@@ -1,0 +1,16 @@
+package com.kylantraynor.livelyworld.climate;
+
+public enum ClimateType {
+	RAIN_FOREST,
+	TROPICAL_SAVANNA,
+	HUMID_SUBTROPICAL,
+	HUMID_CONTINENTAL,
+	OCEANIC,
+	MEDITERRANEAN,
+	STEPPE,
+	SUBARCTIC,
+	TUNDRA,
+	POLAR,
+	ARID,
+	UNDERGROUND
+}

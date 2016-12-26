@@ -1,0 +1,9 @@
+name: LivelyWorld
+main: com.kylantraynor.livelyworld.LivelyWorld
+version: 0.1
+depend: [ProtocolLib]
+commands:
+  livelyworld:
+    description: Access all livelyworld commands.
+    permission: livelyworld.all
+    aliases: [lw]

@@ -1,0 +1,74 @@
+package com.kylantraynor.livelyworld.climate;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import org.bukkit.Location;
+import org.bukkit.World;
+
+import com.kylantraynor.livelyworld.hooks.HookManager;
+import com.kylantraynor.livelyworld.hooks.WorldBorderHook;
+import com.kylantraynor.voronoi.VCell;
+import com.kylantraynor.voronoi.VSite;
+import com.kylantraynor.voronoi.VectorXZ;
+import com.kylantraynor.voronoi.Voronoi;
+
+public class ClimateMap {
+	
+	private Voronoi<ClimateCell> generator;
+	private World world;
+	private int resolution;
+	private boolean generated = false;
+	private HashMap<VSite, ClimateCell> climates;
+	
+	public ClimateMap(World world){
+		this(world, 500);
+	}
+	
+	public ClimateMap(World world, int resolution){
+		this.world = world;
+		this.resolution = resolution;
+	}
+	
+	public void generateMap(){
+		if(HookManager.hasWorldBorder()){
+			
+			WorldBorderHook hook = HookManager.getWorldBorder();
+			Location center = hook.getWorldCenter(world);
+			float minX = (float) (center.getX() - hook.getWorldRadiusX(world));
+			float minZ = (float) (center.getZ() - hook.getWorldRadiusZ(world));
+			float maxX = (float) (center.getX() + hook.getWorldRadiusX(world));
+			float maxZ = (float) (center.getZ() + hook.getWorldRadiusZ(world));
+			List<VSite> sites = new ArrayList<VSite>();
+			climates = new HashMap<VSite, ClimateCell>();
+			for(int x = (int) minX + resolution; x < maxX - resolution; x += resolution){
+				for(int z = (int) minZ + resolution; z < maxZ - resolution; z += resolution){
+					VSite s = new VSite((float) (x + Math.random() * resolution - resolution / 2), (float) (z + Math.random() * resolution - resolution / 2), 1);
+					sites.add(s);
+					climates.put(s, new ClimateCell());
+				}
+			}
+			this.generator = new Voronoi<ClimateCell>(sites.toArray(new VSite[sites.size()]), minX, minZ, maxX, maxZ);
+		}
+		
+		if(generator == null) return;
+		
+		this.generator.generate();
+		generated = true;
+	}
+	
+	public VCell getCell(VSite site){
+		return this.generator.getCell(site);
+	}
+	
+	public ClimateCell getClimateCellAt(Location location){
+		if(location == null) throw new NullPointerException("Location can't be Null");
+		if(generated){
+			VCell cell = this.generator.getCellAt(new VectorXZ((float) location.getX(), (float) location.getZ()));
+			if(cell == null) return null;
+			return climates.get(cell.getSite());
+		}
+		return null;
+	}
+}

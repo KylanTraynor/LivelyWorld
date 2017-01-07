@@ -20,7 +20,6 @@ public class ClimateMap {
 	private World world;
 	private int resolution;
 	private boolean generated = false;
-	private HashMap<VSite, ClimateCell> climates;
 	
 	public ClimateMap(World world){
 		this(world, 500);
@@ -41,7 +40,6 @@ public class ClimateMap {
 			float maxX = (float) (center.getX() + hook.getWorldRadiusX(world));
 			float maxZ = (float) (center.getZ() + hook.getWorldRadiusZ(world));
 			List<VSite> sites = new ArrayList<VSite>();
-			climates = new HashMap<VSite, ClimateCell>();
 			for(int x = (int) minX + resolution; x < maxX - resolution; x += resolution){
 				for(int z = (int) minZ + resolution; z < maxZ - resolution; z += resolution){
 					VSite s = new VSite((float) (x + Math.random() * resolution - resolution / 2), (float) (z + Math.random() * resolution - resolution / 2), 1);
@@ -57,16 +55,15 @@ public class ClimateMap {
 		generated = true;
 	}
 	
-	public VCell getCell(VSite site){
+	public ClimateCell getCell(VSite site){
 		return this.generator.getCell(site);
 	}
 	
 	public ClimateCell getClimateCellAt(Location location){
 		if(location == null) throw new NullPointerException("Location can't be Null");
 		if(generated){
-			VCell cell = this.generator.getCellAt(new VectorXZ((float) location.getX(), (float) location.getZ()));
-			if(cell == null) return null;
-			return climates.get(cell.getSite());
+			ClimateCell cell = this.generator.getCellAt(new VectorXZ((float) location.getX(), (float) location.getZ()));
+			return cell;
 		}
 		return null;
 	}

@@ -451,6 +451,9 @@ public class LivelyWorld extends JavaPlugin implements Listener{
 	public void onEntiryDeath(EntityDeathEvent event){
 		switch(event.getEntityType()){
 		case CHICKEN:
+			for(int i = 0; i < (Math.random() * 5) + 8; i++){
+				event.getEntity().getLocation().getWorld().dropItemNaturally(event.getEntity().getLocation(), new ItemStack(Material.FEATHER, 1));
+			}
 			break;
 		case COW:
 			for(int i = 0; i < (Math.random() * 5) + 8; i++){
@@ -459,6 +462,9 @@ public class LivelyWorld extends JavaPlugin implements Listener{
 			for(int i = 1; i < (Math.random() * 2) + 1; i++){
 				event.getEntity().getLocation().getWorld().dropItemNaturally(event.getEntity().getLocation(), new ItemStack(Material.LEATHER, 1));
 			}
+			for(int i = 0; i < (Math.random() * 5) + 5; i++){
+				event.getEntity().getLocation().getWorld().dropItemNaturally(event.getEntity().getLocation(), new ItemStack(Material.BONE, 1));
+			}
 			break;
 		case GUARDIAN:
 			break;
@@ -466,12 +472,13 @@ public class LivelyWorld extends JavaPlugin implements Listener{
 			if(event.getEntity() instanceof Horse){
 				Horse horse = (Horse) event.getEntity();
 				if(horse.getVariant() == Variant.UNDEAD_HORSE || horse.getVariant() == Variant.SKELETON_HORSE){
-					break;
 				} else {
 					for(int i = 1; i < (Math.random() * 2) + 1; i++){
 						event.getEntity().getLocation().getWorld().dropItemNaturally(event.getEntity().getLocation(), new ItemStack(Material.LEATHER, 1));
 					}
-					break;
+				}
+				for(int i = 0; i < (Math.random() * 5) + 5; i++){
+					event.getEntity().getLocation().getWorld().dropItemNaturally(event.getEntity().getLocation(), new ItemStack(Material.BONE, 1));
 				}
 			}
 			break;
@@ -483,12 +490,21 @@ public class LivelyWorld extends JavaPlugin implements Listener{
 			for(int i = 0; i < (Math.random() * 5) + 3; i++){
 				event.getEntity().getLocation().getWorld().dropItemNaturally(event.getEntity().getLocation(), new ItemStack(Material.PORK, 1));
 			}
+			for(int i = 0; i < (Math.random() * 5) + 2; i++){
+				event.getEntity().getLocation().getWorld().dropItemNaturally(event.getEntity().getLocation(), new ItemStack(Material.BONE, 1));
+			}
 			break;
 		case RABBIT:
+			for(int i = 0; i < (Math.random() * 2) + 1; i++){
+				event.getEntity().getLocation().getWorld().dropItemNaturally(event.getEntity().getLocation(), new ItemStack(Material.BONE, 1));
+			}
 			break;
 		case SHEEP:
 			for(int i = 0; i < (Math.random() * 5) + 5; i++){
 				event.getEntity().getLocation().getWorld().dropItemNaturally(event.getEntity().getLocation(), new ItemStack(Material.MUTTON, 1));
+			}
+			for(int i = 0; i < (Math.random() * 4) + 4; i++){
+				event.getEntity().getLocation().getWorld().dropItemNaturally(event.getEntity().getLocation(), new ItemStack(Material.BONE, 1));
 			}
 			break;
 		default:

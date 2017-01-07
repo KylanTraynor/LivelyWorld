@@ -46,7 +46,6 @@ public class ClimateMap {
 				for(int z = (int) minZ + resolution; z < maxZ - resolution; z += resolution){
 					VSite s = new VSite((float) (x + Math.random() * resolution - resolution / 2), (float) (z + Math.random() * resolution - resolution / 2), 1);
 					sites.add(s);
-					climates.put(s, new ClimateCell());
 				}
 			}
 			this.generator = new Voronoi<ClimateCell>(sites.toArray(new VSite[sites.size()]), minX, minZ, maxX, maxZ);

@@ -87,21 +87,20 @@ public class DynmapHook {
 	    if(weatherIcon != null){
 	    	Marker weather = markerList.remove(id);
 	    	if (weather == null){
-	    		weather = weatherSet.createMarker(id, "" + (int) c.getLowAltitudePressure(), c.getWorld().getName(), (double) c.getSite().getX(), 48d, (double) c.getSite().getZ(), weatherIcon, false);
+	    		weather = weatherSet.createMarker(id, c.getTemperature().toString("C") + "/" + c.getTemperature().toString("F"), c.getWorld().getName(), (double) c.getSite().getX(), c.getAltitude(), (double) c.getSite().getZ(), weatherIcon, false);
 	    	} else {
 	    		weather.setLocation(c.getWorld().getName(),
 	    				c.getSite().getX(),
-	    				48d,
+	    				c.getAltitude(),
 	    				c.getSite().getZ());
-	            weather.setLabel("" + (int) c.getLowAltitudePressure());
+	            weather.setLabel(c.getTemperature().toString("C") + "/" + c.getTemperature().toString("F"));
 	            weather.setMarkerIcon(weatherIcon);
 	    	}
-	    	/*StringBuilder sb = new StringBuilder();
-	    	for(UUID uid : c.getMembers()){
-	    		sb.append("<br />" + Bukkit.getServer().getOfflinePlayer(uid).getName());
-	    	}*/
-	    	/*camp.setDescription("Expire in " + ChronoUnit.HOURS.between(Instant.now(), c.getExpireOn()) + " hours."
-	    			+ "<br />Members: " + sb.toString());*/
+	    	StringBuilder sb = new StringBuilder();
+	    	sb.append("Weather: " + c.getWeather().toString().toLowerCase());
+	    	sb.append("<br />Temperature: " + c.getTemperature().toString("C") + "/" + c.getTemperature().toString("F"));
+	    	sb.append("<br />Pressure: " + (int) c.getLowAltitudePressure() + " hPa");
+	    	weather.setDescription(sb.toString());
 	    	markerList.put(id, weather);
 	    }
 	}

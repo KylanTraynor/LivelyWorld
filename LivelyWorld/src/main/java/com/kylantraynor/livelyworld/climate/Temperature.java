@@ -26,18 +26,29 @@ public class Temperature {
 		if(playerSystem.containsKey(p)){
 			switch(playerSystem.get(p)){
 			case "K":
-				return "" + getRoundedValue(this.value) + "캩";
+				return "" + getRoundedValue(this.value) + "째K";
 			case "C":
-				return "" + getRoundedValue(this.value - 273.15) + "캜";
+				return "" + getRoundedValue(this.value - 273.15) + "째C";
 			case "F":
-				return "" + getRoundedValue((this.value - 273.15) * 1.8) + "캟";
+				return "" + getRoundedValue((this.value - 273.15) * 1.8) + "째F";
 			}
 		}
-		return "" + getRoundedValue(this.value - 273.15) + "캜";
+		return "" + getRoundedValue(this.value - 273.15) + "째C";
+	}
+	
+	public String toString(String system){
+		switch(system){
+		case "C":
+			return "" + getRoundedValue(this.value - 273.15) + "째C";
+		case "F":
+			return "" + getRoundedValue((this.value - 273.15) * 1.8) + "째F";
+		default:
+			return "" + getRoundedValue(this.value) + "째K";
+		}
 	}
 	
 	@Override
 	public String toString(){
-		return "" + getRoundedValue(this.value) + "캩";
+		return "" + getRoundedValue(this.value) + "째K";
 	}
 }

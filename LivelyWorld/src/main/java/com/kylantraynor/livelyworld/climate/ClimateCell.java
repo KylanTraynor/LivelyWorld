@@ -86,4 +86,8 @@ public class ClimateCell extends VCell{
 	public void update() {
 		updateMap();
 	}
+
+	public Temperature getTemperature() {
+		return getBaseTemperature();
+	}
 }

@@ -29,6 +29,11 @@ public class ClimateCell extends VCell{
 	}
 	
 	public Weather getWeather(){
+		if(world.hasStorm()){
+			return Weather.RAIN;
+		} else if(world.isThundering()){
+			return Weather.THUNDERSTORM;
+		}
 		return Weather.CLEAR;
 	}
 	

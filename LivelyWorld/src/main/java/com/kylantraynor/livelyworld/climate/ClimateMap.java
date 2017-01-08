@@ -46,7 +46,7 @@ public class ClimateMap {
 					sites.add(s);
 				}
 			}
-			this.generator = new Voronoi<ClimateCell>(sites.toArray(new VSite[sites.size()]), minX, minZ, maxX, maxZ);
+			this.generator = new Voronoi<ClimateCell>(ClimateCell.class, sites.toArray(new VSite[sites.size()]), minX, minZ, maxX, maxZ);
 		}
 		
 		if(generator == null) return;

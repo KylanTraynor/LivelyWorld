@@ -15,9 +15,14 @@ public class ClimateCell extends VCell{
 	private double highAltitudePressure = getBasePressure();
 	private double airVolume = Double.NaN;
 	private double airAmount = Double.NaN;
+	private Temperature temperature;
 	
 	public ClimateCell() {
 		super();
+	}
+	
+	public Location getLocation(){
+		return new Location(world, (double) getSite().getX(), getAltitude(), (double) getSite().getZ());
 	}
 
 	public void setWorld(World world) {
@@ -51,6 +56,12 @@ public class ClimateCell extends VCell{
 	
 	public double getAltitude(){
 		return world.getHighestBlockYAt((int) getSite().x, (int) getSite().z);
+	}
+	
+	public Temperature getTemperature() {
+		if(temperature != null) return temperature;
+		temperature = getBaseTemperature();
+		return temperature;
 	}
 	
 	public double getVolume(){
@@ -87,12 +98,18 @@ public class ClimateCell extends VCell{
 			HookManager.getDynmap().updateClimateCell(this);
 		}
 	}
-
-	public void update() {
-		updateMap();
+	
+	public void updateTemperature(){
+		temperature = getTemperature().bringTo(Planet.getPlanet(world).getDefaultAirTemperature(getLocation()), getVolume() * 0.001);
+	}
+	
+	public void updatePressure(){
+		lowAltitudePressure = ClimateUtils.getGasPressure(getVolume(), getAmount(), getTemperature());
 	}
 
-	public Temperature getTemperature() {
-		return getBaseTemperature();
+	public void update() {
+		updateTemperature();
+		updatePressure();
+		updateMap();
 	}
 }

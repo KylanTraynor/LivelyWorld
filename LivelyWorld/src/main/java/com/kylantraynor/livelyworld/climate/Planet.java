@@ -133,7 +133,7 @@ public class Planet {
 	
 	public Temperature getDefaultAirTemperature(Location l){
 		double max = 30;
-		double base = 273.15;
+		double base = 273.15 + 15;
 		double daily = base + ((getSunPosition(l) + 0.5) / 1.5) * max;
 		double altitude = daily - 0.001*(l.getY() - 49)*(l.getY() - 49);
 		double radiation = (altitude - max/2) + max*getSunAverageRadiation(l);

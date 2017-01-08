@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 public class Temperature {
 	
 	static Map<Player, String> playerSystem = new HashMap<Player, String>();
-	double value;
+	final double value;
 	
 	public Temperature(double v){
 		this.value = v;
@@ -16,6 +16,21 @@ public class Temperature {
 	
 	public double getValue(){
 		return this.value;
+	}
+	
+	public Temperature add(Temperature t){
+		return new Temperature(this.value + t.value);
+	}
+	
+	public Temperature bringTo(Temperature t, double inertia){
+		double oldt = this.value;
+		double targett = t.value;
+		double newt = (oldt * inertia + targett) / (inertia + 1);
+		return new Temperature(newt);
+	}
+	
+	public Temperature remove(Temperature t){
+		return new Temperature(this.value - t.value);
 	}
 	
 	public double getRoundedValue(double value){

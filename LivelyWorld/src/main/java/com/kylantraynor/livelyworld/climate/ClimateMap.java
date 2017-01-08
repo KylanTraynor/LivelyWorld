@@ -52,6 +52,9 @@ public class ClimateMap {
 		if(generator == null) return;
 		
 		this.generator.generate();
+		for(ClimateCell c : generator.getCells()){
+			c.setWorld(world);
+		}
 		generated = true;
 	}
 	
@@ -66,5 +69,14 @@ public class ClimateMap {
 			return cell;
 		}
 		return null;
+	}
+
+	public ClimateCell[] getCells() {
+		return this.generator.getCells();
+	}
+
+	public void randomCellUpdate() {
+		int i = (int) (Math.random() * getCells().length);
+		if(getCells()[i] != null) getCells()[i].update();
 	}
 }

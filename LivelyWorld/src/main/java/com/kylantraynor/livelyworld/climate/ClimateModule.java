@@ -2,15 +2,18 @@ package com.kylantraynor.livelyworld.climate;
 
 import java.util.logging.Level;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import com.kylantraynor.livelyworld.LivelyWorld;
 
@@ -18,6 +21,8 @@ public class ClimateModule {
 	
 	private LivelyWorld plugin;
 	private Planet defaultPlanet;
+	
+	private BukkitRunnable climateUpdater;
 	
 	static final String MessageHeader = ChatColor.GOLD + "[" + ChatColor.WHITE + "Climate" + ChatColor.GOLD + "] " + ChatColor.WHITE;
 
@@ -31,10 +36,27 @@ public class ClimateModule {
 			p.generateClimateMaps();
 			this.plugin.log(Level.INFO, "Generated climate maps for planet " + p.getName() + ".");
 		}
+		
+		climateUpdater = new BukkitRunnable(){
+
+			@Override
+			public void run() {
+				for(World w : Bukkit.getServer().getWorlds()){
+					Planet p = Planet.getPlanet(w);
+					if(p != null){
+						p.getClimateMap(w).randomCellUpdate();
+					}
+				}
+			}
+			
+		};
+		
+		climateUpdater.runTaskTimer(plugin, 20L, 20L);
 	}
 	
 	public void onDisable(){
 		Planet.planets.clear();
+		climateUpdater.cancel();
 	}
 
 	public LivelyWorld getPlugin() {

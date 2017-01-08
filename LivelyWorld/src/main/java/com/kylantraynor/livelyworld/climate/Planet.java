@@ -12,6 +12,7 @@ public class Planet {
 	
 	static ArrayList<Planet> planets = new ArrayList<Planet>();
 	
+	static double HalfPI = Math.PI / 2;
 	
 	public static Planet getPlanet(World w){
 		for(Planet p : planets){
@@ -65,6 +66,10 @@ public class Planet {
 		return (getR() * 2 * Math.PI);
 	}
 	
+	public double getAngleFromEquator(double zPosition){
+		return (Math.abs(zPosition) / getMaxZ()) * HalfPI;
+	}
+	
 	public Calendar getCurrentIRLDate(){
 		return Calendar.getInstance();
 	}
@@ -86,7 +91,7 @@ public class Planet {
 	}
 	
 	public double getMaxZ(){
-		return getR() * Math.PI/2;
+		return getR() * HalfPI;
 	}
 	
 	public double getCurrentOffset(){
@@ -99,6 +104,10 @@ public class Planet {
 
 	public double getInclination(){
 		return (21 * Math.PI)/180;
+	}
+	
+	public double getSunAverageRadiation(double zPos){
+		return Math.max(Math.cos((zPos + getCurrentOffset()) / getR()), 0);
 	}
 	
 	public double getSunAverageRadiation(Location l){

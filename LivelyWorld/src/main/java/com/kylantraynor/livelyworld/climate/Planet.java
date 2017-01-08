@@ -2,6 +2,8 @@ package com.kylantraynor.livelyworld.climate;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -27,13 +29,28 @@ public class Planet {
 	}
 
 	private ArrayList<World> worlds = new ArrayList<World>();
+	private Map<World, ClimateMap> maps = new HashMap<World, ClimateMap>();
 	private World mainWorld;
 	private String name;
 	
 	public Planet(World w, String name){
-		this.mainWorld = w;
+		setWorld(w);
 		this.name = name;
 		planets.add(this);
+	}
+	
+	public ClimateMap getClimateMap(World world){
+		if(world == null) world = mainWorld;
+		ClimateMap map = maps.get(world);
+		if(map == null){
+			map = new ClimateMap(world);
+			maps.put(world, map);
+		}
+		return map;
+	}
+	
+	public ClimateMap getClimateMap(){
+		return getClimateMap(null);
 	}
 	
 	public long getRadius(){
@@ -123,6 +140,7 @@ public class Planet {
 	}
 
 	public void setWorld(World world) {
+		addWorld(world);
 		this.mainWorld = world;
 	}
 	
@@ -143,5 +161,11 @@ public class Planet {
 
 	public String getName() {
 		return this.name;
+	}
+
+	public void generateClimateMaps() {
+		for(World w : worlds){
+			getClimateMap(w).generateMap();
+		}
 	}
 }

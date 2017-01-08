@@ -1,5 +1,7 @@
 package com.kylantraynor.livelyworld.climate;
 
+import java.util.logging.Level;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -25,6 +27,10 @@ public class ClimateModule {
 	
 	public void onEnable(){
 		defaultPlanet = new Planet(plugin.getServer().getWorld("world"), "Laramidia");
+		for(Planet p : Planet.planets){
+			p.generateClimateMaps();
+			this.plugin.log(Level.INFO, "Generated climate maps for planet " + p.getName() + ".");
+		}
 	}
 	
 	public void onDisable(){
@@ -143,7 +149,7 @@ public class ClimateModule {
 							if(planet != null){
 								planet = defaultPlanet;
 							}
-							p.sendMessage(MessageHeader + ChatColor.GOLD + planet.getName() + " has an obliquity of " + ((planet.getOb() * 180)/Math.PI) + "° at the moment.");
+							p.sendMessage(MessageHeader + ChatColor.GOLD + planet.getName() + " has an obliquity of " + ((planet.getOb() * 180)/Math.PI) + "ï¿½ at the moment.");
 						}
 						break;
 					case "CURRENTSOLAREQUATOR":

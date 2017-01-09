@@ -45,7 +45,7 @@ public class Temperature {
 			case "C":
 				return "" + getRoundedValue(this.value - 273.15) + "\u00BA" + "C";
 			case "F":
-				return "" + getRoundedValue((this.value - 273.15) * 1.8) + "\u00BA" + "F";
+				return "" + getRoundedValue((this.value - 273.15) * 1.8 + 32) + "\u00BA" + "F";
 			}
 		}
 		return "" + getRoundedValue(this.value - 273.15) + "\u00BA" + "C";
@@ -56,7 +56,7 @@ public class Temperature {
 		case "C":
 			return "" + getRoundedValue(this.value - 273.15) + "\u00BA" + "C";
 		case "F":
-			return "" + getRoundedValue((this.value - 273.15) * 1.8) + "\u00BA" + "F";
+			return "" + getRoundedValue((this.value - 273.15) * 1.8 + 32) + "\u00BA" + "F";
 		default:
 			return "" + getRoundedValue(this.value) + "\u00BA" + "K";
 		}

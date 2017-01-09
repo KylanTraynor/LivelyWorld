@@ -58,7 +58,7 @@ public class Planet {
 	}
 
 	public long getRadius() {
-		return 6000000L / 100; // 100 times smaller than earth.
+		return 6000000L / 400; // 400 times smaller than earth.
 	}
 
 	public long getR() {

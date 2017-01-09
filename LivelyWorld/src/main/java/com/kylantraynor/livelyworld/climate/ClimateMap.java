@@ -15,24 +15,24 @@ import com.kylantraynor.voronoi.VectorXZ;
 import com.kylantraynor.voronoi.Voronoi;
 
 public class ClimateMap {
-	
+
 	private Voronoi<ClimateCell> generator;
 	private World world;
 	private int resolution;
 	private boolean generated = false;
-	
-	public ClimateMap(World world){
+
+	public ClimateMap(World world) {
 		this(world, 500);
 	}
-	
-	public ClimateMap(World world, int resolution){
+
+	public ClimateMap(World world, int resolution) {
 		this.world = world;
 		this.resolution = resolution;
 	}
-	
-	public void generateMap(){
-		if(HookManager.hasWorldBorder()){
-			
+
+	public void generateMap() {
+		if (HookManager.hasWorldBorder()) {
+
 			WorldBorderHook hook = HookManager.getWorldBorder();
 			Location center = hook.getWorldCenter(world);
 			float minX = (float) (center.getX() - hook.getWorldRadiusX(world));
@@ -40,32 +40,40 @@ public class ClimateMap {
 			float maxX = (float) (center.getX() + hook.getWorldRadiusX(world));
 			float maxZ = (float) (center.getZ() + hook.getWorldRadiusZ(world));
 			List<VSite> sites = new ArrayList<VSite>();
-			for(int x = (int) minX + resolution; x < maxX - resolution; x += resolution){
-				for(int z = (int) minZ + resolution; z < maxZ - resolution; z += resolution){
-					VSite s = new VSite((float) (x + Math.random() * resolution - resolution / 2), (float) (z + Math.random() * resolution - resolution / 2), 1);
+			for (int x = (int) minX + resolution; x < maxX - resolution; x += resolution) {
+				for (int z = (int) minZ + resolution; z < maxZ - resolution; z += resolution) {
+					VSite s = new VSite(
+							(float) (x + Math.random() * resolution - resolution / 2),
+							(float) (z + Math.random() * resolution - resolution / 2),
+							1);
 					sites.add(s);
 				}
 			}
-			this.generator = new Voronoi<ClimateCell>(ClimateCell.class, sites.toArray(new VSite[sites.size()]), minX, minZ, maxX, maxZ);
+			this.generator = new Voronoi<ClimateCell>(ClimateCell.class,
+					sites.toArray(new VSite[sites.size()]), minX, minZ, maxX,
+					maxZ);
 		}
-		
-		if(generator == null) return;
-		
+
+		if (generator == null)
+			return;
+
 		this.generator.generate();
-		for(ClimateCell c : generator.getCells()){
+		for (ClimateCell c : generator.getCells()) {
 			c.setWorld(world);
 		}
 		generated = true;
 	}
-	
-	public ClimateCell getCell(VSite site){
+
+	public ClimateCell getCell(VSite site) {
 		return this.generator.getCell(site);
 	}
-	
-	public ClimateCell getClimateCellAt(Location location){
-		if(location == null) throw new NullPointerException("Location can't be Null");
-		if(generated){
-			ClimateCell cell = this.generator.getCellAt(new VectorXZ((float) location.getX(), (float) location.getZ()));
+
+	public ClimateCell getClimateCellAt(Location location) {
+		if (location == null)
+			throw new NullPointerException("Location can't be Null");
+		if (generated) {
+			ClimateCell cell = this.generator.getCellAt(new VectorXZ(
+					(float) location.getX(), (float) location.getZ()));
 			return cell;
 		}
 		return null;
@@ -77,6 +85,7 @@ public class ClimateMap {
 
 	public void randomCellUpdate() {
 		int i = (int) (Math.random() * getCells().length);
-		if(getCells()[i] != null) getCells()[i].update();
+		if (getCells()[i] != null)
+			getCells()[i].update();
 	}
 }

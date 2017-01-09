@@ -9,41 +9,41 @@ import com.wimbli.WorldBorder.BorderData;
 import com.wimbli.WorldBorder.Config;
 
 public class WorldBorderHook {
-	
-	public BorderData getWorldBorder(World w){
+
+	public BorderData getWorldBorder(World w) {
 		return Config.Border(w.getName());
 	}
-	
-	public boolean isWorldCircular(World w){
+
+	public boolean isWorldCircular(World w) {
 		BorderData border = getWorldBorder(w);
-		if(border != null){
+		if (border != null) {
 			return border.getShape();
 		} else {
 			return false;
 		}
 	}
-	
-	public int getWorldRadiusX(World w){
+
+	public int getWorldRadiusX(World w) {
 		BorderData border = getWorldBorder(w);
-		if(border != null){
+		if (border != null) {
 			return border.getRadiusX();
 		} else {
 			return 0;
 		}
 	}
-	
-	public int getWorldRadiusZ(World w){
+
+	public int getWorldRadiusZ(World w) {
 		BorderData border = getWorldBorder(w);
-		if(border != null){
+		if (border != null) {
 			return border.getRadiusZ();
 		} else {
 			return 0;
 		}
 	}
-	
-	public Location getWorldCenter(World w){
+
+	public Location getWorldCenter(World w) {
 		BorderData border = getWorldBorder(w);
-		if(border != null){
+		if (border != null) {
 			return new Location(w, border.getX(), 0, border.getZ());
 		} else {
 			return new Location(w, 0, 0, 0);

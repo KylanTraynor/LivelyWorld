@@ -6,40 +6,40 @@ import java.util.Map;
 import org.bukkit.entity.Player;
 
 public class Temperature {
-	
+
 	static Map<Player, String> playerSystem = new HashMap<Player, String>();
 	final double value;
-	
-	public Temperature(double v){
+
+	public Temperature(double v) {
 		this.value = v;
 	}
-	
-	public double getValue(){
+
+	public double getValue() {
 		return this.value;
 	}
-	
-	public Temperature add(Temperature t){
+
+	public Temperature add(Temperature t) {
 		return new Temperature(this.value + t.value);
 	}
-	
-	public Temperature bringTo(Temperature t, double inertia){
+
+	public Temperature bringTo(Temperature t, double inertia) {
 		double oldt = this.value;
 		double targett = t.value;
 		double newt = (oldt * inertia + targett) / (inertia + 1);
 		return new Temperature(newt);
 	}
-	
-	public Temperature remove(Temperature t){
+
+	public Temperature remove(Temperature t) {
 		return new Temperature(this.value - t.value);
 	}
-	
-	public double getRoundedValue(double value){
+
+	public double getRoundedValue(double value) {
 		return ((double) Math.round(value * 100)) / 100;
 	}
-	
-	public String toString(Player p){
-		if(playerSystem.containsKey(p)){
-			switch(playerSystem.get(p)){
+
+	public String toString(Player p) {
+		if (playerSystem.containsKey(p)) {
+			switch (playerSystem.get(p)) {
 			case "K":
 				return "" + getRoundedValue(this.value) + "°K";
 			case "C":
@@ -50,9 +50,9 @@ public class Temperature {
 		}
 		return "" + getRoundedValue(this.value - 273.15) + "°C";
 	}
-	
-	public String toString(String system){
-		switch(system){
+
+	public String toString(String system) {
+		switch (system) {
 		case "C":
 			return "" + getRoundedValue(this.value - 273.15) + "°C";
 		case "F":
@@ -61,9 +61,9 @@ public class Temperature {
 			return "" + getRoundedValue(this.value) + "°K";
 		}
 	}
-	
+
 	@Override
-	public String toString(){
+	public String toString() {
 		return "" + getRoundedValue(this.value) + "°K";
 	}
 }

@@ -50,22 +50,22 @@ import com.kylantraynor.livelyworld.sounds.SoundManager;
 import com.kylantraynor.livelyworld.vegetation.VegetationModule;
 import com.kylantraynor.livelyworld.water.TidesModule;
 
-public class LivelyWorld extends JavaPlugin implements Listener{
-	
+public class LivelyWorld extends JavaPlugin implements Listener {
+
 	private static final String PLUGIN_NAME = "LivelyWorld";
-	
+
 	private boolean usingPathways = true;
 	private PathwaysModule pathways;
-	
+
 	private boolean usingDeterioration = true;
 	private DeteriorationModule deterioration;
-	
+
 	private boolean usingCreatures = true;
 	private CreaturesModule creatures;
-	
+
 	private boolean usingVegetation = true;
 	private VegetationModule vegetation;
-	
+
 	protected int updateRadius = 250;
 
 	private boolean usingBurn = true;
@@ -81,167 +81,182 @@ public class LivelyWorld extends JavaPlugin implements Listener{
 
 	private boolean usingTides = true;
 	private TidesModule tides;
-	
+
 	private boolean usingGravity = true;
 	private GravityModule gravity;
-	
+
 	private LivelyWorld currentInstance;
-	
+
 	private Instant lastBlockUpdate = Instant.now();
 	private long blockUpdatePeriod = 5L;
 	private Location worldCenter;
 	private int worldBorder = 4800;
-	
-	public void log(Level level, String message){
+
+	public void log(Level level, String message) {
 		getLogger().log(level, "[" + PLUGIN_NAME + "] " + message);
 	}
-	
+
 	@Override
-	public void onEnable(){
+	public void onEnable() {
 		currentInstance = this;
 		saveDefaultConfig();
 		worldCenter = new Location(Bukkit.getWorld("world"), 1600, 100, 1600);
 		PluginManager pm = getServer().getPluginManager();
 		pm.registerEvents(this, this);
-		
+
 		loadConfig();
-		
-		if(usingPathways){
+
+		if (usingPathways) {
 			pathways = new PathwaysModule();
 			pathways.onEnable(this);
 		}
-		
-		if(usingClimate){
+
+		if (usingClimate) {
 			climate = new ClimateModule(this);
 			climate.onEnable();
 		}
-		
-		if(usingDeterioration){
+
+		if (usingDeterioration) {
 			deterioration = new DeteriorationModule();
 			deterioration.onEnable(this);
 		}
-		
-		if(usingCreatures){
+
+		if (usingCreatures) {
 			creatures = new CreaturesModule();
 			creatures.onEnable(this);
 		}
-		
-		if(usingVegetation){
+
+		if (usingVegetation) {
 			vegetation = new VegetationModule(this);
 			vegetation.onEnable();
 		}
-		
-		if(usingBurn){
+
+		if (usingBurn) {
 			burn = new BurnModule(this);
 			burn.onEnable();
 		}
-		
-		if(usingSounds){
+
+		if (usingSounds) {
 			sounds = new SoundManager(this);
 			sounds.enable();
 		}
-		
-		if(usingTides){
+
+		if (usingTides) {
 			tides = new TidesModule(this);
 			tides.enable();
 		}
-		
-		if(usingGravity){
+
+		if (usingGravity) {
 			gravity = new GravityModule(this);
 			gravity.enable();
 			gravity.reloadProperties(getConfig());
 		}
-		
-		randomBlockPicker = new BukkitRunnable(){
+
+		randomBlockPicker = new BukkitRunnable() {
 
 			@Override
-			public void run(){
-				try{
-					if(getServer().getOnlinePlayers().size() == 0) {
-						int randomX = (int) Math.round(Math.random() * (worldBorder * 2) - worldBorder);
-						int randomY = (int) ( 255 * Math.random());
-						int randomZ = (int) Math.round(Math.random() * (worldBorder * 2) - worldBorder);
+			public void run() {
+				try {
+					if (getServer().getOnlinePlayers().size() == 0) {
+						int randomX = (int) Math.round(Math.random()
+								* (worldBorder * 2) - worldBorder);
+						int randomY = (int) (255 * Math.random());
+						int randomZ = (int) Math.round(Math.random()
+								* (worldBorder * 2) - worldBorder);
 						randomX += worldCenter.getBlockX();
 						randomZ += worldCenter.getBlockZ();
-						Location l = new Location(worldCenter.getWorld(), randomX, randomY, randomZ);
-						new BukkitRunnable(){
+						Location l = new Location(worldCenter.getWorld(),
+								randomX, randomY, randomZ);
+						new BukkitRunnable() {
 							@Override
 							public void run() {
-								try{ updateBlock(l.getBlock(), null);
+								try {
+									updateBlock(l.getBlock(), null);
 								} catch (Exception e) {
 									e.printStackTrace();
 								}
 							}
-							
+
 						}.runTask(currentInstance);
 					} else {
 						int size = getServer().getOnlinePlayers().size();
 						int random = (int) Math.floor(Math.random() * size);
-						Player p = getServer().getOnlinePlayers().toArray(new Player[size])[random];
-						int randomX = (int) Math.round((Math.random() * (updateRadius * 2 + 1)) - updateRadius);
-						int randomY = (int) ( 255 * Math.random());
-						int randomZ = (int) Math.round((Math.random() * (updateRadius * 2 + 1)) - updateRadius);
-						Location l = p.getLocation().add(randomX, randomY, randomZ);
-						new BukkitRunnable(){
+						Player p = getServer().getOnlinePlayers().toArray(
+								new Player[size])[random];
+						int randomX = (int) Math
+								.round((Math.random() * (updateRadius * 2 + 1))
+										- updateRadius);
+						int randomY = (int) (255 * Math.random());
+						int randomZ = (int) Math
+								.round((Math.random() * (updateRadius * 2 + 1))
+										- updateRadius);
+						Location l = p.getLocation().add(randomX, randomY,
+								randomZ);
+						new BukkitRunnable() {
 							@Override
 							public void run() {
-								try{ 
-									if(l.getChunk().isLoaded()){
+								try {
+									if (l.getChunk().isLoaded()) {
 										updateBlock(l.getBlock(), p);
 									}
 								} catch (Exception e) {
 									e.printStackTrace();
 								}
 							}
-							
+
 						}.runTask(currentInstance);
 					}
-				} catch (Exception e){
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 		};
-		randomBlockPicker.runTaskTimerAsynchronously(this, 10L, blockUpdatePeriod);
+		randomBlockPicker.runTaskTimerAsynchronously(this, 10L,
+				blockUpdatePeriod);
 	}
-	
+
 	protected void updateBlock(Block b, Player p) {
-		if(!isInValidWorld(b.getLocation())) return;
-		if(Instant.now().get(
-				ChronoField.MILLI_OF_SECOND) - lastBlockUpdate.get(ChronoField.MILLI_OF_SECOND) > 
-				(ChronoField.MILLI_OF_SECOND.range().getMaximum() * (blockUpdatePeriod + 1) / 20.0)){
+		if (!isInValidWorld(b.getLocation()))
+			return;
+		if (Instant.now().get(ChronoField.MILLI_OF_SECOND)
+				- lastBlockUpdate.get(ChronoField.MILLI_OF_SECOND) > (ChronoField.MILLI_OF_SECOND
+				.range().getMaximum() * (blockUpdatePeriod + 1) / 20.0)) {
 			lastBlockUpdate = Instant.now();
 			return;
 		} else {
 			lastBlockUpdate = Instant.now();
 		}
-		if(usingClimate){
+		if (usingClimate) {
 			climate.onBlockUpdate(b, p);
 		}
-		if(usingDeterioration){
+		if (usingDeterioration) {
 			deterioration.onBlockUpdate(b, p);
 		}
-		if(usingCreatures){
+		if (usingCreatures) {
 			creatures.onBlockUpdate(b, p);
 		}
-		if(usingVegetation){
+		if (usingVegetation) {
 			vegetation.onBlockUpdate(b, p);
 		}
-		if(usingBurn){
+		if (usingBurn) {
 			burn.onBlockUpdate(b, p);
 		}
-		if(usingGravity){
+		if (usingGravity) {
 			gravity.onBlockUpdate(b, p);
 		}
 	}
 
 	private boolean isInValidWorld(Location location) {
-		if(location.getWorld() == worldCenter.getWorld()){
-			if(location.getBlockX() < worldBorder + worldCenter.getBlockX() &&
-					location.getBlockX() > -worldBorder + worldCenter.getBlockX() &&
-					location.getBlockZ() < worldBorder + worldCenter.getBlockZ() &&
-					location.getBlockZ() > -worldBorder + worldCenter.getBlockZ() &&
-					location.getBlockY() > 0 &&
-					location.getBlockY() < 255) return true;
+		if (location.getWorld() == worldCenter.getWorld()) {
+			if (location.getBlockX() < worldBorder + worldCenter.getBlockX()
+					&& location.getBlockX() > -worldBorder
+							+ worldCenter.getBlockX()
+					&& location.getBlockZ() < worldBorder
+							+ worldCenter.getBlockZ()
+					&& location.getBlockZ() > -worldBorder
+							+ worldCenter.getBlockZ()
+					&& location.getBlockY() > 0 && location.getBlockY() < 255)
+				return true;
 		}
 		return false;
 	}
@@ -249,7 +264,7 @@ public class LivelyWorld extends JavaPlugin implements Listener{
 	private void loadConfig() {
 		YamlConfiguration cfg = (YamlConfiguration) getConfig();
 		// If config file contains usepathways
-		if(cfg.contains("usepathways")){
+		if (cfg.contains("usepathways")) {
 			// then get the value
 			usingPathways = cfg.getBoolean("usepathways");
 		} else {
@@ -257,7 +272,7 @@ public class LivelyWorld extends JavaPlugin implements Listener{
 			getConfig().set("usepathways", usingPathways);
 		}
 		// If config file contains useclimate
-		if(cfg.contains("useclimate")){
+		if (cfg.contains("useclimate")) {
 			// then get the value
 			usingClimate = cfg.getBoolean("useclimate");
 		} else {
@@ -265,7 +280,7 @@ public class LivelyWorld extends JavaPlugin implements Listener{
 			getConfig().set("useclimate", usingClimate);
 		}
 		// If config file contains usedeterioration
-		if(cfg.contains("usedeterioration")){
+		if (cfg.contains("usedeterioration")) {
 			// then get the value
 			usingDeterioration = cfg.getBoolean("usedeterioration");
 		} else {
@@ -273,7 +288,7 @@ public class LivelyWorld extends JavaPlugin implements Listener{
 			getConfig().set("usedeterioration", usingDeterioration);
 		}
 		// If config file contains usecreatures
-		if(cfg.contains("usecreatures")){
+		if (cfg.contains("usecreatures")) {
 			// then get the value
 			usingCreatures = cfg.getBoolean("usecreatures");
 		} else {
@@ -281,7 +296,7 @@ public class LivelyWorld extends JavaPlugin implements Listener{
 			getConfig().set("usecreatures", usingCreatures);
 		}
 		// If config file contains usevegetation
-		if(cfg.contains("usevegetation")){
+		if (cfg.contains("usevegetation")) {
 			// then get the value
 			usingVegetation = cfg.getBoolean("usevegetation");
 		} else {
@@ -289,7 +304,7 @@ public class LivelyWorld extends JavaPlugin implements Listener{
 			getConfig().set("usevegetation", usingVegetation);
 		}
 		// If config file contains useburn
-		if(cfg.contains("useburn")){
+		if (cfg.contains("useburn")) {
 			// then get the value
 			usingBurn = cfg.getBoolean("useburn");
 		} else {
@@ -297,7 +312,7 @@ public class LivelyWorld extends JavaPlugin implements Listener{
 			getConfig().set("useburn", usingBurn);
 		}
 		// If config file contains usetides
-		if(cfg.contains("usetides")){
+		if (cfg.contains("usetides")) {
 			// then get the value
 			usingTides = cfg.getBoolean("usetides");
 		} else {
@@ -305,7 +320,7 @@ public class LivelyWorld extends JavaPlugin implements Listener{
 			getConfig().set("usetides", usingTides);
 		}
 		// If config file contains usesounds
-		if(cfg.contains("usesounds")){
+		if (cfg.contains("usesounds")) {
 			// then get the value
 			usingSounds = cfg.getBoolean("usesounds");
 		} else {
@@ -313,15 +328,15 @@ public class LivelyWorld extends JavaPlugin implements Listener{
 			getConfig().set("usesounds", usingSounds);
 		}
 		// If config file contains usesounds
-		if(cfg.contains("usegravity")){
+		if (cfg.contains("usegravity")) {
 			// then get the value
 			usingGravity = cfg.getBoolean("usegravity");
 		} else {
 			// else write the default value in the config file
 			getConfig().set("usegravity", usingGravity);
 		}
-			// If config file contains updateradius
-		if(cfg.contains("updateradius")){
+		// If config file contains updateradius
+		if (cfg.contains("updateradius")) {
 			// then get the value
 			updateRadius = cfg.getInt("updateradius");
 		} else {
@@ -332,61 +347,66 @@ public class LivelyWorld extends JavaPlugin implements Listener{
 	}
 
 	@Override
-	public void onDisable(){
-		if(sounds != null){
+	public void onDisable() {
+		if (sounds != null) {
 			sounds.disable();
 		}
-		if(gravity != null){
+		if (gravity != null) {
 			gravity.setProperties(getConfig());
 		}
 		getServer().getScheduler().cancelTasks(this);
 		randomBlockPicker = null;
 		saveConfig();
 	}
-	
+
 	@EventHandler
-	public void onBlockForm(BlockFormEvent event){
-		if(event.isCancelled()) return;
-		if(event.getNewState().getType() == Material.SNOW){
-			if(usingClimate){
+	public void onBlockForm(BlockFormEvent event) {
+		if (event.isCancelled())
+			return;
+		if (event.getNewState().getType() == Material.SNOW) {
+			if (usingClimate) {
 				climate.updateBiome(event.getBlock());
 			}
 			event.setCancelled(true);
-			SnowFallTask snowFallTask = new SnowFallTask(climate,
-					event.getBlock().getWorld(), event.getBlock().getX(),
-					event.getBlock().getY(), event.getBlock().getZ());
-			
+			SnowFallTask snowFallTask = new SnowFallTask(climate, event
+					.getBlock().getWorld(), event.getBlock().getX(), event
+					.getBlock().getY(), event.getBlock().getZ());
+
 			snowFallTask.runTaskLater(this, 1);
 		}
 	}
-	
+
 	public Location getLowestNear(Location location) {
-		return getLowestNear(location.getWorld(), location.getBlockX(), location.getBlockY(), location.getBlockZ());
+		return getLowestNear(location.getWorld(), location.getBlockX(),
+				location.getBlockY(), location.getBlockZ());
 	}
-	
-	public Location getLowestNear(World world, int startX, int startY, int startZ) {
+
+	public Location getLowestNear(World world, int startX, int startY,
+			int startZ) {
 		int snowBaseLevel = 8;
-		if(world.getBlockAt(startX, startY - 1, startZ).getType() == Material.SNOW){
-			snowBaseLevel = world.getBlockAt(startX, startY -1, startZ).getData();
+		if (world.getBlockAt(startX, startY - 1, startZ).getType() == Material.SNOW) {
+			snowBaseLevel = world.getBlockAt(startX, startY - 1, startZ)
+					.getData();
 		}
-		
-		for(int x = startX - 1; x <= startX + 1; x++){
-			for(int z = startZ - 1; z <= startZ + 1; z++){
-				if(x * x == 1 && z * z == 1) continue;
+
+		for (int x = startX - 1; x <= startX + 1; x++) {
+			for (int z = startZ - 1; z <= startZ + 1; z++) {
+				if (x * x == 1 && z * z == 1)
+					continue;
 				Block b = world.getBlockAt(x, startY, z);
-				if(b.getType() == Material.AIR){
+				if (b.getType() == Material.AIR) {
 					b = b.getRelative(BlockFace.DOWN);
-					if(b.getType() == Material.AIR){
-						while(b.getRelative(BlockFace.DOWN).getType() == Material.AIR){
+					if (b.getType() == Material.AIR) {
+						while (b.getRelative(BlockFace.DOWN).getType() == Material.AIR) {
 							b = b.getRelative(BlockFace.DOWN);
 						}
-						if(b.getType() == Material.AIR){
+						if (b.getType() == Material.AIR) {
 							return new Location(world, x, b.getY(), z);
 						} else {
 							return new Location(world, x, b.getY() + 1, z);
 						}
-					} else if(b.getType() == Material.SNOW){
-						if(b.getData() < snowBaseLevel){
+					} else if (b.getType() == Material.SNOW) {
+						if (b.getData() < snowBaseLevel) {
 							return new Location(world, x, b.getY() + 1, z);
 						}
 					}
@@ -397,88 +417,117 @@ public class LivelyWorld extends JavaPlugin implements Listener{
 	}
 
 	@EventHandler
-	public void onPlayerMove(PlayerMoveEvent event){
-		if(event.getTo().getBlock() != event.getFrom().getBlock()){
-			if(usingPathways){
+	public void onPlayerMove(PlayerMoveEvent event) {
+		if (event.getTo().getBlock() != event.getFrom().getBlock()) {
+			if (usingPathways) {
 				pathways.onPlayerMove(event);
 			}
-			if(usingGravity){
+			if (usingGravity) {
 				Location l = event.getTo().clone().add(0, -1, 0);
-				if(l.getBlockY() < 255 && l.getBlockY() > 0){
+				if (l.getBlockY() < 255 && l.getBlockY() > 0) {
 					gravity.onBlockUpdate(l.getBlock(), event.getPlayer());
 				}
 			}
-			if(usingTides){
+			if (usingTides) {
 				tides.onPlayerMove(event);
 			}
-			// this part tries to remove the fall damage when not touching blocks for a while
-			// but not actually falling, so it checks if the player's velocity is actually
-			// in the direction of -Y, if not, it sets the falling distance to 0.
-			if(event.getPlayer().getFallDistance() > 2){
-				if(event.getPlayer().getVelocity().getY() > -0.5){
+			// this part tries to remove the fall damage when not touching
+			// blocks for a while
+			// but not actually falling, so it checks if the player's velocity
+			// is actually
+			// in the direction of -Y, if not, it sets the falling distance to
+			// 0.
+			if (event.getPlayer().getFallDistance() > 2) {
+				if (event.getPlayer().getVelocity().getY() > -0.5) {
 					event.getPlayer().setFallDistance(2);
 				}
 			}
 		}
 	}
-	
+
 	@EventHandler
-	public void onChunkLoad(ChunkLoadEvent event){
-		if(usingTides){
+	public void onChunkLoad(ChunkLoadEvent event) {
+		if (usingTides) {
 			tides.onChunkLoad(event);
 		}
 	}
-	
+
 	@EventHandler
-	public void onVehicleMove(VehicleMoveEvent event){
-		if(event.getTo().getBlock() != event.getFrom().getBlock()){
-			if(usingPathways){
+	public void onVehicleMove(VehicleMoveEvent event) {
+		if (event.getTo().getBlock() != event.getFrom().getBlock()) {
+			if (usingPathways) {
 				pathways.onVehicleMove(event);
 			}
-			if(usingGravity){
+			if (usingGravity) {
 				Location l = event.getTo().add(0, -1, 0);
-				if(l.getBlockY() < 255 && l.getBlockY() > 0){
+				if (l.getBlockY() < 255 && l.getBlockY() > 0) {
 					gravity.onBlockUpdate(l.getBlock(), null);
 				}
 			}
-			if(usingTides){
+			if (usingTides) {
 				tides.onVehicleMove(event);
 			}
 		}
 	}
-	
+
 	@EventHandler
-	public void onEntiryDeath(EntityDeathEvent event){
-		switch(event.getEntityType()){
+	public void onEntiryDeath(EntityDeathEvent event) {
+		switch (event.getEntityType()) {
 		case CHICKEN:
-			for(int i = 0; i < (Math.random() * 5) + 8; i++){
-				event.getEntity().getLocation().getWorld().dropItemNaturally(event.getEntity().getLocation(), new ItemStack(Material.FEATHER, 1));
+			for (int i = 0; i < (Math.random() * 5) + 8; i++) {
+				event.getEntity()
+						.getLocation()
+						.getWorld()
+						.dropItemNaturally(event.getEntity().getLocation(),
+								new ItemStack(Material.FEATHER, 1));
 			}
 			break;
 		case COW:
-			for(int i = 0; i < (Math.random() * 5) + 8; i++){
-				event.getEntity().getLocation().getWorld().dropItemNaturally(event.getEntity().getLocation(), new ItemStack(Material.RAW_BEEF, 1));
+			for (int i = 0; i < (Math.random() * 5) + 8; i++) {
+				event.getEntity()
+						.getLocation()
+						.getWorld()
+						.dropItemNaturally(event.getEntity().getLocation(),
+								new ItemStack(Material.RAW_BEEF, 1));
 			}
-			for(int i = 1; i < (Math.random() * 2) + 1; i++){
-				event.getEntity().getLocation().getWorld().dropItemNaturally(event.getEntity().getLocation(), new ItemStack(Material.LEATHER, 1));
+			for (int i = 1; i < (Math.random() * 2) + 1; i++) {
+				event.getEntity()
+						.getLocation()
+						.getWorld()
+						.dropItemNaturally(event.getEntity().getLocation(),
+								new ItemStack(Material.LEATHER, 1));
 			}
-			for(int i = 0; i < (Math.random() * 5) + 5; i++){
-				event.getEntity().getLocation().getWorld().dropItemNaturally(event.getEntity().getLocation(), new ItemStack(Material.BONE, 1));
+			for (int i = 0; i < (Math.random() * 5) + 5; i++) {
+				event.getEntity()
+						.getLocation()
+						.getWorld()
+						.dropItemNaturally(event.getEntity().getLocation(),
+								new ItemStack(Material.BONE, 1));
 			}
 			break;
 		case GUARDIAN:
 			break;
 		case HORSE:
-			if(event.getEntity() instanceof Horse){
+			if (event.getEntity() instanceof Horse) {
 				Horse horse = (Horse) event.getEntity();
-				if(horse.getVariant() == Variant.UNDEAD_HORSE || horse.getVariant() == Variant.SKELETON_HORSE){
+				if (horse.getVariant() == Variant.UNDEAD_HORSE
+						|| horse.getVariant() == Variant.SKELETON_HORSE) {
 				} else {
-					for(int i = 1; i < (Math.random() * 2) + 1; i++){
-						event.getEntity().getLocation().getWorld().dropItemNaturally(event.getEntity().getLocation(), new ItemStack(Material.LEATHER, 1));
+					for (int i = 1; i < (Math.random() * 2) + 1; i++) {
+						event.getEntity()
+								.getLocation()
+								.getWorld()
+								.dropItemNaturally(
+										event.getEntity().getLocation(),
+										new ItemStack(Material.LEATHER, 1));
 					}
 				}
-				for(int i = 0; i < (Math.random() * 5) + 5; i++){
-					event.getEntity().getLocation().getWorld().dropItemNaturally(event.getEntity().getLocation(), new ItemStack(Material.BONE, 1));
+				for (int i = 0; i < (Math.random() * 5) + 5; i++) {
+					event.getEntity()
+							.getLocation()
+							.getWorld()
+							.dropItemNaturally(event.getEntity().getLocation(),
+									new ItemStack(Material.BONE, 1));
 				}
 			}
 			break;
@@ -487,55 +536,76 @@ public class LivelyWorld extends JavaPlugin implements Listener{
 		case OCELOT:
 			break;
 		case PIG:
-			for(int i = 0; i < (Math.random() * 5) + 3; i++){
-				event.getEntity().getLocation().getWorld().dropItemNaturally(event.getEntity().getLocation(), new ItemStack(Material.PORK, 1));
+			for (int i = 0; i < (Math.random() * 5) + 3; i++) {
+				event.getEntity()
+						.getLocation()
+						.getWorld()
+						.dropItemNaturally(event.getEntity().getLocation(),
+								new ItemStack(Material.PORK, 1));
 			}
-			for(int i = 0; i < (Math.random() * 5) + 2; i++){
-				event.getEntity().getLocation().getWorld().dropItemNaturally(event.getEntity().getLocation(), new ItemStack(Material.BONE, 1));
+			for (int i = 0; i < (Math.random() * 5) + 2; i++) {
+				event.getEntity()
+						.getLocation()
+						.getWorld()
+						.dropItemNaturally(event.getEntity().getLocation(),
+								new ItemStack(Material.BONE, 1));
 			}
 			break;
 		case RABBIT:
-			for(int i = 0; i < (Math.random() * 2) + 1; i++){
-				event.getEntity().getLocation().getWorld().dropItemNaturally(event.getEntity().getLocation(), new ItemStack(Material.BONE, 1));
+			for (int i = 0; i < (Math.random() * 2) + 1; i++) {
+				event.getEntity()
+						.getLocation()
+						.getWorld()
+						.dropItemNaturally(event.getEntity().getLocation(),
+								new ItemStack(Material.BONE, 1));
 			}
 			break;
 		case SHEEP:
-			for(int i = 0; i < (Math.random() * 5) + 5; i++){
-				event.getEntity().getLocation().getWorld().dropItemNaturally(event.getEntity().getLocation(), new ItemStack(Material.MUTTON, 1));
+			for (int i = 0; i < (Math.random() * 5) + 5; i++) {
+				event.getEntity()
+						.getLocation()
+						.getWorld()
+						.dropItemNaturally(event.getEntity().getLocation(),
+								new ItemStack(Material.MUTTON, 1));
 			}
-			for(int i = 0; i < (Math.random() * 4) + 4; i++){
-				event.getEntity().getLocation().getWorld().dropItemNaturally(event.getEntity().getLocation(), new ItemStack(Material.BONE, 1));
+			for (int i = 0; i < (Math.random() * 4) + 4; i++) {
+				event.getEntity()
+						.getLocation()
+						.getWorld()
+						.dropItemNaturally(event.getEntity().getLocation(),
+								new ItemStack(Material.BONE, 1));
 			}
 			break;
 		default:
 			break;
-		
+
 		}
 	}
-	
-	public boolean hasPlayerInRange(Location l, double range){
-		for(Player p : Bukkit.getServer().getOnlinePlayers()){
-			if(p.getWorld().equals(l.getWorld())){
-				if(p.getLocation().distance(l) <= range){
+
+	public boolean hasPlayerInRange(Location l, double range) {
+		for (Player p : Bukkit.getServer().getOnlinePlayers()) {
+			if (p.getWorld().equals(l.getWorld())) {
+				if (p.getLocation().distance(l) <= range) {
 					return true;
 				}
 			}
 		}
 		return false;
 	}
-	
+
 	@EventHandler
-	public void onItemDespawn(ItemDespawnEvent event){
-		//log(Level.INFO, "Item has despawned!");
+	public void onItemDespawn(ItemDespawnEvent event) {
+		// log(Level.INFO, "Item has despawned!");
 		Item item = event.getEntity();
-		if(item != null){
-			//log(Level.INFO, item.getItemStack().getType().toString());
-			switch(item.getItemStack().getType()){
+		if (item != null) {
+			// log(Level.INFO, item.getItemStack().getType().toString());
+			switch (item.getItemStack().getType()) {
 			case SAPLING:
-				if(usingVegetation){
-					//log(Level.INFO, "Attempting to plant sapling.");
-					if(event.getLocation().getChunk().isLoaded()){
-						vegetation.plantSapling(event.getEntity().getItemStack().getData(), event.getLocation());
+				if (usingVegetation) {
+					// log(Level.INFO, "Attempting to plant sapling.");
+					if (event.getLocation().getChunk().isLoaded()) {
+						vegetation.plantSapling(event.getEntity()
+								.getItemStack().getData(), event.getLocation());
 					} else {
 						event.setCancelled(true);
 					}
@@ -545,26 +615,28 @@ public class LivelyWorld extends JavaPlugin implements Listener{
 				break;
 			}
 		} else {
-			//log(Level.INFO, "There was no item!");
+			// log(Level.INFO, "There was no item!");
 		}
 	}
-	
+
 	@EventHandler
-	public void onBlockIgnite(BlockIgniteEvent event){
-		//log(Level.INFO, "On Block Ignite.");
-		if(usingBurn && event.getBlock().getChunk().isLoaded()){
+	public void onBlockIgnite(BlockIgniteEvent event) {
+		// log(Level.INFO, "On Block Ignite.");
+		if (usingBurn && event.getBlock().getChunk().isLoaded()) {
 			burn.onBlockIgnite(event);
 		}
 	}
-	
+
 	@Override
-	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args){
-		
-		switch (cmd.getName().toUpperCase()){
+	public boolean onCommand(CommandSender sender, Command cmd, String label,
+			String[] args) {
+
+		switch (cmd.getName().toUpperCase()) {
 		case "LIVELYWORLD":
-			if(!(sender instanceof Player)) return false;
-			if(args.length >= 1){
-				switch(args[0].toUpperCase()){
+			if (!(sender instanceof Player))
+				return false;
+			if (args.length >= 1) {
+				switch (args[0].toUpperCase()) {
 				case "WATER":
 					tides.onCommand(sender, cmd, label, args);
 					break;
@@ -581,35 +653,38 @@ public class LivelyWorld extends JavaPlugin implements Listener{
 					gravity.onCommand(sender, cmd, label, args);
 				}
 			} else {
-				
+
 			}
 			break;
 		}
-		
+
 		return false;
 	}
-	
+
 	@EventHandler
-	public void onBlockBurn(BlockBurnEvent event){
-		//log(Level.INFO, "On Block Burn.");
-		if(usingBurn && event.getBlock().getChunk().isLoaded()){
+	public void onBlockBurn(BlockBurnEvent event) {
+		// log(Level.INFO, "On Block Burn.");
+		if (usingBurn && event.getBlock().getChunk().isLoaded()) {
 			burn.onBlockBurn(event);
 		}
 	}
-	
+
 	@EventHandler
-	public void onBlockGrow(BlockGrowEvent event){
-		if(usingClimate){
-			switch(event.getBlock().getType()){
+	public void onBlockGrow(BlockGrowEvent event) {
+		if (usingClimate) {
+			switch (event.getBlock().getType()) {
 			case CACTUS:
-				double tempDistance = new Climate(event.getBlock().getLocation()).getAreaTemperature().getValue() - (273.15 + 35);
-				if(Math.random() * Math.abs(tempDistance) > 1){
+				double tempDistance = new Climate(event.getBlock()
+						.getLocation()).getAreaTemperature().getValue()
+						- (273.15 + 35);
+				if (Math.random() * Math.abs(tempDistance) > 1) {
 					event.setCancelled(true);
 				}
 				break;
 			case WHEAT:
-				double tempDistance2 = new Climate(event.getBlock().getLocation()).getAreaTemperature().getValue() - 288;
-				if(Math.random() * Math.abs(tempDistance2) > 1){
+				double tempDistance2 = new Climate(event.getBlock()
+						.getLocation()).getAreaTemperature().getValue() - 288;
+				if (Math.random() * Math.abs(tempDistance2) > 1) {
 					event.setCancelled(true);
 				}
 			default:

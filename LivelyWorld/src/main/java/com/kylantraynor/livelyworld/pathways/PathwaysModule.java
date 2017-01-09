@@ -16,9 +16,9 @@ import org.bukkit.material.Step;
 import com.kylantraynor.livelyworld.LivelyWorld;
 
 public class PathwaysModule {
-	
+
 	private LivelyWorld plugin;
-	
+
 	// Default multiplier for horses
 	public double horseMultiplier = 8;
 	// Default multiplier when the player is running
@@ -37,171 +37,189 @@ public class PathwaysModule {
 	public double probabilityCblStairs = 0.0025;
 	// Default probability for stairs to turn into cobble slabs
 	public double probabilityCblSlab = 0.0010;
-	
-	
-	public void onEnable(LivelyWorld basePlugin){
+
+	public void onEnable(LivelyWorld basePlugin) {
 		setPlugin(basePlugin);
 		loadConfigValues();
 	}
-	
+
 	// Loads data from the config, and write default values
-	public void loadConfigValues(){
+	public void loadConfigValues() {
 		// Get configuration File (config.yml)
 		YamlConfiguration cfg = (YamlConfiguration) plugin.getConfig();
 		// If config file contains multipliers.sprint
-		if(cfg.contains("pathways.multipliers.sprint")){
+		if (cfg.contains("pathways.multipliers.sprint")) {
 			// then get the value
 			runningMultiplier = cfg.getDouble("pathways.multipliers.sprint");
 		} else {
 			// else write the default value in the config file
-			plugin.getConfig().set("pathways.multipliers.sprint", runningMultiplier);
+			plugin.getConfig().set("pathways.multipliers.sprint",
+					runningMultiplier);
 		}
 		// Same, but for horse multiplier
-		if(cfg.contains("pathways.multipliers.horse")){
+		if (cfg.contains("pathways.multipliers.horse")) {
 			horseMultiplier = cfg.getDouble("pathways.multipliers.horse");
 		} else {
-			plugin.getConfig().set("pathways.multipliers.horse", horseMultiplier);
+			plugin.getConfig().set("pathways.multipliers.horse",
+					horseMultiplier);
 		}
 		// Same, but for dirt probability
-		if(cfg.contains("pathways.probabilities.dirt")){
+		if (cfg.contains("pathways.probabilities.dirt")) {
 			probabilityDirt = cfg.getDouble("pathways.probabilities.dirt");
 		} else {
-			plugin.getConfig().set("pathways.probabilities.dirt", probabilityDirt);
+			plugin.getConfig().set("pathways.probabilities.dirt",
+					probabilityDirt);
 		}
 		// Same, but for coarse dirt probability
-		if(cfg.contains("pathways.probabilities.coarse")){
+		if (cfg.contains("pathways.probabilities.coarse")) {
 			probabilityCoarse = cfg.getDouble("pathways.probabilities.coarse");
 		} else {
-			plugin.getConfig().set("pathways.probabilities.coarse", probabilityCoarse);
+			plugin.getConfig().set("pathways.probabilities.coarse",
+					probabilityCoarse);
 		}
 		// Same, but for coarse 1.9 Path probability
-		if(cfg.contains("pathways.probabilities.path")){
+		if (cfg.contains("pathways.probabilities.path")) {
 			probabilityPath = cfg.getDouble("pathways.probabilities.path");
 		} else {
-			plugin.getConfig().set("pathways.probabilities.path", probabilityPath);
+			plugin.getConfig().set("pathways.probabilities.path",
+					probabilityPath);
 		}
 		// Same, but for gravel probability
-		if(cfg.contains("pathways.probabilities.gravel")){
+		if (cfg.contains("pathways.probabilities.gravel")) {
 			probabilityGravel = cfg.getDouble("pathways.probabilities.gravel");
 		} else {
-			plugin.getConfig().set("pathways.probabilities.gravel", probabilityGravel);
+			plugin.getConfig().set("pathways.probabilities.gravel",
+					probabilityGravel);
 		}
 		// Same, but for cobblestone probability
-		if(cfg.contains("pathways.probabilities.cobble")){
+		if (cfg.contains("pathways.probabilities.cobble")) {
 			probabilityCobble = cfg.getDouble("pathways.probabilities.cobble");
 		} else {
-			plugin.getConfig().set("pathways.probabilities.cobble", probabilityCobble);
+			plugin.getConfig().set("pathways.probabilities.cobble",
+					probabilityCobble);
 		}
 		// Same, but for stairs probability
-		if(cfg.contains("pathways.probabilities.cblstairs")){
-			probabilityCblStairs = cfg.getDouble("pathways.probabilities.cblstairs");
+		if (cfg.contains("pathways.probabilities.cblstairs")) {
+			probabilityCblStairs = cfg
+					.getDouble("pathways.probabilities.cblstairs");
 		} else {
-			plugin.getConfig().set("pathways.probabilities.cblstairs", probabilityCblStairs);
+			plugin.getConfig().set("pathways.probabilities.cblstairs",
+					probabilityCblStairs);
 		}
 		// Same, but for slabs probability
-		if(cfg.contains("pathways.probabilities.cblslab")){
-			probabilityCblSlab = cfg.getDouble("pathways.probabilities.cblslab");
+		if (cfg.contains("pathways.probabilities.cblslab")) {
+			probabilityCblSlab = cfg
+					.getDouble("pathways.probabilities.cblslab");
 		} else {
-			plugin.getConfig().set("pathways.probabilities.cblslab", probabilityCblSlab);
+			plugin.getConfig().set("pathways.probabilities.cblslab",
+					probabilityCblSlab);
 		}
 		// Actually writes the changes in config.yml
 		plugin.saveConfig();
 	}
-	
-	public void onVehicleMove(VehicleMoveEvent event){
+
+	public void onVehicleMove(VehicleMoveEvent event) {
 		// If this vehicle is a horse
-		if (event.getVehicle().getType() == EntityType.HORSE){
+		if (event.getVehicle().getType() == EntityType.HORSE) {
 			// If the movement was made from one block to another, and not just
 			// within a block
-			if (event.getFrom().getBlockX() != event.getTo().getBlockX() ||
-					event.getFrom().getBlockZ() != event.getTo().getBlockZ()){
+			if (event.getFrom().getBlockX() != event.getTo().getBlockX()
+					|| event.getFrom().getBlockZ() != event.getTo().getBlockZ()) {
 				// Then get the block the movement started from
-				Block b = event.getFrom().getBlock().getRelative(BlockFace.DOWN);
+				Block b = event.getFrom().getBlock()
+						.getRelative(BlockFace.DOWN);
 				// Roll dice and change the block if necessary
 				changeBlock(b, horseMultiplier);
 			}
 		}
 	}
-	
-	public void onPlayerMove(PlayerMoveEvent event){
+
+	public void onPlayerMove(PlayerMoveEvent event) {
 		// Sets the default multiplier
 		double multiplier = 1.0;
 		// If the player is sneaking
 		if (event.getPlayer().isSneaking()) {
 			// then don't change any block
 			return;
-		} else if (event.getPlayer().isSprinting()){
+		} else if (event.getPlayer().isSprinting()) {
 			// Else, if the player is running, change the multiplier
 			multiplier = runningMultiplier;
 		}
 		// if the movement was actually from one block to another, and
 		// not within one block
-		if (event.getFrom().getBlockX() != event.getTo().getBlockX() ||
-				event.getFrom().getBlockZ() != event.getTo().getBlockZ()){
+		if (event.getFrom().getBlockX() != event.getTo().getBlockX()
+				|| event.getFrom().getBlockZ() != event.getTo().getBlockZ()) {
 			// Get the block the movement started from
-			if(event.getFrom().getBlock().getType().isSolid()){
+			if (event.getFrom().getBlock().getType().isSolid()) {
 				changeBlock(event.getFrom().getBlock(), multiplier);
 			} else {
-				Block b = event.getFrom().getBlock().getRelative(BlockFace.DOWN);
+				Block b = event.getFrom().getBlock()
+						.getRelative(BlockFace.DOWN);
 				changeBlock(b, multiplier);
 			}
 		}
 	}
-	
-	
+
 	// Roll a dice and change block if necessary
 	@SuppressWarnings("deprecation")
-	public void changeBlock(Block b, double multiplier){
-		if(b.getRelative(BlockFace.UP).getType() == Material.LONG_GRASS){
+	public void changeBlock(Block b, double multiplier) {
+		if (b.getRelative(BlockFace.UP).getType() == Material.LONG_GRASS) {
 			b.getRelative(BlockFace.UP).breakNaturally();
-			b.getWorld().playSound(b.getLocation(), Sound.BLOCK_GRASS_STEP, 2, (float) ((Math.random() + 1) / 2));
-		} else if (b.getRelative(BlockFace.UP).getType() == Material.SNOW){
+			b.getWorld().playSound(b.getLocation(), Sound.BLOCK_GRASS_STEP, 2,
+					(float) ((Math.random() + 1) / 2));
+		} else if (b.getRelative(BlockFace.UP).getType() == Material.SNOW) {
 			Block snow = b.getRelative(BlockFace.UP);
-			if(snow.getData() > 0){
+			if (snow.getData() > 0) {
 				snow.setData((byte) (snow.getData() - 1));
 			} else {
 				snow.breakNaturally();
 			}
-			snow.getWorld().playSound(snow.getLocation(), Sound.BLOCK_SNOW_BREAK, 1, (float) ((Math.random() + 1) / 2));
+			snow.getWorld().playSound(snow.getLocation(),
+					Sound.BLOCK_SNOW_BREAK, 1,
+					(float) ((Math.random() + 1) / 2));
 			return;
 		}
 		// If block is Grass
-		if (b.getType() == Material.GRASS){
-			// then if a random double is bellow the probability for dirt to appear
-			if (Math.random() <= probabilityDirt * multiplier){
+		if (b.getType() == Material.GRASS) {
+			// then if a random double is bellow the probability for dirt to
+			// appear
+			if (Math.random() <= probabilityDirt * multiplier) {
 				// Change the grass to dirt
 				b.setType(Material.DIRT);
 			}
-		} else if (b.getType() == Material.DIRT && b.getData() == 0){
+		} else if (b.getType() == Material.DIRT && b.getData() == 0) {
 			// Same for coarse (coarse = dirt with data value of 1)
-			if (Math.random() <= probabilityCoarse * multiplier){
-				if(b.getBiome() == Biome.FOREST || b.getBiome() == Biome.JUNGLE){
+			if (Math.random() <= probabilityCoarse * multiplier) {
+				if (b.getBiome() == Biome.FOREST
+						|| b.getBiome() == Biome.JUNGLE) {
 					b.setData((byte) 2);
 				} else {
 					b.setData((byte) 1);
 				}
 			}
-		} else if (b.getType() == Material.DIRT && (b.getData() == 1 || b.getData() == 2)){
+		} else if (b.getType() == Material.DIRT
+				&& (b.getData() == 1 || b.getData() == 2)) {
 			// Same for grassPath
-			if (Math.random() <= probabilityPath * multiplier){
+			if (Math.random() <= probabilityPath * multiplier) {
 				b.setType(Material.GRASS_PATH);
 			}
-		} else if (b.getType() == Material.GRAVEL){
+		} else if (b.getType() == Material.GRAVEL) {
 			// Same for Cobblestone
-			if (Math.random() <= probabilityCobble * multiplier){
+			if (Math.random() <= probabilityCobble * multiplier) {
 				b.setType(Material.COBBLESTONE);
 			}
-		} else if (b.getType() == Material.COBBLESTONE){
-			if(b.getRelative(BlockFace.UP).getType() == Material.RAILS) return;
+		} else if (b.getType() == Material.COBBLESTONE) {
+			if (b.getRelative(BlockFace.UP).getType() == Material.RAILS)
+				return;
 			// Same for stairs
-			if (Math.random() <= probabilityCblStairs * multiplier){
+			if (Math.random() <= probabilityCblStairs * multiplier) {
 				b.setType(Material.COBBLESTONE_STAIRS);
 				// Get the current state of the block
 				BlockState state = b.getState();
 				// Since the state has to be stairs, just get a stairs object
 				Stairs stairs = (Stairs) state.getData();
 				// For a value between 0 and 3...
-				switch((int)(Math.random() * 4)){
+				switch ((int) (Math.random() * 4)) {
 				case 0:
 					// if it's 0, set the stairs to face north
 					stairs.setFacingDirection(BlockFace.NORTH);
@@ -224,9 +242,9 @@ public class PathwaysModule {
 				// Update the state of the block
 				state.update(false, false);
 			}
-		} else if (b.getType() == Material.COBBLESTONE_STAIRS){
+		} else if (b.getType() == Material.COBBLESTONE_STAIRS) {
 			// Same for slabs
-			if (Math.random() <= probabilityCblStairs * multiplier){
+			if (Math.random() <= probabilityCblStairs * multiplier) {
 				b.setType(Material.STEP);
 				// Get the state of the block
 				BlockState state = b.getState();
@@ -239,10 +257,11 @@ public class PathwaysModule {
 				// Update the state of the block
 				state.update(false, false);
 			}
-		} else if(b.getType() == Material.SNOW_BLOCK){
+		} else if (b.getType() == Material.SNOW_BLOCK) {
 			b.setType(Material.SNOW);
 			b.setData((byte) 6);
-			b.getWorld().playSound(b.getLocation(), Sound.BLOCK_SNOW_BREAK, 1, (float) ((Math.random() + 1) / 2));
+			b.getWorld().playSound(b.getLocation(), Sound.BLOCK_SNOW_BREAK, 1,
+					(float) ((Math.random() + 1) / 2));
 		}
 	}
 

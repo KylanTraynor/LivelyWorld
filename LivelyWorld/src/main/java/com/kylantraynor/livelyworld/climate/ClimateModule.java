@@ -21,6 +21,8 @@ public class ClimateModule {
 
 	private LivelyWorld plugin;
 	private Planet defaultPlanet;
+	
+	private final int cellUpdates = 5;
 
 	private BukkitRunnable climateUpdater;
 
@@ -47,7 +49,8 @@ public class ClimateModule {
 				for (World w : Bukkit.getServer().getWorlds()) {
 					Planet p = Planet.getPlanet(w);
 					if (p != null) {
-						p.getClimateMap(w).randomCellUpdate();
+						for(int i = 0; i < cellUpdates; i++)
+							p.getClimateMap(w).randomCellUpdate();
 					}
 				}
 			}

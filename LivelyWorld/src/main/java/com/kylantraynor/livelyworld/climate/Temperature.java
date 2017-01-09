@@ -11,7 +11,7 @@ public class Temperature {
 	final double value;
 
 	public Temperature(double v) {
-		this.value = v;
+		this.value = v <= 0 ? 0 : v;
 	}
 
 	public double getValue() {

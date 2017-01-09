@@ -8,8 +8,10 @@ import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Color;
 import org.bukkit.World;
 import org.dynmap.DynmapAPI;
+import org.dynmap.markers.AreaMarker;
 import org.dynmap.markers.Marker;
 import org.dynmap.markers.MarkerAPI;
 import org.dynmap.markers.MarkerIcon;
@@ -24,6 +26,7 @@ public class DynmapHook {
 	private MarkerAPI markerAPI;
 
 	private MarkerSet weatherSet;
+	private MarkerSet temperaturesSet;
 
 	private HashMap<String, Marker> markerList = new HashMap<String, Marker>();
 
@@ -33,6 +36,7 @@ public class DynmapHook {
 		markerAPI = api.getMarkerAPI();
 
 		loadWeatherMarkerSet();
+		loadTemperaturesMarkerSet();
 	}
 
 	private void loadWeatherMarkerSet() {
@@ -54,6 +58,26 @@ public class DynmapHook {
 		weatherSet.setLayerPriority(10);
 		weatherSet.setHideByDefault(true);
 	}
+	
+	private void loadTemperaturesMarkerSet() {
+		temperaturesSet = markerAPI.getMarkerSet("livelyworld.markerset.temperatures");
+		if (temperaturesSet == null) {
+			temperaturesSet = markerAPI.createMarkerSet(
+					"livelyworld.markerset.temperatures", "Temperatures", null, false);
+		} else {
+			temperaturesSet.setMarkerSetLabel("Temperatures");
+		}
+		if (temperaturesSet == null) {
+			Bukkit.getServer().getLogger().severe("Error creating marker set");
+			return;
+		}
+		int minzoom = 0;
+		if (minzoom > 0) {
+			temperaturesSet.setMinZoom(minzoom);
+		}
+		temperaturesSet.setLayerPriority(10);
+		temperaturesSet.setHideByDefault(true);
+	}
 
 	public void updateWeather() {
 		for (World w : Bukkit.getServer().getWorlds()) {
@@ -74,7 +98,8 @@ public class DynmapHook {
 
 	public void updateClimateCell(ClimateCell c) {
 		String id = "" + (int) c.getSite().getX() + "_"
-				+ (int) c.getSite().getZ() + "_camp";
+				+ (int) c.getSite().getZ() + "_weathericon";
+		String cellid = "" + (int) c.getSite().getX() + "_" + (int) c.getSite().getX() + "_weathercell";
 		String weatherMarker = "weather_"
 				+ c.getWeather().toString().toLowerCase();
 		MarkerIcon weatherIcon = null;
@@ -114,6 +139,24 @@ public class DynmapHook {
 			sb.append("<br />Air Particles: " + (int) c.getAmount() + " kmoles");
 			weather.setDescription(sb.toString());
 			markerList.put(id, weather);
+			
+			// Creates Area Marker
+			AreaMarker m = temperaturesSet.createAreaMarker(cellid, c.getTemperature().toString("C") + "/"
+					+ c.getTemperature().toString("F")
+					, false, c.getWorld().getName(), c.getVerticesX(), c.getVerticesZ(), false);
+			if(m == null){
+				m = temperaturesSet.findAreaMarker(cellid);
+				if(m == null){
+					Bukkit.getServer().getLogger().severe("Failed to create marker area.");
+					return;
+				}
+				m.setLabel(c.getTemperature().toString("C") + "/" + c.getTemperature().toString("F"));
+			}
+			double min = 273.15 - 80;
+			double max = 273.15 + 80;
+			double cappedTemperature = Math.max(Math.min(c.getTemperature().getValue(), max), min) - min;
+			int value = (int) (cappedTemperature * 255 / (max - min));
+			m.setFillStyle(0.5, Color.fromRGB(value, 0, 255 - value).asRGB());
 		}
 	}
 }

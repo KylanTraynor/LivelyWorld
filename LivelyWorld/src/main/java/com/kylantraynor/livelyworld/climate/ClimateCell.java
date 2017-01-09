@@ -14,7 +14,7 @@ public class ClimateCell extends VCell {
 	private double lowAltitudePressure = getBasePressure();
 	private double highAltitudePressure = getBasePressure();
 	private double airVolume = Double.NaN;
-	private double airAmount = Double.NaN;
+	private Long airAmount = null;
 	private Temperature temperature;
 
 	public ClimateCell() {
@@ -82,8 +82,8 @@ public class ClimateCell extends VCell {
 		return airVolume;
 	}
 
-	public double getAmount() {
-		if (!Double.isNaN(airAmount))
+	public long getAmount() {
+		if (airAmount != null)
 			return airAmount;
 		airAmount = ClimateUtils.getGasAmount(getBasePressure(), getVolume(),
 				getBaseTemperature());

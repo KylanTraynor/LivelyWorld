@@ -16,6 +16,7 @@ public class ClimateCell extends VCell {
 	private double airVolume = Double.NaN;
 	private Long airAmount = null;
 	private Temperature temperature;
+	private ClimateMap map;
 
 	public ClimateCell() {
 		super();
@@ -123,5 +124,13 @@ public class ClimateCell extends VCell {
 		updateTemperature();
 		updatePressure();
 		updateMap();
+	}
+
+	public void setMap(ClimateMap climateMap) {
+		this.map = climateMap;
+	}
+	
+	public ClimateMap getMap(){
+		return map;
 	}
 }

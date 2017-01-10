@@ -152,8 +152,8 @@ public class DynmapHook {
 				}
 				m.setLabel(c.getTemperature().toString("C") + "/" + c.getTemperature().toString("F"));
 			}
-			double min = 273.15 - 80;
-			double max = 273.15 + 80;
+			double min = c.getMap().getCurrentLowestTemperature().getValue();
+			double max = c.getMap().getCurrentHighestTemperature().getValue();
 			double cappedTemperature = Math.max(Math.min(c.getTemperature().getValue(), max), min) - min;
 			int value = (int) (cappedTemperature * 255 / (max - min));
 			int red = value;

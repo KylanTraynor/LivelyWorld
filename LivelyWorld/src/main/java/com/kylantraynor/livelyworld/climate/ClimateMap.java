@@ -60,6 +60,7 @@ public class ClimateMap {
 		this.generator.generate();
 		for (ClimateCell c : generator.getCells()) {
 			c.setWorld(world);
+			c.setMap(this);
 		}
 		generated = true;
 	}
@@ -87,5 +88,33 @@ public class ClimateMap {
 		int i = (int) (Math.random() * getCells().length);
 		if (getCells()[i] != null)
 			getCells()[i].update();
+	}
+	
+	public Temperature getCurrentHighestTemperature(){
+		double highest = Double.NaN;
+		for(ClimateCell c : getCells()){
+			if(Double.isNaN(highest)) {
+				highest = c.getTemperature().getValue();
+				continue;
+			}
+			if(c.getTemperature().getValue() > highest){
+				highest = c.getTemperature().getValue();
+			}
+		}
+		return new Temperature(highest);
+	}
+	
+	public Temperature getCurrentLowestTemperature(){
+		double lowest = Double.NaN;
+		for(ClimateCell c : getCells()){
+			if(Double.isNaN(lowest)) {
+				lowest = c.getTemperature().getValue();
+				continue;
+			}
+			if(c.getTemperature().getValue() < lowest){
+				lowest = c.getTemperature().getValue();
+			}
+		}
+		return new Temperature(lowest);
 	}
 }

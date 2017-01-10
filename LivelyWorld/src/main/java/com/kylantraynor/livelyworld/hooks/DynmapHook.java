@@ -157,7 +157,7 @@ public class DynmapHook {
 			double cappedTemperature = Math.max(Math.min(c.getTemperature().getValue(), max), min) - min;
 			int value = (int) (cappedTemperature * 255 / (max - min));
 			int red = value;
-			int green = (int) (255 * Math.sin((value) * 2 * Math.PI / 255));
+			int green = (int) (255 * Math.sin((value) * Math.PI / 255));
 			int blue = 255 - value;
 			m.setFillStyle(0.80, Color.fromRGB(red, green, blue).asRGB());
 			m.setLineStyle(1, 0, Color.fromRGB(red, green, blue).asRGB());

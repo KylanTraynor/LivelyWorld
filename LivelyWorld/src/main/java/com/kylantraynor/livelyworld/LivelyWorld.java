@@ -102,7 +102,6 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 		saveDefaultConfig();
 		worldCenter = new Location(Bukkit.getWorld("world"), 1600, 100, 1600);
 		PluginManager pm = getServer().getPluginManager();
-		pm.registerEvents(this, this);
 
 		loadConfig();
 
@@ -152,6 +151,8 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 			gravity.reloadProperties(getConfig());
 		}
 
+		pm.registerEvents(this, this);
+		
 		randomBlockPicker = new BukkitRunnable() {
 
 			@Override

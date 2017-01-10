@@ -18,6 +18,6 @@ public class ClimateUtils {
 
 	static long getGasAmount(double pressure, double volume,
 			Temperature temperature) {
-		return ((long) (pressure * 100)) * (long) ( (long) (volume * 0.001) * (1 / (R * temperature.getValue())));
+		return (long) ((pressure * 100) * (volume * 0.001) * (1 / (R * temperature.getValue())));
 	}
 }

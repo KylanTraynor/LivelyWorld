@@ -128,7 +128,7 @@ public class Planet {
 
 	public double getSunAverageRadiation(Location l) {
 		return Math.max(Math.cos((l.getZ() + getCurrentOffset()) / getR()), 0)
-				* (l.getBlock().getLightFromSky() * 0.06666667);
+				* (l.getBlock().getLightFromSky() / 15.0);
 	}
 
 	public double getSunRadiation(Location l) {
@@ -140,7 +140,7 @@ public class Planet {
 	}
 
 	public double getDayLight(Location l) {
-		return Math.max((getSunPosition(l) + 0.5) * 0.66666667, 0.0);
+		return Math.max((getSunPosition(l) + 0.5) /1.5, 0.0);
 	}
 
 	public double getSunPosition(Location l) {
@@ -151,7 +151,7 @@ public class Planet {
 	public Temperature getDefaultAirTemperature(Location l) {
 		double max = 30;
 		double base = 273.15 + 15;
-		double daily = base + ((getSunPosition(l) + 0.5) * 0.66666667) * max;
+		double daily = base + ((getSunPosition(l) + 0.5) / 1.5) * max;
 		double altitude = daily - 0.001 * (l.getY() - 49) * (l.getY() - 49);
 		double radiation = (altitude - max * 0.5) + max
 				* getSunAverageRadiation(l);

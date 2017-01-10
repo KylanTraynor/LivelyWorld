@@ -26,7 +26,7 @@ public class Temperature {
 		double oldt = this.value;
 		double targett = t.value;
 		if(inertia + 1 == 0) return new Temperature(t.getValue());
-		double newt = (oldt * inertia + targett) * (1 / (inertia + 1));
+		double newt = (oldt * inertia + targett) * (1.0 / (inertia + 1));
 		return new Temperature(newt);
 	}
 
@@ -35,7 +35,7 @@ public class Temperature {
 	}
 
 	public double getRoundedValue(double value) {
-		return ((double) Math.round(value * 100)) * 0.01;
+		return ((double) Math.round(value * 100)) / 100;
 	}
 
 	public String toString(Player p) {

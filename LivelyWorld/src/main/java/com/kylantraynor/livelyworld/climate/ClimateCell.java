@@ -157,7 +157,7 @@ public class ClimateCell extends VCell {
 	}
 	
 	public void init(){
-		this.temperature.bringTo(Planet.getPlanet(world).getDefaultAirTemperature(getLocation()), 0);
+		this.temperature = getTemperature().bringTo(Planet.getPlanet(world).getDefaultAirTemperature(getLocation()), 0);
 		updatePressure();
 		updateMap();
 	}

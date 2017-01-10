@@ -61,6 +61,7 @@ public class ClimateMap {
 		for (ClimateCell c : generator.getCells()) {
 			c.setWorld(world);
 			c.setMap(this);
+			c.init();
 		}
 		generated = true;
 	}

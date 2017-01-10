@@ -17,6 +17,7 @@ public class ClimateCell extends VCell {
 	private Long airAmount = null;
 	private Temperature temperature;
 	private ClimateMap map;
+	private double altitude = Double.NaN;
 
 	public ClimateCell() {
 		super();
@@ -58,7 +59,13 @@ public class ClimateCell extends VCell {
 	}
 
 	public double getAltitude() {
-		return world.getHighestBlockYAt((int) getSite().x, (int) getSite().z);
+		if(!Double.isNaN(altitude)) return altitude;
+		double y = world.getHighestBlockYAt((int) getSite().x, (int) getSite().z);
+		while(y > 1 && world.getBlockAt((int) getSite().x, (int) y, (int) getSite().z).isLiquid() )
+			y--;
+		
+		altitude = y;
+		return altitude;
 	}
 
 	public Temperature getTemperature() {
@@ -132,5 +139,11 @@ public class ClimateCell extends VCell {
 	
 	public ClimateMap getMap(){
 		return map;
+	}
+	
+	public void init(){
+		this.temperature.bringTo(Planet.getPlanet(world).getDefaultAirTemperature(getLocation()), 0);
+		updatePressure();
+		updateMap();
 	}
 }

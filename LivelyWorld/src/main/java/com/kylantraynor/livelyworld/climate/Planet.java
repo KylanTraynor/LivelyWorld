@@ -13,6 +13,9 @@ public class Planet {
 	static ArrayList<Planet> planets = new ArrayList<Planet>();
 
 	static double HalfPI = Math.PI / 2;
+	static double TwoPI = Math.PI * 2;
+	private double inclination = (21 * Math.PI) / 180;
+	private long radius = 6000000L / 400; // 400 times smaller than earth. 15000;
 
 	public static Planet getPlanet(World w) {
 		for (Planet p : planets) {
@@ -58,7 +61,7 @@ public class Planet {
 	}
 
 	public long getRadius() {
-		return 6000000L / 400; // 400 times smaller than earth. 15000
+		return radius;
 	}
 
 	public long getR() {
@@ -74,7 +77,7 @@ public class Planet {
 	}
 
 	public double getCircumference() {
-		return (getR() * 2 * Math.PI);
+		return (getR() * TwoPI);
 	}
 
 	public double getAngleFromEquator(double zPosition) {
@@ -99,8 +102,7 @@ public class Planet {
 
 	public double getObliquity() {
 		return getInclination()
-				* (-Math.cos(2
-						* Math.PI
+				* (-Math.cos(TwoPI
 						* ((double) getDaysSinceIRLJanuary() / (double) getDaysInIRLYear())));
 	}
 
@@ -117,7 +119,7 @@ public class Planet {
 	}
 
 	public double getInclination() {
-		return (21 * Math.PI) / 180;
+		return inclination;
 	}
 
 	public double getSunAverageRadiation(double zPos) {
@@ -126,7 +128,7 @@ public class Planet {
 
 	public double getSunAverageRadiation(Location l) {
 		return Math.max(Math.cos((l.getZ() + getCurrentOffset()) / getR()), 0)
-				* (l.getBlock().getLightFromSky() / 15.0);
+				* (l.getBlock().getLightFromSky() * 0.06666667);
 	}
 
 	public double getSunRadiation(Location l) {
@@ -138,20 +140,20 @@ public class Planet {
 	}
 
 	public double getDayLight(Location l) {
-		return Math.max((getSunPosition(l) + 0.5) / 1.5, 0.0);
+		return Math.max((getSunPosition(l) + 0.5) * 0.66666667, 0.0);
 	}
 
 	public double getSunPosition(Location l) {
 		double day = getDayTime(l) / 24000.0;
-		return Math.cos((day) * (Math.PI * 2));
+		return Math.cos((day) * TwoPI);
 	}
 
 	public Temperature getDefaultAirTemperature(Location l) {
 		double max = 30;
 		double base = 273.15 + 15;
-		double daily = base + ((getSunPosition(l) + 0.5) / 1.5) * max;
+		double daily = base + ((getSunPosition(l) + 0.5) * 0.66666667) * max;
 		double altitude = daily - 0.001 * (l.getY() - 49) * (l.getY() - 49);
-		double radiation = (altitude - max / 2) + max
+		double radiation = (altitude - max * 0.5) + max
 				* getSunAverageRadiation(l);
 		return new Temperature(radiation);
 	}

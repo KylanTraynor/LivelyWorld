@@ -18,6 +18,8 @@ public class ClimateCell extends VCell {
 	private Temperature temperature;
 	private ClimateMap map;
 	private double altitude = Double.NaN;
+	private double oceanDepth = Double.NaN;
+	private double cellArea = Double.NaN;
 
 	public ClimateCell() {
 		super();
@@ -60,11 +62,12 @@ public class ClimateCell extends VCell {
 
 	public double getAltitude() {
 		if(!Double.isNaN(altitude)) return altitude;
-		double y = world.getHighestBlockYAt((int) getSite().x, (int) getSite().z);
-		while(y > 1 && world.getBlockAt((int) getSite().x, (int) y, (int) getSite().z).isLiquid() )
+		altitude = world.getHighestBlockYAt((int) getSite().x, (int) getSite().z);
+		double y = altitude;
+		while(y > 1 && world.getBlockAt((int) getSite().x, (int) (y - 1), (int) getSite().z).isLiquid() )
 			y--;
 		
-		altitude = y;
+		oceanDepth = altitude - y;
 		return altitude;
 	}
 
@@ -75,19 +78,31 @@ public class ClimateCell extends VCell {
 		return temperature;
 	}
 
-	public double getVolume() {
-		if (!Double.isNaN(airVolume))
-			return airVolume;
-		double volume = 0;
+	public double getArea(){
+		if(!Double.isNaN(cellArea)){
+			return cellArea;
+		}
+		double area = 0;
 		for (VTriangle t : getTriangles()) {
 			VectorXZ a = t.points[0];
 			VectorXZ b = t.points[1];
 			VectorXZ c = t.points[2];
-			volume += (a.getX() * (b.getZ() - c.getZ()) + b.getX()
+			area += (a.getX() * (b.getZ() - c.getZ()) + b.getX()
 					* (c.getZ() - a.getZ()) + c.getX() * (a.getZ() - b.getZ())) * 0.5;
 		}
-		airVolume = volume * (255 - getAltitude());
+		cellArea = area;
+		return cellArea;
+	}
+	
+	public double getVolume() {
+		if (!Double.isNaN(airVolume))
+			return airVolume;
+		airVolume = getArea() * (255 - getAltitude());
 		return airVolume;
+	}
+	
+	public double getWaterVolume(){
+		return getArea() * oceanDepth;
 	}
 
 	public long getAmount() {
@@ -119,7 +134,7 @@ public class ClimateCell extends VCell {
 		temperature = getTemperature()
 				.bringTo(
 						Planet.getPlanet(world).getDefaultAirTemperature(
-								getLocation()), getVolume() * 0.00001);
+								getLocation()), getVolume() * 0.00001 + getWaterVolume() * 0.00002);
 	}
 
 	public void updatePressure() {

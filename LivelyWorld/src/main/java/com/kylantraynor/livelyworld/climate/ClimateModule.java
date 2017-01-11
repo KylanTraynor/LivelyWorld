@@ -22,7 +22,7 @@ public class ClimateModule {
 	private LivelyWorld plugin;
 	private Planet defaultPlanet;
 	
-	private final int cellUpdates = 5;
+	private final int cellUpdates = 10;
 
 	private BukkitRunnable climateUpdater;
 

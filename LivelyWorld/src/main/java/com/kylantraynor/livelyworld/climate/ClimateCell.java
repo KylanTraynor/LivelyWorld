@@ -134,7 +134,7 @@ public class ClimateCell extends VCell {
 		temperature = getTemperature()
 				.bringTo(
 						Planet.getPlanet(world).getDefaultAirTemperature(
-								getLocation()), getVolume() * 0.00001 + getWaterVolume() * 0.00002);
+								getLocation()), getVolume() * 0.0000001 + getWaterVolume() * 0.000001);
 	}
 
 	public void updatePressure() {

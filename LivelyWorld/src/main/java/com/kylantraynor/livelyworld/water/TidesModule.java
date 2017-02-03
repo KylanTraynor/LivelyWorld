@@ -285,6 +285,8 @@ public class TidesModule {
 			return true;
 		if (l.getBlock().getType() == Material.VINE)
 			return true;
+		if (l.getBlock().getType() == Material.CACTUS)
+			return true;
 		if (l.getBlock().getType() == Material.SNOW)
 			return true;
 		if (l.getBlock().getType() == Material.RAILS)

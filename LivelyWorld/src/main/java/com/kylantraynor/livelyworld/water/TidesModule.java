@@ -68,6 +68,8 @@ public class TidesModule {
 		this.ignoredPlayers = new ArrayList<Player>();
 
 		changingBlock.put(Material.COBBLESTONE, Material.MOSSY_COBBLESTONE);
+		changingBlock.put(Material.GRASS, Material.DIRT);
+		changingBlock.put(Material.DIRT, Material.SAND);
 
 		int interval = 20 * 30;
 		tidesTask = new TideDispatcherTask(this, interval);

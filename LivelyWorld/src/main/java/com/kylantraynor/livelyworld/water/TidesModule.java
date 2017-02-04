@@ -70,6 +70,9 @@ public class TidesModule {
 		changingBlock.put(Material.COBBLESTONE, Material.MOSSY_COBBLESTONE);
 		changingBlock.put(Material.GRASS, Material.DIRT);
 		changingBlock.put(Material.DIRT, Material.SAND);
+		changingBlock.put(Material.MOSSY_COBBLESTONE, Material.GRAVEL);
+		changingBlock.put(Material.STONE, Material.COBBLESTONE);
+		changingBlock.put(Material.GRAVEL, Material.SAND);
 
 		int interval = 20 * 30;
 		tidesTask = new TideDispatcherTask(this, interval);
@@ -233,9 +236,9 @@ public class TidesModule {
 					for (int z = -1; z <= 1; z++) {
 						if (Math.random() < 0.01) {
 							Block b = location.clone().add(x, 0, z).getBlock();
-							if (changingBlock.containsKey(b.getType())) {
-								b.setType(changingBlock.get(b.getType()));
-
+							Material newMaterial = changingBlock.get(b.getType());
+							if(newMaterial != null){
+								b.setType(newMaterial);
 							}
 						}
 					}

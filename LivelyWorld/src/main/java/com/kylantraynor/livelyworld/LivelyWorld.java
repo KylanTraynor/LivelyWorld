@@ -609,7 +609,7 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 			switch (item.getItemStack().getType()) {
 			case SAPLING:
 				if (usingVegetation) {
-					// log(Level.INFO, "Attempting to plant sapling.");
+					log(Level.INFO, "Attempting to plant sapling.");
 					if (event.getLocation().getChunk().isLoaded()) {
 						vegetation.plantSapling(event.getEntity()
 								.getItemStack().getData(), event.getLocation());

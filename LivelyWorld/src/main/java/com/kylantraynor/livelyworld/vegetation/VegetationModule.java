@@ -1,5 +1,7 @@
 package com.kylantraynor.livelyworld.vegetation;
 
+import java.util.logging.Level;
+
 import org.bukkit.Bukkit;
 import org.bukkit.CropState;
 import org.bukkit.Location;
@@ -15,6 +17,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Crops;
 import org.bukkit.material.MaterialData;
+import org.bukkit.material.Sapling;
 import org.bukkit.material.Tree;
 
 import com.kylantraynor.livelyworld.LivelyWorld;
@@ -218,14 +221,16 @@ public class VegetationModule implements Listener {
 	}
 
 	public void plantSapling(MaterialData data, Location location) {
-		if (data != null && data instanceof Tree) {
+		if (data != null && data instanceof Sapling) {
 			Material base = location.getBlock().getRelative(BlockFace.DOWN)
 					.getType();
 			if (base == Material.DIRT || base == Material.GRASS) {
 				location.getBlock().setType(Material.SAPLING);
-				location.getBlock().setData(((Tree) data).getData(), true);
+				location.getBlock().setData(((Sapling) data).getData(), true);
 			}
 
+		} else {
+			plugin.log(Level.INFO, "Couldn't plant sapling.");
 		}
 	}
 

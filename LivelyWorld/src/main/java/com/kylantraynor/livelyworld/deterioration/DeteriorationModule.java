@@ -85,9 +85,9 @@ public class DeteriorationModule {
 		if (debug)
 			this.plugin.log(Level.INFO,
 					"Trying to spawn Cobweb at " + b.getLocation());
-		if (b.getLightFromSky() >= 5)
+		if (b.getLightFromSky() >= 8)
 			return;
-		if (Math.random() * 100 <= 25 && b.getType() == Material.AIR) {
+		if (Math.random() * 100 <= 50 && b.getType() == Material.AIR) {
 			b.setType(Material.WEB);
 			if (debug)
 				this.plugin.log(Level.INFO, "Succesfully spawned Cobweb.");

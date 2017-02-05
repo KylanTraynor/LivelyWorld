@@ -34,6 +34,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.Crops;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -41,8 +42,11 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import com.kylantraynor.livelyworld.burn.BurnModule;
 import com.kylantraynor.livelyworld.climate.Climate;
+import com.kylantraynor.livelyworld.climate.ClimateCell;
 import com.kylantraynor.livelyworld.climate.ClimateChunk;
+import com.kylantraynor.livelyworld.climate.ClimateMap;
 import com.kylantraynor.livelyworld.climate.ClimateModule;
+import com.kylantraynor.livelyworld.climate.Planet;
 import com.kylantraynor.livelyworld.climate.SnowFallTask;
 import com.kylantraynor.livelyworld.creatures.CreaturesModule;
 import com.kylantraynor.livelyworld.deterioration.DeteriorationModule;
@@ -684,11 +688,25 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 					event.setCancelled(true);
 				}
 				break;
-			case WHEAT:
-				double tempDistance2 = new Climate(event.getBlock()
-						.getLocation()).getAreaTemperature().getValue() - 288;
-				if (Math.random() * Math.abs(tempDistance2) > 1) {
-					event.setCancelled(true);
+			case CROPS:
+				BlockState state = event.getBlock().getState();
+				Crops crops = (Crops) state.getData();
+				switch(crops.getItemType()){
+				case WHEAT:
+					Planet p = Planet.getPlanet(event.getBlock().getWorld());
+					if(p != null){
+						ClimateMap cm = p.getClimateMap(event.getBlock().getWorld());
+						if(cm == null) break;
+						ClimateCell cc = cm.getClimateCellAt(event.getBlock().getLocation());
+						if(cc == null) break;
+						double tempDistance2 = Math.abs(cc.getTemperature().getValue() - (14.85 + 273.15));
+						if (Math.random() * tempDistance2 > 1) {
+							event.setCancelled(true);
+						}
+					}
+					break;
+				default:
+					break;
 				}
 			default:
 				break;

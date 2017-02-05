@@ -256,7 +256,7 @@ public class VegetationModule implements Listener {
 			switch(crops.getItemType()){
 			case WHEAT:
 				if(crops.getState() == CropState.RIPE){
-					ItemStack is = new ItemStack(Material.WHEAT, 5);
+					ItemStack is = new ItemStack(Material.WHEAT, 10);
 					event.getBlock().getWorld().dropItemNaturally(event.getBlock().getLocation(), is);
 				}
 				break;

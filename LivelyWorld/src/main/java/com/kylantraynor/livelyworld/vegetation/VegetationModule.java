@@ -1,14 +1,19 @@
 package com.kylantraynor.livelyworld.vegetation;
 
 import org.bukkit.Bukkit;
+import org.bukkit.CropState;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.Crops;
 import org.bukkit.material.MaterialData;
 import org.bukkit.material.Tree;
 
@@ -24,10 +29,10 @@ public class VegetationModule implements Listener {
 
 	public VegetationModule(LivelyWorld plugin) {
 		this.setPlugin(plugin);
-
 	}
 
 	public void onEnable() {
+		plugin.getServer().getPluginManager().registerEvents(this, plugin);
 	}
 
 	public void onDisable() {
@@ -240,6 +245,27 @@ public class VegetationModule implements Listener {
 						}
 					}
 				}
+			}
+		}
+	}
+
+	public void onBreakCrops(BlockBreakEvent event) {
+		BlockState state = event.getBlock().getState();
+		if(state.getData() instanceof Crops){
+			Crops crops = (Crops) state.getData();
+			switch(crops.getItemType()){
+			case WHEAT:
+				if(crops.getState() == CropState.RIPE){
+					ItemStack is = new ItemStack(Material.WHEAT, 5);
+					event.getBlock().getWorld().dropItemNaturally(event.getBlock().getLocation(), is);
+				}
+				break;
+			case CARROT:
+				break;
+			case POTATO:
+				break;
+			default:
+				break;
 			}
 		}
 	}

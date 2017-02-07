@@ -255,11 +255,13 @@ public class VegetationModule implements Listener {
 	}
 
 	public void onBreakCrops(BlockBreakEvent event) {
+		plugin.getLogger().info("Processing Crops Breaking.");
 		BlockState state = event.getBlock().getState();
 		if(state.getData() instanceof Crops){
 			Crops crops = (Crops) state.getData();
 			switch(crops.getItemType()){
 			case WHEAT:
+				plugin.getLogger().info("Processing Wheat Breaking.");
 				if(crops.getState() == CropState.RIPE){
 					ItemStack is = new ItemStack(Material.WHEAT, 10);
 					event.getBlock().getWorld().dropItemNaturally(event.getBlock().getLocation(), is);
@@ -270,8 +272,11 @@ public class VegetationModule implements Listener {
 			case POTATO:
 				break;
 			default:
+				plugin.getLogger().info("Unexpected type of crop.");
 				break;
 			}
+		} else {
+			plugin.getLogger().info("Crops block wasn't instance of Crops?");
 		}
 	}
 }

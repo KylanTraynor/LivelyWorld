@@ -94,7 +94,7 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 	private LivelyWorld currentInstance;
 
 	private Instant lastBlockUpdate = Instant.now();
-	private long blockUpdatePeriod = 5L;
+	private long blockUpdatePeriod = 2L;
 	private Location worldCenter;
 	private int worldBorder = 4800;
 
@@ -590,9 +590,10 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 	}
 
 	public boolean hasPlayerInRange(Location l, double range) {
+		double rangeSquared = range * range;
 		for (Player p : Bukkit.getServer().getOnlinePlayers()) {
 			if (p.getWorld().equals(l.getWorld())) {
-				if (p.getLocation().distance(l) <= range) {
+				if (p.getLocation().distanceSquared(l) <= rangeSquared) {
 					return true;
 				}
 			}
@@ -717,7 +718,9 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 	@EventHandler
 	public void onBlockBreak(BlockBreakEvent event){
 		if(usingVegetation){
+			getLogger().info("Block break event detected & using Vegetation Module.");
 			if(event.getBlock().getType() == Material.CROPS){
+				getLogger().info("Block Broken is of type CROPS.");
 				vegetation.onBreakCrops(event);
 			}
 		}

@@ -272,7 +272,7 @@ public class VegetationModule implements Listener {
 			case POTATO:
 				break;
 			default:
-				plugin.getLogger().info("Unexpected type of crop.");
+				plugin.getLogger().info("Unexpected type of crop: " + crops.getItemType().toString());
 				break;
 			}
 		} else {

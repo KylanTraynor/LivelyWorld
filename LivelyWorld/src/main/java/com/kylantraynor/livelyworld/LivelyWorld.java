@@ -718,7 +718,6 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 	@EventHandler
 	public void onBlockBreak(BlockBreakEvent event){
 		if(usingVegetation){
-			getLogger().info("Block break event detected & using Vegetation Module.");
 			if(event.getBlock().getType() == Material.CROPS){
 				getLogger().info("Block Broken is of type CROPS.");
 				vegetation.onBreakCrops(event);

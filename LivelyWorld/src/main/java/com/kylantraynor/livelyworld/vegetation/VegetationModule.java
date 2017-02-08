@@ -260,7 +260,7 @@ public class VegetationModule implements Listener {
 		if(state.getData() instanceof Crops){
 			Crops crops = (Crops) state.getData();
 			switch(crops.getItemType()){
-			case WHEAT:
+			case CROPS:
 				plugin.getLogger().info("Processing Wheat Breaking.");
 				if(crops.getState() == CropState.RIPE){
 					ItemStack is = new ItemStack(Material.WHEAT, 10);

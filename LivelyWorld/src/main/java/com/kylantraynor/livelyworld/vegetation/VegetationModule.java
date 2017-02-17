@@ -221,6 +221,8 @@ public class VegetationModule implements Listener {
 	}
 
 	public void plantSapling(MaterialData data, Location location) {
+		if(location.getBlock().getType().isBlock() || location.getBlock().getType().isSolid()) return;
+		if(location.getBlock().getLightFromSky() < 12) return;
 		if (data != null && data instanceof Sapling) {
 			Material base = location.getBlock().getRelative(BlockFace.DOWN)
 					.getType();

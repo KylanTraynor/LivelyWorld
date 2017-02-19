@@ -35,6 +35,8 @@ public class Tree {
 			return true;
 		if (type == Material.BIRCH_FENCE)
 			return true;
+		if(type == Material.DARK_OAK_FENCE)
+			return true;
 		return false;
 	}
 

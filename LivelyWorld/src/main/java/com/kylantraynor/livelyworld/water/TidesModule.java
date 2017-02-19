@@ -231,15 +231,13 @@ public class TidesModule {
 			if (!location.getBlock().isLiquid()) {
 				location.getBlock().breakNaturally();
 			}
-			if (Math.random() < 0.01) {
-				for (int x = -1; x <= 1; x++) {
-					for (int z = -1; z <= 1; z++) {
-						if (Math.random() < 0.0001) {
-							Block b = location.clone().add(x, 0, z).getBlock();
-							Material newMaterial = changingBlock.get(b.getType());
-							if(newMaterial != null){
-								b.setType(newMaterial);
-							}
+			for (int x = -1; x <= 1; x++) {
+				for (int z = -1; z <= 1; z++) {
+					if (Math.random() < 0.0001) {
+						Block b = location.clone().add(x, 0, z).getBlock();
+						Material newMaterial = changingBlock.get(b.getType());
+						if(newMaterial != null){
+							b.setType(newMaterial);
 						}
 					}
 				}

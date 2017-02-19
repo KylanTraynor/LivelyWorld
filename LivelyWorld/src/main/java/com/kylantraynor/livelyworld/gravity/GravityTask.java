@@ -9,6 +9,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
 
 public class GravityTask extends BukkitRunnable {
 
@@ -34,6 +35,18 @@ public class GravityTask extends BukkitRunnable {
 	public Block getBlock() {
 		return world.getBlockAt(x, y, z);
 	}
+	
+	private Vector hasAirAround(){
+		for(int x = -1; x <= 1; x++){
+			for(int z = -1; z <= 1; z++){
+				if(!module.isSolidBlock(world.getBlockAt(this.x + x, y, this.z + z))){
+					if(!module.isSolidBlock(world.getBlockAt(this.x  + x, y - 1 , this.z + z)))
+						return new Vector(x, 0, z);
+				}
+			}
+		}
+		return null;
+	}
 
 	private void doGravityCheck() {
 		if (!getBlock().getChunk().isLoaded())
@@ -45,7 +58,18 @@ public class GravityTask extends BukkitRunnable {
 				GravityTask task = new GravityTask(module, world, x, y - 1, z);
 				task.runTaskLater(module.getPlugin(), 10);
 			}
-			return;
+			Vector airDirection = hasAirAround();
+			if(airDirection != null){
+				GravityProperties gp = module.getBlockProperties(getBlock());
+				if(gp != null){
+					if(gp.getType() == GravityType.SANDLIKE){
+						spawnFallingBlock(airDirection);
+					}
+				}
+				return;
+			} else {
+				return;
+			}
 		}
 		GravityProperties gp = module.getBlockProperties(getBlock());
 		if (gp != null) {
@@ -119,16 +143,7 @@ public class GravityTask extends BukkitRunnable {
 			}
 		}
 
-		if (getBlock().getChunk().getEntities().length < Bukkit.getServer()
-				.getAmbientSpawnLimit()) {
-			if (module.isDebug())
-				Bukkit.getServer().getLogger().info("Spawning falling block.");
-			FallingBlock fb = world.spawnFallingBlock(getBlock().getLocation(),
-					getBlock().getType(), getBlock().getData());
-			getBlock().setType(Material.AIR);
-			world.playSound(getBlock().getLocation(), Sound.BLOCK_GRAVEL_FALL,
-					1, 1);
-
+		if(spawnFallingBlock(null)){
 			for (int x = this.x - 1; x <= this.x + 1; x++) {
 				for (int y = this.y; y <= this.y + 1; y++) {
 					for (int z = this.z - 1; z <= this.z + 1; z++) {
@@ -142,6 +157,26 @@ public class GravityTask extends BukkitRunnable {
 			}
 		}
 
+	}
+	
+	@SuppressWarnings("deprecation")
+	public boolean spawnFallingBlock(Vector velocity){
+		if (getBlock().getChunk().getEntities().length < Bukkit.getServer()
+				.getAmbientSpawnLimit()) {
+			if (module.isDebug())
+				Bukkit.getServer().getLogger().info("Spawning falling block.");
+			FallingBlock fb = world.spawnFallingBlock(getBlock().getLocation(),
+					getBlock().getType(), getBlock().getData());
+			if(velocity != null){
+				fb.setVelocity(velocity);
+			}
+			getBlock().setType(Material.AIR);
+			world.playSound(getBlock().getLocation(), Sound.BLOCK_GRAVEL_FALL,
+					1, 1);
+			
+			return true;
+		}
+		return false;
 	}
 
 	public boolean hasSupport(World w, int baseX, int y, int baseZ, int range,

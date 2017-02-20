@@ -165,10 +165,13 @@ public class GravityTask extends BukkitRunnable {
 				.getAmbientSpawnLimit()) {
 			if (module.isDebug())
 				Bukkit.getServer().getLogger().info("Spawning falling block.");
-			FallingBlock fb = world.spawnFallingBlock(getBlock().getLocation(),
-					getBlock().getType(), getBlock().getData());
 			if(velocity != null){
-				fb.setVelocity(velocity);
+				FallingBlock fb = world.spawnFallingBlock(getBlock().getLocation().add(velocity),
+						getBlock().getType(), getBlock().getData());
+				//fb.setVelocity(velocity);
+			} else {
+				FallingBlock fb = world.spawnFallingBlock(getBlock().getLocation(),
+						getBlock().getType(), getBlock().getData());
 			}
 			getBlock().setType(Material.AIR);
 			world.playSound(getBlock().getLocation(), Sound.BLOCK_GRAVEL_FALL,

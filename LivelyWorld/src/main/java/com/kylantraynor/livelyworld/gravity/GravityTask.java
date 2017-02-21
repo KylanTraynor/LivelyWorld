@@ -166,11 +166,11 @@ public class GravityTask extends BukkitRunnable {
 			if (module.isDebug())
 				Bukkit.getServer().getLogger().info("Spawning falling block.");
 			if(velocity != null){
-				FallingBlock fb = world.spawnFallingBlock(getBlock().getLocation().add(velocity),
+				FallingBlock fb = world.spawnFallingBlock(getBlock().getLocation().add(0.5, 0.5, 0.5).add(velocity),
 						getBlock().getType(), getBlock().getData());
 				//fb.setVelocity(velocity);
 			} else {
-				FallingBlock fb = world.spawnFallingBlock(getBlock().getLocation(),
+				FallingBlock fb = world.spawnFallingBlock(getBlock().getLocation().add(0.5,0.5,0.5),
 						getBlock().getType(), getBlock().getData());
 			}
 			getBlock().setType(Material.AIR);

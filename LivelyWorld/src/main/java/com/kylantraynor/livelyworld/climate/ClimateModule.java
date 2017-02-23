@@ -75,6 +75,8 @@ public class ClimateModule {
 
 	public void onBlockUpdate(Block block, Player p) {
 		Location l = block.getLocation().clone();
+		Planet planet = Planet.getPlanet(block.getWorld());
+		ClimateMap map = planet.getClimateMap(block.getWorld());
 		l.setY(255);
 		Block b = l.getBlock();
 		while (b.getType() == Material.AIR && b.getLocation().getBlockY() > 46) {
@@ -84,8 +86,9 @@ public class ClimateModule {
 			switch (b.getBiome()) {
 			case FROZEN_OCEAN:
 			case FROZEN_RIVER:
-				ClimateChunk c = ClimateChunk.getAt(b.getLocation());
-				if (c.getTemperature().getValue() > 273.15
+				
+				//ClimateChunk c = ClimateChunk.getAt(b.getLocation());
+				if (map.getTemperatureAt(b.getLocation()).getValue() > 273.15
 						&& b.getLocation().getY() <= 60) {
 					if (hasBiomeWithin(b.getLocation(), Biome.OCEAN, 5)) {
 						b.setBiome(Biome.OCEAN);
@@ -114,7 +117,9 @@ public class ClimateModule {
 					|| topBlock.getRelative(BlockFace.UP).getType() == Material.SNOW_BLOCK) {
 				topBlock = topBlock.getRelative(BlockFace.UP);
 			}
-
+			if(map.getTemperatureAt(topBlock.getLocation()).getValue() > 273.15){
+				topBlock.
+			}
 		} else if ((b.getType() == Material.WATER || b.getType() == Material.STATIONARY_WATER)) {
 			for (int x = -2; x <= 2; x++) {
 				for (int z = -2; z <= 2; z++) {

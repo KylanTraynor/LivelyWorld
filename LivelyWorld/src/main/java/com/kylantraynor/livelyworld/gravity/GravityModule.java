@@ -75,29 +75,31 @@ public class GravityModule {
 				}
 				break;
 			case "SET":
-				if (args.length >= 5
+				if (args.length >= 6
 						&& sender.hasPermission("livelyworld.gravity.admin")) {
 					Material m = Material.getMaterial(args[2].toUpperCase());
 					if (m != null) {
 						if (args[3].equalsIgnoreCase("BASIC")) {
-							int r = Integer.parseInt(args[4]);
-							GravityProperties gp = new GravityProperties(r);
+							int s = Integer.parseInt(args[4]);
+							int r = Integer.parseInt(args[5]);
+							GravityProperties gp = new GravityProperties(s, r);
 							blockProperties.put(m, gp);
 							sender.sendMessage("Blocks of type " + m.toString()
 									+ " now have " + gp.getType().toString()
 									+ " gravity with " + gp.getRadius()
-									+ " radius of support.");
+									+ " radius of support. (Stability: " + s +")");
 							return;
 						} else if (args[3].equalsIgnoreCase("SANDLIKE")) {
+							int s = Integer.parseInt(args[4]);
 							blockProperties
-									.put(m, GravityProperties.sandlike());
+									.put(m, new GravityProperties(GravityType.SANDLIKE, s, 0));
 							sender.sendMessage("Blocks of type " + m.toString()
-									+ " now have SANDLIKE gravity.");
+									+ " now have SANDLIKE gravity. (Stability: " + s + ")");
 							return;
 						}
 					}
 				}
-				sender.sendMessage("/lw gravity set <Material> <GravityType> <SupportRadius>");
+				sender.sendMessage("/lw gravity set <Material> <GravityType> <Stability> <SupportRadius>");
 				break;
 			}
 		}

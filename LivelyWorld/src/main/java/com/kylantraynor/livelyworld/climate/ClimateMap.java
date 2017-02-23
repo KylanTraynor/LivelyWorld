@@ -118,4 +118,32 @@ public class ClimateMap {
 		}
 		return new Temperature(lowest);
 	}
+
+	public Temperature getTemperatureAt(Location location) {
+		
+		ClimateCell cell = getClimateCellAt(location);
+		
+		VectorXZ v = new VectorXZ((float) location.getX(), (float) location.getZ());
+		
+		ClimateCell cell2 = null;
+		ClimateCell cell3 = null;
+		
+		for(VCell c : cell.getNeighbours()){
+			if(cell3 == null) cell3 = (ClimateCell)c;
+			else {
+				if(cell3.getSite().distanceSquared(v) > c.getSite().distanceSquared(v)){
+					if(cell2 == null) cell2 = (ClimateCell) c;
+					else if(cell2.getSite().distanceSquared(v) > c.getSite().distanceSquared(v)){
+						cell3 = cell2;
+						cell2 = (ClimateCell)c;
+					} else {
+						cell3 = (ClimateCell)c;
+					}
+				}
+			}
+		}
+		
+		ClimateTriangle t = new ClimateTriangle(cell, cell2, cell3);
+		return t.getTemperatureAt(v);
+	}
 }

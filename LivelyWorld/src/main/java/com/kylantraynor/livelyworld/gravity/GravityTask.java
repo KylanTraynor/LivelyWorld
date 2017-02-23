@@ -107,7 +107,8 @@ public class GravityTask extends BukkitRunnable {
 				GravityProperties gp = module.getBlockProperties(getBlock());
 				if(gp != null){
 					if(gp.getType() == GravityType.SANDLIKE){
-						spawnFallingBlock(airDirection);
+						if(Math.random() < (1.0 / gp.stability))
+							spawnFallingBlock(airDirection);
 					}
 				}
 				return;
@@ -126,6 +127,9 @@ public class GravityTask extends BukkitRunnable {
 				}
 				break;
 			}
+			if(Math.random() > (1.0 / gp.getStability())){
+				return;
+			}
 		} else {
 			switch (getBlock().getType()) {
 			case CLAY:
@@ -137,7 +141,7 @@ public class GravityTask extends BukkitRunnable {
 			case DIRT:
 			case GRASS_PATH:
 				module.setBlockProperties(getBlock().getType(),
-						new GravityProperties(1));
+						new GravityProperties(1, 1));
 				if (hasSupport(world, x, y, z, 1, true)) {
 					return;
 				}
@@ -145,7 +149,7 @@ public class GravityTask extends BukkitRunnable {
 			case COBBLESTONE:
 			case COBBLESTONE_STAIRS:
 				module.setBlockProperties(getBlock().getType(),
-						new GravityProperties(1));
+						new GravityProperties(1, 1));
 				if (hasSupport(world, x, y, z, 1, true)) {
 					return;
 				}
@@ -169,7 +173,7 @@ public class GravityTask extends BukkitRunnable {
 				break;
 			case SMOOTH_STAIRS:
 				module.setBlockProperties(getBlock().getType(),
-						new GravityProperties(4));
+						new GravityProperties(1, 4));
 				if (hasSupport(world, x, y, z, 4, true)) {
 					return;
 				}
@@ -177,7 +181,7 @@ public class GravityTask extends BukkitRunnable {
 			case BRICK:
 			case BRICK_STAIRS:
 				module.setBlockProperties(getBlock().getType(),
-						new GravityProperties(4));
+						new GravityProperties(1, 4));
 				if (hasSupport(world, x, y, z, 4, true)) {
 					return;
 				}

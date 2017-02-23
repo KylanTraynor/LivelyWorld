@@ -37,6 +37,46 @@ public class GravityTask extends BukkitRunnable {
 	}
 	
 	private Vector hasAirAround(){
+		int rdm = (int) Math.floor(Math.random() * 4);
+		switch(rdm){
+		case 0:
+			if(!module.isSolidBlock(world.getBlockAt(x + 1, y, z)))
+				if(!module.isSolidBlock(world.getBlockAt(x + 1, y - 1, z))) return new Vector(1, 0, 0);
+			if(!module.isSolidBlock(world.getBlockAt(x - 1, y, z)))
+				if(!module.isSolidBlock(world.getBlockAt(x - 1, y - 1, z))) return new Vector(-1, 0, 0);
+			if(!module.isSolidBlock(world.getBlockAt(x, y, z + 1)))
+				if(!module.isSolidBlock(world.getBlockAt(x, y - 1, z + 1))) return new Vector(0, 0, 1);
+			if(!module.isSolidBlock(world.getBlockAt(x, y, z - 1)))
+				if(!module.isSolidBlock(world.getBlockAt(x, y - 1, z - 1))) return new Vector(0, 0, -1);
+		case 1:
+			if(!module.isSolidBlock(world.getBlockAt(x - 1, y, z)))
+				if(!module.isSolidBlock(world.getBlockAt(x - 1, y - 1, z))) return new Vector(-1, 0, 0);
+			if(!module.isSolidBlock(world.getBlockAt(x + 1, y, z)))
+				if(!module.isSolidBlock(world.getBlockAt(x + 1, y - 1, z))) return new Vector(1, 0, 0);
+			if(!module.isSolidBlock(world.getBlockAt(x, y, z - 1)))
+				if(!module.isSolidBlock(world.getBlockAt(x, y - 1, z - 1))) return new Vector(0, 0, -1);
+			if(!module.isSolidBlock(world.getBlockAt(x, y, z + 1)))
+				if(!module.isSolidBlock(world.getBlockAt(x, y - 1, z + 1))) return new Vector(0, 0, 1);
+		case 2:
+			if(!module.isSolidBlock(world.getBlockAt(x, y, z + 1)))
+				if(!module.isSolidBlock(world.getBlockAt(x, y - 1, z + 1))) return new Vector(0, 0, 1);
+			if(!module.isSolidBlock(world.getBlockAt(x, y, z - 1)))
+				if(!module.isSolidBlock(world.getBlockAt(x, y - 1, z - 1))) return new Vector(0, 0, -1);
+			if(!module.isSolidBlock(world.getBlockAt(x + 1, y, z)))
+				if(!module.isSolidBlock(world.getBlockAt(x + 1, y - 1, z))) return new Vector(1, 0, 0);
+			if(!module.isSolidBlock(world.getBlockAt(x - 1, y, z)))
+				if(!module.isSolidBlock(world.getBlockAt(x - 1, y - 1, z))) return new Vector(-1, 0, 0);
+		case 3:
+			if(!module.isSolidBlock(world.getBlockAt(x, y, z - 1)))
+				if(!module.isSolidBlock(world.getBlockAt(x, y - 1, z - 1))) return new Vector(0, 0, -1);
+			if(!module.isSolidBlock(world.getBlockAt(x, y, z + 1)))
+				if(!module.isSolidBlock(world.getBlockAt(x, y - 1, z + 1))) return new Vector(0, 0, 1);
+			if(!module.isSolidBlock(world.getBlockAt(x - 1, y, z)))
+				if(!module.isSolidBlock(world.getBlockAt(x - 1, y - 1, z))) return new Vector(-1, 0, 0);
+			if(!module.isSolidBlock(world.getBlockAt(x + 1, y, z)))
+				if(!module.isSolidBlock(world.getBlockAt(x + 1, y - 1, z))) return new Vector(1, 0, 0);
+		}
+		/*
 		for(int x = -1; x <= 1; x++){
 			for(int z = -1; z <= 1; z++){
 				if(!module.isSolidBlock(world.getBlockAt(this.x + x, y, this.z + z))){
@@ -44,7 +84,7 @@ public class GravityTask extends BukkitRunnable {
 						return new Vector(x, 0, z);
 				}
 			}
-		}
+		}*/
 		return null;
 	}
 

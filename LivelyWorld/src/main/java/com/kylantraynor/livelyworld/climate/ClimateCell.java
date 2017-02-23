@@ -15,6 +15,7 @@ public class ClimateCell extends VCell {
 	private double highAltitudePressure = getBasePressure();
 	private double airVolume = Double.NaN;
 	private Long airAmount = null;
+	private Long highAirAmount = null;
 	private Temperature temperature;
 	private ClimateMap map;
 	private double altitude = Double.NaN;

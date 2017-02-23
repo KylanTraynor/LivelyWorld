@@ -15,6 +15,7 @@ import org.bukkit.block.BlockState;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.Horse.Variant;
 import org.bukkit.entity.Item;
@@ -28,6 +29,7 @@ import org.bukkit.event.block.BlockFormEvent;
 import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockGrowEvent;
 import org.bukkit.event.block.BlockIgniteEvent;
+import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.ItemDespawnEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -722,6 +724,13 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 				getLogger().info("Block Broken is of type CROPS.");
 				vegetation.onBreakCrops(event);
 			}
+		}
+	}
+	
+	@EventHandler
+	public void onEntityChangeBlockEvent(EntityChangeBlockEvent event){
+		if(usingGravity){
+			if(event.getEntityType() == EntityType.FALLING_BLOCK) gravity.checkGravityOn(event.getBlock());
 		}
 	}
 }

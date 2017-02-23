@@ -27,9 +27,7 @@ public class GravityModule {
 	}
 
 	public void onBlockUpdate(Block b, Player p) {
-		GravityTask t = new GravityTask(this, b.getWorld(), b.getX(), b.getY(),
-				b.getZ());
-		t.runTaskLater(plugin, 1);
+		checkGravityOn(b);
 	}
 
 	public void reloadProperties(FileConfiguration fileConfiguration) {
@@ -139,5 +137,11 @@ public class GravityModule {
 
 	public void setBlockProperties(Material type, GravityProperties properties) {
 		blockProperties.put(type, properties);
+	}
+
+	public void checkGravityOn(Block block) {
+		GravityTask t = new GravityTask(this, block.getWorld(), block.getX(), block.getY(),
+				block.getZ());
+		t.runTaskLater(plugin, 1);
 	}
 }

@@ -429,6 +429,7 @@ public class TidesModule {
 							ignoredPlayers.add((Player) sender);
 							sender.sendMessage("Waves turned off.");
 						}
+						break;
 					case "BEACHESREGRESSION":
 						if (sender.isOp()) {
 							beachRegression = !beachRegression;
@@ -438,6 +439,7 @@ public class TidesModule {
 								sender.sendMessage("Beaches Regression turned off.");
 							}
 						}
+						break;
 					case "DEBUG":
 						if (sender.isOp()) {
 							debug = !debug;
@@ -447,6 +449,7 @@ public class TidesModule {
 								sender.sendMessage("Debug for water module turned off.");
 							}
 						}
+						break;
 					}
 				}
 			}

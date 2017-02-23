@@ -40,7 +40,9 @@ public class GravityModule {
 				gp.setType(GravityType.valueOf(fileConfiguration
 						.getString("gravity.blocks." + s + ".type")));
 				gp.setRadius(fileConfiguration.getInt("gravity.blocks." + s
-						+ ".radius"));
+						+ ".radius", 1));
+				gp.setStability(fileConfiguration.getInt("gravity.blocks." + s
+						+ ".stability", 1));
 				blockProperties.put(Material.getMaterial(s), gp);
 			}
 		}
@@ -53,6 +55,8 @@ public class GravityModule {
 					+ ".type", e.getValue().getType().toString());
 			fileConfiguration.set("gravity.blocks." + e.getKey().toString()
 					+ ".radius", e.getValue().getRadius());
+			fileConfiguration.set("gravity.blocks." + e.getKey().toString()
+					+ ".stability", e.getValue().getStability());
 		}
 		return fileConfiguration;
 	}

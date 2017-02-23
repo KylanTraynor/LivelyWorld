@@ -118,7 +118,7 @@ public class ClimateModule {
 				topBlock = topBlock.getRelative(BlockFace.UP);
 			}
 			if(map.getTemperatureAt(topBlock.getLocation()).getValue() > 273.15){
-				topBlock.
+				
 			}
 		} else if ((b.getType() == Material.WATER || b.getType() == Material.STATIONARY_WATER)) {
 			for (int x = -2; x <= 2; x++) {

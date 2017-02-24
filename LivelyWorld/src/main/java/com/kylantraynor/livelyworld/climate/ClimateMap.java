@@ -122,13 +122,14 @@ public class ClimateMap {
 	public Temperature getTemperatureAt(Location location) {
 		
 		ClimateCell cell = getClimateCellAt(location);
-		
+		if(cell == null) return null;
 		VectorXZ v = new VectorXZ((float) location.getX(), (float) location.getZ());
 		
 		ClimateCell cell2 = null;
 		ClimateCell cell3 = null;
 		
 		for(VCell c : cell.getNeighbours()){
+			if(c == null) continue;
 			if(cell3 == null) cell3 = (ClimateCell)c;
 			else {
 				if(cell3.getSite().distanceSquared(v) > c.getSite().distanceSquared(v)){
@@ -143,6 +144,7 @@ public class ClimateMap {
 			}
 		}
 		
+		if(cell2 == null || cell3 == null) return cell.getTemperature();
 		ClimateTriangle t = new ClimateTriangle(cell, cell2, cell3);
 		return t.getTemperatureAt(v);
 	}

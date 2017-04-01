@@ -7,6 +7,8 @@ import org.bukkit.entity.Player;
 
 public class Temperature {
 
+	public static final Temperature NaN = new Temperature(Double.NaN);
+	
 	static Map<Player, String> playerSystem = new HashMap<Player, String>();
 	final double value;
 
@@ -66,5 +68,26 @@ public class Temperature {
 	@Override
 	public String toString() {
 		return "" + getRoundedValue(this.value) + "°K";
+	}
+	
+	public static Temperature fromCelsius(double celsius){
+		return new Temperature(celsius + 273.15);
+	}
+	
+	public static Temperature fromFahrenheit(double fahrenheit){
+		return fromCelsius(((fahrenheit - 32) / 1.8));
+	}
+	
+	public boolean isCelsiusBetween(double min, double max){
+		return isBetween(min + 273.15, max + 273.15);
+	}
+	
+	public boolean isBetween(double min, double max){
+		if(isNaN()) return false;
+		return this.value >= min && this.value <= max;
+	}
+	
+	public boolean isNaN(){
+		return Double.isNaN(value);
 	}
 }

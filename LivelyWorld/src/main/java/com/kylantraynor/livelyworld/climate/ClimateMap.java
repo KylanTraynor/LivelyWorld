@@ -144,7 +144,10 @@ public class ClimateMap {
 			}
 		}
 		
-		if(cell2 == null || cell3 == null) return cell.getTemperature();
+		if(cell2 == null || cell3 == null){
+			// Shouldn't happen.
+			return cell.getTemperature();
+		}
 		ClimateTriangle t = new ClimateTriangle(cell, cell2, cell3);
 		return t.getTemperatureAt(v);
 	}

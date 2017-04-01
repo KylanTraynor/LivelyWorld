@@ -48,11 +48,14 @@ import com.kylantraynor.livelyworld.climate.ClimateCell;
 import com.kylantraynor.livelyworld.climate.ClimateChunk;
 import com.kylantraynor.livelyworld.climate.ClimateMap;
 import com.kylantraynor.livelyworld.climate.ClimateModule;
+import com.kylantraynor.livelyworld.climate.ClimateUtils;
 import com.kylantraynor.livelyworld.climate.Planet;
 import com.kylantraynor.livelyworld.climate.SnowFallTask;
+import com.kylantraynor.livelyworld.climate.Temperature;
 import com.kylantraynor.livelyworld.creatures.CreaturesModule;
 import com.kylantraynor.livelyworld.deterioration.DeteriorationModule;
 import com.kylantraynor.livelyworld.gravity.GravityModule;
+import com.kylantraynor.livelyworld.hooks.HookManager;
 import com.kylantraynor.livelyworld.pathways.PathwaysModule;
 import com.kylantraynor.livelyworld.sounds.SoundManager;
 import com.kylantraynor.livelyworld.vegetation.VegetationModule;
@@ -167,13 +170,27 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 			public void run() {
 				try {
 					if (getServer().getOnlinePlayers().size() == 0) {
-						int randomX = (int) Math.round(Math.random()
+						World world = Bukkit.getWorlds().get((int) Math.floor(Math.random() * Bukkit.getWorlds().size()));
+						int randomX = 0;
+						int randomY = (int) (255 * Math.random());
+						int randomZ = 0;
+						if(HookManager.hasWorldBorder()){
+							worldCenter = HookManager.getWorldBorder().getWorldCenter(world);
+							double worldRadiusX = HookManager.getWorldBorder().getWorldRadiusX(world);
+							double worldRadiusZ = HookManager.getWorldBorder().getWorldRadiusZ(world);
+							if(worldRadiusX == 0 || worldRadiusZ == 0) return;
+ 							randomX = (int) Math.round(Math.random() * (worldRadiusX * 2) - worldRadiusX);
+							randomZ = (int) Math.round(Math.random() * (worldRadiusZ * 2) - worldRadiusZ);
+						} else {
+							return;
+						}
+						/*int randomX = (int) Math.round(Math.random()
 								* (worldBorder * 2) - worldBorder);
 						int randomY = (int) (255 * Math.random());
 						int randomZ = (int) Math.round(Math.random()
 								* (worldBorder * 2) - worldBorder);
 						randomX += worldCenter.getBlockX();
-						randomZ += worldCenter.getBlockZ();
+						randomZ += worldCenter.getBlockZ();*/
 						Location l = new Location(worldCenter.getWorld(),
 								randomX, randomY, randomZ);
 						new BukkitRunnable() {
@@ -695,7 +712,15 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 				BlockState state = event.getBlock().getState();
 				Crops crops = (Crops) state.getData();
 				switch(crops.getItemType()){
-				case WHEAT:
+				case CROPS:
+					Temperature temp = ClimateUtils.getTemperatureAt(event.getBlock().getLocation());
+					if(temp.isNaN()) return;
+					double tempDistance2 = Math.abs(temp.getValue() - Temperature.fromCelsius(14.85).getValue());
+					if(Math.random() * tempDistance2 > 5){
+						event.setCancelled(true);
+						return;
+					}
+					/*
 					Planet p = Planet.getPlanet(event.getBlock().getWorld());
 					if(p != null){
 						ClimateMap cm = p.getClimateMap(event.getBlock().getWorld());
@@ -707,6 +732,7 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 							event.setCancelled(true);
 						}
 					}
+					*/
 					break;
 				default:
 					break;

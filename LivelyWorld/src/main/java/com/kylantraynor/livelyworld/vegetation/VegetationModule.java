@@ -21,7 +21,10 @@ import org.bukkit.material.Sapling;
 import org.bukkit.material.Tree;
 
 import com.kylantraynor.livelyworld.LivelyWorld;
+import com.kylantraynor.livelyworld.climate.ClimateCell;
 import com.kylantraynor.livelyworld.climate.ClimateChunk;
+import com.kylantraynor.livelyworld.climate.ClimateMap;
+import com.kylantraynor.livelyworld.climate.ClimateUtils;
 import com.kylantraynor.livelyworld.climate.Planet;
 import com.kylantraynor.livelyworld.climate.Temperature;
 
@@ -76,8 +79,12 @@ public class VegetationModule implements Listener {
 			updateTree(b);
 			break;
 		case GRASS:
-			if (Math.random() <= 0.5) {
-				updateGrass(b);
+			double rdm = Math.random();
+			if (rdm <= 0.75) {
+				if(rdm <= 0.5)
+					updateGrass(b);
+				else
+					tryPlantFern(b.getRelative(BlockFace.UP));
 			} else {
 				updateFlower(b);
 			}
@@ -215,6 +222,19 @@ public class VegetationModule implements Listener {
 			b.setType(Material.DIRT);
 		}
 	}
+	
+	private void tryPlantFern(Block b){
+		if(b.getType() != Material.AIR) return;
+		if(b.getLightFromSky() < 5) return;
+		boolean isClimateOk = ClimateUtils.getTemperatureAt(b.getLocation()).isCelsiusBetween(
+				10, 
+				25);
+		if(isClimateOk){
+			b.setType(Material.LONG_GRASS);
+			b.setData((byte) 2);
+		}
+		
+	}
 
 	private void updateTree(Block b) {
 
@@ -265,7 +285,7 @@ public class VegetationModule implements Listener {
 			case CROPS:
 				plugin.getLogger().info("Processing Wheat Breaking.");
 				if(crops.getState() == CropState.RIPE){
-					ItemStack is = new ItemStack(Material.WHEAT, 10);
+					ItemStack is = new ItemStack(Material.WHEAT, 15);
 					event.getBlock().getWorld().dropItemNaturally(event.getBlock().getLocation(), is);
 				}
 				break;

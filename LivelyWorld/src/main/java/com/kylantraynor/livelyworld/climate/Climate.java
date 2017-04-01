@@ -218,10 +218,11 @@ public class Climate {
 				for (int z = location.getBlockZ() - 8; z <= location
 						.getBlockZ() + 8; z++) {
 					Block b = getWorld().getBlockAt(x, y, z);
-					double distance = b.getLocation().add(0.5, 0.5, 0.5)
-							.distance(location);
+					if(b == null) continue;
+					double distanceSquared = b.getLocation().add(0.5, 0.5, 0.5)
+							.distanceSquared(location);
 					temp += (new Climate(b.getLocation()).getTemperature().value - temp)
-							/ (distance * distance);
+							/ (distanceSquared);
 				}
 			}
 		}
@@ -235,11 +236,11 @@ public class Climate {
 				for (int z = location.getBlockZ() - 8; z <= location
 						.getBlockZ() + 8; z++) {
 					Block b = getWorld().getBlockAt(x, y, z);
-					double distance = b.getLocation().add(0.5, 0.5, 0.5)
-							.distance(location);
+					double distanceSquared = b.getLocation().add(0.5, 0.5, 0.5)
+							.distanceSquared(location);
 					temp += (new Climate(b.getLocation())
 							.getAverageTemperature().value - temp)
-							/ (distance * distance);
+							/ (distanceSquared);
 				}
 			}
 		}

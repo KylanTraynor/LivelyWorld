@@ -54,7 +54,7 @@ public class ClimateCell extends VCell {
 	}
 
 	public Temperature getBaseTemperature() {
-		return new Temperature(273.15 + 15);
+		return Temperature.fromCelsius(15);
 	}
 
 	public double getBasePressure() {
@@ -134,8 +134,9 @@ public class ClimateCell extends VCell {
 	public void updateTemperature() {
 		temperature = getTemperature()
 				.bringTo(
-						Planet.getPlanet(world).getDefaultAirTemperature(
-								getLocation()), getVolume() * 0.0000001 + getWaterVolume() * 0.000001);
+						//Planet.getPlanet(world).getDefaultAirTemperature(getLocation()), 
+						Planet.getPlanet(world).getClimate(getLocation()).getAreaTemperature(),
+						getVolume() * 0.0000001 + getWaterVolume() * 0.000001);
 	}
 
 	public void updatePressure() {

@@ -40,34 +40,34 @@ public class Climate {
 		double temp = 0;
 		switch (m) {
 		case PACKED_ICE:
-			temp = 220;
+			temp = -40;
 			break;
 		case ICE:
 		case FROSTED_ICE:
-			temp = 273.15;
+			temp = 0;
 			break;
 		case SNOW:
-			temp = 275;
+			temp = 0;
 			break;
 		case WATER:
 		case STATIONARY_WATER:
-			temp = 300;
+			temp = 30;
 			break;
 		case LEAVES:
 		case LEAVES_2:
-			temp = 300;
+			temp = 25;
 			break;
 		case GRASS:
-			temp = 305;
+			temp = 25;
 			break;
 		case DIRT:
-			temp = 310;
+			temp = 30;
 			break;
 		case COBBLESTONE:
 		case GRAVEL:
 		case FURNACE:
 		case COBBLESTONE_STAIRS:
-			temp = 325;
+			temp = 55;
 			break;
 		case SAND:
 		case STONE:
@@ -77,75 +77,79 @@ public class Climate {
 		case SANDSTONE:
 		case RED_SANDSTONE:
 		case STAINED_CLAY:
-			temp = 330;
+			temp = 60;
+			break;
+		case IRON_BLOCK:
+		case GOLD_BLOCK:
+			temp = 120;
 			break;
 		case FIRE:
 		case TORCH:
 		case BURNING_FURNACE:
-			temp = 1200;
+			temp = 500;
 			break;
 		case LAVA:
 		case STATIONARY_LAVA:
 			temp = 1400;
 			break;
 		default:
-			temp = 300.15;
+			temp = 27;
 			break;
 		}
-		return new Temperature(temp);
+		return Temperature.fromCelsius(temp);
 	}
 
 	public static Temperature getInertialTemperatureFor(Material m) {
 		double temp = 0;
 		switch (m) {
 		case PACKED_ICE:
-			temp = 175;
+			temp = -70;
 		case SNOW:
 		case ICE:
 		case FROSTED_ICE:
-			temp = 210;
+			temp = -30;
 			break;
 		case WATER:
 		case STATIONARY_WATER:
-			temp = 274;
+			temp = 1;
 			break;
 		case LEAVES:
 		case LEAVES_2:
-			temp = 280;
+			temp = 15;
 			break;
 		case GRASS:
-			temp = 280;
+			temp = 15;
 			break;
 		case DIRT:
-			temp = 288;
+			temp = 15;
 			break;
 		case COBBLESTONE:
 		case GRAVEL:
 		case FURNACE:
 		case COBBLESTONE_STAIRS:
-			temp = 288;
+			temp = 16;
 			break;
 		case SAND:
 		case STONE:
 		case SMOOTH_BRICK:
 		case DOUBLE_STEP:
 		case STEP:
-			temp = 290;
+			temp = 16;
 			break;
 		case FIRE:
 		case TORCH:
 		case BURNING_FURNACE:
-			temp = 1200;
+			temp = 500;
 			break;
 		case LAVA:
 		case STATIONARY_LAVA:
 			temp = 1400;
 			break;
 		default:
-			temp = 288.15;
+			temp = 15;
 			break;
 		}
-		return new Temperature(temp);
+		return Temperature.fromCelsius(temp);
 	}
 
 	Location location;

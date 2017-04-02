@@ -76,7 +76,9 @@ public class ClimateModule {
 	public void onBlockUpdate(Block block, Player p) {
 		Location l = block.getLocation().clone();
 		Planet planet = Planet.getPlanet(block.getWorld());
+		if(planet == null) return;
 		ClimateMap map = planet.getClimateMap(block.getWorld());
+		if(map == null) return;
 		l.setY(255);
 		Block b = l.getBlock();
 		while (b.getType() == Material.AIR && b.getLocation().getBlockY() > 46) {

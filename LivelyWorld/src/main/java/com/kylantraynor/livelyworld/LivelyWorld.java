@@ -3,6 +3,7 @@ package com.kylantraynor.livelyworld;
 import java.time.Instant;
 import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
@@ -15,7 +16,9 @@ import org.bukkit.block.BlockState;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.Horse.Variant;
 import org.bukkit.entity.Item;
@@ -32,6 +35,7 @@ import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.ItemDespawnEvent;
+import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
@@ -620,6 +624,26 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 		return false;
 	}
 
+	@EventHandler
+	public void onItemSpawn(ItemSpawnEvent event){
+		Item item = event.getEntity();
+		if(usingGravity){
+			List<Entity> ents = item.getNearbyEntities(1, 1, 1);
+			for(Entity e : ents){
+				if(e.getType() == EntityType.FALLING_BLOCK){
+					FallingBlock fb = (FallingBlock) e;
+					if(fb.getMaterial() == item.getItemStack().getType()){
+						if(!item.getLocation().getBlock().getType().isSolid()){
+							item.remove();
+							item.getLocation().getBlock().setType(fb.getMaterial());
+							item.getLocation().getBlock().setData(fb.getBlockData());
+						}
+					}
+				}
+			}
+		}
+	}
+	
 	@EventHandler
 	public void onItemDespawn(ItemDespawnEvent event) {
 		// log(Level.INFO, "Item has despawned!");

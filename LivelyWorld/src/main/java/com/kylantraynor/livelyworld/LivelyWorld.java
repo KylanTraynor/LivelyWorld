@@ -634,9 +634,19 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 					FallingBlock fb = (FallingBlock) e;
 					if(fb.getMaterial() == item.getItemStack().getType()){
 						if(!item.getLocation().getBlock().getType().isSolid()){
-							item.remove();
-							item.getLocation().getBlock().setType(fb.getMaterial());
-							item.getLocation().getBlock().setData(fb.getBlockData());
+							BukkitRunnable br = new BukkitRunnable(){
+
+								@Override
+								public void run() {
+									if(item != null){
+									item.getLocation().getBlock().breakNaturally();
+									item.getLocation().getBlock().setType(fb.getMaterial());
+									item.getLocation().getBlock().setData(fb.getBlockData());
+									item.remove();}
+								}
+								
+							};
+							br.runTaskLater(this, 10);
 						}
 					}
 				}

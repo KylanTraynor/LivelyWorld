@@ -628,7 +628,7 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 	public void onItemSpawn(ItemSpawnEvent event){
 		Item item = event.getEntity();
 		if(usingGravity){
-			List<Entity> ents = item.getNearbyEntities(1, 1, 1);
+			List<Entity> ents = item.getNearbyEntities(2, 2, 2);
 			for(Entity e : ents){
 				if(e.getType() == EntityType.FALLING_BLOCK){
 					FallingBlock fb = (FallingBlock) e;

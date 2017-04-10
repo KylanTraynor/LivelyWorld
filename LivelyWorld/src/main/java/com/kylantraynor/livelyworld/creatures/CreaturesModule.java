@@ -33,10 +33,12 @@ public class CreaturesModule {
 			public void run() {
 				for(World world : getPlugin().getServer().getWorlds()){
 					for(Chunk chunk : world.getLoadedChunks()){
+						double rdm = Math.random();
+						if(rdm >= 0.5) continue;
 						Entity[] entities = chunk.getEntities();
 						for(Entity e : entities){
 							if(isAnimal(e)){
-								if(Math.random() >= 0.1) continue;
+								if(rdm >= 0.1) continue;
 								Ageable animal = (Ageable) e;
 								boolean ate = false;
 								if(isEdibleBlock(e.getLocation().getBlock())){

@@ -105,6 +105,7 @@ public class CreaturesModule {
 	public boolean isAnimal(Entity e) {
 		if(e.getType() == EntityType.COW) return true;
 		if(e.getType() == EntityType.SHEEP) return true;
+		//if(e.getType() == EntityType.HORSE) return true;
 		return false;
 	}
 	
@@ -113,8 +114,10 @@ public class CreaturesModule {
 		if(block.getType() == Material.LONG_GRASS) return true;
 		if(block.getType() == Material.DOUBLE_PLANT) return true;
 		if(block.getType() == Material.LEAVES) return true;
+		if(block.getType() == Material.RED_ROSE) return true;
 		if(block.getType() == Material.LEAVES_2) return true;
 		if(block.getType() == Material.CROPS) return true;
+		if(block.getType() == Material.YELLOW_FLOWER) return true;
 		return false;
 	}
 	
@@ -124,6 +127,8 @@ public class CreaturesModule {
 		if(block.getType() == Material.LEAVES) return true;
 		if(block.getType() == Material.LEAVES_2) return true;
 		if(block.getType() == Material.CROPS) return true;
+		if(block.getType() == Material.RED_ROSE) return true;
+		if(block.getType() == Material.YELLOW_FLOWER) return true;
 		return false;
 	}
 

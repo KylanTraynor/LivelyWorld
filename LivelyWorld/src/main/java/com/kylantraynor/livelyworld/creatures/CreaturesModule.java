@@ -87,7 +87,7 @@ public class CreaturesModule {
 										}
 										//animal.setBreed(true);
 									}
-									animal.setHealth(Math.min(animal.getHealth() + 1, mxHealth));
+									animal.setHealth(Math.min(animal.getHealth() + 5, mxHealth));
 								} else {
 									animal.damage(1);
 								}

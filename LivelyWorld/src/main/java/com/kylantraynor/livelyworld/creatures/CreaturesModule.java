@@ -11,8 +11,7 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.entity.Ageable;
-import org.bukkit.entity.Cow;
+import org.bukkit.entity.Animals;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -24,9 +23,25 @@ public class CreaturesModule {
 
 	private LivelyWorld plugin;
 	private BukkitRunnable runnable;
+	private AnimalsHelper helper;
 
 	public void onEnable(LivelyWorld plugin) {
 		this.setPlugin(plugin);
+		
+		String packageName = this.getPlugin().getServer().getClass().getPackage().getName();
+        String version = packageName.substring(packageName.lastIndexOf('.') + 1);
+
+        try {
+            final Class<?> clazz = Class.forName("com.kylantraynor.livelyworld." + version + ".AnimalsHelperHandler");
+            // Check if we have a WildAnimalHandler class at that location.
+            if (AnimalsHelper.class.isAssignableFrom(clazz)) { // Make sure it actually implements WildAnimal
+                this.helper = (AnimalsHelper) clazz.getConstructor().newInstance(); // Set our handler
+            }
+        } catch (final Exception e) {
+            e.printStackTrace();
+            this.getPlugin().getLogger().warning("This CraftBukkit version is not supported. Auto-Breed will not work.");
+            this.helper = null;
+        }
 		this.runnable = new BukkitRunnable(){
 
 			@Override
@@ -38,7 +53,7 @@ public class CreaturesModule {
 						for(Entity e : entities){
 							if(isAnimal(e)){
 								if(Math.random() >= 0.25) continue;
-								Ageable animal = (Ageable) e;
+								Animals animal = (Animals) e;
 								boolean ate = false;
 								if(isEdibleBlock(e.getLocation().getBlock())){
 									Block b = e.getLocation().getBlock();
@@ -64,7 +79,10 @@ public class CreaturesModule {
 								if(ate == true){
 									double mxHealth = animal.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
 									if(animal.getHealth() >= mxHealth - 2 && animal.isAdult()){
-										animal.setBreed(true);
+										if(getHelper() != null){
+											getHelper().startLoveMode(animal);
+										}
+										//animal.setBreed(true);
 									}
 									animal.setHealth(Math.min(animal.getHealth() + 1, mxHealth));
 								} else {
@@ -78,6 +96,10 @@ public class CreaturesModule {
 			
 		};
 		this.runnable.runTaskTimer(getPlugin(), 10, 20 * 5);
+	}
+	
+	public AnimalsHelper getHelper(){
+		return this.helper;
 	}
 	
 	public boolean isAnimal(Entity e) {

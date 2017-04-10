@@ -54,6 +54,7 @@ public class CreaturesModule {
 							if(isAnimal(e)){
 								if(Math.random() >= 0.25) continue;
 								Animals animal = (Animals) e;
+								if(!animal.isAdult()) continue;
 								boolean ate = false;
 								if(isEdibleBlock(e.getLocation().getBlock())){
 									Block b = e.getLocation().getBlock();
@@ -78,7 +79,7 @@ public class CreaturesModule {
 								}
 								if(ate == true){
 									double mxHealth = animal.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
-									if(animal.getHealth() >= mxHealth - 2 && animal.isAdult()){
+									if(animal.getHealth() >= mxHealth - 2 && animal.canBreed()){
 										if(getHelper() != null){
 											if(!getHelper().isInLoveMode(animal)){
 												getHelper().startLoveMode(animal);

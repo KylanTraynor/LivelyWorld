@@ -80,7 +80,9 @@ public class CreaturesModule {
 									double mxHealth = animal.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
 									if(animal.getHealth() >= mxHealth - 2 && animal.isAdult()){
 										if(getHelper() != null){
-											getHelper().startLoveMode(animal);
+											if(!getHelper().isInLoveMode(animal)){
+												getHelper().startLoveMode(animal);
+											}
 										}
 										//animal.setBreed(true);
 									}

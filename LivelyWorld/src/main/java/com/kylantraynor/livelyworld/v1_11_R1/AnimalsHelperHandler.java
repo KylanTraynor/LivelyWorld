@@ -1,9 +1,13 @@
 package com.kylantraynor.livelyworld.v1_11_R1;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Animals;
+import org.bukkit.entity.Entity;
+import org.bukkit.util.Vector;
 import org.bukkit.craftbukkit.v1_11_R1.entity.CraftAnimals;
 import org.bukkit.craftbukkit.v1_11_R1.entity.CraftEntity;
 
@@ -54,4 +58,38 @@ public class AnimalsHelperHandler implements AnimalsHelper {
             throw new RuntimeException(x.toString());
         }
     }
+
+	@Override
+	public void moveTowardOthers(Animals animal) {
+		double dx = 0;
+		double dy = 0;
+		double dz = 0;
+		for(Entity e : animal.getNearbyEntities(16, 16, 16)){
+			if(e instanceof Animals){
+				dx += e.getLocation().getX() - animal.getLocation().getX();
+				dy += e.getLocation().getY() - animal.getLocation().getY();
+				dz += e.getLocation().getZ() - animal.getLocation().getZ();
+			}
+		}
+		Vector herdDir = new Vector(dx, dy, dz);
+		herdDir.normalize();
+		moveTo(animal, animal.getLocation().clone().add(herdDir), 1);
+	}
+
+	@Override
+	public void moveAwayFromOthers(Animals animal) {
+		double dx = 0;
+		double dy = 0;
+		double dz = 0;
+		for(Entity e : animal.getNearbyEntities(16, 16, 16)){
+			if(e instanceof Animals){
+				dx += e.getLocation().getX() - animal.getLocation().getX();
+				dy += e.getLocation().getY() - animal.getLocation().getY();
+				dz += e.getLocation().getZ() - animal.getLocation().getZ();
+			}
+		}
+		Vector herdDir = new Vector(dx, dy, dz);
+		herdDir.normalize();
+		moveTo(animal, animal.getLocation().clone().add(herdDir.multiply(-1.0)), 1);
+	}
 }

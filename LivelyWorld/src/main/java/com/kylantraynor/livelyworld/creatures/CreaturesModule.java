@@ -96,6 +96,7 @@ public class CreaturesModule {
 											if(!getHelper().isInLoveMode(animal)){
 												getHelper().startLoveMode(animal);
 											}
+											getHelper().moveTowardOthers(animal);
 										}
 										//animal.setBreed(true);
 									}
@@ -113,6 +114,9 @@ public class CreaturesModule {
 													}
 												}
 											}
+										}
+										if(!foundBetterPlace){
+											getHelper().moveAwayFromOthers(animal);
 										}
 									}
 									endangeredAnimals.put(animal.getUniqueId(), animal.getLocation());

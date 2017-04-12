@@ -25,6 +25,7 @@ import com.kylantraynor.livelyworld.LivelyWorld;
 
 public class CreaturesModule {
 
+	private boolean autobreed = false;
 	private LivelyWorld plugin;
 	private BukkitRunnable runnable;
 	private AnimalsHelper helper;
@@ -118,7 +119,9 @@ public class CreaturesModule {
 			}
 			
 		};
-		this.runnable.runTaskTimer(getPlugin(), 10, 20 * 5);
+		if(autobreed){
+			this.runnable.runTaskTimer(getPlugin(), 10, 20 * 5);
+		}
 	}
 	
 	protected boolean moveTowardFood(Animals animal) {

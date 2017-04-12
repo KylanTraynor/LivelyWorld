@@ -2,6 +2,7 @@ package com.kylantraynor.livelyworld.v1_11_R1;
 
 import java.lang.reflect.Field;
 
+import org.bukkit.Location;
 import org.bukkit.entity.Animals;
 import org.bukkit.craftbukkit.v1_11_R1.entity.CraftAnimals;
 import org.bukkit.craftbukkit.v1_11_R1.entity.CraftEntity;
@@ -21,6 +22,15 @@ public class AnimalsHelperHandler implements AnimalsHelper {
     public boolean isInLoveMode(Animals animal) {
         EntityAnimal entity = getEntityAnimal(animal);
         return entity.isInLove();
+    }
+    
+    public void moveTo(Animals animal, Location location, double speed) {
+    	EntityAnimal entity = getEntityAnimal(animal);
+    	try{
+    		entity.getNavigation().a(location.getX(), location.getY(), location.getZ(), speed);
+    	} catch (Exception x){
+    		throw new RuntimeException(x.toString());
+    	}
     }
 
     public void startLoveMode(Animals animal) {

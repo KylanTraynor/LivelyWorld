@@ -1,8 +1,11 @@
 package com.kylantraynor.livelyworld.creatures;
 
-import java.util.logging.Level;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.World;
@@ -24,6 +27,7 @@ public class CreaturesModule {
 	private LivelyWorld plugin;
 	private BukkitRunnable runnable;
 	private AnimalsHelper helper;
+	private Map<UUID, Location> endangeredAnimals = new HashMap<UUID, Location>();
 
 	public void onEnable(LivelyWorld plugin) {
 		this.setPlugin(plugin);
@@ -53,6 +57,14 @@ public class CreaturesModule {
 						for(Entity e : entities){
 							if(isAnimal(e)){
 								if(Math.random() >= 0.25) continue;
+								Location lastLoc = endangeredAnimals.get(e.getUniqueId());
+								if(lastLoc != null){
+									if(lastLoc.getBlock() == e.getLocation().getBlock()){
+										continue;
+									} else {
+										endangeredAnimals.remove(e.getUniqueId());
+									}
+								}
 								Animals animal = (Animals) e;
 								if(!animal.isAdult()) continue;
 								boolean ate = false;
@@ -90,6 +102,20 @@ public class CreaturesModule {
 									animal.setHealth(Math.min(animal.getHealth() + 5, mxHealth));
 								} else {
 									animal.damage(1);
+									if(getHelper() != null){
+										boolean foundBetterPlace = false;
+										for(int x = -3; x < 4; x++){
+											for(int z = -3; z < 4; z++){
+												for(int y = -2; y < 3; y++){
+													if(!foundBetterPlace && isEdibleBlock(animal.getLocation().getBlock().getRelative(x, y, z))){
+														getHelper().moveTo(animal, animal.getLocation().clone().add(x + 0.5, y + 1.5, z + 0.5), 1);
+														foundBetterPlace = true;
+													}
+												}
+											}
+										}
+									}
+									endangeredAnimals.put(animal.getUniqueId(), animal.getLocation());
 								}
 							}
 						}

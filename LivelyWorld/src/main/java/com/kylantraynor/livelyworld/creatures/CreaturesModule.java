@@ -19,6 +19,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
 
 import com.kylantraynor.livelyworld.LivelyWorld;
 
@@ -104,18 +105,7 @@ public class CreaturesModule {
 								} else {
 									animal.damage(1);
 									if(getHelper() != null){
-										boolean foundBetterPlace = false;
-										for(int x = -1; x < 2; x++){
-											for(int z = -1; z < 2; z++){
-												for(int y = -1; y < 2; y++){
-													if(!foundBetterPlace && isEdibleBlock(animal.getLocation().getBlock().getRelative(x, y, z))){
-														getHelper().moveTo(animal, animal.getLocation().clone().add(x + 0.5, y + 1.5, z + 0.5), 1);
-														foundBetterPlace = true;
-													}
-												}
-											}
-										}
-										if(!foundBetterPlace){
+										if(!moveTowardFood(animal)){
 											getHelper().moveAwayFromOthers(animal);
 										}
 									}
@@ -131,6 +121,29 @@ public class CreaturesModule {
 		this.runnable.runTaskTimer(getPlugin(), 10, 20 * 5);
 	}
 	
+	protected boolean moveTowardFood(Animals animal) {
+		Vector v = null;
+		for(int x = -3; x < 4; x++){
+			for(int z = -3; z < 4; z++){
+				for(int y = 2; y > -3; y--){
+					if(isEdibleBlock(animal.getLocation().getBlock().getRelative(x, y, z))){
+						Vector temp = animal.getLocation().clone().add(x, y, z).toVector();
+						if(v == null){
+							v = temp;
+							continue;
+						}
+						if(v.getBlockX() + v.getBlockY() + v.getBlockZ() > temp.getBlockX() + temp.getBlockY() + temp.getBlockZ()){
+							v = temp;
+						}
+					}
+				}
+			}
+		}
+		if(v == null) return false;
+		getHelper().moveTo(animal, animal.getLocation().clone().add(v), 1);
+		return true;
+	}
+
 	public AnimalsHelper getHelper(){
 		return this.helper;
 	}

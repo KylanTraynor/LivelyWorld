@@ -2,6 +2,7 @@ package com.kylantraynor.livelyworld.deterioration;
 
 import java.util.logging.Level;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -9,8 +10,10 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.material.MaterialData;
 
 import com.kylantraynor.livelyworld.LivelyWorld;
+import com.kylantraynor.livelyworld.events.BlockDeteriorateEvent;
 
 public class DeteriorationModule {
 
@@ -81,16 +84,21 @@ public class DeteriorationModule {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	private void trySpawnCobWeb(Block b) {
 		if (debug)
 			this.plugin.log(Level.INFO,
 					"Trying to spawn Cobweb at " + b.getLocation());
-		if (b.getLightFromSky() >= 8)
+		if (b.getLightFromSky() > 8)
 			return;
 		if (Math.random() * 100 <= 50 && b.getType() == Material.AIR) {
-			b.setType(Material.WEB);
-			if (debug)
-				this.plugin.log(Level.INFO, "Succesfully spawned Cobweb.");
+			BlockDeteriorateEvent event = new BlockDeteriorateEvent(b, DeteriorationCause.Age, new MaterialData(Material.WEB));
+			Bukkit.getPluginManager().callEvent(event);
+			
+			if(!event.isCancelled()){
+				b.setType(event.getTarget().getItemType());
+				b.setData(event.getTarget().getData());
+			}
 		}
 	}
 

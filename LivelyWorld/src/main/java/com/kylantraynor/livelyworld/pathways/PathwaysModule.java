@@ -1,5 +1,6 @@
 package com.kylantraynor.livelyworld.pathways;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Biome;
@@ -10,10 +11,13 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
+import org.bukkit.material.MaterialData;
 import org.bukkit.material.Stairs;
 import org.bukkit.material.Step;
 
 import com.kylantraynor.livelyworld.LivelyWorld;
+import com.kylantraynor.livelyworld.deterioration.DeteriorationCause;
+import com.kylantraynor.livelyworld.events.BlockDeteriorateEvent;
 
 public class PathwaysModule {
 
@@ -199,6 +203,8 @@ public class PathwaysModule {
 			}
 		} else if (b.getType() == Material.DIRT
 				&& (b.getData() == 1 || b.getData() == 2)) {
+			if (b.getRelative(BlockFace.UP).getType() == Material.RAILS)
+				return;
 			// Same for grassPath
 			if (Math.random() <= probabilityPath * multiplier) {
 				b.setType(Material.GRASS_PATH);
@@ -213,55 +219,73 @@ public class PathwaysModule {
 				return;
 			// Same for stairs
 			if (Math.random() <= probabilityCblStairs * multiplier) {
-				b.setType(Material.COBBLESTONE_STAIRS);
-				// Get the current state of the block
-				BlockState state = b.getState();
-				// Since the state has to be stairs, just get a stairs object
-				Stairs stairs = (Stairs) state.getData();
-				// For a value between 0 and 3...
-				switch ((int) (Math.random() * 4)) {
-				case 0:
-					// if it's 0, set the stairs to face north
-					stairs.setFacingDirection(BlockFace.NORTH);
-					break;
-				case 1:
-					// if it's 1, set the stairs to face east
-					stairs.setFacingDirection(BlockFace.EAST);
-					break;
-				case 2:
-					// if it's 2, set the stairs to face south
-					stairs.setFacingDirection(BlockFace.SOUTH);
-					break;
-				case 3:
-					// if it's 3, set the stairs to face west
-					stairs.setFacingDirection(BlockFace.WEST);
-					break;
-				}
-				// Update the data of the state
-				state.setData(stairs);
-				// Update the state of the block
-				state.update(false, false);
+				turnToCobbleStairs(b);
 			}
 		} else if (b.getType() == Material.COBBLESTONE_STAIRS) {
 			// Same for slabs
 			if (Math.random() <= probabilityCblStairs * multiplier) {
-				b.setType(Material.STEP);
-				// Get the state of the block
-				BlockState state = b.getState();
-				// Since it's a slab, cast it to a slab object
-				Step step = (Step) state.getData();
-				// Apply the cobblestone texture to the slab
-				step.setMaterial(Material.COBBLESTONE);
-				// Update the data of the state
-				state.setData(step);
-				// Update the state of the block
-				state.update(false, false);
+				turnToCobbleSlab(b);
 			}
 		} else if (b.getType() == Material.SNOW_BLOCK) {
 			b.setType(Material.SNOW);
 			b.setData((byte) 6);
 			b.getWorld().playSound(b.getLocation(), Sound.BLOCK_SNOW_BREAK, 1,
 					(float) ((Math.random() + 1) / 2));
+		}
+	}
+	
+	private void turnToCobbleStairs(Block b){
+		BlockDeteriorateEvent event = new BlockDeteriorateEvent(b, DeteriorationCause.Walking,
+				new MaterialData(Material.COBBLESTONE_STAIRS));
+		Bukkit.getPluginManager().callEvent(event);
+		
+		if(!event.isCancelled()){
+			b.setType(Material.COBBLESTONE_STAIRS);
+			// Get the current state of the block
+			BlockState state = b.getState();
+			// Since the state has to be stairs, just get a stairs object
+			Stairs stairs = (Stairs) state.getData();
+			// For a value between 0 and 3...
+			switch ((int) (Math.random() * 4)) {
+			case 0:
+				// if it's 0, set the stairs to face north
+				stairs.setFacingDirection(BlockFace.NORTH);
+				break;
+			case 1:
+				// if it's 1, set the stairs to face east
+				stairs.setFacingDirection(BlockFace.EAST);
+				break;
+			case 2:
+				// if it's 2, set the stairs to face south
+				stairs.setFacingDirection(BlockFace.SOUTH);
+				break;
+			case 3:
+				// if it's 3, set the stairs to face west
+				stairs.setFacingDirection(BlockFace.WEST);
+				break;
+			}
+			// Update the data of the state
+			state.setData(stairs);
+			// Update the state of the block
+			state.update(false, false);
+		}
+	}
+	
+	public void turnToCobbleSlab(Block b){
+		Step step = new Step();
+		step.setMaterial(Material.COBBLESTONE);
+		BlockDeteriorateEvent event = new BlockDeteriorateEvent(b, DeteriorationCause.Walking,
+				step);
+		Bukkit.getPluginManager().callEvent(event);
+		
+		if(!event.isCancelled()){
+			b.setType(Material.STEP);
+			// Get the state of the block
+			BlockState state = b.getState();
+			// Update the data of the state
+			state.setData(event.getTarget());
+			// Update the state of the block
+			state.update(false, false);
 		}
 	}
 

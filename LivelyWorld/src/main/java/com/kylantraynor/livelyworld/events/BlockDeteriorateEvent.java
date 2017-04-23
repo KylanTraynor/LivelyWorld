@@ -18,7 +18,7 @@ public class BlockDeteriorateEvent extends BlockEvent implements Cancellable{
 	public BlockDeteriorateEvent(Block theBlock, DeteriorationCause cause, MaterialData target) {
 		super(theBlock);
 		this.setCause(cause);
-		this.setTarget(target);
+		this.target = target;
 	}
 
 	@Override

@@ -185,6 +185,8 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 							if(worldRadiusX == 0 || worldRadiusZ == 0) return;
  							randomX = (int) Math.round(Math.random() * (worldRadiusX * 2) - worldRadiusX);
 							randomZ = (int) Math.round(Math.random() * (worldRadiusZ * 2) - worldRadiusZ);
+							randomX += worldCenter.getBlockX();
+							randomZ += worldCenter.getBlockZ();
 						} else {
 							return;
 						}

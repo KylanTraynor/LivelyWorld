@@ -44,7 +44,8 @@ public class SnowFallTask extends BukkitRunnable {
 			} else if (b.getRelative(BlockFace.DOWN).getType().isSolid()) {
 				b.setType(Material.SNOW);
 			} else if (b.getRelative(BlockFace.DOWN).getType() != Material.SIGN_POST
-					&& b.getRelative(BlockFace.DOWN).getType() != Material.SIGN) {
+					&& b.getRelative(BlockFace.DOWN).getType() != Material.SIGN
+					&& b.getRelative(BlockFace.DOWN).getType() == Material.RAILS) {
 				b.getRelative(BlockFace.DOWN).breakNaturally();
 				b.getRelative(BlockFace.DOWN).setType(Material.SNOW);
 			} else if (ClimateUtils.isWater(b.getRelative(BlockFace.DOWN))){

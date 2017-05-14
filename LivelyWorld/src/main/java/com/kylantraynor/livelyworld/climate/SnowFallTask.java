@@ -35,17 +35,21 @@ public class SnowFallTask extends BukkitRunnable {
 			module.updateBiome(b);
 			if (b.getRelative(BlockFace.DOWN).getType() == Material.SNOW) {
 				Block snow = b.getRelative(BlockFace.DOWN);
-				if (snow.getData() < 6) {
+				ClimateUtils.setSnowLayers(snow, ClimateUtils.getSnowLayers(snow) + 1);
+				/*if (snow.getData() < 6) {
 					snow.setData((byte) (snow.getData() + 1));
 				} else {
 					snow.setType(Material.SNOW_BLOCK);
-				}
+				}*/
 			} else if (b.getRelative(BlockFace.DOWN).getType().isSolid()) {
 				b.setType(Material.SNOW);
 			} else if (b.getRelative(BlockFace.DOWN).getType() != Material.SIGN_POST
 					&& b.getRelative(BlockFace.DOWN).getType() != Material.SIGN) {
 				b.getRelative(BlockFace.DOWN).breakNaturally();
 				b.getRelative(BlockFace.DOWN).setType(Material.SNOW);
+			} else if (ClimateUtils.isWater(b.getRelative(BlockFace.DOWN))){
+				b.getRelative(BlockFace.DOWN).setType(Material.FROSTED_ICE);
+				ClimateUtils.setSnowLayers(b, ClimateUtils.getSnowLayers(b) + 1);
 			}
 		} else {
 			SnowFallTask snowFallTask = new SnowFallTask(module, world,

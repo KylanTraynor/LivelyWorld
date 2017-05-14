@@ -1,6 +1,8 @@
 package com.kylantraynor.livelyworld.climate;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
 
 public class ClimateUtils {
 
@@ -33,5 +35,33 @@ public class ClimateUtils {
 			}
 		}
 		return Temperature.NaN;
+	}
+	
+	public static boolean isSnow(Block block){
+		if(block.getType() == Material.SNOW || block.getType() == Material.SNOW_BLOCK) return true;
+		return false;
+	}
+	
+	@SuppressWarnings("deprecation")
+	public static int getSnowLayers(Block block){
+		if(!isSnow(block)) return 0;
+		return block.getType() == Material.SNOW ? block.getData() + 1 : 8;
+	}
+	
+	public static void setSnowLayers(Block block, int layers){
+		if(layers == 0){
+			block.setType(Material.AIR);
+			block.setData((byte) 0);
+		} else if(layers == 8){
+			block.setType(Material.SNOW_BLOCK);
+			block.setData((byte) 0);
+		} else {
+			block.setType(Material.SNOW);
+			block.setData((byte) (layers - 1));
+		}
+	}
+
+	public static boolean isWater(Block block) {
+		return block.getType() == Material.WATER || block.getType() == Material.STATIONARY_WATER;
 	}
 }

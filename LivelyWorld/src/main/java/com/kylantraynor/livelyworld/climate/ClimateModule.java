@@ -10,6 +10,7 @@ import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -120,7 +121,10 @@ public class ClimateModule {
 				topBlock = topBlock.getRelative(BlockFace.UP);
 			}
 			if(map.getTemperatureAt(topBlock.getLocation()).getValue() > 273.15){
-				
+				ClimateUtils.setSnowLayers(topBlock, ClimateUtils.getSnowLayers(topBlock) - 1);
+			} else if (map.getClimateCellAt(topBlock.getLocation()).getWeather() != Weather.CLEAR){
+				SnowFallTask task = new SnowFallTask(this, topBlock.getWorld(), topBlock.getX(), topBlock.getY(), topBlock.getZ());
+				task.runTaskLater(this.getPlugin(), 1);
 			}
 		} else if ((b.getType() == Material.WATER || b.getType() == Material.STATIONARY_WATER)) {
 			for (int x = -2; x <= 2; x++) {

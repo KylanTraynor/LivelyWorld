@@ -15,6 +15,7 @@ import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;
@@ -24,6 +25,7 @@ import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
+import org.bukkit.material.MaterialData;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
@@ -36,6 +38,8 @@ import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.EnumWrappers.ResourcePackStatus;
 import com.kylantraynor.livelyworld.LivelyWorld;
 import com.kylantraynor.livelyworld.climate.Planet;
+import com.kylantraynor.livelyworld.deterioration.DeteriorationCause;
+import com.kylantraynor.livelyworld.events.BlockDeteriorateEvent;
 
 public class TidesModule {
 
@@ -54,7 +58,7 @@ public class TidesModule {
 
 	private ArrayList<Player> ignoredPlayers;
 	private boolean debug;
-	private Map<Material, Material> changingBlock = new HashMap<Material, Material>();
+	private Map<Material, MaterialData> changingBlock = new HashMap<Material, MaterialData>();
 
 	public List<String> ignoreTimeOuts = new ArrayList<String>();
 
@@ -67,12 +71,12 @@ public class TidesModule {
 		this.enabled = true;
 		this.ignoredPlayers = new ArrayList<Player>();
 
-		changingBlock.put(Material.COBBLESTONE, Material.MOSSY_COBBLESTONE);
-		changingBlock.put(Material.GRASS, Material.DIRT);
-		changingBlock.put(Material.DIRT, Material.SAND);
-		changingBlock.put(Material.MOSSY_COBBLESTONE, Material.GRAVEL);
-		changingBlock.put(Material.STONE, Material.COBBLESTONE);
-		changingBlock.put(Material.GRAVEL, Material.SAND);
+		changingBlock.put(Material.COBBLESTONE, new MaterialData(Material.MOSSY_COBBLESTONE));
+		changingBlock.put(Material.GRASS, new MaterialData(Material.DIRT));
+		changingBlock.put(Material.DIRT, new MaterialData(Material.SAND));
+		changingBlock.put(Material.MOSSY_COBBLESTONE, new MaterialData(Material.GRAVEL));
+		changingBlock.put(Material.STONE, new MaterialData(Material.COBBLESTONE));
+		changingBlock.put(Material.GRAVEL, new MaterialData(Material.SAND));
 
 		int interval = 20 * 30;
 		tidesTask = new TideDispatcherTask(this, interval);
@@ -235,9 +239,16 @@ public class TidesModule {
 				for (int z = -1; z <= 1; z++) {
 					if (Math.random() < 0.0001) {
 						Block b = location.clone().add(x, 0, z).getBlock();
-						Material newMaterial = changingBlock.get(b.getType());
+						BlockState state = b.getState();
+						MaterialData newMaterial = changingBlock.get(state.getData());
 						if(newMaterial != null){
-							b.setType(newMaterial);
+							BlockDeteriorateEvent event = new BlockDeteriorateEvent(b, 
+									DeteriorationCause.Erosion, newMaterial);
+							Bukkit.getPluginManager().callEvent(event);
+							if(!event.isCancelled()){
+								state.setData(newMaterial);
+								state.update();
+							}
 						}
 					}
 				}

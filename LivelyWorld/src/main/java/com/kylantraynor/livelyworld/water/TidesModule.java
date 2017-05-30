@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -77,6 +78,7 @@ public class TidesModule {
 		changingBlock.put(Material.MOSSY_COBBLESTONE, new MaterialData(Material.GRAVEL));
 		changingBlock.put(Material.STONE, new MaterialData(Material.COBBLESTONE));
 		changingBlock.put(Material.GRAVEL, new MaterialData(Material.SAND));
+		changingBlock.put(Material.SMOOTH_BRICK, new MaterialData(Material.SMOOTH_BRICK, (byte) 2));
 
 		int interval = 20 * 30;
 		tidesTask = new TideDispatcherTask(this, interval);
@@ -255,8 +257,9 @@ public class TidesModule {
 			}
 		}
 		for (Player p : Bukkit.getServer().getOnlinePlayers()) {
-			if (ignoredPlayers.contains(p))
-				continue;
+			if (ignoredPlayers.contains(p)) continue;
+			if(p.getGameMode() == GameMode.SPECTATOR) continue;
+			
 			if (location.getWorld().equals(p.getWorld())) {
 				if (maxRange != null) {
 					if (location.distanceSquared(p.getLocation()) <= maxRangeSquared

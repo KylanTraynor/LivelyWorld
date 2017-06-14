@@ -90,7 +90,10 @@
     		<artifactId>WorldBorder</artifactId>
     		<scope>provided</scope>
     	</dependency>
-    	
+    	<dependency>
+				<groupId>org.bukkit</groupId>
+				<artifactId>craftbukkit</artifactId>
+		</dependency>
 	</dependencies>
 	<dependencyManagement>
 		<dependencies>

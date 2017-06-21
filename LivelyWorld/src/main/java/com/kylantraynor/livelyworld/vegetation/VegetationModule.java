@@ -90,7 +90,9 @@ public class VegetationModule implements Listener {
 			}
 			break;
 		case LONG_GRASS:
-			updateGrass(b.getRelative(BlockFace.DOWN));
+			if(Math.random() < 0.1)
+				updateGrass(b.getRelative(BlockFace.DOWN));
+			break;
 		default:
 			break;
 		}

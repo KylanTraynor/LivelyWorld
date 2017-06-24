@@ -278,13 +278,16 @@ public class ClimateCell extends VCell {
 
 	private void updateHumidity() {
 		double saturation = (100 - getRelativeHumidity()) * 0.01;
-		humidity += oceanDepth * saturation * 0.1;
+		saturation = saturation < 0 ? 0 : saturation;
+		if(saturation > 0){
+			humidity += oceanDepth * saturation * 0.1;
+		}
 		if(weather == Weather.RAIN){
 			humidity -= 1;
 		} else if(weather == Weather.STORM){
-			humidity -= 2;
-		} else if(weather == Weather.THUNDERSTORM){
 			humidity -= 3;
+		} else if(weather == Weather.THUNDERSTORM){
+			humidity -= 6;
 		}
 		humidity = (humidity < 0 ? 0 : humidity);
 	}

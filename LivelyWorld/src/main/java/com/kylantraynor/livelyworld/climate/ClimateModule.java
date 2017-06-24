@@ -12,11 +12,8 @@ import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.BlockState;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -127,7 +124,7 @@ public class ClimateModule {
 		}
 		updateBiome(b);
 		ClimateCell c = map.getClimateCellAt(b.getLocation());
-		if(c.getWeather() == Weather.THUNDERSTORM && Math.random() > 0.80){
+		if(c.getWeather() == Weather.THUNDERSTORM && Math.random() >= 0.75){
 			spawnLightning(b);
 		}
 		if (b.getType() == Material.ICE) {
@@ -193,8 +190,7 @@ public class ClimateModule {
 	}
 
 	private void spawnLightning(Block b) {
-		Entity e = b.getWorld().spawnEntity(b.getLocation(), EntityType.LIGHTNING);
-		e.setSilent(true);
+		b.getLocation().getWorld().spigot().strikeLightning(b.getLocation(), false);
 		b.getWorld().playSound(b.getLocation(), Sound.ENTITY_LIGHTNING_IMPACT, 1, 100);
 		b.getWorld().playSound(b.getLocation().add(0, 255 - b.getLocation().getY(), 0), Sound.ENTITY_LIGHTNING_THUNDER, 1, 300);
 	}

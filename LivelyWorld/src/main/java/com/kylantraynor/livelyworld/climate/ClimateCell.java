@@ -22,6 +22,7 @@ public class ClimateCell extends VCell {
 	private double altitude = Double.NaN;
 	private double oceanDepth = Double.NaN;
 	private double cellArea = Double.NaN;
+	private Weather weather = Weather.CLEAR;
 
 	public ClimateCell() {
 		super();
@@ -50,12 +51,7 @@ public class ClimateCell extends VCell {
 	}
 
 	public Weather getWeather() {
-		if (world.hasStorm()) {
-			return Weather.RAIN;
-		} else if (world.isThundering()) {
-			return Weather.THUNDERSTORM;
-		}
-		return Weather.CLEAR;
+		return weather;
 	}
 
 	public double getSunRadiation() {
@@ -172,8 +168,21 @@ public class ClimateCell extends VCell {
 	public void update() {
 		updateTemperature();
 		updatePressure();
+		updateWeather();
 		updateMap();
 		updateWinds();
+	}
+
+	private void updateWeather() {
+		if(this.getLowAltitudePressure() > 1020){
+			weather = Weather.CLEAR;
+		} else if (world.hasStorm()) {
+			weather = Weather.RAIN;
+		} else if (world.isThundering()) {
+			weather = Weather.THUNDERSTORM;
+		} else {
+			weather = Weather.CLEAR;
+		}
 	}
 
 	private void updateWinds() {
@@ -198,5 +207,9 @@ public class ClimateCell extends VCell {
 		this.temperature = getTemperature().bringTo(Planet.getPlanet(world).getDefaultAirTemperature(getLocation()), 0);
 		updatePressure();
 		updateMap();
+	}
+
+	public void setWeather(Weather weather) {
+		this.weather = weather;
 	}
 }

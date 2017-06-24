@@ -6,6 +6,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.WeatherType;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
@@ -13,6 +15,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -54,6 +57,31 @@ public class ClimateModule {
 							p.getClimateMap(w).randomCellUpdate();
 					}
 				}
+				for (Player p : Bukkit.getServer().getOnlinePlayers()){
+					Planet pl = Planet.getPlanet(p.getWorld());
+					if(pl == null) continue;
+					ClimateMap map = pl.getClimateMap(p.getWorld());
+					if(map == null) continue;
+					ClimateCell c = map.getClimateCellAt(p.getLocation());
+					switch (c.getWeather()){
+					case CLEAR:
+						p.setPlayerWeather(WeatherType.CLEAR);
+						break;
+					case OVERCAST:
+						break;
+					case RAIN:
+						p.setPlayerWeather(WeatherType.DOWNFALL);
+						break;
+					case STORM:
+						p.setPlayerWeather(WeatherType.DOWNFALL);
+						break;
+					case THUNDERSTORM:
+						p.setPlayerWeather(WeatherType.DOWNFALL);
+						break;
+					default:
+						break;
+					}
+				}
 			}
 
 		};
@@ -86,6 +114,10 @@ public class ClimateModule {
 			b = b.getRelative(BlockFace.DOWN);
 		}
 		updateBiome(b);
+		ClimateCell c = map.getClimateCellAt(b.getLocation());
+		if(c.getWeather() == Weather.THUNDERSTORM && Math.random() > 0.80){
+			spawnLightning(b);
+		}
 		if (b.getType() == Material.ICE) {
 			switch (b.getBiome()) {
 			case FROZEN_OCEAN:
@@ -133,7 +165,6 @@ public class ClimateModule {
 					Location loc = b.getLocation();
 					loc.add(x, 0, z);
 					if (loc.getBlock().getType() == Material.ICE) {
-						ClimateChunk c = ClimateChunk.getAt(loc);
 						if (c.getTemperature().getValue() > 273.15
 								&& b.getLocation().getY() <= 60) {
 							if (hasBiomeWithin(b.getLocation(), Biome.OCEAN, 5)) {
@@ -147,6 +178,12 @@ public class ClimateModule {
 				}
 			}
 		}
+	}
+
+	private void spawnLightning(Block b) {
+		b.getWorld().spawnEntity(b.getLocation(), EntityType.LIGHTNING);
+		b.getWorld().playSound(b.getLocation(), Sound.ENTITY_LIGHTNING_IMPACT, 1, 100);
+		b.getWorld().playSound(b.getLocation(), Sound.ENTITY_LIGHTNING_THUNDER, 1, 300);
 	}
 
 	private boolean hasBiomeWithin(Location location, Biome biome, int i) {
@@ -173,6 +210,27 @@ public class ClimateModule {
 					+ "/livelyworld climate get <property>");
 		} else if (args.length >= 2) {
 			switch (args[1].toUpperCase()) {
+			case "SET":
+				if(args.length == 2){
+					sender.sendMessage(ChatColor.GRAY + "/livelyworld climate set Weather <weather>");
+					return;
+				}
+				switch(args[3].toUpperCase()){
+				case "WEATHER":
+					Player p = (Player) sender;
+					Planet pl = Planet.getPlanet(p.getWorld());
+					if(pl == null) return;
+					ClimateMap map = pl.getClimateMap(p.getWorld());
+					if(map == null) return;
+					ClimateCell c = map.getClimateCellAt(p.getLocation());
+					try{
+						c.setWeather(Weather.valueOf(args[4].toUpperCase()));
+					} catch (Exception e){
+						c.setWeather(Weather.CLEAR);
+					}
+					break;
+				}
+				break;
 			case "GET":
 				if (args.length == 2) {
 					sender.sendMessage(ChatColor.GRAY

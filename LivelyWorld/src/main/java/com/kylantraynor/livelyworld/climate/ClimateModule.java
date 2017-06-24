@@ -228,7 +228,7 @@ public class ClimateModule {
 					sender.sendMessage(ChatColor.GRAY + "/livelyworld climate set Weather <weather>");
 					return;
 				}
-				switch(args[3].toUpperCase()){
+				switch(args[2].toUpperCase()){
 				case "WEATHER":
 					Player p = (Player) sender;
 					Planet pl = Planet.getPlanet(p.getWorld());
@@ -247,7 +247,7 @@ public class ClimateModule {
 						return;
 					}
 					try{
-						c.setWeather(Weather.valueOf(args[4].toUpperCase()));
+						c.setWeather(Weather.valueOf(args[3].toUpperCase()));
 					} catch (Exception e){
 						c.setWeather(Weather.CLEAR);
 					}

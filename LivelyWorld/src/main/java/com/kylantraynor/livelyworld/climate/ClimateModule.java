@@ -124,7 +124,7 @@ public class ClimateModule {
 		}
 		updateBiome(b);
 		ClimateCell c = map.getClimateCellAt(b.getLocation());
-		if(c.getWeather() == Weather.THUNDERSTORM && Math.random() >= 0.75){
+		if(c.getWeather() == Weather.THUNDERSTORM && Math.random() <= (((double) Bukkit.getOnlinePlayers().size()) / Math.max(c.getPlayersWithin().length, 1))){
 			spawnLightning(b);
 		}
 		if (b.getType() == Material.ICE) {

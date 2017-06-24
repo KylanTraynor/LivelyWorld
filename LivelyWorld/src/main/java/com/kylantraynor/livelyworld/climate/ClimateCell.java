@@ -1,7 +1,12 @@
 package com.kylantraynor.livelyworld.climate;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.entity.Player;
 
 import com.kylantraynor.livelyworld.hooks.HookManager;
 import com.kylantraynor.voronoi.VCell;
@@ -236,7 +241,7 @@ public class ClimateCell extends VCell {
 		}
 		double dp = lowestPressure.getHighAltitudePressure() - this.getHighAltitudePressure();
 		if(dp < 0){
-			double transfer = ClimateUtils.getGasAmount(Math.abs(dp), 10, new Temperature(getTemperature().getValue() * 0.9));
+			double transfer = ClimateUtils.getGasAmount(Math.abs(dp), getHighVolume(), new Temperature(getTemperature().getValue() * 0.9));
 			transfer = Math.min(transfer, getAmountHigh());
 			lowestPressure.addHighAmount(transfer);
 			airAmountHigh = Math.max(getAmountHigh() - transfer, 0);
@@ -260,7 +265,7 @@ public class ClimateCell extends VCell {
 
 	public double getAmountHigh() {
 		if(Double.isNaN(airAmountHigh) || airAmountHigh < 0){
-			airAmountHigh = ClimateUtils.getGasAmount(1015, 10, new Temperature(273.15));
+			airAmountHigh = ClimateUtils.getGasAmount(900, getHighVolume(), new Temperature(273.15));
 		}
 		if(airAmountHigh < 0 ) airAmountHigh = 0;
 		return airAmountHigh;
@@ -337,5 +342,17 @@ public class ClimateCell extends VCell {
 
 	public double getHumidity() {
 		return humidity;
+	}
+	
+	public Player[] getPlayersWithin(){
+		List<Player> result = new ArrayList<Player>();
+		for(Player p : Bukkit.getOnlinePlayers()){
+			if(world == p.getWorld()){
+				if(isInside(new VectorXZ((float)p.getLocation().getX(), (float)p.getLocation().getZ()))){
+					result.add(p);
+				}
+			}
+		}
+		return result.toArray(new Player[result.size()]);
 	}
 }

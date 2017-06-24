@@ -15,6 +15,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -181,9 +182,10 @@ public class ClimateModule {
 	}
 
 	private void spawnLightning(Block b) {
-		b.getWorld().spawnEntity(b.getLocation(), EntityType.LIGHTNING);
+		Entity e = b.getWorld().spawnEntity(b.getLocation(), EntityType.LIGHTNING);
+		e.setSilent(true);
 		b.getWorld().playSound(b.getLocation(), Sound.ENTITY_LIGHTNING_IMPACT, 1, 100);
-		b.getWorld().playSound(b.getLocation(), Sound.ENTITY_LIGHTNING_THUNDER, 1, 300);
+		b.getWorld().playSound(b.getLocation().add(0, 255 - b.getLocation().getY(), 0), Sound.ENTITY_LIGHTNING_THUNDER, 1, 300);
 	}
 
 	private boolean hasBiomeWithin(Location location, Biome biome, int i) {

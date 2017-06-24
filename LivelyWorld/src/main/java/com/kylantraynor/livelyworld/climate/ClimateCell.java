@@ -178,6 +178,7 @@ public class ClimateCell extends VCell {
 
 	private void updateWinds() {
 		for(ClimateCell c : this.getNeighbours()){
+			if(c == null) continue;
 			double dt = c.getTemperature().getValue() - this.getTemperature().getValue();
 			if(dt < 0){
 				

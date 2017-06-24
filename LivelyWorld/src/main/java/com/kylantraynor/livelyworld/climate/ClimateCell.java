@@ -172,9 +172,18 @@ public class ClimateCell extends VCell {
 	public void update() {
 		updateTemperature();
 		updatePressure();
+		updateHumidity();
 		updateWeather();
 		updateMap();
 		updateWinds();
+	}
+
+	private void updateHumidity() {
+		double saturation = (100 - getRelativeHumidity()) * 0.01;
+		humidity += oceanDepth * saturation * 0.1;
+		if(weather != Weather.CLEAR){
+			humidity -= 0.1;
+		}
 	}
 
 	private void updateWeather() {

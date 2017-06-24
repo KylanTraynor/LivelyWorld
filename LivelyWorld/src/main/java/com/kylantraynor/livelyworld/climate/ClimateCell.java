@@ -264,11 +264,11 @@ public class ClimateCell extends VCell {
 		double saturation = (100 - getRelativeHumidity()) * 0.01;
 		humidity += oceanDepth * saturation * 0.1;
 		if(weather == Weather.RAIN){
-			humidity -= 0.1;
+			humidity -= 0.5;
 		} else if(weather == Weather.STORM){
-			humidity -= 0.2;
+			humidity -= 1;
 		} else if(weather == Weather.THUNDERSTORM){
-			humidity -= 0.3;
+			humidity -= 1.5;
 		}
 		humidity = (humidity < 0 ? 0 : humidity);
 	}
@@ -278,6 +278,8 @@ public class ClimateCell extends VCell {
 			weather = Weather.THUNDERSTORM;
 		} else if (getRelativeHumidity() >= 55 + (Math.random() * 45)) {
 			weather = Weather.RAIN;
+		} else if (getRelativeHumidity() >= 99){
+			weather = Weather.STORM;
 		}else {
 			weather = Weather.CLEAR;
 		}

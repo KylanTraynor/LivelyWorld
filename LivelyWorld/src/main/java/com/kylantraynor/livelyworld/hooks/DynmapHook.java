@@ -136,7 +136,7 @@ public class DynmapHook {
 			sb.append("<br />Altitude: " + (int) c.getAltitude() + " m");
 			sb.append("<br />~DEBUG~");
 			sb.append("<br />Air Volume: " + (int) c.getAirVolumeOnBlock() + " m3");
-			sb.append("<br />Air Particles: " + (int) c.getAmountOnBlock() + " Mmoles");
+			sb.append("<br />Air Particles: " + (int) c.getAmountOnBlock() + " moles");
 			weather.setDescription(sb.toString());
 			markerList.put(id, weather);
 			

@@ -16,6 +16,7 @@ public class ClimateCell extends VCell {
 	private double airVolume = Double.NaN;
 	private Long airAmount = null;
 	private Long highAirAmount = null;
+	private double humidity = 6.4;
 	private double airAmountOnBlock = Double.NaN;
 	private Temperature temperature;
 	private ClimateMap map;
@@ -23,6 +24,7 @@ public class ClimateCell extends VCell {
 	private double oceanDepth = Double.NaN;
 	private double cellArea = Double.NaN;
 	private Weather weather = Weather.CLEAR;
+	private double humidityMultiplier;
 
 	public ClimateCell() {
 		super();
@@ -82,6 +84,7 @@ public class ClimateCell extends VCell {
 		if (temperature != null)
 			return temperature;
 		temperature = getBaseTemperature();
+		humidityMultiplier = Double.NaN;
 		return temperature;
 	}
 
@@ -158,6 +161,7 @@ public class ClimateCell extends VCell {
 						//Planet.getPlanet(world).getDefaultAirTemperature(getLocation()), 
 						Planet.getPlanet(world).getClimate(getLocation()).getAreaTemperature(),
 						getAirVolumeOnBlock() * 0.01 + getWaterVolumeOnBlock());
+		humidityMultiplier = Double.NaN;
 	}
 
 	public void updatePressure() {
@@ -178,11 +182,24 @@ public class ClimateCell extends VCell {
 			weather = Weather.CLEAR;
 		} else if (world.hasStorm()) {
 			weather = Weather.RAIN;
-		} else if (world.isThundering()) {
+		} else if (getTemperature().isCelsiusAbove(30) && getRelativeHumidity() > 75) {
 			weather = Weather.THUNDERSTORM;
 		} else {
 			weather = Weather.CLEAR;
 		}
+	}
+	
+	private void preCalcHumidity(){
+		double e = Math.exp((17.67 * (getTemperature().getValue() - 273.15))/(getTemperature().getValue() - 30));
+		double divider = e * 13.25;
+		humidityMultiplier = getTemperature().getValue() / divider;
+	}
+
+	public double getRelativeHumidity() {
+		if(Double.isNaN(humidityMultiplier)){
+			preCalcHumidity();
+		}
+		return humidity * humidityMultiplier;
 	}
 
 	private void updateWinds() {
@@ -211,5 +228,9 @@ public class ClimateCell extends VCell {
 
 	public void setWeather(Weather weather) {
 		this.weather = weather;
+	}
+
+	public double getHumidity() {
+		return humidity;
 	}
 }

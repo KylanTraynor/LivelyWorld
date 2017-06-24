@@ -30,6 +30,7 @@ public class ClimateModule {
 	private final int cellUpdates = 1;
 
 	private BukkitRunnable climateUpdater;
+	private BukkitRunnable weatherUpdater;
 
 	static final String MessageHeader = ChatColor.GOLD + "[" + ChatColor.WHITE
 			+ "Climate" + ChatColor.GOLD + "] " + ChatColor.WHITE;
@@ -46,18 +47,10 @@ public class ClimateModule {
 			this.plugin.log(Level.INFO, "Generated climate maps for planet "
 					+ p.getName() + ".");
 		}
-
-		climateUpdater = new BukkitRunnable() {
+		weatherUpdater = new BukkitRunnable() {
 
 			@Override
 			public void run() {
-				for (World w : Bukkit.getServer().getWorlds()) {
-					Planet p = Planet.getPlanet(w);
-					if (p != null) {
-						for(int i = 0; i < cellUpdates; i++)
-							p.getClimateMap(w).randomCellUpdate();
-					}
-				}
 				for (Player p : Bukkit.getServer().getOnlinePlayers()){
 					Planet pl = Planet.getPlanet(p.getWorld());
 					if(pl == null) continue;
@@ -81,6 +74,23 @@ public class ClimateModule {
 						break;
 					default:
 						break;
+					}
+				}
+			}
+			
+		};
+		
+		weatherUpdater.runTaskTimer(plugin, 20L, 40L);
+		
+		climateUpdater = new BukkitRunnable() {
+
+			@Override
+			public void run() {
+				for (World w : Bukkit.getServer().getWorlds()) {
+					Planet p = Planet.getPlanet(w);
+					if (p != null) {
+						for(int i = 0; i < cellUpdates; i++)
+							p.getClimateMap(w).randomCellUpdate();
 					}
 				}
 			}
@@ -221,15 +231,26 @@ public class ClimateModule {
 				case "WEATHER":
 					Player p = (Player) sender;
 					Planet pl = Planet.getPlanet(p.getWorld());
-					if(pl == null) return;
+					if(pl == null) {
+						sender.sendMessage(ChatColor.RED + "This world doesn't have a climate map.");
+						return;
+					}
 					ClimateMap map = pl.getClimateMap(p.getWorld());
-					if(map == null) return;
+					if(map == null) {
+						sender.sendMessage(ChatColor.RED + "This world doesn't have a climate map.");
+						return;
+					}
 					ClimateCell c = map.getClimateCellAt(p.getLocation());
+					if(c == null){
+						sender.sendMessage(ChatColor.RED + "There is no climate cell here.");
+						return;
+					}
 					try{
 						c.setWeather(Weather.valueOf(args[4].toUpperCase()));
 					} catch (Exception e){
 						c.setWeather(Weather.CLEAR);
 					}
+					sender.sendMessage(ChatColor.GREEN + "Weather has been set to " + c.getWeather() + " in this cell.");
 					break;
 				}
 				break;

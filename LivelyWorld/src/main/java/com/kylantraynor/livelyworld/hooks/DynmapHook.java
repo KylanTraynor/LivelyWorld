@@ -129,16 +129,17 @@ public class DynmapHook {
 			}
 			StringBuilder sb = new StringBuilder();
 			sb.append("Weather: " + c.getWeather().toString().toLowerCase());
-			sb.append("<br />Temperature: " + c.getTemperature().toString("C")
-					+ "/" + c.getTemperature().toString("F"));
+			sb.append("<br />Temperature: " + c.getTemperature().toString("C") + "/" + c.getTemperature().toString("F"));
 			sb.append("<br />Humidity: " + (int) c.getRelativeHumidity() + "%");
-			sb.append("<br />Pressure: " + (int) c.getLowAltitudePressure()
-					+ " hPa");
+			sb.append("<br />Pressure: " + (int) c.getLowAltitudePressure() + " hPa");
 			sb.append("<br />Altitude: " + (int) c.getAltitude() + " m");
+			
 			sb.append("<br />~DEBUG~");
-			sb.append("<br />Water Vapor amount: " + (int) c.getHumidity() + "g/m3");
+			sb.append("<br />Water Vapor amount: " + (int) c.getHumidity() + " g/m3");
 			sb.append("<br />Air Volume: " + (int) c.getAirVolumeOnBlock() + " m3");
 			sb.append("<br />Air Particles: " + (int) c.getAmountOnBlock() + " moles");
+			sb.append("<br />High Air Particles: " + (int) c.getAmountHigh() + " moles");
+			sb.append("<br />High Air Pressure: " + (int) c.getHighAltitudePressure() + " hPa");
 			weather.setDescription(sb.toString());
 			markerList.put(id, weather);
 			

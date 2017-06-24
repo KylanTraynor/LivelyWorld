@@ -40,6 +40,10 @@ public class ClimateCell extends VCell {
 		return result;
 	}
 
+	public double getHighVolume(){
+		return 10;
+	}
+	
 	public Location getLocation() {
 		return new Location(world, (double) getSite().getX(), getAltitude(),
 				(double) getSite().getZ());
@@ -142,14 +146,14 @@ public class ClimateCell extends VCell {
 
 	public double getLowAltitudePressure() {
 		if (Double.isNaN(lowAltitudePressure))
-			lowAltitudePressure = lowAltitudePressure = ClimateUtils.getGasPressure(getAirVolumeOnBlock(), getAmountOnBlock(), getTemperature());
+			lowAltitudePressure = ClimateUtils.getGasPressure(getAirVolumeOnBlock(), getAmountOnBlock(), getTemperature());
 		if(lowAltitudePressure < 0) lowAltitudePressure = 0;
 		return lowAltitudePressure;
 	}
 
 	public double getHighAltitudePressure() {
 		if(Double.isNaN(highAltitudePressure)){
-			highAltitudePressure = ClimateUtils.getGasPressure(10, getAmountHigh(), new Temperature(getTemperature().getValue() * 0.9));
+			highAltitudePressure = ClimateUtils.getGasPressure(getHighVolume(), getAmountHigh(), new Temperature(getTemperature().getValue() * 0.9));
 		}
 		if(highAltitudePressure < 0) highAltitudePressure = 0;
 		return highAltitudePressure;
@@ -166,7 +170,7 @@ public class ClimateCell extends VCell {
 				.bringTo(
 						//Planet.getPlanet(world).getDefaultAirTemperature(getLocation()), 
 						Planet.getPlanet(world).getClimate(getLocation()).getAreaTemperature(),
-						getAirVolumeOnBlock() * 0.01 + getWaterVolumeOnBlock());
+						getAirVolumeOnBlock() * 0.01 + getWaterVolumeOnBlock() + getHumidity());
 		humidityMultiplier = Double.NaN;
 		highAltitudePressure = Double.NaN;
 		lowAltitudePressure = Double.NaN;
@@ -180,14 +184,14 @@ public class ClimateCell extends VCell {
 	private void moveVertically() {
 		double dp = getLowAltitudePressure() - getHighAltitudePressure();
 		if(dp > 0){
-			double transfer = ClimateUtils.getGasAmount(dp/2, getAirVolumeOnBlock(), getTemperature());
+			double transfer = ClimateUtils.getGasAmount(Math.abs(dp/2), getAirVolumeOnBlock(), getTemperature());
 			transfer = Math.min(transfer, getAmountOnBlock());
 			airAmountOnBlock = Math.max(getAmountOnBlock() - transfer, 0);
 			airAmountHigh = Math.max(getAmountHigh() + transfer, 0);
 			lowAltitudePressure = Double.NaN;
 			highAltitudePressure = Double.NaN;
 		} else if(dp < 0) {
-			double transfer = ClimateUtils.getGasAmount(-dp/2, 10, new Temperature(getTemperature().getValue() * 0.9));
+			double transfer = ClimateUtils.getGasAmount(Math.abs(dp/2), getHighVolume(), new Temperature(getTemperature().getValue() * 0.9));
 			transfer = Math.min(transfer, getAmountHigh());
 			airAmountHigh = Math.max(getAmountHigh() - transfer, 0);
 			airAmountOnBlock = Math.max(getAmountOnBlock() + transfer, 0);
@@ -207,13 +211,16 @@ public class ClimateCell extends VCell {
 		double dp = lowestPressure.getLowAltitudePressure() - this.getLowAltitudePressure();
 		if(dp < 0){
 			double humidityRatio = getHumidity() / getAmountOnBlock();
-			double transfer = ClimateUtils.getGasAmount(dp / 4, getAirVolumeOnBlock(), getTemperature());
+			double transfer = ClimateUtils.getGasAmount(Math.abs(dp / 4), getAirVolumeOnBlock(), getTemperature());
 			transfer = Math.min(transfer, getAmountOnBlock());
 			double humidityTransfer = Math.max(transfer * humidityRatio, getHumidity());
+			if(lowestPressure.getRelativeHumidity() <= 99){
+				lowestPressure.addHumidity(humidityTransfer);
+				humidity = Math.max(getHumidity() - humidityTransfer, 0);
+			}
 			lowestPressure.addAmount(transfer);
-			lowestPressure.addHumidity(humidityTransfer);
 			airAmountOnBlock = Math.max(getAmountOnBlock() - transfer, 0);
-			humidity = Math.max(getHumidity() - humidityTransfer, 0);
+			
 			lowAltitudePressure = Double.NaN;
 			
 		}
@@ -229,7 +236,7 @@ public class ClimateCell extends VCell {
 		}
 		double dp = lowestPressure.getHighAltitudePressure() - this.getHighAltitudePressure();
 		if(dp < 0){
-			double transfer = ClimateUtils.getGasAmount(-dp, 10, new Temperature(getTemperature().getValue() * 0.9));
+			double transfer = ClimateUtils.getGasAmount(Math.abs(dp), 10, new Temperature(getTemperature().getValue() * 0.9));
 			transfer = Math.min(transfer, getAmountHigh());
 			lowestPressure.addHighAmount(transfer);
 			airAmountHigh = Math.max(getAmountHigh() - transfer, 0);
@@ -251,7 +258,7 @@ public class ClimateCell extends VCell {
 		humidity = Math.max(getHumidity() + transfer, 0);
 	}
 
-	private double getAmountHigh() {
+	public double getAmountHigh() {
 		if(Double.isNaN(airAmountHigh) || airAmountHigh < 0){
 			airAmountHigh = ClimateUtils.getGasAmount(1015, 10, new Temperature(273.15));
 		}
@@ -273,11 +280,11 @@ public class ClimateCell extends VCell {
 		double saturation = (100 - getRelativeHumidity()) * 0.01;
 		humidity += oceanDepth * saturation * 0.1;
 		if(weather == Weather.RAIN){
-			humidity -= 0.5;
-		} else if(weather == Weather.STORM){
 			humidity -= 1;
+		} else if(weather == Weather.STORM){
+			humidity -= 2;
 		} else if(weather == Weather.THUNDERSTORM){
-			humidity -= 1.5;
+			humidity -= 3;
 		}
 		humidity = (humidity < 0 ? 0 : humidity);
 	}

@@ -142,7 +142,7 @@ public class ClimateCell extends VCell {
 
 	public double getLowAltitudePressure() {
 		if (Double.isNaN(lowAltitudePressure))
-			lowAltitudePressure = getBasePressure();
+			lowAltitudePressure = lowAltitudePressure = ClimateUtils.getGasPressure(getAirVolumeOnBlock(), getAmountOnBlock(), getTemperature());
 		if(lowAltitudePressure < 0) lowAltitudePressure = 0;
 		return lowAltitudePressure;
 	}
@@ -169,6 +169,7 @@ public class ClimateCell extends VCell {
 						getAirVolumeOnBlock() * 0.01 + getWaterVolumeOnBlock());
 		humidityMultiplier = Double.NaN;
 		highAltitudePressure = Double.NaN;
+		lowAltitudePressure = Double.NaN;
 	}
 
 	public void updatePressure() {
@@ -183,11 +184,15 @@ public class ClimateCell extends VCell {
 			transfer = Math.min(transfer, getAmountOnBlock());
 			airAmountOnBlock = Math.max(getAmountOnBlock() - transfer, 0);
 			airAmountHigh = Math.max(getAmountHigh() + transfer, 0);
-		} else {
-			double transfer = ClimateUtils.getGasAmount(dp/2, 10, new Temperature(getTemperature().getValue() * 0.9));
+			lowAltitudePressure = Double.NaN;
+			highAltitudePressure = Double.NaN;
+		} else if(dp < 0) {
+			double transfer = ClimateUtils.getGasAmount(-dp/2, 10, new Temperature(getTemperature().getValue() * 0.9));
 			transfer = Math.min(transfer, getAmountHigh());
 			airAmountHigh = Math.max(getAmountHigh() - transfer, 0);
 			airAmountOnBlock = Math.max(getAmountOnBlock() + transfer, 0);
+			lowAltitudePressure = Double.NaN;
+			highAltitudePressure = Double.NaN;
 		}
 	}
 	
@@ -209,6 +214,8 @@ public class ClimateCell extends VCell {
 			lowestPressure.addHumidity(humidityTransfer);
 			airAmountOnBlock = Math.max(getAmountOnBlock() - transfer, 0);
 			humidity = Math.max(getHumidity() - humidityTransfer, 0);
+			lowAltitudePressure = Double.NaN;
+			
 		}
 	}
 	
@@ -226,15 +233,18 @@ public class ClimateCell extends VCell {
 			transfer = Math.min(transfer, getAmountHigh());
 			lowestPressure.addHighAmount(transfer);
 			airAmountHigh = Math.max(getAmountHigh() - transfer, 0);
+			highAltitudePressure = Double.NaN;
 		}
 	}
 
 	private void addHighAmount(double transfer) {
 		airAmountHigh = Math.max(getAmountHigh() + transfer, 0);
+		highAltitudePressure = Double.NaN;
 	}
 
 	private void addAmount(double transfer) {
 		airAmountOnBlock = Math.max(getAmountOnBlock() + transfer, 0);
+		lowAltitudePressure = Double.NaN;
 	}
 	
 	private void addHumidity(double transfer) {
@@ -251,7 +261,6 @@ public class ClimateCell extends VCell {
 
 	public void update() {
 		updateTemperature();
-		updatePressure();
 		moveVertically();
 		moveLowAir();
 		moveHighAir();

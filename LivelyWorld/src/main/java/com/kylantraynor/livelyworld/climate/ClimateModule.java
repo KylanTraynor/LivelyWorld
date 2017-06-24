@@ -92,7 +92,7 @@ public class ClimateModule {
 				
 				//ClimateChunk c = ClimateChunk.getAt(b.getLocation());
 				if (map.getTemperatureAt(b.getLocation()).getValue() > 273.15
-						&& b.getLocation().getY() <= 60) {
+						&& b.getLocation().getY() <= 49) {
 					if (hasBiomeWithin(b.getLocation(), Biome.OCEAN, 5)) {
 						b.setBiome(Biome.OCEAN);
 					} else {
@@ -412,12 +412,12 @@ public class ClimateModule {
 			case TAIGA_COLD_HILLS:
 				block.setBiome(Biome.TAIGA_HILLS);
 				break;
-			case TAIGA:
+			/*case TAIGA:
 				block.setBiome(Biome.FOREST);
 				break;
 			case TAIGA_HILLS:
 				block.setBiome(Biome.FOREST_HILLS);
-				break;
+				break;*/
 			case ICE_MOUNTAINS:
 				block.setBiome(Biome.EXTREME_HILLS);
 				break;

@@ -190,7 +190,7 @@ public class ClimateModule {
 	}
 
 	private void spawnLightning(Block b) {
-		b.getLocation().getWorld().spigot().strikeLightning(b.getLocation(), false);
+		b.getLocation().getWorld().spigot().strikeLightning(b.getLocation(), true);
 		b.getWorld().playSound(b.getLocation(), Sound.ENTITY_LIGHTNING_IMPACT, 1, 100);
 		b.getWorld().playSound(b.getLocation().add(0, 255 - b.getLocation().getY(), 0), Sound.ENTITY_LIGHTNING_THUNDER, 1, 300);
 	}

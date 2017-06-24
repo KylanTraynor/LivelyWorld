@@ -174,6 +174,9 @@ public class ClimateCell extends VCell {
 		}
 		lowAltitudePressure = ClimateUtils.getGasPressure(getAirVolumeOnBlock(),
 				getAmountOnBlock(), getTemperature());
+	}
+	
+	private void moveLowAir(){
 		ClimateCell lowestPressure = this;
 		for(ClimateCell c : getNeighbours()){
 			if(c == null) continue;
@@ -191,6 +194,26 @@ public class ClimateCell extends VCell {
 			airAmountOnBlock -= transfer;
 			humidity = Math.max(getHumidity() - humidityTransfer, 0);
 		}
+	}
+	
+	private void moveHighAir(){
+		ClimateCell lowestPressure = this;
+		for(ClimateCell c : getNeighbours()){
+			if(c == null) continue;
+			if(c.getAmountHigh() < lowestPressure.getAmountHigh()){
+				lowestPressure = c;
+			}
+		}
+		double da = lowestPressure.getAmountHigh() - this.getAmountHigh();
+		if(da < 0){
+			double transfer = da/4;
+			lowestPressure.addHighAmount(transfer);
+			airAmountHigh -= transfer;
+		}
+	}
+
+	private void addHighAmount(double transfer) {
+		airAmountHigh = getAmountHigh() + transfer;
 	}
 
 	private void addAmount(double transfer) {
@@ -211,6 +234,8 @@ public class ClimateCell extends VCell {
 	public void update() {
 		updateTemperature();
 		updatePressure();
+		moveLowAir();
+		moveHighAir();
 		updateHumidity();
 		updateWeather();
 		updateMap();

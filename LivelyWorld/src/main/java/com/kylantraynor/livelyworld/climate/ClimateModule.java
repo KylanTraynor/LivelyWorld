@@ -397,43 +397,80 @@ public class ClimateModule {
 	}
 
 	public void updateBiome(Block block) {
-		if (block.getBiome() == Biome.RIVER)
-			return;
-		Climate c = new Climate(block.getLocation());
-		Temperature temp = c.getAreaTemperature();
-		if (temp.getValue() > 273.15 + 5) {
-			switch (block.getBiome()) {
-			case COLD_BEACH:
-				block.setBiome(Biome.BEACHES);
-				break;
-			case TAIGA_COLD:
-				block.setBiome(Biome.TAIGA);
-				break;
-			case TAIGA_COLD_HILLS:
-				block.setBiome(Biome.TAIGA_HILLS);
-				break;
-			/*case TAIGA:
-				block.setBiome(Biome.FOREST);
-				break;
-			case TAIGA_HILLS:
-				block.setBiome(Biome.FOREST_HILLS);
-				break;*/
-			case ICE_MOUNTAINS:
-				block.setBiome(Biome.EXTREME_HILLS);
-				break;
-			case ICE_FLATS:
-				block.setBiome(Biome.PLAINS);
-				break;
-			case FROZEN_OCEAN:
-				block.setBiome(Biome.OCEAN);
-				break;
-			case FROZEN_RIVER:
-				block.setBiome(Biome.RIVER);
-				break;
-			default:
-				break;
+		Planet p = Planet.getPlanet(block.getWorld());
+		ClimateMap map = p.getClimateMap(block.getWorld());
+		Temperature temp = map.getTemperatureAt(block.getLocation());
+		switch (block.getBiome()) {
+		case COLD_BEACH:
+			if(temp.isCelsiusAbove(5)){
+				block.setBiome(Biome.STONE_BEACH);
 			}
+			break;
+		case STONE_BEACH:
+			if(temp.isCelsiusBelow(5)){
+				block.setBiome(Biome.COLD_BEACH);
+			} else if(temp.isCelsiusAbove(20)){
+				block.setBiome(Biome.BEACHES);
+			}
+			break;
+		case TAIGA_COLD:
+			if(temp.isCelsiusAbove(5)){
+				block.setBiome(Biome.TAIGA);
+			}
+			break;
+		case TAIGA_COLD_HILLS:
+			if(temp.isCelsiusAbove(5)){
+				block.setBiome(Biome.TAIGA_HILLS);
+			}
+			break;
+		case TAIGA:
+			if(temp.isCelsiusAbove(20)){
+				block.setBiome(Biome.FOREST);
+			} else if(temp.isCelsiusBelow(5)){
+				block.setBiome(Biome.TAIGA_COLD);
+			}
+			break;
+		case TAIGA_HILLS:
+			if(temp.isCelsiusAbove(20)){
+				block.setBiome(Biome.FOREST_HILLS);
+			} else if(temp.isCelsiusBelow(5)){
+				block.setBiome(Biome.TAIGA_COLD_HILLS);
+			}
+			break;
+		case ICE_MOUNTAINS:
+			if(temp.isCelsiusAbove(5)){
+				block.setBiome(Biome.EXTREME_HILLS);
+			}
+			break;
+		case EXTREME_HILLS:
+			break;
+		case ICE_FLATS:
+			if(temp.isCelsiusAbove(5)){
+				block.setBiome(Biome.PLAINS);
+			}
+			break;
+		case FROZEN_OCEAN:
+			if(temp.isCelsiusAbove(-5)){
+				block.setBiome(Biome.OCEAN);
+			}
+			break;
+		case OCEAN:
+			if(temp.isCelsiusBelow(-10)){
+				block.setBiome(Biome.FROZEN_OCEAN);
+			}
+			break;
+		case FROZEN_RIVER:
+			if(temp.isCelsiusAbove(0)){
+				block.setBiome(Biome.RIVER);
+			}
+			break;
+		case RIVER:
+			if(temp.isCelsiusBelow(0)){
+				block.setBiome(Biome.FROZEN_RIVER);
+			}
+			break;
+		default:
+			break;
 		}
-
 	}
 }

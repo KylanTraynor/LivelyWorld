@@ -87,6 +87,24 @@ public class Temperature {
 		return this.value >= min && this.value <= max;
 	}
 	
+	public boolean isCelsiusAbove(double min){
+		return isAbove(min + 273.15);
+	}
+	
+	public boolean isAbove(double min){
+		if(isNaN()) return false;
+		return this.value > min;
+	}
+	
+	public boolean isCelsiusBelow(double max){
+		return isBelow(max + 273.15);
+	}
+	
+	public boolean isBelow(double max){
+		if(isNaN()) return false;
+		return this.value < max;
+ 	}
+	
 	public boolean isNaN(){
 		return Double.isNaN(value);
 	}

@@ -331,7 +331,7 @@ public class TidesModule {
 			return true;
 		} else if (oceanDepth == 0) {
 			Biome b = l.getBlock().getBiome();
-			if (b == Biome.BEACHES || b == Biome.OCEAN || b == Biome.DEEP_OCEAN) {
+			if (b == Biome.BEACHES || b == Biome.STONE_BEACH || b == Biome.OCEAN || b == Biome.DEEP_OCEAN) {
 				l.getBlock().setBiome(Biome.PLAINS);
 			}
 			return false;
@@ -351,7 +351,7 @@ public class TidesModule {
 				if ((x == -1 || x == 1) && (z == -1 || z == 1))
 					continue;
 				Biome biome = l.clone().add(x, 0, z).getBlock().getBiome();
-				if (biome == Biome.BEACHES || biome == Biome.OCEAN) {
+				if (biome == Biome.BEACHES || biome == Biome.STONE_BEACH || biome == Biome.OCEAN) {
 					l.getBlock().setBiome(Biome.BEACHES);
 					return true;
 				}
@@ -403,7 +403,7 @@ public class TidesModule {
 	}
 
 	public boolean isNextToWater(Location l) {
-		if (l.getBlock().getBiome() == Biome.BEACHES) {
+		if (l.getBlock().getBiome() == Biome.BEACHES || l.getBlock().getBiome() == Biome.STONE_BEACH) {
 			if (l.getBlock().getRelative(BlockFace.DOWN).getType() == Material.AIR)
 				return false;
 			return true;

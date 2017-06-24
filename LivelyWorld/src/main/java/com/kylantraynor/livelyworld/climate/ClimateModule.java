@@ -85,6 +85,7 @@ public class ClimateModule {
 		while (b.getType() == Material.AIR && b.getLocation().getBlockY() > 46) {
 			b = b.getRelative(BlockFace.DOWN);
 		}
+		updateBiome(b);
 		if (b.getType() == Material.ICE) {
 			switch (b.getBiome()) {
 			case FROZEN_OCEAN:
@@ -413,6 +414,11 @@ public class ClimateModule {
 				block.setBiome(Biome.BEACHES);
 			}
 			break;
+		case BEACHES:
+			if(temp.isCelsiusBelow(15)){
+				block.setBiome(Biome.STONE_BEACH);
+			}
+			break;
 		case TAIGA_COLD:
 			if(temp.isCelsiusAbove(5)){
 				block.setBiome(Biome.TAIGA);
@@ -447,6 +453,20 @@ public class ClimateModule {
 		case ICE_FLATS:
 			if(temp.isCelsiusAbove(5)){
 				block.setBiome(Biome.PLAINS);
+			}
+			break;
+		case PLAINS:
+			if(temp.isCelsiusBelow(0)){
+				block.setBiome(Biome.ICE_FLATS);
+			} else if(temp.isCelsiusAbove(25)){
+				block.setBiome(Biome.SAVANNA);
+			}
+			break;
+		case SAVANNA:
+			if(temp.isCelsiusBelow(20)){
+				block.setBiome(Biome.PLAINS);
+			} else if(temp.isCelsiusAbove(35)){
+				block.setBiome(Biome.DESERT);
 			}
 			break;
 		case FROZEN_OCEAN:

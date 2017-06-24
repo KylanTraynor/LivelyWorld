@@ -29,7 +29,11 @@ public class ClimateCell extends VCell {
 	
 	@Override
 	public ClimateCell[] getNeighbours(){
-		return (ClimateCell[]) super.getNeighbours();
+		ClimateCell[] result = new ClimateCell[super.getNeighbours().length];
+		for(int i = 0; i < super.getNeighbours().length; i++){
+			result[i] = (ClimateCell) super.getNeighbours()[i];
+		}
+		return result;
 	}
 
 	public Location getLocation() {

@@ -16,6 +16,7 @@ public class ClimateCell extends VCell {
 	private double airVolume = Double.NaN;
 	private Long airAmount = null;
 	private Long highAirAmount = null;
+	private double airAmountOnBlock = Double.NaN;
 	private Temperature temperature;
 	private ClimateMap map;
 	private double altitude = Double.NaN;
@@ -24,6 +25,11 @@ public class ClimateCell extends VCell {
 
 	public ClimateCell() {
 		super();
+	}
+	
+	@Override
+	public ClimateCell[] getNeighbours(){
+		return (ClimateCell[]) super.getNeighbours();
 	}
 
 	public Location getLocation() {
@@ -102,16 +108,31 @@ public class ClimateCell extends VCell {
 		return airVolume;
 	}
 	
+	public double getAirVolumeOnBlock() {
+		return 255 - getAltitude();
+	}
+	
 	public double getWaterVolume(){
 		return getArea() * oceanDepth;
 	}
+	
+	public double getWaterVolumeOnBlock(){
+		return oceanDepth;
+	}
 
-	public long getAmount() {
+	/*public long getAmount() {
 		if (airAmount != null)
 			return airAmount;
 		airAmount = ClimateUtils.getGasAmount(getBasePressure(), getVolume(),
 				getBaseTemperature());
 		return airAmount;
+	}*/
+	
+	public double getAmountOnBlock(){
+		if(Double.isNaN(airAmountOnBlock)){
+			airAmountOnBlock = ClimateUtils.getGasAmount(getBasePressure(), getAirVolumeOnBlock(), getBaseTemperature());
+		}
+		return airAmountOnBlock;
 	}
 
 	public double getLowAltitudePressure() {
@@ -136,18 +157,28 @@ public class ClimateCell extends VCell {
 				.bringTo(
 						//Planet.getPlanet(world).getDefaultAirTemperature(getLocation()), 
 						Planet.getPlanet(world).getClimate(getLocation()).getAreaTemperature(),
-						getVolume() * 0.0000001 + getWaterVolume() * 0.000001);
+						getAirVolumeOnBlock() * 0.01 + getWaterVolumeOnBlock() * 0.1);
 	}
 
 	public void updatePressure() {
-		lowAltitudePressure = ClimateUtils.getGasPressure(getVolume(),
-				getAmount(), getTemperature());
+		lowAltitudePressure = ClimateUtils.getGasPressure(getAirVolumeOnBlock(),
+				getAmountOnBlock(), getTemperature());
 	}
 
 	public void update() {
 		updateTemperature();
 		updatePressure();
 		updateMap();
+		updateWinds();
+	}
+
+	private void updateWinds() {
+		for(ClimateCell c : this.getNeighbours()){
+			double dt = c.getTemperature().getValue() - this.getTemperature().getValue();
+			if(dt < 0){
+				
+			}
+		}
 	}
 
 	public void setMap(ClimateMap climateMap) {

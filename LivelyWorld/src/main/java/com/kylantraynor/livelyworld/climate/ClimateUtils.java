@@ -10,19 +10,19 @@ public class ClimateUtils {
 	static double invertedR = 1 / R;
 
 	public static Temperature getGasTemperature(double pressure, double volume,
-			long amount) {
-		return new Temperature(0.000001 * (pressure * 100) * volume * (double)(1.0d / amount)
+			double amount) {
+		return new Temperature(0.000001 * (pressure * 100) * volume * (1.0 / amount)
 				* invertedR);
 	}
 
-	public static double getGasPressure(double volume, long amount,
+	public static double getGasPressure(double volume, double amount,
 			Temperature temperature) {
-		return 1000000 * (amount * (long) temperature.getValue() * R * (1 / volume)) * 0.01;
+		return 1000000 * (amount * temperature.getValue() * R * (1.0 / volume)) * 0.01;
 	}
 
-	public static long getGasAmount(double pressure, double volume,
+	public static double getGasAmount(double pressure, double volume,
 			Temperature temperature) {
-		return (long) ((pressure * 100) * (volume * 0.000001) * (1 / (R * temperature.getValue())));
+		return ((pressure * 100) * (volume * 0.000001) * (1 / (R * temperature.getValue())));
 	}
 	
 	public static Temperature getTemperatureAt(Location location){

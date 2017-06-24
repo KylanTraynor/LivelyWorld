@@ -103,6 +103,7 @@ public class ClimateModule {
 	public void onDisable() {
 		Planet.planets.clear();
 		climateUpdater.cancel();
+		weatherUpdater.cancel();
 	}
 
 	public LivelyWorld getPlugin() {

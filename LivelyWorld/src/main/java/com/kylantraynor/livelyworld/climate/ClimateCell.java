@@ -180,7 +180,7 @@ public class ClimateCell extends VCell {
 	private void updateWeather() {
 		if(this.getLowAltitudePressure() > 1020){
 			weather = Weather.CLEAR;
-		} else if (world.hasStorm()) {
+		} else if (getRelativeHumidity() >= 55) {
 			weather = Weather.RAIN;
 		} else if (getTemperature().isCelsiusAbove(30) && getRelativeHumidity() > 75) {
 			weather = Weather.THUNDERSTORM;

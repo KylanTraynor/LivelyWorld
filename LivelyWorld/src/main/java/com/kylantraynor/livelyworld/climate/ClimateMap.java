@@ -20,6 +20,8 @@ public class ClimateMap {
 	private World world;
 	private int resolution;
 	private boolean generated = false;
+	private Temperature lowestTemperature = Temperature.fromCelsius(0);
+	private Temperature highestTemperature = Temperature.fromCelsius(20);
 
 	public ClimateMap(World world) {
 		this(world, 500);
@@ -92,31 +94,25 @@ public class ClimateMap {
 	}
 	
 	public Temperature getCurrentHighestTemperature(){
-		double highest = Double.NaN;
+		double highest = highestTemperature.getValue();
 		for(ClimateCell c : getCells()){
-			if(Double.isNaN(highest)) {
-				highest = c.getTemperature().getValue();
-				continue;
-			}
 			if(c.getTemperature().getValue() > highest){
 				highest = c.getTemperature().getValue();
 			}
 		}
-		return new Temperature(highest);
+		highestTemperature = new Temperature(highest);
+		return highestTemperature;
 	}
 	
 	public Temperature getCurrentLowestTemperature(){
-		double lowest = Double.NaN;
+		double lowest = lowestTemperature.getValue();
 		for(ClimateCell c : getCells()){
-			if(Double.isNaN(lowest)) {
-				lowest = c.getTemperature().getValue();
-				continue;
-			}
 			if(c.getTemperature().getValue() < lowest){
 				lowest = c.getTemperature().getValue();
 			}
 		}
-		return new Temperature(lowest);
+		lowestTemperature = new Temperature(lowest);
+		return lowestTemperature;
 	}
 
 	public Temperature getTemperatureAt(Location location) {

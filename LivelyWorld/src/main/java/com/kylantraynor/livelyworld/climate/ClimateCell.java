@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.WeatherType;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
@@ -297,7 +298,9 @@ public class ClimateCell extends VCell {
 		if(saturation > 0){
 			humidity += oceanDepth * saturation * 0.1;
 		}
-		if(weather == Weather.RAIN){
+		if(weather == Weather.OVERCAST){
+			humidity -= 0.5 * (getRelativeHumidity() * 0.01);
+		} else if(weather == Weather.RAIN){
 			humidity -= 1 * (getRelativeHumidity() * 0.01);
 		} else if(weather == Weather.STORM){
 			humidity -= 3 * (getRelativeHumidity() * 0.01);
@@ -310,7 +313,7 @@ public class ClimateCell extends VCell {
 	private void updateWeather() {
 		if (getTemperature().isCelsiusAbove(30) && getRelativeHumidity() > 75) {
 			weather = Weather.THUNDERSTORM;
-		} else if (getRelativeHumidity() >= 99){
+		} else if (getRelativeHumidity() >= 80){
 			weather = Weather.STORM;
 		} else if (getRelativeHumidity() >= 55 + (Math.random() * 45)) {
 			weather = Weather.RAIN;

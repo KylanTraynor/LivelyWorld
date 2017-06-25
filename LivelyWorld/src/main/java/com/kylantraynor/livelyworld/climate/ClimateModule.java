@@ -59,6 +59,7 @@ public class ClimateModule {
 						p.setPlayerWeather(WeatherType.CLEAR);
 						break;
 					case OVERCAST:
+						p.setPlayerWeather(WeatherType.CLEAR);
 						break;
 					case RAIN:
 						p.setPlayerWeather(WeatherType.DOWNFALL);

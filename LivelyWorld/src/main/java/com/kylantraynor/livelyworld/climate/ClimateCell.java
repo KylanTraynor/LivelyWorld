@@ -298,11 +298,11 @@ public class ClimateCell extends VCell {
 			humidity += oceanDepth * saturation * 0.1;
 		}
 		if(weather == Weather.RAIN){
-			humidity -= 1;
+			humidity -= 1 * (getRelativeHumidity() * 0.01);
 		} else if(weather == Weather.STORM){
-			humidity -= 3;
+			humidity -= 3 * (getRelativeHumidity() * 0.01);
 		} else if(weather == Weather.THUNDERSTORM){
-			humidity -= 6;
+			humidity -= 6 * (getRelativeHumidity() * 0.01);
 		}
 		humidity = (humidity < 0 ? 0 : humidity);
 	}

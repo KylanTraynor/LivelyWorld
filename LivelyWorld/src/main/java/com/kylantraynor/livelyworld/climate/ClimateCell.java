@@ -310,10 +310,12 @@ public class ClimateCell extends VCell {
 	private void updateWeather() {
 		if (getTemperature().isCelsiusAbove(30) && getRelativeHumidity() > 75) {
 			weather = Weather.THUNDERSTORM;
-		} else if (getRelativeHumidity() >= 55 + (Math.random() * 45)) {
-			weather = Weather.RAIN;
 		} else if (getRelativeHumidity() >= 99){
 			weather = Weather.STORM;
+		} else if (getRelativeHumidity() >= 55 + (Math.random() * 45)) {
+			weather = Weather.RAIN;
+		} else if (getRelativeHumidity() >= 55){
+			weather = Weather.OVERCAST;
 		}else {
 			weather = Weather.CLEAR;
 		}

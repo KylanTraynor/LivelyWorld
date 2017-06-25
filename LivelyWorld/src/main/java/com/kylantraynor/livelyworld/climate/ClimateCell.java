@@ -281,9 +281,9 @@ public class ClimateCell extends VCell {
 
 	public void update() {
 		updateIrradiance();
+		moveHighAir();
 		moveVertically();
 		moveLowAir();
-		moveHighAir();
 		updateTemperature();
 		updateHumidity();
 		updateWeather();

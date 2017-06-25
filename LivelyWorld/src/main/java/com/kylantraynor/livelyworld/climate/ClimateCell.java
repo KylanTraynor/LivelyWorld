@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.WeatherType;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -293,10 +294,21 @@ public class ClimateCell extends VCell {
 	}
 
 	private void updateHumidity() {
-		double saturation = (75 - getRelativeHumidity()) * 0.01;
-		saturation = saturation < 0 ? 0 : saturation;
+		double saturation = Math.max(75 - getRelativeHumidity(), 0) * 0.01;
 		if(saturation > 0){
-			humidity += oceanDepth * saturation * 0.1;
+			if(oceanDepth > 0){
+				humidity += 1 * saturation;
+			} else {
+				if(getLocation().getBlock().getType() == Material.GRASS ||
+						getLocation().getBlock().getType() == Material.LEAVES || 
+						getLocation().getBlock().getType() == Material.LEAVES_2 ||
+						getLocation().getBlock().getType() == Material.LONG_GRASS ||
+						getLocation().getBlock().getType() == Material.DOUBLE_PLANT ||
+						getLocation().getBlock().getType() == Material.YELLOW_FLOWER ||
+						getLocation().getBlock().getType() == Material.RED_ROSE){
+					humidity += 0.1 * saturation;
+				}
+			}
 		}
 		if(weather == Weather.OVERCAST){
 			humidity -= 0.5 * (Math.max(getRelativeHumidity() - 50, 0) * 0.01);

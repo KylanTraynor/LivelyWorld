@@ -197,14 +197,14 @@ public class ClimateCell extends VCell {
 	private void moveVertically() {
 		double dp = getLowAltitudePressure() - getHighAltitudePressure();
 		if(dp > 0){
-			double transfer = ClimateUtils.getGasAmount(Math.abs(dp/2), getAirVolumeOnBlock(), getTemperature());
+			double transfer = ClimateUtils.getGasAmount(Math.abs(dp), getHighVolume(), getTropopauseTemperature());
 			transfer = Math.min(transfer, getAmountOnBlock());
 			airAmountOnBlock = Math.max(getAmountOnBlock() - transfer, 0);
 			airAmountHigh = Math.max(getAmountHigh() + transfer, 0);
 			lowAltitudePressure = Double.NaN;
 			highAltitudePressure = Double.NaN;
 		} else if(dp < 0) {
-			double transfer = ClimateUtils.getGasAmount(Math.abs(dp/2), getHighVolume(), getTropopauseTemperature());
+			double transfer = ClimateUtils.getGasAmount(Math.abs(dp), getAirVolumeOnBlock(), getTemperature());
 			transfer = Math.min(transfer, getAmountHigh());
 			airAmountHigh = Math.max(getAmountHigh() - transfer, 0);
 			airAmountOnBlock = Math.max(getAmountOnBlock() + transfer, 0);
@@ -224,7 +224,7 @@ public class ClimateCell extends VCell {
 		double dp = lowestPressure.getLowAltitudePressure() - this.getLowAltitudePressure();
 		if(dp < 0){
 			double humidityRatio = getHumidity() / getAmountOnBlock();
-			double transfer = ClimateUtils.getGasAmount(Math.abs(dp / 4), getAirVolumeOnBlock(), getTemperature());
+			double transfer = ClimateUtils.getGasAmount(Math.abs(dp), lowestPressure.getAirVolumeOnBlock(), lowestPressure.getTemperature());
 			transfer = Math.min(transfer, getAmountOnBlock());
 			double humidityTransfer = Math.max(transfer * humidityRatio, getHumidity());
 			if(lowestPressure.getRelativeHumidity() <= 99 && lowestPressure.getRelativeHumidity() < this.getRelativeHumidity()){
@@ -249,7 +249,7 @@ public class ClimateCell extends VCell {
 		}
 		double dp = lowestPressure.getHighAltitudePressure() - this.getHighAltitudePressure();
 		if(dp < 0){
-			double transfer = ClimateUtils.getGasAmount(Math.abs(dp), getHighVolume(), getTropopauseTemperature());
+			double transfer = ClimateUtils.getGasAmount(Math.abs(dp), lowestPressure.getHighVolume(), lowestPressure.getTropopauseTemperature());
 			transfer = Math.min(transfer, getAmountHigh());
 			lowestPressure.addHighAmount(transfer);
 			airAmountHigh = Math.max(getAmountHigh() - transfer, 0);

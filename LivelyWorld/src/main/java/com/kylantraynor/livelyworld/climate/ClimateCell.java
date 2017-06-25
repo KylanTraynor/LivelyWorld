@@ -31,6 +31,7 @@ public class ClimateCell extends VCell {
 	private double cellArea = Double.NaN;
 	private Weather weather = Weather.CLEAR;
 	private double humidityMultiplier;
+	private Temperature tropopauseTemp;
 
 	public ClimateCell() {
 		super();
@@ -47,6 +48,13 @@ public class ClimateCell extends VCell {
 
 	public double getHighVolume(){
 		return 10;
+	}
+	
+	public Temperature getTropopauseTemperature(){
+		if(tropopauseTemp == null){
+			tropopauseTemp = new Temperature(225);
+		}
+		return tropopauseTemp;
 	}
 	
 	public Location getLocation() {
@@ -158,7 +166,7 @@ public class ClimateCell extends VCell {
 
 	public double getHighAltitudePressure() {
 		if(Double.isNaN(highAltitudePressure)){
-			highAltitudePressure = ClimateUtils.getGasPressure(getHighVolume(), getAmountHigh(), new Temperature(getTemperature().getValue() * 0.9));
+			highAltitudePressure = ClimateUtils.getGasPressure(getHighVolume(), getAmountHigh(), getTropopauseTemperature());
 		}
 		if(highAltitudePressure < 0) highAltitudePressure = 0;
 		return highAltitudePressure;
@@ -196,7 +204,7 @@ public class ClimateCell extends VCell {
 			lowAltitudePressure = Double.NaN;
 			highAltitudePressure = Double.NaN;
 		} else if(dp < 0) {
-			double transfer = ClimateUtils.getGasAmount(Math.abs(dp/2), getHighVolume(), new Temperature(getTemperature().getValue() * 0.9));
+			double transfer = ClimateUtils.getGasAmount(Math.abs(dp/2), getHighVolume(), getTropopauseTemperature());
 			transfer = Math.min(transfer, getAmountHigh());
 			airAmountHigh = Math.max(getAmountHigh() - transfer, 0);
 			airAmountOnBlock = Math.max(getAmountOnBlock() + transfer, 0);
@@ -241,7 +249,7 @@ public class ClimateCell extends VCell {
 		}
 		double dp = lowestPressure.getHighAltitudePressure() - this.getHighAltitudePressure();
 		if(dp < 0){
-			double transfer = ClimateUtils.getGasAmount(Math.abs(dp), getHighVolume(), new Temperature(getTemperature().getValue() * 0.9));
+			double transfer = ClimateUtils.getGasAmount(Math.abs(dp), getHighVolume(), getTropopauseTemperature());
 			transfer = Math.min(transfer, getAmountHigh());
 			lowestPressure.addHighAmount(transfer);
 			airAmountHigh = Math.max(getAmountHigh() - transfer, 0);
@@ -265,7 +273,7 @@ public class ClimateCell extends VCell {
 
 	public double getAmountHigh() {
 		if(Double.isNaN(airAmountHigh) || airAmountHigh < 0){
-			airAmountHigh = ClimateUtils.getGasAmount(900, getHighVolume(), new Temperature(273.15));
+			airAmountHigh = ClimateUtils.getGasAmount(900, getHighVolume(), getTropopauseTemperature());
 		}
 		if(airAmountHigh < 0 ) airAmountHigh = 0;
 		return airAmountHigh;

@@ -301,9 +301,9 @@ public class ClimateCell extends VCell {
 		if(weather == Weather.OVERCAST){
 			humidity -= 0.5 * (getRelativeHumidity() * 0.01);
 		} else if(weather == Weather.RAIN){
-			humidity -= 1 * (getRelativeHumidity() * 0.01);
-		} else if(weather == Weather.STORM){
 			humidity -= 3 * (getRelativeHumidity() * 0.01);
+		} else if(weather == Weather.STORM){
+			humidity -= 5 * (getRelativeHumidity() * 0.01);
 		} else if(weather == Weather.THUNDERSTORM){
 			humidity -= 6 * (getRelativeHumidity() * 0.01);
 		}

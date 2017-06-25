@@ -299,13 +299,13 @@ public class ClimateCell extends VCell {
 			humidity += oceanDepth * saturation * 0.1;
 		}
 		if(weather == Weather.OVERCAST){
-			humidity -= 0.5 * (getRelativeHumidity() * 0.01);
+			humidity -= 0.5 * (Math.max(getRelativeHumidity() - 50, 0) * 0.01);
 		} else if(weather == Weather.RAIN){
-			humidity -= 3 * (getRelativeHumidity() * 0.01);
+			humidity -= 1 * (Math.max(getRelativeHumidity() - 50, 0) * 0.01);
 		} else if(weather == Weather.STORM){
-			humidity -= 5 * (getRelativeHumidity() * 0.01);
+			humidity -= 4 * (Math.max(getRelativeHumidity() - 50, 0) * 0.01);
 		} else if(weather == Weather.THUNDERSTORM){
-			humidity -= 6 * (getRelativeHumidity() * 0.01);
+			humidity -= 4 * (Math.max(getRelativeHumidity() - 50, 0) * 0.01);
 		}
 		humidity = (humidity < 0 ? 0 : humidity);
 	}

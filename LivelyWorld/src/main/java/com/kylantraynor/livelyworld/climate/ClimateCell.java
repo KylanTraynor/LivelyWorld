@@ -170,7 +170,7 @@ public class ClimateCell extends VCell {
 		}
 	}
 
-	public void updateTemperature() {
+	public void updateIrradiance() {
 		temperature = getTemperature()
 				.bringTo(
 						//Planet.getPlanet(world).getDefaultAirTemperature(getLocation()), 
@@ -219,7 +219,7 @@ public class ClimateCell extends VCell {
 			double transfer = ClimateUtils.getGasAmount(Math.abs(dp / 4), getAirVolumeOnBlock(), getTemperature());
 			transfer = Math.min(transfer, getAmountOnBlock());
 			double humidityTransfer = Math.max(transfer * humidityRatio, getHumidity());
-			if(lowestPressure.getRelativeHumidity() <= 99){
+			if(lowestPressure.getRelativeHumidity() <= 99 && lowestPressure.getRelativeHumidity() < this.getRelativeHumidity()){
 				lowestPressure.addHumidity(humidityTransfer);
 				humidity = Math.max(getHumidity() - humidityTransfer, 0);
 			}
@@ -272,17 +272,22 @@ public class ClimateCell extends VCell {
 	}
 
 	public void update() {
-		updateTemperature();
+		updateIrradiance();
 		moveVertically();
 		moveLowAir();
 		moveHighAir();
+		updateTemperature();
 		updateHumidity();
 		updateWeather();
 		updateMap();
 	}
 
+	private void updateTemperature() {
+		temperature = ClimateUtils.getGasTemperature(this.getLowAltitudePressure(), this.getAirVolumeOnBlock(), this.getAmountOnBlock());
+	}
+
 	private void updateHumidity() {
-		double saturation = (100 - getRelativeHumidity()) * 0.01;
+		double saturation = (75 - getRelativeHumidity()) * 0.01;
 		saturation = saturation < 0 ? 0 : saturation;
 		if(saturation > 0){
 			humidity += oceanDepth * saturation * 0.1;

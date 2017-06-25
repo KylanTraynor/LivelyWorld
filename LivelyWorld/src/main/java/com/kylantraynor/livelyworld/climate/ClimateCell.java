@@ -214,28 +214,25 @@ public class ClimateCell extends VCell {
 	}
 	
 	private void moveLowAir(){
-		ClimateCell lowestPressure = this;
+		ClimateCell highestPressure = this;
 		for(ClimateCell c : getNeighbours()){
 			if(c == null) continue;
-			if(c.getLowAltitudePressure() < lowestPressure.getLowAltitudePressure()){
-				lowestPressure = c;
+			if(c.getLowAltitudePressure() > highestPressure.getLowAltitudePressure()){
+				highestPressure = c;
 			}
 		}
-		double dp = lowestPressure.getLowAltitudePressure() - this.getLowAltitudePressure();
-		if(dp < 0){
-			double humidityRatio = getHumidity() / getAmountOnBlock();
-			double transfer = ClimateUtils.getGasAmount(Math.abs(dp), lowestPressure.getAirVolumeOnBlock(), lowestPressure.getTemperature());
-			transfer = Math.min(transfer, getAmountOnBlock());
-			double humidityTransfer = Math.max(transfer * humidityRatio, getHumidity());
-			if(lowestPressure.getRelativeHumidity() <= 99 && lowestPressure.getRelativeHumidity() < this.getRelativeHumidity()){
-				lowestPressure.addHumidity(humidityTransfer);
-				humidity = Math.max(getHumidity() - humidityTransfer, 0);
+		double dp = highestPressure.getLowAltitudePressure() - this.getLowAltitudePressure();
+		if(dp > 0){
+			double humidityRatio = highestPressure.getHumidity() / highestPressure.getAmountOnBlock();
+			double transfer = ClimateUtils.getGasAmount(Math.abs(dp), getAirVolumeOnBlock(), getTemperature());
+			transfer = Math.min(transfer, highestPressure.getAmountOnBlock());
+			double humidityTransfer = Math.max(transfer * humidityRatio, highestPressure.getHumidity());
+			if(getRelativeHumidity() <= 99 && getRelativeHumidity() < highestPressure.getRelativeHumidity()){
+				addHumidity(humidityTransfer);
+				highestPressure.addHumidity(-humidityTransfer);
 			}
-			lowestPressure.addAmount(transfer);
-			airAmountOnBlock = Math.max(getAmountOnBlock() - transfer, 0);
-			
-			lowAltitudePressure = Double.NaN;
-			
+			addAmount(transfer);
+			highestPressure.addAmount(-transfer);
 		}
 	}
 	

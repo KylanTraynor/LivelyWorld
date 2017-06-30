@@ -229,7 +229,7 @@ public class ClimateCell extends VCell {
 			double transfer = ClimateUtils.getGasAmount(Math.abs(dp), getAirVolumeOnBlock(), getTemperature());
 			transfer = Math.min(transfer, highestPressure.getAmountOnBlock());
 			double humidityTransfer = Math.min(transfer * humidityRatio, highestPressure.getHumidity());
-			if(getRelativeHumidity() <= 99 && getRelativeHumidity() < highestPressure.getRelativeHumidity()){
+			if(getRelativeHumidity() <= 99){
 				addHumidity(humidityTransfer);
 				highestPressure.addHumidity(-humidityTransfer);
 			}

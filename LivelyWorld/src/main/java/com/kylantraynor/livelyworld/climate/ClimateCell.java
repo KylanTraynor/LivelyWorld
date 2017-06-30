@@ -231,11 +231,20 @@ public class ClimateCell extends VCell {
 			double humidityTransfer = Math.min(transfer * humidityRatio, highestPressure.getHumidity());
 			if(getRelativeHumidity() <= 99){
 				addHumidity(humidityTransfer);
+				
 				highestPressure.addHumidity(-humidityTransfer);
 			}
 			addAmount(transfer);
 			highestPressure.addAmount(-transfer);
+			this.bringTemperatureTo(highestPressure.getTemperature(), getAmountOnBlock() / transfer);
 		}
+	}
+	
+	private void bringTemperatureTo(Temperature temp, double inertia){
+		temperature = getTemperature().bringTo(temp, inertia);
+		humidityMultiplier = Double.NaN;
+		highAltitudePressure = Double.NaN;
+		lowAltitudePressure = Double.NaN;
 	}
 	
 	private void moveHighAir(){

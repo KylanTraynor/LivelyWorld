@@ -184,7 +184,7 @@ public class ClimateCell extends VCell {
 		temperature = getTemperature()
 				.bringTo(
 						//Planet.getPlanet(world).getDefaultAirTemperature(getLocation()), 
-						Planet.getPlanet(world).getClimate(getLocation()).getAreaTemperature(),
+						Planet.getPlanet(world).getClimate(getLocation()).getAreaSurfaceTemperature(),
 						(getAmountOnBlock() * 0.000001) + getWaterVolumeOnBlock() + getHumidity());
 		humidityMultiplier = Double.NaN;
 		highAltitudePressure = Double.NaN;

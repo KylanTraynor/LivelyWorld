@@ -232,6 +232,24 @@ public class Climate {
 		}
 		return new Temperature(temp);
 	}
+	
+	public Temperature getAreaSurfaceTemperature(){
+		double temp = 0;
+		Location surfaceLocation = getWorld().getHighestBlockAt(location.getBlockX(), location.getBlockZ()).getLocation().add(0.5, 0.5, 0.5);
+		for(int x = location.getBlockX() - 8; x <= location.getBlockX() + 8; x++){
+			for(int z = location.getBlockZ() - 8; z <= location.getBlockZ() + 8; z++){
+				Block b = getWorld().getHighestBlockAt(x, z);
+				if(b == null) continue;
+				double distanceSquared = b.getLocation().add(0.5,0.5,0.5).distanceSquared(surfaceLocation);
+				if(distanceSquared == 0){
+					temp += (new Climate(b.getLocation()).getTemperature().value - temp);
+				} else {
+					temp += (new Climate(b.getLocation()).getTemperature().value - temp)/distanceSquared;
+				}
+			}
+		}
+		return new Temperature(temp);
+	}
 
 	public Temperature getAreaAverageTemperature() {
 		double temp = 0;

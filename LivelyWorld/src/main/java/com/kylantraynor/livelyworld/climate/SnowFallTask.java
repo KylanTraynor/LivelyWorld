@@ -33,6 +33,14 @@ public class SnowFallTask extends BukkitRunnable {
 		Block b = module.getPlugin().getLowestNear(world, x, y, z).getBlock();
 		if (getBlock().equals(b) || Math.random() < 0.01) {
 			module.updateBiome(b);
+			// Stop if temperature is above 0
+			Planet p = Planet.getPlanet(this.world);
+			if(p == null) return;
+			ClimateMap map = p.getClimateMap(world);
+			if(map == null) return;
+			ClimateCell cell = map.getClimateCellAt(b.getLocation());
+			if(cell.getTemperature().isCelsiusAbove(0)) return;
+			
 			if (b.getRelative(BlockFace.DOWN).getType() == Material.SNOW) {
 				Block snow = b.getRelative(BlockFace.DOWN);
 				ClimateUtils.setSnowLayers(snow, ClimateUtils.getSnowLayers(snow) + 1);

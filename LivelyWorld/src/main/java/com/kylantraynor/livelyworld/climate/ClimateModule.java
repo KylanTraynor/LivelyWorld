@@ -169,7 +169,7 @@ public class ClimateModule {
 					|| topBlock.getRelative(BlockFace.UP).getType() == Material.SNOW_BLOCK) {
 				topBlock = topBlock.getRelative(BlockFace.UP);
 			}
-			if(map.getTemperatureAt(topBlock.getLocation()).getValue() > 273.15){
+			if(map.getTemperatureAt(topBlock.getLocation()).isCelsiusAbove(0)){
 				ClimateUtils.setSnowLayers(topBlock, ClimateUtils.getSnowLayers(topBlock) - 1);
 			} else if (map.getClimateCellAt(topBlock.getLocation()).getWeather() != Weather.CLEAR){
 				SnowFallTask task = new SnowFallTask(this, topBlock.getWorld(), topBlock.getX(), topBlock.getY(), topBlock.getZ());

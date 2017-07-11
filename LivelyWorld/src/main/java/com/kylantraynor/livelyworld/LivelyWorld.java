@@ -737,9 +737,9 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 		if (usingClimate) {
 			switch (event.getBlock().getType()) {
 			case CACTUS:
-				double tempDistance = new Climate(event.getBlock()
-						.getLocation()).getAreaTemperature().getValue()
-						- (273.15 + 35);
+				Temperature temp = ClimateUtils.getTemperatureAt(event.getBlock().getLocation());
+				if(temp.isNaN()) return;
+				double tempDistance = temp.getValue() - (273.15 + 35);
 				if (Math.random() * Math.abs(tempDistance) > 1) {
 					event.setCancelled(true);
 				}
@@ -749,10 +749,10 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 				Crops crops = (Crops) state.getData();
 				switch(crops.getItemType()){
 				case CROPS:
-					Temperature temp = ClimateUtils.getTemperatureAt(event.getBlock().getLocation());
-					if(temp.isNaN()) return;
-					double tempDistance2 = Math.abs(temp.getValue() - Temperature.fromCelsius(14.85).getValue());
-					if(Math.random() * tempDistance2 > 5){
+					Temperature temp1 = ClimateUtils.getTemperatureAt(event.getBlock().getLocation());
+					if(temp1.isNaN()) return;
+					double tempDistance2 = Math.abs(temp1.getValue() - Temperature.fromCelsius(14.85).getValue());
+					if(Math.random() * tempDistance2 > 1){
 						event.setCancelled(true);
 						return;
 					}
@@ -783,7 +783,6 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 	public void onBlockBreak(BlockBreakEvent event){
 		if(usingVegetation){
 			if(event.getBlock().getType() == Material.CROPS){
-				getLogger().info("Block Broken is of type CROPS.");
 				vegetation.onBreakCrops(event);
 			}
 		}

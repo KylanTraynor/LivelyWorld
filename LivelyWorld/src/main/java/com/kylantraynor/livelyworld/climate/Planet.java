@@ -145,7 +145,7 @@ public class Planet {
 
 	public double getSunPosition(Location l) {
 		double day = getDayTime(l) / 24000.0;
-		return Math.cos((day) * TwoPI);
+		return -Math.cos((day) * TwoPI);
 	}
 
 	public Temperature getDefaultAirTemperature(Location l) {

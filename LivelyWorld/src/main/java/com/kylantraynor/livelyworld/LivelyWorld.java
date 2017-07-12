@@ -794,4 +794,8 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 			if(event.getEntityType() == EntityType.FALLING_BLOCK) gravity.checkGravityOn(event.getBlock());
 		}
 	}
+
+	public ClimateModule getClimateModule() {
+		return climate;
+	}
 }

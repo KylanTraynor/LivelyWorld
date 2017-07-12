@@ -64,8 +64,28 @@ public class ClimateModule {
 					case RAIN:
 						p.setPlayerWeather(WeatherType.DOWNFALL);
 						break;
+					case SNOW:
+						p.setPlayerWeather(WeatherType.DOWNFALL);
+						if(Math.random() <= 0.75 * (1.0 / Math.max(c.getPlayersWithin().length, 1))){
+							int random_x = (int) ((Math.random() * 150 * 2) - 150);
+							int random_z = (int) ((Math.random() * 150 * 2) - 150);
+							Block b = p.getWorld().getHighestBlockAt(p.getLocation().getBlockX() + random_x, p.getLocation().getBlockZ() + random_z);
+							SnowFallTask task = new SnowFallTask(getPlugin().getClimateModule(), b.getWorld(), b.getX(), b.getY(), b.getZ());
+							task.runTaskLater(getPlugin(), 1);
+						}
+						break;
 					case STORM:
 						p.setPlayerWeather(WeatherType.DOWNFALL);
+						break;
+					case SNOWSTORM:
+						p.setPlayerWeather(WeatherType.DOWNFALL);
+						if(Math.random() <= 1.0 / Math.max(c.getPlayersWithin().length, 1)){
+							int random_x = (int) ((Math.random() * 150 * 2) - 150);
+							int random_z = (int) ((Math.random() * 150 * 2) - 150);
+							Block b = p.getWorld().getHighestBlockAt(p.getLocation().getBlockX() + random_x, p.getLocation().getBlockZ() + random_z);
+							SnowFallTask task = new SnowFallTask(getPlugin().getClimateModule(), b.getWorld(), b.getX(), b.getY(), b.getZ());
+							task.runTaskLater(getPlugin(), 1);
+						}
 						break;
 					case THUNDERSTORM:
 						p.setPlayerWeather(WeatherType.DOWNFALL);

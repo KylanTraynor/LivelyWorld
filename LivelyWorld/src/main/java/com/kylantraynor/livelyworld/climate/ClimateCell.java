@@ -127,12 +127,12 @@ public class ClimateCell extends VCell {
 	public double getVolume() {
 		if (!Double.isNaN(airVolume))
 			return airVolume;
-		airVolume = getArea() * (255 - getAltitude());
+		airVolume = getArea() * (256 - getAltitude());
 		return airVolume;
 	}
 	
 	public double getAirVolumeOnBlock() {
-		return 255 - getAltitude();
+		return 256 - getAltitude();
 	}
 	
 	public double getWaterVolume(){
@@ -301,7 +301,7 @@ public class ClimateCell extends VCell {
 	}
 
 	private void updateTemperature() {
-		temperature = ClimateUtils.getGasTemperature(this.getLowAltitudePressure(), this.getAirVolumeOnBlock(), this.getAmountOnBlock());
+		//temperature = ClimateUtils.getGasTemperature(this.getLowAltitudePressure(), this.getAirVolumeOnBlock(), this.getAmountOnBlock());
 	}
 
 	private void updateHumidity() {

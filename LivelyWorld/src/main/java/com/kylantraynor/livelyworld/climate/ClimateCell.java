@@ -322,6 +322,8 @@ public class ClimateCell extends VCell {
 						getLocation().getBlock().getType() == Material.YELLOW_FLOWER ||
 						getLocation().getBlock().getType() == Material.RED_ROSE){
 					humidity += 0.1 * saturation;
+				} else {
+					humidity -= 0.01;
 				}
 			}
 		}

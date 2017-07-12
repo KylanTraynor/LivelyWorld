@@ -87,10 +87,12 @@ public class ClimateMap {
 		return this.generator.getCells();
 	}
 
+	private int lastCellUpdateId = 0;
+	
 	public void randomCellUpdate() {
-		int i = (int) (Math.random() * getCells().length);
-		if (getCells()[i] != null)
-			getCells()[i].update();
+		lastCellUpdateId = lastCellUpdateId >= getCells().length - 1 ? 0 : lastCellUpdateId + 1;
+		if (getCells()[lastCellUpdateId] != null)
+			getCells()[lastCellUpdateId].update();
 	}
 	
 	public Temperature getCurrentHighestTemperature(){

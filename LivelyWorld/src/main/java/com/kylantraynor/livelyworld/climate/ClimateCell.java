@@ -199,6 +199,7 @@ public class ClimateCell extends VCell {
 	private void moveVertically() {
 		double dp = getLowAltitudePressure() - getHighAltitudePressure();
 		if(dp > 0){
+			//Move Air Up
 			double transfer = ClimateUtils.getGasAmount(Math.abs(dp), getHighVolume(), getTropopauseTemperature());
 			transfer = Math.min(transfer, getAmountOnBlock());
 			airAmountOnBlock = Math.max(getAmountOnBlock() - transfer, 0);
@@ -206,6 +207,7 @@ public class ClimateCell extends VCell {
 			lowAltitudePressure = Double.NaN;
 			highAltitudePressure = Double.NaN;
 		} else if(dp < 0) {
+			// Move Air Down
 			double transfer = ClimateUtils.getGasAmount(Math.abs(dp), getAirVolumeOnBlock(), getTemperature());
 			transfer = Math.min(transfer, getAmountHigh());
 			airAmountHigh = Math.max(getAmountHigh() - transfer, 0);

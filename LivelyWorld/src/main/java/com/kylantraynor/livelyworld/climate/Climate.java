@@ -5,6 +5,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 
 public class Climate {
 
@@ -240,6 +241,7 @@ public class Climate {
 			for(int z = location.getBlockZ() - 8; z <= location.getBlockZ() + 8; z++){
 				Block b = getWorld().getHighestBlockAt(x, z);
 				if(b == null) continue;
+				b = b.getRelative(BlockFace.DOWN);
 				temp += (new Climate(b.getLocation()).getTemperature().value);
 				count++;
 			}

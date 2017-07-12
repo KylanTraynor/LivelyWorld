@@ -91,7 +91,7 @@ public class ClimateCell extends VCell {
 
 	public double getAltitude() {
 		if(!Double.isNaN(altitude)) return altitude;
-		altitude = world.getHighestBlockYAt((int) getSite().x, (int) getSite().z);
+		altitude = world.getHighestBlockYAt((int) getSite().x, (int) getSite().z) - 1;
 		double y = altitude;
 		while(y > 1 && world.getBlockAt((int) getSite().x, (int) (y - 1), (int) getSite().z).isLiquid() )
 			y--;

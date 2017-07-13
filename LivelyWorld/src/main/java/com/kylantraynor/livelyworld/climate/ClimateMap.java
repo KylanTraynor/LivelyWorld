@@ -3,10 +3,12 @@ package com.kylantraynor.livelyworld.climate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Stack;
 
 import org.bukkit.Location;
 import org.bukkit.World;
 
+import com.kylantraynor.livelyworld.Utils.SizedList;
 import com.kylantraynor.livelyworld.hooks.HookManager;
 import com.kylantraynor.livelyworld.hooks.WorldBorderHook;
 import com.kylantraynor.voronoi.VCell;
@@ -22,6 +24,7 @@ public class ClimateMap {
 	private boolean generated = false;
 	private Temperature lowestTemperature = Temperature.fromCelsius(0);
 	private Temperature highestTemperature = Temperature.fromCelsius(20);
+	private SizedList<ClimateCell> cache = new SizedList<ClimateCell>(10);
 
 	public ClimateMap(World world) {
 		this(world, 500);
@@ -77,9 +80,21 @@ public class ClimateMap {
 		if (location == null)
 			throw new NullPointerException("Location can't be Null");
 		if (generated) {
-			ClimateCell cell = this.generator.getCellAt(new VectorXZ(
+			ClimateCell result = null;
+			for(ClimateCell c : cache){
+				if(c != null){
+					if(c.isInside(new VectorXZ((float) location.getX(), (float) location.getZ()))){
+						result = c;
+						break;
+					}
+				}
+			}
+			if(result == null){
+				result = this.generator.getCellAt(new VectorXZ(
 					(float) location.getX(), (float) location.getZ()));
-			return cell;
+				cache.add(result);
+			}
+			return result;
 		}
 		return null;
 	}

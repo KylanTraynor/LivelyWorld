@@ -30,10 +30,8 @@ public class ClimateUtils {
 		Planet planet = Planet.getPlanet(location.getWorld());
 		if(planet != null){
 			ClimateMap map = planet.getClimateMap(location.getWorld());
-			ClimateCell cell = map.getClimateCellAt(location);
-			if(cell != null){
-				return cell.getTemperature();
-			}
+			if(map == null) return Temperature.NaN;
+			return map.getTemperatureAt(location);
 		}
 		return Temperature.NaN;
 	}

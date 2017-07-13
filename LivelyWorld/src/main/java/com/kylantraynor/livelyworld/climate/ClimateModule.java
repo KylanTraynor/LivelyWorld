@@ -611,7 +611,7 @@ public class ClimateModule {
 			}
 			break;
 		case FROZEN_RIVER:
-			if(temp.isCelsiusAbove(0)){
+			if(temp.isCelsiusAbove(3)){
 				block.setBiome(Biome.RIVER);
 			}
 			break;

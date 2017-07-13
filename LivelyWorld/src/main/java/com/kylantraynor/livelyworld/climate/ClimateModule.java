@@ -95,7 +95,9 @@ public class ClimateModule {
 								while(b.getType() == Material.AIR){
 									b = b.getRelative(BlockFace.DOWN);
 								}
-								ClimateUtils.melt(b);
+								if(c.getTemperature().isCelsiusAbove(5)){
+									ClimateUtils.melt(b);
+								}
 							}
 						}
 						break;

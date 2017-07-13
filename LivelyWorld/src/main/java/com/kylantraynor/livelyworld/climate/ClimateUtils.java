@@ -75,7 +75,11 @@ public class ClimateUtils {
 
 	public static void melt(Block b) {
 		if(isSnow(b)){
-			setWaterHeight(b, getSnowLayers(b), false);
+			if(getSnowLayers(b) > 1){
+				setSnowLayers(b, getSnowLayers(b) - 1);
+			} else {
+				setWaterHeight(b, getSnowLayers(b), false);
+			}
 		}
 	}
 	

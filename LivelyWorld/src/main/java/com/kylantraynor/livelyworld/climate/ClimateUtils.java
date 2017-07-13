@@ -72,4 +72,27 @@ public class ClimateUtils {
 	public static boolean isWater(Block block) {
 		return block.getType() == Material.WATER || block.getType() == Material.STATIONARY_WATER;
 	}
+
+	public static void melt(Block b) {
+		if(isSnow(b)){
+			setWaterHeight(b, getSnowLayers(b), false);
+		}
+	}
+	
+	public static void setWaterHeight(Block b, int height, boolean canSource){
+		if(height == 0){
+			b.setType(Material.AIR);
+			b.setData((byte)0);
+		} else if(height == 8){
+			b.setType(Material.WATER);
+			if(canSource){
+				b.setData((byte)0);
+			} else {
+				b.setData((byte) 8);
+			}
+		} else {
+			b.setType(Material.WATER);
+			b.setData((byte) (8 - height));
+		}
+	}
 }

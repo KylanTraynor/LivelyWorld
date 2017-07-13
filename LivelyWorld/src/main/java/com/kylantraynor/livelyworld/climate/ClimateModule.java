@@ -89,7 +89,7 @@ public class ClimateModule {
 						break;
 					case THUNDERSTORM:
 						p.setPlayerWeather(WeatherType.DOWNFALL);
-						if(Math.random() <= 0.75 * (1.0 / Math.max(c.getPlayersWithin().length, 1))){
+						if(Math.random() <= 0.1 * (1.0 / Math.max(c.getPlayersWithin().length, 1))){
 							int random_x = (int) ((Math.random() * 150 * 2) - 150);
 							int random_z = (int) ((Math.random() * 150 * 2) - 150);
 							Block b = p.getWorld().getHighestBlockAt(p.getLocation().getBlockX() + random_x, p.getLocation().getBlockZ() + random_z);
@@ -104,7 +104,7 @@ public class ClimateModule {
 			
 		};
 		
-		weatherUpdater.runTaskTimer(plugin, 20L, 40L);
+		weatherUpdater.runTaskTimer(plugin, 20L, 2L);
 		
 		climateUpdater = new BukkitRunnable() {
 

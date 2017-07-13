@@ -3,6 +3,7 @@ package com.kylantraynor.livelyworld.climate;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 
 public class ClimateUtils {
 
@@ -66,6 +67,9 @@ public class ClimateUtils {
 		} else {
 			block.setType(Material.SNOW);
 			block.setData((byte) (layers - 1));
+			if(block.getRelative(BlockFace.DOWN).getType() == Material.GRASS){
+				block.getRelative(BlockFace.DOWN).setType(Material.DIRT);
+			}
 		}
 	}
 

@@ -37,6 +37,14 @@ public class ClimateUtils {
 		return Temperature.NaN;
 	}
 	
+	public static ClimateCell getClimateCellAt(Location location){
+		Planet planet = Planet.getPlanet(location.getWorld());
+		if(planet == null) return null;
+		ClimateMap map = planet.getClimateMap(location.getWorld());
+		if(map == null) return null;
+		return map.getClimateCellAt(location);
+	}
+	
 	public static boolean isSnow(Block block){
 		if(block.getType() == Material.SNOW || block.getType() == Material.SNOW_BLOCK) return true;
 		return false;

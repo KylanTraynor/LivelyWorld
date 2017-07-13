@@ -252,7 +252,7 @@ public class ClimateCell extends VCell {
 			}
 			addAmount(transfer);
 			highestPressure.addAmount(-transfer);
-			this.bringTemperatureTo(highestPressure.getTemperature(), getAmountOnBlock() / transfer);
+			this.bringTemperatureTo(highestPressure.getTemperature(), (getAmountOnBlock() / (double) transfer) * 0.1);
 		}
 	}
 	

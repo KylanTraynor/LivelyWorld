@@ -52,7 +52,7 @@ public class Climate {
 			break;
 		case WATER:
 		case STATIONARY_WATER:
-			temp = 30;
+			temp = 35;
 			break;
 		case LEAVES:
 		case LEAVES_2:
@@ -112,30 +112,33 @@ public class Climate {
 			break;
 		case WATER:
 		case STATIONARY_WATER:
-			temp = 1;
+			temp = 0;
 			break;
 		case LEAVES:
 		case LEAVES_2:
-			temp = 15;
+			temp = 0;
 			break;
 		case GRASS:
-			temp = 15;
+			temp = 0;
 			break;
 		case DIRT:
-			temp = 15;
+			temp = -5;
 			break;
 		case COBBLESTONE:
 		case GRAVEL:
 		case FURNACE:
 		case COBBLESTONE_STAIRS:
-			temp = 16;
+			temp = 0;
 			break;
 		case SAND:
 		case STONE:
 		case SMOOTH_BRICK:
 		case DOUBLE_STEP:
+		case SANDSTONE:
+		case RED_SANDSTONE:
+		case STAINED_CLAY:
 		case STEP:
-			temp = 16;
+			temp = 0;
 			break;
 		case FIRE:
 		case TORCH:

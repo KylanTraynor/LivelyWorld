@@ -8,6 +8,9 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.WeatherType;
 import org.bukkit.World;
+import org.bukkit.block.Biome;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 
 import com.kylantraynor.livelyworld.hooks.HookManager;
@@ -61,8 +64,9 @@ public class ClimateCell extends VCell {
 	}
 	
 	public Location getLocation() {
-		return new Location(world, (double) getSite().getX(), getAltitude(),
-				(double) getSite().getZ());
+		Block b = world.getHighestBlockAt((int)this.getSite().getX(), (int) this.getSite().getZ());
+		if(b != null) b = b.getRelative(BlockFace.DOWN);
+		return b.getLocation() ;
 	}
 
 	public void setWorld(World world) {
@@ -252,12 +256,23 @@ public class ClimateCell extends VCell {
 			}
 			addAmount(transfer);
 			highestPressure.addAmount(-transfer);
-			this.bringTemperatureTo(highestPressure.getTemperature(), (getAmountOnBlock() / (double) transfer) * 0.1);
+			Temperature temp = highestPressure.getTemperature();
+			highestPressure.bringTemperatureTo(this.getTemperature(), (getAmountOnBlock() / (double) transfer) * 0.1);
+			this.bringTemperatureTo(temp, (getAmountOnBlock() / (double) transfer) * 0.1);
 		}
 	}
 	
 	private void bringTemperatureTo(Temperature temp, double inertia){
 		temperature = getTemperature().bringTo(temp, inertia);
+		Biome b = world.getBiome((int)getSite().getX(), (int)getSite().getZ());
+		if(b == Biome.DESERT || 
+				b == Biome.DESERT_HILLS || 
+				b == Biome.MESA || 
+				b == Biome.MESA_CLEAR_ROCK || 
+				b == Biome.MESA_ROCK) {
+			
+			humidity = 0;
+		}
 		humidityMultiplier = Double.NaN;
 		highAltitudePressure = Double.NaN;
 		lowAltitudePressure = Double.NaN;

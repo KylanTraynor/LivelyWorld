@@ -93,23 +93,27 @@ public class ClimateModule {
 					case RAIN:
 						break;
 					case SNOW:
-						if(Math.random() <= 0.75 * (1.0 / Math.max(c.getPlayersWithin().length, 1))){
-							int random_x = (int) ((Math.random() * 150 * 2) - 150);
-							int random_z = (int) ((Math.random() * 150 * 2) - 150);
-							Block b = p.getWorld().getHighestBlockAt(p.getLocation().getBlockX() + random_x, p.getLocation().getBlockZ() + random_z);
-							SnowFallTask task = new SnowFallTask(getPlugin().getClimateModule(), b.getWorld(), b.getX(), b.getY(), b.getZ());
-							task.runTaskLater(getPlugin(), 1);
+						if(Math.random() <= 0.95 * (1.0 / Math.max(c.getPlayersWithin().length, 1))){
+							for(int i = 0; i < 5; i++){
+								int random_x = (int) ((Math.random() * 150 * 2) - 150);
+								int random_z = (int) ((Math.random() * 150 * 2) - 150);
+								Block b = p.getWorld().getHighestBlockAt(p.getLocation().getBlockX() + random_x, p.getLocation().getBlockZ() + random_z);
+								SnowFallTask task = new SnowFallTask(getPlugin().getClimateModule(), b.getWorld(), b.getX(), b.getY() + 1, b.getZ());
+								task.runTaskLater(getPlugin(), 1);
+							}
 						}
 						break;
 					case STORM:
 						break;
 					case SNOWSTORM:
 						if(Math.random() <= 1.0 / Math.max(c.getPlayersWithin().length, 1)){
-							int random_x = (int) ((Math.random() * 150 * 2) - 150);
-							int random_z = (int) ((Math.random() * 150 * 2) - 150);
-							Block b = p.getWorld().getHighestBlockAt(p.getLocation().getBlockX() + random_x, p.getLocation().getBlockZ() + random_z);
-							SnowFallTask task = new SnowFallTask(getPlugin().getClimateModule(), b.getWorld(), b.getX(), b.getY(), b.getZ());
-							task.runTaskLater(getPlugin(), 1);
+							for(int i = 0; i < 10; i++){
+								int random_x = (int) ((Math.random() * 150 * 2) - 150);
+								int random_z = (int) ((Math.random() * 150 * 2) - 150);
+								Block b = p.getWorld().getHighestBlockAt(p.getLocation().getBlockX() + random_x, p.getLocation().getBlockZ() + random_z);
+								SnowFallTask task = new SnowFallTask(getPlugin().getClimateModule(), b.getWorld(), b.getX(), b.getY() + 1, b.getZ());
+								task.runTaskLater(getPlugin(), 1);
+							}
 						}
 						break;
 					case THUNDERSTORM:
@@ -129,7 +133,7 @@ public class ClimateModule {
 		};
 		
 		weatherUpdater.runTaskTimer(plugin, 20L, 60L);
-		weatherEffectsUpdater.runTaskTimer(plugin, 20L, 2L);
+		weatherEffectsUpdater.runTaskTimer(plugin, 20L, 1L);
 		
 		climateUpdater = new BukkitRunnable() {
 

@@ -342,9 +342,9 @@ public class ClimateCell extends VCell {
 		} else if(weather == Weather.RAIN || weather == Weather.SNOW){
 			humidity -= 1 * (Math.max(getRelativeHumidity() - 50, 0) * 0.01);
 		} else if(weather == Weather.STORM || weather == Weather.SNOWSTORM){
-			humidity -= 4 * (Math.max(getRelativeHumidity() - 50, 0) * 0.01);
+			humidity -= 1.5 * (Math.max(getRelativeHumidity() - 50, 0) * 0.01);
 		} else if(weather == Weather.THUNDERSTORM){
-			humidity -= 4 * (Math.max(getRelativeHumidity() - 50, 0) * 0.01);
+			humidity -= 1.5 * (Math.max(getRelativeHumidity() - 50, 0) * 0.01);
 		}
 		humidity = (humidity < 0 ? 0 : humidity);
 	}

@@ -28,6 +28,7 @@ public class ClimateModule {
 
 	private BukkitRunnable climateUpdater;
 	private BukkitRunnable weatherUpdater;
+	private BukkitRunnable weatherEffectsUpdater;
 
 	static final String MessageHeader = ChatColor.GOLD + "[" + ChatColor.WHITE
 			+ "Climate" + ChatColor.GOLD + "] " + ChatColor.WHITE;
@@ -56,16 +57,42 @@ public class ClimateModule {
 					ClimateCell c = map.getClimateCellAt(p.getLocation());
 					switch (c.getWeather()){
 					case CLEAR:
-						p.setPlayerWeather(WeatherType.CLEAR);
-						break;
 					case OVERCAST:
 						p.setPlayerWeather(WeatherType.CLEAR);
 						break;
 					case RAIN:
+					case SNOW:
+					case STORM:
+					case SNOWSTORM:
+					case THUNDERSTORM:
 						p.setPlayerWeather(WeatherType.DOWNFALL);
 						break;
+					default:
+						break;
+					}
+				}
+			}
+			
+		};
+		
+		weatherEffectsUpdater = new BukkitRunnable() {
+
+			@Override
+			public void run() {
+				for (Player p : Bukkit.getServer().getOnlinePlayers()){
+					Planet pl = Planet.getPlanet(p.getWorld());
+					if(pl == null) continue;
+					ClimateMap map = pl.getClimateMap(p.getWorld());
+					if(map == null) continue;
+					ClimateCell c = map.getClimateCellAt(p.getLocation());
+					switch (c.getWeather()){
+					case CLEAR:
+						break;
+					case OVERCAST:
+						break;
+					case RAIN:
+						break;
 					case SNOW:
-						p.setPlayerWeather(WeatherType.DOWNFALL);
 						if(Math.random() <= 0.75 * (1.0 / Math.max(c.getPlayersWithin().length, 1))){
 							int random_x = (int) ((Math.random() * 150 * 2) - 150);
 							int random_z = (int) ((Math.random() * 150 * 2) - 150);
@@ -75,10 +102,8 @@ public class ClimateModule {
 						}
 						break;
 					case STORM:
-						p.setPlayerWeather(WeatherType.DOWNFALL);
 						break;
 					case SNOWSTORM:
-						p.setPlayerWeather(WeatherType.DOWNFALL);
 						if(Math.random() <= 1.0 / Math.max(c.getPlayersWithin().length, 1)){
 							int random_x = (int) ((Math.random() * 150 * 2) - 150);
 							int random_z = (int) ((Math.random() * 150 * 2) - 150);
@@ -88,7 +113,6 @@ public class ClimateModule {
 						}
 						break;
 					case THUNDERSTORM:
-						p.setPlayerWeather(WeatherType.DOWNFALL);
 						if(Math.random() <= 0.1 * (1.0 / Math.max(c.getPlayersWithin().length, 1))){
 							int random_x = (int) ((Math.random() * 150 * 2) - 150);
 							int random_z = (int) ((Math.random() * 150 * 2) - 150);
@@ -104,7 +128,8 @@ public class ClimateModule {
 			
 		};
 		
-		weatherUpdater.runTaskTimer(plugin, 20L, 2L);
+		weatherUpdater.runTaskTimer(plugin, 20L, 60L);
+		weatherEffectsUpdater.runTaskTimer(plugin, 20L, 2L);
 		
 		climateUpdater = new BukkitRunnable() {
 
@@ -128,6 +153,7 @@ public class ClimateModule {
 		Planet.planets.clear();
 		climateUpdater.cancel();
 		weatherUpdater.cancel();
+		weatherEffectsUpdater.cancel();
 	}
 
 	public LivelyWorld getPlugin() {

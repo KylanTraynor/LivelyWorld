@@ -218,7 +218,7 @@ public class Climate {
 			return new Temperature(tMax);
 		} else {
 			double temp = tMin;
-			temp += (tMax - tMin) * getPlanet().getSunRadiation(location);
+			temp += (tMax - tMin) * getPlanet().getSunRadiation(location.clone().add(0, 1, 0));
 			return new Temperature(temp);
 		}
 	}

@@ -193,7 +193,7 @@ public class ClimateCell extends VCell {
 		} else {
 			temperature = getTemperature()
 					.bringTo(target,
-							(getAmountOnBlock() * 0.000001) + getWaterVolumeOnBlock() + (getHumidity()));
+							(getAmountOnBlock() * 0.000001) + getWaterVolumeOnBlock() + (getHumidity() * 2));
 		}
 		humidityMultiplier = Double.NaN;
 		highAltitudePressure = Double.NaN;

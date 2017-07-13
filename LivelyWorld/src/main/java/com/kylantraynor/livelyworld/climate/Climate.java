@@ -48,6 +48,7 @@ public class Climate {
 			temp = 0;
 			break;
 		case SNOW:
+		case SNOW_BLOCK:
 			temp = 0;
 			break;
 		case WATER:
@@ -106,6 +107,7 @@ public class Climate {
 		case PACKED_ICE:
 			temp = -70;
 		case SNOW:
+		case SNOW_BLOCK:
 		case ICE:
 		case FROSTED_ICE:
 			temp = -30;

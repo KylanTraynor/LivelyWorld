@@ -131,6 +131,7 @@ public class DynmapHook {
 			sb.append("Weather: " + c.getWeather().toString().toLowerCase());
 			sb.append("<br />Temperature: " + c.getTemperature().toString("C") + "/" + c.getTemperature().toString("F"));
 			sb.append("<br />Humidity: " + (int) c.getRelativeHumidity() + "%");
+			sb.append("<br />Precipitations: " + (int) c.getPrecipitations() + " g/m3");
 			sb.append("<br />Pressure: " + (int) c.getLowAltitudePressure() + " hPa");
 			sb.append("<br />Altitude: " + (int) c.getAltitude() + " m");
 			

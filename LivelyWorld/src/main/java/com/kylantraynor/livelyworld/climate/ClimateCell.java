@@ -28,6 +28,7 @@ public class ClimateCell extends VCell {
 	private double airAmountHigh = Double.NaN;
 	private Temperature temperature;
 	private ClimateMap map;
+	private double precipitations = 0;
 	private double altitude = Double.NaN;
 	private double oceanDepth = Double.NaN;
 	private double cellArea = Double.NaN;
@@ -337,15 +338,18 @@ public class ClimateCell extends VCell {
 				}
 			}
 		}
+		double precipitation = 0;
 		if(weather == Weather.OVERCAST){
-			humidity -= 0.5 * (Math.max(getRelativeHumidity() - 50, 0) * 0.01);
+			precipitation = 0.5 * (Math.max(getRelativeHumidity() - 50, 0) * 0.01);
 		} else if(weather == Weather.RAIN || weather == Weather.SNOW){
-			humidity -= 1 * (Math.max(getRelativeHumidity() - 50, 0) * 0.01);
+			precipitation = 1 * (Math.max(getRelativeHumidity() - 50, 0) * 0.01);
 		} else if(weather == Weather.STORM || weather == Weather.SNOWSTORM){
-			humidity -= 1.5 * (Math.max(getRelativeHumidity() - 50, 0) * 0.01);
+			precipitation = 1.5 * (Math.max(getRelativeHumidity() - 50, 0) * 0.01);
 		} else if(weather == Weather.THUNDERSTORM){
-			humidity -= 1.5 * (Math.max(getRelativeHumidity() - 50, 0) * 0.01);
+			precipitation = 1.5 * (Math.max(getRelativeHumidity() - 50, 0) * 0.01);
 		}
+		this.precipitations += precipitation;
+		humidity -= precipitation;
 		humidity = (humidity < 0 ? 0 : humidity);
 	}
 
@@ -416,5 +420,9 @@ public class ClimateCell extends VCell {
 			}
 		}
 		return result.toArray(new Player[result.size()]);
+	}
+
+	public double getPrecipitations() {
+		return precipitations;
 	}
 }

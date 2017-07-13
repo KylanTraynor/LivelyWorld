@@ -26,6 +26,10 @@ public class Climate {
 			return 40;
 		case GRASS:
 			return 65.0;
+		case DOUBLE_PLANT:
+		case LONG_GRASS:
+		case YELLOW_FLOWER:
+		case RED_ROSE:
 		case LEAVES:
 		case LEAVES_2:
 			return 75.0;
@@ -55,15 +59,19 @@ public class Climate {
 		case STATIONARY_WATER:
 			temp = 35;
 			break;
+		case DOUBLE_PLANT:
+		case LONG_GRASS:
+		case YELLOW_FLOWER:
+		case RED_ROSE:
 		case LEAVES:
 		case LEAVES_2:
 			temp = 25;
 			break;
 		case GRASS:
-			temp = 25;
+			temp = 35;
 			break;
 		case DIRT:
-			temp = 30;
+			temp = 40;
 			break;
 		case COBBLESTONE:
 		case GRAVEL:
@@ -116,6 +124,10 @@ public class Climate {
 		case STATIONARY_WATER:
 			temp = 0;
 			break;
+		case DOUBLE_PLANT:
+		case LONG_GRASS:
+		case YELLOW_FLOWER:
+		case RED_ROSE:
 		case LEAVES:
 		case LEAVES_2:
 			temp = 0;

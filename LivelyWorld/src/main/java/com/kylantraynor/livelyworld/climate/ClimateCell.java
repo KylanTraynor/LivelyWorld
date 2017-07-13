@@ -178,14 +178,23 @@ public class ClimateCell extends VCell {
 		if (HookManager.hasDynmap()) {
 			HookManager.getDynmap().updateClimateCell(this);
 		}
+	};
+	
+	public Temperature getSurfaceTemperature(){
+		return Planet.getPlanet(world).getClimate(getLocation()).getAreaSurfaceTemperature();
 	}
 
 	public void updateIrradiance() {
-		temperature = getTemperature()
-				.bringTo(
-						//Planet.getPlanet(world).getDefaultAirTemperature(getLocation()), 
-						Planet.getPlanet(world).getClimate(getLocation()).getAreaSurfaceTemperature(),
-						(getAmountOnBlock() * 0.000001) + getWaterVolumeOnBlock() + (getHumidity() * 0.5));
+		Temperature target = getSurfaceTemperature();
+		if(target.getValue() > temperature.getValue()){
+			temperature = getTemperature()
+					.bringTo(target,
+							(getAmountOnBlock() * 0.000001) + getWaterVolumeOnBlock() + (getHumidity() * 0.5));
+		} else {
+			temperature = getTemperature()
+					.bringTo(target,
+							(getAmountOnBlock() * 0.000001) + getWaterVolumeOnBlock() + (getHumidity()));
+		}
 		humidityMultiplier = Double.NaN;
 		highAltitudePressure = Double.NaN;
 		lowAltitudePressure = Double.NaN;
@@ -314,13 +323,14 @@ public class ClimateCell extends VCell {
 			if(oceanDepth > 0){
 				humidity += 1 * saturation;
 			} else {
-				if(getLocation().getBlock().getType() == Material.GRASS ||
-						getLocation().getBlock().getType() == Material.LEAVES || 
-						getLocation().getBlock().getType() == Material.LEAVES_2 ||
-						getLocation().getBlock().getType() == Material.LONG_GRASS ||
-						getLocation().getBlock().getType() == Material.DOUBLE_PLANT ||
-						getLocation().getBlock().getType() == Material.YELLOW_FLOWER ||
-						getLocation().getBlock().getType() == Material.RED_ROSE){
+				Material m = getLocation().getBlock().getType();
+				if(m == Material.GRASS ||
+						m == Material.LEAVES || 
+						m == Material.LEAVES_2 ||
+						m == Material.LONG_GRASS ||
+						m == Material.DOUBLE_PLANT ||
+						m == Material.YELLOW_FLOWER ||
+						m == Material.RED_ROSE){
 					humidity += 0.1 * saturation;
 				} else {
 					humidity -= 0.01;

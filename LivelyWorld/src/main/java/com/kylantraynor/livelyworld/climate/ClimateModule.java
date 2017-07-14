@@ -88,7 +88,7 @@ public class ClimateModule {
 					switch (c.getWeather()){
 					case CLEAR:
 						if(Math.random() <= 1.0 * (1.0 / Math.max(c.getPlayersWithin().length, 1))){
-							for(int i = 0; i < 10; i++){
+							for(int i = 0; i < 5; i++){
 								int random_x = (int) ((Math.random() * 150 * 2) - 150);
 								int random_z = (int) ((Math.random() * 150 * 2) - 150);
 								Block b = p.getWorld().getHighestBlockAt(p.getLocation().getBlockX() + random_x, p.getLocation().getBlockZ() + random_z);

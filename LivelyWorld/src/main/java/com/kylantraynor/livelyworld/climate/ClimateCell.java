@@ -188,17 +188,21 @@ public class ClimateCell extends VCell {
 	public Temperature getSurfaceTemperature(){
 		return Planet.getPlanet(world).getClimate(getLocation()).getAreaSurfaceTemperature();
 	}
+	
+	public double getDownInertia(){
+		return (getAmountOnBlock() * 0.000001) + (getWaterVolumeOnBlock()*10) + (getHumidity() * 2);
+	}
+	
+	public double getUpInertia(){
+		return (getAmountOnBlock() * 0.000001) + getWaterVolumeOnBlock() + (getHumidity() * 0.5);
+	}
 
 	public void updateIrradiance() {
 		Temperature target = getSurfaceTemperature();
 		if(target.getValue() > temperature.getValue()){
-			temperature = getTemperature()
-					.bringTo(target,
-							(getAmountOnBlock() * 0.000001) + getWaterVolumeOnBlock() + (getHumidity() * 0.5));
+			temperature = getTemperature().bringTo(target, getUpInertia());
 		} else {
-			temperature = getTemperature()
-					.bringTo(target,
-							(getAmountOnBlock() * 0.000001) + getWaterVolumeOnBlock() + (getHumidity() * 2));
+			temperature = getTemperature().bringTo(target, getDownInertia());
 		}
 		humidityMultiplier = Double.NaN;
 		highAltitudePressure = Double.NaN;

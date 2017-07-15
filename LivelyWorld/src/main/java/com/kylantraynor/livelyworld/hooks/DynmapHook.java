@@ -132,7 +132,7 @@ public class DynmapHook {
 			sb.append("<br />Temperature: " + c.getTemperature().toString("C") + "/" + c.getTemperature().toString("F"));
 			sb.append("<br />Humidity: " + (int) c.getRelativeHumidity() + "%");
 			sb.append("<br />Precipitations: " + (int) c.getPrecipitations() + " g/m3");
-			sb.append("<br />Pressure: " + (int) c.getLowAltitudePressure() + " hPa");
+			sb.append("<br />Pressure: " + (int) (c.getLowAltitudePressure() * 0.01) + " hPa");
 			sb.append("<br />Altitude: " + (int) c.getAltitude() + " m");
 			
 			sb.append("<br />~DEBUG~");
@@ -142,7 +142,7 @@ public class DynmapHook {
 			sb.append("<br />Air Volume: " + (int) c.getAirVolumeOnBlock() + " m3");
 			sb.append("<br />Air Particles: " + (int) c.getAmountOnBlock() + " moles");
 			sb.append("<br />High Air Particles: " + (int) c.getAmountHigh() + " moles");
-			sb.append("<br />High Air Pressure: " + (int) c.getHighAltitudePressure() + " hPa");
+			sb.append("<br />High Air Pressure: " + (int) (c.getHighAltitudePressure() * 0.01) + " hPa");
 			weather.setDescription(sb.toString());
 			markerList.put(id, weather);
 			

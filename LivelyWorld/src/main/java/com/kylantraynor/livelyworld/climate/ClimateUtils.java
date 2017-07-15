@@ -15,18 +15,18 @@ public class ClimateUtils {
 
 	public static Temperature getGasTemperature(double pressure, double volume,
 			double amount) {
-		return new Temperature((pressure * 100) * volume * (1.0 / amount)
+		return new Temperature((pressure) * volume * (1.0 / amount)
 				* invertedR);
 	}
 
 	public static double getGasPressure(double volume, double amount,
 			Temperature temperature) {
-		return (amount * temperature.getValue() * R * (1.0 / volume)) * 0.01;
+		return (amount * temperature.getValue() * R * (1.0 / volume));
 	}
 
 	public static double getGasAmount(double pressure, double volume,
 			Temperature temperature) {
-		return ((pressure * 100) * (volume) * (1 / (R * temperature.getValue())));
+		return ((pressure) * (volume) * (1 / (R * temperature.getValue())));
 	}
 	
 	public static Temperature getTemperatureAt(Location location){

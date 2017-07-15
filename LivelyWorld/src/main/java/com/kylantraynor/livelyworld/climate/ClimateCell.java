@@ -95,7 +95,7 @@ public class ClimateCell extends VCell {
 	}
 
 	public double getBasePressure() {
-		return 1013;
+		return 101300;
 	}
 
 	public double getAltitude() {
@@ -309,7 +309,7 @@ public class ClimateCell extends VCell {
 
 	public double getAmountHigh() {
 		if(Double.isNaN(airAmountHigh) || airAmountHigh < 0){
-			airAmountHigh = ClimateUtils.getGasAmount(900, getHighVolume(), getTropopauseTemperature());
+			airAmountHigh = ClimateUtils.getGasAmount(70000, getHighVolume(), getTropopauseTemperature());
 		}
 		if(airAmountHigh < 0 ) airAmountHigh = 0;
 		return airAmountHigh;

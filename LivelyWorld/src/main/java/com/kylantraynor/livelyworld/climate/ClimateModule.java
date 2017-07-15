@@ -85,6 +85,7 @@ public class ClimateModule {
 			@Override
 			public void run() {
 				for(ClimateCell c : playerCache.values()){
+					if(c == null) continue;
 					int mostDist = (int) c.getMostDistance();
 					int doubleMostDist = 2 * mostDist;
 					switch (c.getWeather()){

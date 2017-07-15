@@ -10,7 +10,7 @@ import com.kylantraynor.livelyworld.LivelyWorld;
 
 public class ClimateUtils {
 
-	static double R = 0.083144598;
+	static double R = 0.08;
 	static double invertedR = 1 / R;
 
 	public static Temperature getGasTemperature(double pressure, double volume,

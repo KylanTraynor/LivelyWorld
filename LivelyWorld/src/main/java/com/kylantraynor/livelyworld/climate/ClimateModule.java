@@ -1,10 +1,7 @@
 package com.kylantraynor.livelyworld.climate;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
@@ -30,7 +27,7 @@ public class ClimateModule {
 	private LivelyWorld plugin;
 	private Planet defaultPlanet;
 	
-	private final int cellUpdates = 2;
+	private final int cellUpdates = 5;
 
 	private BukkitRunnable climateUpdater;
 	private BukkitRunnable weatherUpdater;

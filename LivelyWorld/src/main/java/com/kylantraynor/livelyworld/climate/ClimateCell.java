@@ -110,8 +110,7 @@ public class ClimateCell extends VCell {
 	}
 
 	public Temperature getTemperature() {
-		if (temperature != null)
-			return temperature;
+		if (temperature != null) return temperature;
 		temperature = getBaseTemperature();
 		humidityMultiplier = Double.NaN;
 		return temperature;
@@ -331,14 +330,14 @@ public class ClimateCell extends VCell {
 		moveHighAir();
 		moveVertically();
 		moveLowAir();
-		updateTemperature();
+		//updateTemperature();
 		updateHumidity();
 		updateWeather();
 		updateMap();
 	}
 
 	private void updateTemperature() {
-		//temperature = ClimateUtils.getGasTemperature(this.getLowAltitudePressure(), this.getAirVolumeOnBlock(), this.getAmountOnBlock());
+		temperature = ClimateUtils.getGasTemperature(this.getLowAltitudePressure(), this.getAirVolumeOnBlock(), this.getAmountOnBlock());
 	}
 
 	private void updateHumidity() {

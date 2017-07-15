@@ -77,23 +77,27 @@ public class ClimateUtils {
 				block.getRelative(BlockFace.DOWN).setType(Material.DIRT);
 			}
 		}
-		if(oldLayers < layers){
-			int depth = 0;
-			while(block.getType() == Material.SNOW || block.getType() == Material.SNOW_BLOCK || block.getType() == Material.FROSTED_ICE || block.getType() == Material.ICE || block.getType() == Material.PACKED_ICE){
-				block = block.getRelative(BlockFace.DOWN);
-				depth++;
-			}
-			while(depth > 2)
-			{
-				block = block.getRelative(BlockFace.UP);
-				depth--;
-				if(block.getType() == Material.ICE && depth > 10){
-					block.setType(Material.PACKED_ICE);
-				} else if(block.getType() == Material.FROSTED_ICE && depth > 5) {
-					block.setType(Material.ICE);
-				} else if (block.getType() == Material.SNOW_BLOCK && depth > 2){
-					block.setType(Material.FROSTED_ICE);
-				}
+		if(oldLayers < layers && Math.random() < 0.1){
+			updateGlacier(block);
+		}
+	}
+	
+	public static void updateGlacier(Block block){
+		int depth = 0;
+		while(block.getType() == Material.SNOW || block.getType() == Material.SNOW_BLOCK || block.getType() == Material.FROSTED_ICE || block.getType() == Material.ICE || block.getType() == Material.PACKED_ICE){
+			block = block.getRelative(BlockFace.DOWN);
+			depth++;
+		}
+		while(depth > 2)
+		{
+			block = block.getRelative(BlockFace.UP);
+			depth--;
+			if(block.getType() == Material.ICE && depth > 10){
+				block.setType(Material.PACKED_ICE);
+			} else if(block.getType() == Material.FROSTED_ICE && depth > 5) {
+				block.setType(Material.ICE);
+			} else if (block.getType() == Material.SNOW_BLOCK && depth > 2){
+				block.setType(Material.FROSTED_ICE);
 			}
 		}
 	}

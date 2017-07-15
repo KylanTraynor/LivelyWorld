@@ -27,7 +27,7 @@ public class ClimateModule {
 	private LivelyWorld plugin;
 	private Planet defaultPlanet;
 	
-	private final int cellUpdates = 5;
+	private final int cellUpdates = 1;
 
 	private BukkitRunnable climateUpdater;
 	private BukkitRunnable weatherUpdater;
@@ -197,7 +197,7 @@ public class ClimateModule {
 
 		};
 
-		climateUpdater.runTaskTimer(plugin, 20L, 2L);
+		climateUpdater.runTaskTimer(plugin, 20L, 1L);
 	}
 
 	public void onDisable() {

@@ -103,7 +103,15 @@ public class ClimateModule {
 								for(int i = 0; i < 5; i++){
 									int random_x = (int) ((Math.random() * (2 * mostDist)) - mostDist);
 									int random_z = (int) ((Math.random() * (2 * mostDist)) - mostDist);
-									Block b = w.getHighestBlockAt((int) c.getSite().getX() + random_x, (int)c.getSite().getZ() + random_z);
+									int x = (int)c.getSite().getX() + random_x;
+									int z = (int)c.getSite().getZ() + random_z;
+									int chunkX = x >> 4; // /16
+									int chunkZ = z >> 4; // /16
+									if(!w.isChunkLoaded(chunkX, chunkZ)){
+										continue;
+									}
+									Block b = w.getHighestBlockAt(x, z);
+									if(!b.getChunk().isLoaded()) return;
 									while(b.getType() == Material.AIR){
 										b = b.getRelative(BlockFace.DOWN);
 									}
@@ -122,6 +130,13 @@ public class ClimateModule {
 								for(int i = 0; i < 5; i++){
 									int random_x = (int) ((Math.random() * (2 * mostDist)) - mostDist);
 									int random_z = (int) ((Math.random() * (2 * mostDist)) - mostDist);
+									int x = (int)c.getSite().getX() + random_x;
+									int z = (int)c.getSite().getZ() + random_z;
+									int chunkX = x >> 4; // /16
+									int chunkZ = z >> 4; // /16
+									if(!w.isChunkLoaded(chunkX, chunkZ)){
+										continue;
+									}
 									Block b = w.getHighestBlockAt((int) c.getSite().getX() + random_x, (int)c.getSite().getZ() + random_z);
 									SnowFallTask task = new SnowFallTask(getPlugin().getClimateModule(), b.getWorld(), b.getX(), b.getY() + 1, b.getZ());
 									task.runTaskLater(getPlugin(), 1);
@@ -135,6 +150,13 @@ public class ClimateModule {
 								for(int i = 0; i < 10; i++){
 									int random_x = (int) ((Math.random() * (2 * mostDist)) - mostDist);
 									int random_z = (int) ((Math.random() * (2 * mostDist)) - mostDist);
+									int x = (int)c.getSite().getX() + random_x;
+									int z = (int)c.getSite().getZ() + random_z;
+									int chunkX = x >> 4; // /16
+									int chunkZ = z >> 4; // /16
+									if(!w.isChunkLoaded(chunkX, chunkZ)){
+										continue;
+									}
 									Block b = w.getHighestBlockAt((int) c.getSite().getX() + random_x, (int)c.getSite().getZ() + random_z);
 									SnowFallTask task = new SnowFallTask(getPlugin().getClimateModule(), b.getWorld(), b.getX(), b.getY() + 1, b.getZ());
 									task.runTaskLater(getPlugin(), 1);
@@ -145,6 +167,13 @@ public class ClimateModule {
 							if(Math.random() <= 0.1){
 								int random_x = (int) ((Math.random() * (2 * mostDist)) - mostDist);
 								int random_z = (int) ((Math.random() * (2 * mostDist)) - mostDist);
+								int x = (int)c.getSite().getX() + random_x;
+								int z = (int)c.getSite().getZ() + random_z;
+								int chunkX = x >> 4; // /16
+								int chunkZ = z >> 4; // /16
+								if(!w.isChunkLoaded(chunkX, chunkZ)){
+									continue;
+								}
 								Block b = w.getHighestBlockAt((int) c.getSite().getX() + random_x, (int)c.getSite().getZ() + random_z);
 								spawnLightning(b.getRelative(BlockFace.UP));
 							}

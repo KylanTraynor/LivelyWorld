@@ -50,6 +50,7 @@ import com.kylantraynor.livelyworld.burn.BurnModule;
 import com.kylantraynor.livelyworld.climate.Climate;
 import com.kylantraynor.livelyworld.climate.ClimateCell;
 import com.kylantraynor.livelyworld.climate.ClimateChunk;
+import com.kylantraynor.livelyworld.climate.ClimateListener;
 import com.kylantraynor.livelyworld.climate.ClimateMap;
 import com.kylantraynor.livelyworld.climate.ClimateModule;
 import com.kylantraynor.livelyworld.climate.ClimateUtils;
@@ -100,7 +101,7 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 	private boolean usingGravity = true;
 	private GravityModule gravity;
 
-	private LivelyWorld currentInstance;
+	private static LivelyWorld currentInstance;
 
 	private Instant lastBlockUpdate = Instant.now();
 	private long blockUpdatePeriod = 2L;
@@ -127,6 +128,7 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 
 		if (usingClimate) {
 			climate = new ClimateModule(this);
+			this.getServer().getPluginManager().registerEvents(new ClimateListener(), this);
 			climate.onEnable();
 		}
 
@@ -797,5 +799,9 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 
 	public ClimateModule getClimateModule() {
 		return climate;
+	}
+	
+	public static LivelyWorld getInstance(){
+		return currentInstance;
 	}
 }

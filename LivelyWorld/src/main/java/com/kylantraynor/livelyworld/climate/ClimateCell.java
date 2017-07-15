@@ -2,6 +2,8 @@ package com.kylantraynor.livelyworld.climate;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -13,6 +15,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 
+import com.kylantraynor.livelyworld.LivelyWorld;
 import com.kylantraynor.livelyworld.hooks.HookManager;
 import com.kylantraynor.voronoi.VCell;
 import com.kylantraynor.voronoi.VTriangle;
@@ -38,6 +41,7 @@ public class ClimateCell extends VCell {
 	private Weather weather = Weather.CLEAR;
 	private double humidityMultiplier;
 	private Temperature tropopauseTemp;
+	private double largestDistance;
 
 	public ClimateCell() {
 		super();
@@ -429,16 +433,27 @@ public class ClimateCell extends VCell {
 		return humidity;
 	}
 	
-	public Player[] getPlayersWithin(){
-		List<Player> result = new ArrayList<Player>();
-		for(Player p : Bukkit.getOnlinePlayers()){
-			if(world == p.getWorld()){
-				if(isInside(new VectorXZ((float)p.getLocation().getX(), (float)p.getLocation().getZ()))){
-					result.add(p);
-				}
+	public UUID[] getPlayersWithin(){
+		List<UUID> result = new ArrayList<UUID>();
+		for(Entry<UUID, ClimateCell> e : LivelyWorld.getInstance().getClimateModule().getPlayerCache().entrySet()){
+			if(e.getValue() == this){
+				result.add(e.getKey());
 			}
 		}
-		return result.toArray(new Player[result.size()]);
+		return result.toArray(new UUID[result.size()]);
+	}
+	
+	public double getMostDistance(){
+		if(!Double.isNaN(largestDistance)) return largestDistance;
+		double result = 0;
+		for(int i = 0; i < this.getVerticesX().length; i++){
+			double distSquared = this.getSite().distanceSquared(new VectorXZ((float) getVerticesX()[i], (float) getVerticesZ()[i]));
+			if(distSquared > result){
+				result = distSquared;
+			}
+		}
+		largestDistance = Math.sqrt(result);
+		return largestDistance;
 	}
 
 	public double getPrecipitations() {

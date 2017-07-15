@@ -103,14 +103,14 @@ public class ClimateModule {
 								if(!c.getWorld().isChunkLoaded(chunkX, chunkZ)){
 									continue;
 								}
-								/*Block b = w.getHighestBlockAt(x, z);
+								Block b = c.getWorld().getHighestBlockAt(x, z);
 								if(!b.getChunk().isLoaded()) return;
 								while(b.getType() == Material.AIR){
 									b = b.getRelative(BlockFace.DOWN);
 								}
 								if(c.getTemperature().isCelsiusAbove(5)){
 									ClimateUtils.melt(b);
-								}*/
+								}
 							}
 						}
 						break;
@@ -130,9 +130,9 @@ public class ClimateModule {
 								if(!c.getWorld().isChunkLoaded(chunkX, chunkZ)){
 									continue;
 								}
-								/*Block b = w.getHighestBlockAt((int) c.getSite().getX() + random_x, (int)c.getSite().getZ() + random_z);
+								Block b = c.getWorld().getHighestBlockAt((int) c.getSite().getX() + random_x, (int)c.getSite().getZ() + random_z);
 								SnowFallTask task = new SnowFallTask(getPlugin().getClimateModule(), b.getWorld(), b.getX(), b.getY() + 1, b.getZ());
-								task.runTaskLater(getPlugin(), 1);*/
+								task.runTaskLater(getPlugin(), 1);
 							}
 						}
 						break;
@@ -150,9 +150,9 @@ public class ClimateModule {
 								if(!c.getWorld().isChunkLoaded(chunkX, chunkZ)){
 									continue;
 								}
-								/*Block b = w.getHighestBlockAt((int) c.getSite().getX() + random_x, (int)c.getSite().getZ() + random_z);
+								Block b = c.getWorld().getHighestBlockAt((int) c.getSite().getX() + random_x, (int)c.getSite().getZ() + random_z);
 								SnowFallTask task = new SnowFallTask(getPlugin().getClimateModule(), b.getWorld(), b.getX(), b.getY() + 1, b.getZ());
-								task.runTaskLater(getPlugin(), 1);*/
+								task.runTaskLater(getPlugin(), 1);
 							}
 						}
 						break;
@@ -167,8 +167,8 @@ public class ClimateModule {
 							if(!c.getWorld().isChunkLoaded(chunkX, chunkZ)){
 								continue;
 							}
-							/*Block b = w.getHighestBlockAt((int) c.getSite().getX() + random_x, (int)c.getSite().getZ() + random_z);
-							spawnLightning(b.getRelative(BlockFace.UP));*/
+							Block b = c.getWorld().getHighestBlockAt((int) c.getSite().getX() + random_x, (int)c.getSite().getZ() + random_z);
+							spawnLightning(b.getRelative(BlockFace.UP));
 						}
 						break;
 					default:

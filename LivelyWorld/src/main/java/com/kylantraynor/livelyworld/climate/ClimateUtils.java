@@ -77,9 +77,9 @@ public class ClimateUtils {
 				block.getRelative(BlockFace.DOWN).setType(Material.DIRT);
 			}
 		}
-		/*if(oldLayers < layers && Math.random() < 0.1){
+		if(oldLayers < layers && Math.random() < 0.1){
 			updateGlacier(block);
-		}*/
+		}
 	}
 	
 	public static void updateGlacier(Block block){

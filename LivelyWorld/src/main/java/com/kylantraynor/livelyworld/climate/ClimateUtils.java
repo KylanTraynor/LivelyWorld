@@ -56,6 +56,7 @@ public class ClimateUtils {
 	}
 	
 	public static void setSnowLayers(Block block, int layers){
+		int oldLayers = getSnowLayers(block);
 		if(layers == 0){
 			block.setType(Material.AIR);
 			block.setData((byte) 0);
@@ -67,6 +68,25 @@ public class ClimateUtils {
 			block.setData((byte) (layers - 1));
 			if(block.getRelative(BlockFace.DOWN).getType() == Material.GRASS){
 				block.getRelative(BlockFace.DOWN).setType(Material.DIRT);
+			}
+		}
+		if(oldLayers < layers){
+			int depth = 0;
+			while(block.getType() == Material.SNOW || block.getType() == Material.SNOW_BLOCK || block.getType() == Material.FROSTED_ICE || block.getType() == Material.ICE || block.getType() == Material.PACKED_ICE){
+				block = block.getRelative(BlockFace.DOWN);
+				depth++;
+			}
+			while(depth > 2)
+			{
+				block = block.getRelative(BlockFace.UP);
+				depth++;
+				if(block.getType() == Material.ICE && depth > 10){
+					block.setType(Material.PACKED_ICE);
+				} else if(block.getType() == Material.FROSTED_ICE && depth > 5) {
+					block.setType(Material.ICE);
+				} else if (block.getType() == Material.SNOW_BLOCK && depth > 2){
+					block.setType(Material.FROSTED_ICE);
+				}
 			}
 		}
 	}
@@ -82,6 +102,12 @@ public class ClimateUtils {
 			} else {
 				setWaterHeight(b, getSnowLayers(b), false);
 			}
+		} else if(b.getType() == Material.FROSTED_ICE){
+			
+		} else if(b.getType() == Material.ICE){
+			b.setType(Material.FROSTED_ICE);
+		} else if(b.getType() == Material.PACKED_ICE){
+			b.setType(Material.ICE);
 		}
 	}
 	

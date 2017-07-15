@@ -511,18 +511,12 @@ public class ClimateModule {
 					case "TEMPERATURE":
 						if (sender instanceof Player) {
 							Player p = (Player) sender;
-							Planet planet = Planet.getPlanet(p.getWorld());
-							if (planet != null) {
-								planet = defaultPlanet;
-							}
-							if (new Climate(p.getLocation())
-									.getAreaTemperature() != null) {
+							ClimateCell c = ClimateUtils.getClimateCellFor(p);
+							if (c != null) {
 								p.sendMessage(MessageHeader
 										+ ChatColor.GOLD
 										+ "Current temperature here: "
-										+ new Climate(p.getLocation())
-												.getAreaTemperature().toString(
-														p));
+										+ c.getTemperature().toString(p));
 							} else {
 								p.sendMessage(MessageHeader
 										+ ChatColor.RED
@@ -560,8 +554,11 @@ public class ClimateModule {
 
 	public void updateBiome(Block block) {
 		Planet p = Planet.getPlanet(block.getWorld());
+		if(p == null) return;
 		ClimateMap map = p.getClimateMap(block.getWorld());
+		if(map == null) return;
 		Temperature temp = map.getTemperatureAt(block.getLocation());
+		if(temp.isNaN()) return;
 		switch (block.getBiome()) {
 		case COLD_BEACH:
 			if(temp.isCelsiusAbove(5)){

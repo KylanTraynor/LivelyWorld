@@ -36,7 +36,7 @@ public class ClimateModule {
 	private BukkitRunnable weatherUpdater;
 	private BukkitRunnable weatherEffectsUpdater;
 	
-	private Map<UUID, ClimateCell> playerCache = new HashMap<UUID, ClimateCell>();
+	private Map<String, ClimateCell> playerCache = new HashMap<String, ClimateCell>();
 
 	static final String MessageHeader = ChatColor.GOLD + "[" + ChatColor.WHITE
 			+ "Climate" + ChatColor.GOLD + "] " + ChatColor.WHITE;
@@ -682,9 +682,9 @@ public class ClimateModule {
 	}
 
 	public void updatePlayerCell(Player player) {
-		ClimateCell c = playerCache.get(player.getUniqueId());
+		ClimateCell c = playerCache.get(player.getUniqueId().toString());
 		if(c == null){
-			playerCache.put(player.getUniqueId(), ClimateUtils.getClimateCellAt(player.getLocation()));
+			playerCache.put(player.getUniqueId().toString(), ClimateUtils.getClimateCellAt(player.getLocation()));
 			return;
 		} else {
 			VectorXZ pv = new VectorXZ((float)player.getLocation().getX(), (float) player.getLocation().getZ());
@@ -694,20 +694,20 @@ public class ClimateModule {
 				for(ClimateCell nc : c.getNeighbours()){
 					if(nc == null) continue;
 					if(nc.isInside(pv)){
-						playerCache.put(player.getUniqueId(), nc);
+						playerCache.put(player.getUniqueId().toString(), nc);
 						return;
 					}
 				}
-				playerCache.put(player.getUniqueId(), ClimateUtils.getClimateCellAt(player.getLocation()));
+				playerCache.put(player.getUniqueId().toString(), ClimateUtils.getClimateCellAt(player.getLocation()));
 			}
 		}
 	}
 
 	public ClimateCell getClimateCellFor(Player p) {
-		return playerCache.get(p.getUniqueId());
+		return playerCache.get(p.getUniqueId().toString());
 	}
 
-	public Map<UUID, ClimateCell> getPlayerCache() {
+	public Map<String, ClimateCell> getPlayerCache() {
 		return playerCache;
 	}
 }

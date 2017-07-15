@@ -433,14 +433,14 @@ public class ClimateCell extends VCell {
 		return humidity;
 	}
 	
-	public UUID[] getPlayersWithin(){
-		List<UUID> result = new ArrayList<UUID>();
-		for(Entry<UUID, ClimateCell> e : LivelyWorld.getInstance().getClimateModule().getPlayerCache().entrySet()){
+	public String[] getPlayersWithin(){
+		List<String> result = new ArrayList<String>();
+		for(Entry<String, ClimateCell> e : LivelyWorld.getInstance().getClimateModule().getPlayerCache().entrySet()){
 			if(e.getValue() == this){
 				result.add(e.getKey());
 			}
 		}
-		return result.toArray(new UUID[result.size()]);
+		return result.toArray(new String[result.size()]);
 	}
 	
 	public double getMostDistance(){

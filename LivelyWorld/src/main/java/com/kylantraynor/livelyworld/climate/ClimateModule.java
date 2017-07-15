@@ -90,7 +90,7 @@ public class ClimateModule {
 					switch (c.getWeather()){
 					case CLEAR:
 						if(Math.random() <= 1.0){
-							for(int i = 0; i < 5; i++){
+							for(int i = 0; i < 20; i++){
 								int random_x = (int) ((Math.random() * doubleMostDist) - mostDist);
 								int random_z = (int) ((Math.random() * doubleMostDist) - mostDist);
 								int x = (int)c.getSite().getX() + random_x;
@@ -98,7 +98,6 @@ public class ClimateModule {
 								int chunkX = x >> 4; // /16
 								int chunkZ = z >> 4; // /16
 								if(!c.getWorld().isChunkLoaded(chunkX, chunkZ)){
-									i--;
 									continue;
 								}
 								Block b = c.getWorld().getHighestBlockAt(x, z);
@@ -118,7 +117,7 @@ public class ClimateModule {
 						break;
 					case SNOW:
 						if(Math.random() <= 0.95){
-							for(int i = 0; i < 5; i++){
+							for(int i = 0; i < 20; i++){
 								int random_x = (int) ((Math.random() * doubleMostDist) - mostDist);
 								int random_z = (int) ((Math.random() * doubleMostDist) - mostDist);
 								int x = (int)c.getSite().getX() + random_x;
@@ -126,7 +125,6 @@ public class ClimateModule {
 								int chunkX = x >> 4; // /16
 								int chunkZ = z >> 4; // /16
 								if(!c.getWorld().isChunkLoaded(chunkX, chunkZ)){
-									i--;
 									continue;
 								}
 								Block b = c.getWorld().getHighestBlockAt((int) c.getSite().getX() + random_x, (int)c.getSite().getZ() + random_z);
@@ -139,7 +137,7 @@ public class ClimateModule {
 						break;
 					case SNOWSTORM:
 						if(Math.random() <= 1.0){
-							for(int i = 0; i < 10; i++){
+							for(int i = 0; i < 40; i++){
 								int random_x = (int) ((Math.random() * doubleMostDist) - mostDist);
 								int random_z = (int) ((Math.random() * doubleMostDist) - mostDist);
 								int x = (int)c.getSite().getX() + random_x;
@@ -147,7 +145,6 @@ public class ClimateModule {
 								int chunkX = x >> 4; // /16
 								int chunkZ = z >> 4; // /16
 								if(!c.getWorld().isChunkLoaded(chunkX, chunkZ)){
-									i--;
 									continue;
 								}
 								Block b = c.getWorld().getHighestBlockAt((int) c.getSite().getX() + random_x, (int)c.getSite().getZ() + random_z);

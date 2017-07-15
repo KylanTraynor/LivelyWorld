@@ -98,6 +98,7 @@ public class ClimateModule {
 								int chunkX = x >> 4; // /16
 								int chunkZ = z >> 4; // /16
 								if(!c.getWorld().isChunkLoaded(chunkX, chunkZ)){
+									i--;
 									continue;
 								}
 								Block b = c.getWorld().getHighestBlockAt(x, z);
@@ -125,6 +126,7 @@ public class ClimateModule {
 								int chunkX = x >> 4; // /16
 								int chunkZ = z >> 4; // /16
 								if(!c.getWorld().isChunkLoaded(chunkX, chunkZ)){
+									i--;
 									continue;
 								}
 								Block b = c.getWorld().getHighestBlockAt((int) c.getSite().getX() + random_x, (int)c.getSite().getZ() + random_z);
@@ -145,6 +147,7 @@ public class ClimateModule {
 								int chunkX = x >> 4; // /16
 								int chunkZ = z >> 4; // /16
 								if(!c.getWorld().isChunkLoaded(chunkX, chunkZ)){
+									i--;
 									continue;
 								}
 								Block b = c.getWorld().getHighestBlockAt((int) c.getSite().getX() + random_x, (int)c.getSite().getZ() + random_z);

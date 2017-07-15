@@ -271,15 +271,6 @@ public class ClimateCell extends VCell {
 	
 	private void bringTemperatureTo(Temperature temp, double inertia){
 		temperature = getTemperature().bringTo(temp, inertia);
-		Biome b = world.getBiome((int)getSite().getX(), (int)getSite().getZ());
-		if(b == Biome.DESERT || 
-				b == Biome.DESERT_HILLS || 
-				b == Biome.MESA || 
-				b == Biome.MESA_CLEAR_ROCK || 
-				b == Biome.MESA_ROCK) {
-			
-			humidity = 0;
-		}
 		humidityMultiplier = Double.NaN;
 		highAltitudePressure = Double.NaN;
 		lowAltitudePressure = Double.NaN;
@@ -419,7 +410,16 @@ public class ClimateCell extends VCell {
 	}
 	
 	public void init(){
-		this.temperature = getTemperature().bringTo(Planet.getPlanet(world).getDefaultAirTemperature(getLocation()), 0);
+		this.temperature = getTemperature().bringTo(new Climate(getLocation()).getAreaSurfaceTemperature(), 0);
+		Biome b = world.getBiome((int)getSite().getX(), (int)getSite().getZ());
+		if(b == Biome.DESERT || 
+				b == Biome.DESERT_HILLS || 
+				b == Biome.MESA || 
+				b == Biome.MESA_CLEAR_ROCK || 
+				b == Biome.MESA_ROCK) {
+			
+			humidity = 0;
+		}
 		updatePressure();
 		updateMap();
 	}

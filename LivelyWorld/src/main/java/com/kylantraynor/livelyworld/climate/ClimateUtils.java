@@ -79,7 +79,7 @@ public class ClimateUtils {
 			while(depth > 2)
 			{
 				block = block.getRelative(BlockFace.UP);
-				depth++;
+				depth--;
 				if(block.getType() == Material.ICE && depth > 10){
 					block.setType(Material.PACKED_ICE);
 				} else if(block.getType() == Material.FROSTED_ICE && depth > 5) {

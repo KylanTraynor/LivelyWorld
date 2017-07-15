@@ -88,14 +88,14 @@ public class ClimateModule {
 			@Override
 			public void run() {
 				for (World w : Bukkit.getServer().getWorlds()){
-					Planet pl = Planet.getPlanet(w);
+					/*Planet pl = Planet.getPlanet(w);
 					if(pl == null) continue;
 					ClimateMap map = pl.getClimateMap(w);
-					if(map == null) continue;
-					List<ClimateCell> clist = new ArrayList<ClimateCell>();
+					if(map == null) continue;*/
+					//List<ClimateCell> clist = new ArrayList<ClimateCell>();
 					for(ClimateCell c : playerCache.values()){
-						if(clist.contains(c)) continue;
-						clist.add(c);
+						//if(clist.contains(c)) continue;
+						//clist.add(c);
 						int mostDist = (int) c.getMostDistance();
 						switch (c.getWeather()){
 						case CLEAR:

@@ -4,6 +4,9 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Player;
+
+import com.kylantraynor.livelyworld.LivelyWorld;
 
 public class ClimateUtils {
 
@@ -42,6 +45,10 @@ public class ClimateUtils {
 		ClimateMap map = planet.getClimateMap(location.getWorld());
 		if(map == null) return null;
 		return map.getClimateCellAt(location);
+	}
+	
+	public static ClimateCell getClimateCellFor(Player p){
+		return LivelyWorld.getInstance().getClimateModule().getClimateCellFor(p);
 	}
 	
 	public static boolean isSnow(Block block){

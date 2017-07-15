@@ -13,7 +13,7 @@ public class ClimateListener implements Listener{
 	@EventHandler
 	public void onPlayerMove(PlayerMoveEvent e){
 		if(e.isCancelled()) return;
-		if(e.getFrom().getBlock() != e.getTo().getBlock()){
+		if(e.getTo().getBlockX() != e.getFrom().getBlockX() || e.getTo().getBlockZ() != e.getFrom().getBlockZ()){
 			LivelyWorld.getInstance().getClimateModule().updatePlayerCell(e.getPlayer());
 		}
 	}

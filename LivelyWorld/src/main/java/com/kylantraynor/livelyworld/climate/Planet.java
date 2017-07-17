@@ -131,7 +131,7 @@ public class Planet {
 	}
 
 	public double getSunDirectRadiation(World w, int x, int y, int z){
-		return getSunAverageRadiation(z) * getDayLight(new Location(w, x, y, z));
+		return getSunAverageRadiation(z) * getDayLight(w);
 	}
 	
 	public double getSunRadiation(Location l) {
@@ -140,15 +140,28 @@ public class Planet {
 
 	// 0 - 6h
 	public int getDayTime(Location l) {
-		return (int) ((l.getWorld().getFullTime() + 6000) % 24000);
+		return getDayTime(l.getWorld());
+	}
+	
+	public int getDayTime(World w){
+		return (int) ((w.getFullTime() + 6000) % 24000);
 	}
 
 	public double getDayLight(Location l) {
 		return Math.max((getSunPosition(l) + 0.5) /1.5, 0.0);
 	}
+	
+	public double getDayLight(World w){
+		return Math.max((getSunPosition(w) + 0.5) / 1.5, 0.0);
+	}
 
 	public double getSunPosition(Location l) {
 		double day = getDayTime(l) / 24000.0;
+		return -Math.cos((day) * TwoPI);
+	}
+	
+	public double getSunPosition(World w){
+		double day = getDayTime(w) / 24000.0;
 		return -Math.cos((day) * TwoPI);
 	}
 

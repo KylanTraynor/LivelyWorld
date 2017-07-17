@@ -189,7 +189,7 @@ public class ClimateCell extends VCell {
 	};
 	
 	public Temperature getSurfaceTemperature(){
-		return Planet.getPlanet(world).getClimate(getLocation()).getAreaSurfaceTemperature();
+		return Climate.getAreaSurfaceTemperature(getLocation().getWorld(), getLocation().getBlockX(), getLocation().getBlockZ());
 	}
 	
 	public double getDownInertia(){
@@ -336,7 +336,7 @@ public class ClimateCell extends VCell {
 			if(oceanDepth > 0){
 				humidity += 1 * saturation;
 			} else {
-				Material m = getLocation().getBlock().getType();
+				Material m = LivelyWorld.getInstance().getHighestMaterial(getLocation().getWorld(), getLocation().getBlockX(), getLocation().getBlockZ());
 				if(m == Material.GRASS ||
 						m == Material.LEAVES || 
 						m == Material.LEAVES_2 ||

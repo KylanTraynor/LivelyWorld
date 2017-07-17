@@ -7,6 +7,8 @@ import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 
+import com.kylantraynor.livelyworld.LivelyWorld;
+
 public class Climate {
 
 	public static double getHumidity(Material m) {
@@ -181,16 +183,15 @@ public class Climate {
 	}
 
 	public boolean isHeatSource() {
-		if (location.getBlock().getType() == Material.FIRE)
-			return true;
-		if (location.getBlock().getType() == Material.TORCH)
-			return true;
-		if (location.getBlock().getType() == Material.LAVA)
-			return true;
-		if (location.getBlock().getType() == Material.STATIONARY_LAVA)
-			return true;
-		if (location.getBlock().getType() == Material.BURNING_FURNACE)
-			return true;
+		return isHeatSource(location.getBlock().getType());
+	}
+	
+	public static boolean isHeatSource(Material mat){
+		if(mat == Material.FIRE) return true;
+		if(mat == Material.TORCH) return true;
+		if(mat == Material.LAVA) return true;
+		if(mat == Material.STATIONARY_LAVA) return true;
+		if(mat == Material.BURNING_FURNACE) return true;
 		return false;
 	}
 
@@ -251,15 +252,49 @@ public class Climate {
 		return new Temperature(temp);
 	}
 	
+	public static Temperature getTemperatureFor(Material type, World w, int x, int y, int z, boolean shaded){
+		double tMax = Climate.getMaxTemperatureFor(type).getValue();
+		double tMin = Climate.getInertialTemperatureFor(type).getValue();
+		if (isHeatSource(type)) {
+			return new Temperature(tMax);
+		} else {
+			Planet p = Planet.getPlanet(w);
+			if(p == null ) return new Temperature(tMax);
+			double temp = tMin;
+			if(shaded){
+				temp += (tMax - tMin) * p.getSunRadiation(new Location(w, x, y + 1, z));
+			} else {
+				temp += (tMax - tMin) * p.getSunDirectRadiation(w, x, y + 1, z);
+			}
+			return new Temperature(temp);
+		}
+	}
+	
 	public Temperature getAreaSurfaceTemperature(){
-		double temp = 0;
+		return getAreaSurfaceTemperature(location.getWorld(), location.getBlockX(), location.getBlockZ());
+		/*double temp = 0;
 		int count = 0;
 		for(int x = location.getBlockX() - 8; x <= location.getBlockX() + 8; x++){
 			for(int z = location.getBlockZ() - 8; z <= location.getBlockZ() + 8; z++){
-				Block b = getWorld().getHighestBlockAt(x, z);
-				if(b == null) continue;
-				b = b.getRelative(BlockFace.DOWN);
-				temp += (new Climate(b.getLocation()).getTemperature().value);
+				Material mat = LivelyWorld.getInstance().getHighestMaterial(location.getWorld(), x, z);
+				if(mat == null) continue;
+				temp += Climate.getTemperatureFor(mat, location.getWorld(), x, 0, z, false).getValue();
+				//temp += (new Climate(b.getLocation()).getTemperature().value);
+				count++;
+			}
+		}
+		return new Temperature(temp/count);*/
+	}
+	
+	public static Temperature getAreaSurfaceTemperature(World w, int blockX, int blockZ){
+		double temp = 0;
+		int count = 0;
+		for(int x = blockX - 8; x <= blockX + 8; x++){
+			for(int z = blockZ - 8; z <= blockZ + 8; z++){
+				Material mat = LivelyWorld.getInstance().getHighestMaterial(w, x, z);
+				if(mat == null) continue;
+				temp += Climate.getTemperatureFor(mat, w, x, 0, z, false).getValue();
+				//temp += (new Climate(b.getLocation()).getTemperature().value);
 				count++;
 			}
 		}

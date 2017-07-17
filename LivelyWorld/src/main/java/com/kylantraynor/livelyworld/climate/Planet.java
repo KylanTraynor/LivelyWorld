@@ -130,6 +130,10 @@ public class Planet {
 		return getSunAverageRadiation(l.getZ()) * (l.getBlock().getLightFromSky() / 15.0);
 	}
 
+	public double getSunDirectRadiation(World w, int x, int y, int z){
+		return getSunAverageRadiation(z) * getDayLight(new Location(w, x, y, z));
+	}
+	
 	public double getSunRadiation(Location l) {
 		return getSunAverageRadiation(l) * getDayLight(l);
 	}

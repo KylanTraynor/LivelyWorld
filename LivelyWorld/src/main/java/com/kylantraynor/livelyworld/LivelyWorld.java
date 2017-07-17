@@ -796,6 +796,17 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 			if(event.getEntityType() == EntityType.FALLING_BLOCK) gravity.checkGravityOn(event.getBlock());
 		}
 	}
+	
+	public Material getHighestMaterial(World w, int x, int z){
+		int y = 255;
+		while(y >= 0){
+			if(w.getBlockTypeIdAt(x, y, z) != 0){
+				return Material.getMaterial(w.getBlockTypeIdAt(x, y, z));
+			}
+			y--;
+		}
+		return null;
+	}
 
 	public ClimateModule getClimateModule() {
 		return climate;

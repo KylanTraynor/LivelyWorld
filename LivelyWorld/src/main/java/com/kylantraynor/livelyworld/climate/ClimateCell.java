@@ -42,7 +42,10 @@ public class ClimateCell extends VCell {
 	private double humidityMultiplier;
 	private Temperature tropopauseTemp;
 	private double largestDistance;
-
+	
+	private Temperature minTemp;
+	private Temperature maxTemp;
+	
 	public ClimateCell() {
 		super();
 	}
@@ -83,11 +86,6 @@ public class ClimateCell extends VCell {
 
 	public Weather getWeather() {
 		return weather;
-	}
-
-	public double getSunRadiation() {
-		return Planet.getPlanet(world).getSunRadiation(
-				new Location(world, getSite().getX(), 255, getSite().getZ()));
 	}
 
 	public Temperature getBaseTemperature() {
@@ -189,7 +187,19 @@ public class ClimateCell extends VCell {
 	};
 	
 	public Temperature getSurfaceTemperature(){
-		return Climate.getAreaSurfaceTemperature(getLocation().getWorld(), getLocation().getBlockX(), getLocation().getBlockZ());
+		World w = getLocation().getWorld();
+		int x = getLocation().getBlockX();
+		int y = getLocation().getBlockY();
+		int z = getLocation().getBlockZ();
+		if(minTemp == null){
+			minTemp = Climate.getAreaSurfaceMinTemperature(w, x, z);
+		}
+		if(maxTemp == null){
+			maxTemp = Climate.getAreaSurfaceMaxTemperature(w, x, z);
+		}
+		double dif = maxTemp.getValue() - minTemp.getValue();
+		return new Temperature(minTemp.getValue() + (dif * Planet.getPlanet(w).getSunDirectRadiation(w, x, y, z)));
+		//return Climate.getAreaSurfaceTemperature(getLocation().getWorld(), getLocation().getBlockX(), getLocation().getBlockZ());
 	}
 	
 	public double getDownInertia(){

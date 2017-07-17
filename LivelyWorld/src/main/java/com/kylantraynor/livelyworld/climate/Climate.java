@@ -286,6 +286,38 @@ public class Climate {
 		return new Temperature(temp/count);*/
 	}
 	
+	public static Temperature getAreaSurfaceMinTemperature(World w, int blockX, int blockZ){
+		double temp = 0;
+		int count = 0;
+		for(int x = blockX - 8; x <= blockX + 8; x++){
+			for(int z = blockZ - 8; z <= blockZ + 8; z++){
+				Material mat = LivelyWorld.getInstance().getHighestMaterial(w, x, z);
+				if(mat == null) continue;
+				temp += Climate.getInertialTemperatureFor(mat).getValue();
+				//temp += Climate.getTemperatureFor(mat, w, x, 0, z, false).getValue();
+				//temp += (new Climate(b.getLocation()).getTemperature().value);
+				count++;
+			}
+		}
+		return new Temperature(temp/count);
+	}
+	
+	public static Temperature getAreaSurfaceMaxTemperature(World w, int blockX, int blockZ){
+		double temp = 0;
+		int count = 0;
+		for(int x = blockX - 8; x <= blockX + 8; x++){
+			for(int z = blockZ - 8; z <= blockZ + 8; z++){
+				Material mat = LivelyWorld.getInstance().getHighestMaterial(w, x, z);
+				if(mat == null) continue;
+				temp += Climate.getMaxTemperatureFor(mat).getValue();
+				//temp += Climate.getTemperatureFor(mat, w, x, 0, z, false).getValue();
+				//temp += (new Climate(b.getLocation()).getTemperature().value);
+				count++;
+			}
+		}
+		return new Temperature(temp/count);
+	}
+	
 	public static Temperature getAreaSurfaceTemperature(World w, int blockX, int blockZ){
 		double temp = 0;
 		int count = 0;

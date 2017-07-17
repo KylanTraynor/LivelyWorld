@@ -199,10 +199,10 @@ public class ClimateCell extends VCell {
 		int x = getLocation().getBlockX();
 		int y = getLocation().getBlockY();
 		int z = getLocation().getBlockZ();
-		if(minTemp == null){
+		if(minTemp == null || w.isChunkLoaded(x >> 4, z >> 4)){
 			minTemp = Climate.getAreaSurfaceMinTemperature(w, x, z);
 		}
-		if(maxTemp == null){
+		if(maxTemp == null || w.isChunkLoaded(x >> 4, z >> 4)){
 			maxTemp = Climate.getAreaSurfaceMaxTemperature(w, x, z);
 		}
 		double dif = maxTemp.getValue() - minTemp.getValue();

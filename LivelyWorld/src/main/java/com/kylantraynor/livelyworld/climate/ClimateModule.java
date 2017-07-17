@@ -195,7 +195,7 @@ public class ClimateModule {
 
 		};
 
-		climateUpdater.runTaskTimer(plugin, 21L, 2L);
+		climateUpdater.runTaskTimer(plugin, 21L, 1L);
 	}
 
 	public void onDisable() {

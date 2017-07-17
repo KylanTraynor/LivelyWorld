@@ -193,7 +193,7 @@ public class ClimateCell extends VCell {
 	}
 	
 	public double getDownInertia(){
-		return (getAmountOnBlock() * 0.000001) + (getWaterVolumeOnBlock()*10) + (getHumidity() * 2);
+		return (getAmountOnBlock() * 0.00001) + (getWaterVolumeOnBlock()*100) + (getHumidity() * 5);
 	}
 	
 	public double getUpInertia(){

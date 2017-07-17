@@ -46,6 +46,8 @@ public class ClimateCell extends VCell {
 	private Temperature minTemp;
 	private Temperature maxTemp;
 	
+	private double humidityGeneration = Double.NaN;
+	
 	public ClimateCell() {
 		super();
 	}
@@ -61,6 +63,12 @@ public class ClimateCell extends VCell {
 
 	public double getHighVolume(){
 		return 10;
+	}
+	
+	public double getHumidityGeneration(){
+		if(!Double.isNaN(humidityGeneration)) return humidityGeneration;
+		humidityGeneration = Climate.getSurfaceHumidityGeneration(getLocation().getWorld(), getLocation().getBlockX(), getLocation().getBlockZ());
+		return humidityGeneration;
 	}
 	
 	public Temperature getTropopauseTemperature(){
@@ -343,22 +351,7 @@ public class ClimateCell extends VCell {
 	private void updateHumidity() {
 		double saturation = Math.max(75 - getRelativeHumidity(), 0) * 0.01;
 		if(saturation > 0){
-			if(oceanDepth > 0){
-				humidity += 1 * saturation;
-			} else {
-				Material m = LivelyWorld.getInstance().getHighestMaterial(getLocation().getWorld(), getLocation().getBlockX(), getLocation().getBlockZ());
-				if(m == Material.GRASS ||
-						m == Material.LEAVES || 
-						m == Material.LEAVES_2 ||
-						m == Material.LONG_GRASS ||
-						m == Material.DOUBLE_PLANT ||
-						m == Material.YELLOW_FLOWER ||
-						m == Material.RED_ROSE){
-					humidity += 0.1 * saturation;
-				} else {
-					humidity -= 0.01;
-				}
-			}
+			humidity += (getHumidityGeneration() * saturation);
 		}
 		double precipitation = 0;
 		if(weather == Weather.OVERCAST){

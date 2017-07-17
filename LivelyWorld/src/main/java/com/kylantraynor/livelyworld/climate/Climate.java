@@ -23,23 +23,23 @@ public class Climate {
 		case SANDSTONE:
 		case RED_SANDSTONE:
 		case STAINED_CLAY:
-			return 0.0;
+			return -0.1;
 		case SNOW:
-			return 40;
+			return 0.1;
 		case GRASS:
-			return 65.0;
+			return 0.2;
 		case DOUBLE_PLANT:
 		case LONG_GRASS:
 		case YELLOW_FLOWER:
 		case RED_ROSE:
 		case LEAVES:
 		case LEAVES_2:
-			return 75.0;
+			return 0.2;
 		case WATER:
 		case STATIONARY_WATER:
-			return 100.0;
+			return 1;
 		default:
-			return 50.0;
+			return -0.01;
 		}
 	}
 
@@ -349,5 +349,21 @@ public class Climate {
 			}
 		}
 		return new Temperature(temp);
+	}
+
+	public static double getSurfaceHumidityGeneration(World world, int blockX, int blockZ) {
+		double humidity = 0;
+		int count = 0;
+		for(int x = blockX - 8; x <= blockX + 8; x++){
+			for(int z = blockZ - 8; z <= blockZ + 8; z++){
+				Material mat = LivelyWorld.getInstance().getHighestMaterial(world, x, z);
+				if(mat == null) continue;
+				humidity += Climate.getHumidity(mat);
+				//temp += Climate.getTemperatureFor(mat, w, x, 0, z, false).getValue();
+				//temp += (new Climate(b.getLocation()).getTemperature().value);
+				count++;
+			}
+		}
+		return humidity/count;
 	}
 }

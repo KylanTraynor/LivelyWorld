@@ -376,7 +376,7 @@ public class ClimateCell extends VCell {
 		z = (int) this.getSite().getZ();
 		y = (int) world.getHighestBlockYAt(x, z) - 1;
 		humidityGeneration = Climate.getSurfaceHumidityGeneration(getWorld(), getX(), getZ());
-		this.temperature = getTemperature().bringTo(new Climate(getLocation()).getAreaSurfaceTemperature(), 0);
+		this.temperature = new Climate(getLocation()).getAreaSurfaceTemperature();
 		Biome b = world.getBiome((int)getSite().getX(), (int)getSite().getZ());
 		if(b == Biome.DESERT || 
 				b == Biome.DESERT_HILLS || 

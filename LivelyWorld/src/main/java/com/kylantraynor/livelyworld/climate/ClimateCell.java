@@ -24,8 +24,8 @@ import com.kylantraynor.voronoi.VectorXZ;
 public class ClimateCell extends VCell {
 
 	private World world;
-	private double lowAltitudePressure = getBasePressure();
-	private double highAltitudePressure = getBasePressure();
+	private double lowAltitudePressure = 101300;
+	private double highAltitudePressure = 70000;
 	private double airVolume = Double.NaN;
 	private Long airAmount = null;
 	private Long highAirAmount = null;
@@ -109,10 +109,6 @@ public class ClimateCell extends VCell {
 		return Temperature.fromCelsius(15);
 	}
 
-	public double getBasePressure() {
-		return 101300;
-	}
-
 	public double getAltitude() {
 		return y; // Could be improved by making an average of the y of the surface blocks around it.
 	}
@@ -155,35 +151,18 @@ public class ClimateCell extends VCell {
 	public double getWaterVolumeOnBlock(){
 		return oceanDepth;
 	}
-
-	/*public long getAmount() {
-		if (airAmount != null)
-			return airAmount;
-		airAmount = ClimateUtils.getGasAmount(getBasePressure(), getVolume(),
-				getBaseTemperature());
-		return airAmount;
-	}*/
 	
 	public double getAmountOnBlock(){
-		if(Double.isNaN(airAmountOnBlock)){
-			airAmountOnBlock = ClimateUtils.getGasAmount(getBasePressure(), getAirVolumeOnBlock(), getBaseTemperature());
-		}
-		if(airAmountOnBlock < 0) airAmountOnBlock = 0;
 		return airAmountOnBlock;
 	}
 
 	public double getLowAltitudePressure() {
-		if (Double.isNaN(lowAltitudePressure))
-			lowAltitudePressure = ClimateUtils.getGasPressure(getAirVolumeOnBlock(), getAmountOnBlock(), getTemperature());
-		if(lowAltitudePressure < 0) lowAltitudePressure = 0;
+		if(Double.isNaN(lowAltitudePressure)) updateLowPressure();
 		return lowAltitudePressure;
 	}
 
 	public double getHighAltitudePressure() {
-		if(Double.isNaN(highAltitudePressure)){
-			highAltitudePressure = ClimateUtils.getGasPressure(getHighVolume(), getAmountHigh(), getTropopauseTemperature());
-		}
-		if(highAltitudePressure < 0) highAltitudePressure = 0;
+		if(Double.isNaN(highAltitudePressure)) updateHighPressure();
 		return highAltitudePressure;
 	}
 
@@ -224,11 +203,6 @@ public class ClimateCell extends VCell {
 		highAltitudePressure = Double.NaN;
 		lowAltitudePressure = Double.NaN;
 	}
-
-	public void updatePressure() {
-		lowAltitudePressure = ClimateUtils.getGasPressure(getAirVolumeOnBlock(),
-				getAmountOnBlock(), getTemperature());
-	}
 	
 	private void moveVertically() {
 		double dp = getLowAltitudePressure() - getHighAltitudePressure();
@@ -236,18 +210,14 @@ public class ClimateCell extends VCell {
 			//Move Air Up
 			double transfer = ClimateUtils.getGasAmount(Math.abs(dp), getHighVolume(), getTropopauseTemperature());
 			transfer = Math.min(transfer, getAmountOnBlock());
-			airAmountOnBlock = Math.max(getAmountOnBlock() - transfer, 0);
-			airAmountHigh = Math.max(getAmountHigh() + transfer, 0);
-			lowAltitudePressure = Double.NaN;
-			highAltitudePressure = Double.NaN;
+			addHighAmount(transfer);
+			addAmount(-transfer);
 		} else if(dp < 0) {
 			// Move Air Down
 			double transfer = ClimateUtils.getGasAmount(Math.abs(dp), getAirVolumeOnBlock(), getTemperature());
 			transfer = Math.min(transfer, getAmountHigh());
-			airAmountHigh = Math.max(getAmountHigh() - transfer, 0);
-			airAmountOnBlock = Math.max(getAmountOnBlock() + transfer, 0);
-			lowAltitudePressure = Double.NaN;
-			highAltitudePressure = Double.NaN;
+			addHighAmount(-transfer);
+			addAmount(transfer);
 		}
 	}
 	
@@ -301,18 +271,17 @@ public class ClimateCell extends VCell {
 			double transfer = ClimateUtils.getGasAmount(Math.abs(dp), lowestPressure.getHighVolume(), lowestPressure.getTropopauseTemperature());
 			transfer = Math.min(transfer, getAmountHigh());
 			lowestPressure.addHighAmount(transfer);
-			airAmountHigh = Math.max(getAmountHigh() - transfer, 0);
-			highAltitudePressure = Double.NaN;
+			this.addHighAmount(-transfer);
 		}
 	}
 
 	private void addHighAmount(double transfer) {
-		airAmountHigh = Math.max(getAmountHigh() + transfer, 0);
+		airAmountHigh = Math.max(airAmountHigh + transfer, 0);
 		highAltitudePressure = Double.NaN;
 	}
 
 	private void addAmount(double transfer) {
-		airAmountOnBlock = Math.max(getAmountOnBlock() + transfer, 0);
+		airAmountOnBlock = Math.max(airAmountOnBlock + transfer, 0);
 		lowAltitudePressure = Double.NaN;
 	}
 	
@@ -321,10 +290,6 @@ public class ClimateCell extends VCell {
 	}
 
 	public double getAmountHigh() {
-		if(Double.isNaN(airAmountHigh) || airAmountHigh < 0){
-			airAmountHigh = ClimateUtils.getGasAmount(70000, getHighVolume(), getTropopauseTemperature());
-		}
-		if(airAmountHigh < 0 ) airAmountHigh = 0;
 		return airAmountHigh;
 	}
 
@@ -427,8 +392,17 @@ public class ClimateCell extends VCell {
 			oceanDepth++;
 			oceanY--;
 		}
-		updatePressure();
+		airAmountOnBlock = ClimateUtils.getGasAmount(lowAltitudePressure, getAirVolumeOnBlock(), getBaseTemperature());
+		airAmountHigh = ClimateUtils.getGasAmount(highAltitudePressure, getHighVolume(), getTropopauseTemperature());
 		updateMap();
+	}
+	
+	public void updateLowPressure(){
+		lowAltitudePressure = ClimateUtils.getGasPressure(getAirVolumeOnBlock(), airAmountOnBlock, temperature);
+	}
+	
+	public void updateHighPressure(){
+		highAltitudePressure = ClimateUtils.getGasPressure(getHighVolume(), airAmountHigh, getTropopauseTemperature());
 	}
 
 	public void setWeather(Weather weather) {

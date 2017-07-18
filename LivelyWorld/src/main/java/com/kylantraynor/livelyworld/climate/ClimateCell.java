@@ -48,6 +48,10 @@ public class ClimateCell extends VCell {
 	
 	private double humidityGeneration = Double.NaN;
 	
+	private int x;
+	private int y;
+	private int z;
+	
 	public ClimateCell() {
 		super();
 	}
@@ -67,7 +71,7 @@ public class ClimateCell extends VCell {
 	
 	public double getHumidityGeneration(){
 		if(!Double.isNaN(humidityGeneration)) return humidityGeneration;
-		humidityGeneration = Climate.getSurfaceHumidityGeneration(getLocation().getWorld(), getLocation().getBlockX(), getLocation().getBlockZ());
+		humidityGeneration = Climate.getSurfaceHumidityGeneration(getWorld(), getX(), getZ());
 		return humidityGeneration;
 	}
 	
@@ -79,9 +83,7 @@ public class ClimateCell extends VCell {
 	}
 	
 	public Location getLocation() {
-		Block b = world.getHighestBlockAt((int)this.getSite().getX(), (int) this.getSite().getZ());
-		if(b != null) b = b.getRelative(BlockFace.DOWN);
-		return b.getLocation() ;
+		return new Location(world, x, y, z);
 	}
 
 	public void setWorld(World world) {
@@ -90,6 +92,18 @@ public class ClimateCell extends VCell {
 
 	public World getWorld() {
 		return world;
+	}
+	
+	public int getX(){
+		return x;
+	}
+	
+	public int getY(){
+		return y;
+	}
+	
+	public int getZ(){
+		return z;
 	}
 
 	public Weather getWeather() {
@@ -106,12 +120,12 @@ public class ClimateCell extends VCell {
 
 	public double getAltitude() {
 		if(!Double.isNaN(altitude)) return altitude;
-		altitude = world.getHighestBlockYAt((int) getSite().x, (int) getSite().z) - 1;
-		double y = altitude;
-		while(y > 1 && world.getBlockAt((int) getSite().x, (int) (y - 1), (int) getSite().z).isLiquid() )
+		int y = this.getY();
+		oceanDepth = 0;
+		while(y > 1 && world.getBlockAt(x, y, z).isLiquid() ){
+			oceanDepth++;
 			y--;
-		
-		oceanDepth = altitude - y;
+		}
 		return altitude;
 	}
 
@@ -195,18 +209,14 @@ public class ClimateCell extends VCell {
 	};
 	
 	public Temperature getSurfaceTemperature(){
-		World w = getLocation().getWorld();
-		int x = getLocation().getBlockX();
-		int y = getLocation().getBlockY();
-		int z = getLocation().getBlockZ();
-		if(minTemp == null || w.isChunkLoaded(x >> 4, z >> 4)){
-			minTemp = Climate.getAreaSurfaceMinTemperature(w, x, z);
+		if(minTemp == null || world.isChunkLoaded(x >> 4, z >> 4)){
+			minTemp = Climate.getAreaSurfaceMinTemperature(world, x, z);
 		}
-		if(maxTemp == null || w.isChunkLoaded(x >> 4, z >> 4)){
-			maxTemp = Climate.getAreaSurfaceMaxTemperature(w, x, z);
+		if(maxTemp == null || world.isChunkLoaded(x >> 4, z >> 4)){
+			maxTemp = Climate.getAreaSurfaceMaxTemperature(world, x, z);
 		}
 		double dif = maxTemp.getValue() - minTemp.getValue();
-		return new Temperature(minTemp.getValue() + (dif * Planet.getPlanet(w).getSunDirectRadiation(w, x, y, z)));
+		return new Temperature(minTemp.getValue() + (dif * Planet.getPlanet(world).getSunDirectRadiation(world, x, y, z)));
 		//return Climate.getAreaSurfaceTemperature(getLocation().getWorld(), getLocation().getBlockX(), getLocation().getBlockZ());
 	}
 	
@@ -412,6 +422,9 @@ public class ClimateCell extends VCell {
 	}
 	
 	public void init(){
+		x = (int) this.getSite().getX();
+		z = (int) this.getSite().getZ();
+		y = (int) world.getHighestBlockYAt(x, z) - 1;
 		this.temperature = getTemperature().bringTo(new Climate(getLocation()).getAreaSurfaceTemperature(), 0);
 		Biome b = world.getBiome((int)getSite().getX(), (int)getSite().getZ());
 		if(b == Biome.DESERT || 

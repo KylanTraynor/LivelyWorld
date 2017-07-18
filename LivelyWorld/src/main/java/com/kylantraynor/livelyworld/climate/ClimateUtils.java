@@ -97,7 +97,9 @@ public class ClimateUtils {
 			} else if(block.getType() == Material.FROSTED_ICE && depth > 5) {
 				block.setType(Material.ICE);
 			} else if (block.getType() == Material.SNOW_BLOCK && depth > 2){
-				block.setType(Material.FROSTED_ICE);
+				block.setType(Material.ICE);
+			} else if (isWater(block)){
+				block.setType(Material.ICE); // Should eventually be changed into frosted ICE.
 			}
 		}
 	}

@@ -10,7 +10,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.WeatherType;
-import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -27,7 +26,7 @@ public class ClimateModule {
 	private LivelyWorld plugin;
 	private Planet defaultPlanet;
 	
-	private final int cellUpdates = 1;
+	private final int cellUpdates = 3;
 
 	private BukkitRunnable climateUpdater;
 	private BukkitRunnable weatherUpdater;

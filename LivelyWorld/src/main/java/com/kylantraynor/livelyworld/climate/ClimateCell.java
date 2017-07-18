@@ -32,7 +32,7 @@ public class ClimateCell extends VCell {
 	private double humidity = 6.4;
 	private double airAmountOnBlock = Double.NaN;
 	private double airAmountHigh = Double.NaN;
-	private Temperature temperature;
+	private Temperature temperature = Temperature.fromCelsius(15);
 	private ClimateMap map;
 	private double precipitations = 0;
 	private double altitude = Double.NaN;

@@ -230,7 +230,7 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 							@Override
 							public void run() {
 								try {
-									if (l.getChunk().isLoaded()) {
+									if (l.getWorld().isChunkLoaded(l.getBlockX() >> 4, l.getBlockZ() >> 4)) {
 										updateBlock(l.getBlock(), p);
 									}
 								} catch (Exception e) {

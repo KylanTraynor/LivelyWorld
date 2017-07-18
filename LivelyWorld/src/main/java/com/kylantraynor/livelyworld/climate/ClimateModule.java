@@ -91,7 +91,7 @@ public class ClimateModule {
 					switch (c.getWeather()){
 					case CLEAR:
 						if(Math.random() <= 1.0){
-							for(int i = 0; i < 20; i++){
+							for(int i = 0; i < 100; i++){
 								int random_x = (int) ((Math.random() * doubleMostDist) - mostDist);
 								int random_z = (int) ((Math.random() * doubleMostDist) - mostDist);
 								int x = (int)c.getSite().getX() + random_x;
@@ -118,7 +118,7 @@ public class ClimateModule {
 						break;
 					case SNOW:
 						if(Math.random() <= 0.95){
-							for(int i = 0; i < 20; i++){
+							for(int i = 0; i < 100; i++){
 								int random_x = (int) ((Math.random() * doubleMostDist) - mostDist);
 								int random_z = (int) ((Math.random() * doubleMostDist) - mostDist);
 								int x = (int)c.getSite().getX() + random_x;
@@ -138,7 +138,7 @@ public class ClimateModule {
 						break;
 					case SNOWSTORM:
 						if(Math.random() <= 1.0){
-							for(int i = 0; i < 40; i++){
+							for(int i = 0; i < 200; i++){
 								int random_x = (int) ((Math.random() * doubleMostDist) - mostDist);
 								int random_z = (int) ((Math.random() * doubleMostDist) - mostDist);
 								int x = (int)c.getSite().getX() + random_x;

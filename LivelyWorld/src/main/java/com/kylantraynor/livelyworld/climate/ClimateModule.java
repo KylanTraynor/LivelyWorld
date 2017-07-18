@@ -43,8 +43,9 @@ public class ClimateModule {
 	}
 
 	public void onEnable() {
-		defaultPlanet = new Planet(plugin.getServer().getWorld("world"),
-				"Laramidia");
+		
+		defaultPlanet = new Planet(plugin.getServer().getWorld("world"), "Laramidia");
+		
 		for (Planet p : Planet.planets) {
 			p.generateClimateMaps();
 			this.plugin.log(Level.INFO, "Generated climate maps for planet "
@@ -184,13 +185,18 @@ public class ClimateModule {
 
 			@Override
 			public void run() {
-				for (World w : Bukkit.getServer().getWorlds()) {
+				for(Planet p : Planet.planets){
+					for(int i = 0; i < cellUpdates; i++){
+						p.getClimateMap().randomCellUpdate();
+					}
+				}
+				/*for (World w : Bukkit.getServer().getWorlds()) {
 					Planet p = Planet.getPlanet(w);
 					if (p != null) {
 						for(int i = 0; i < cellUpdates; i++)
 							p.getClimateMap(w).randomCellUpdate();
 					}
-				}
+				}*/
 			}
 
 		};

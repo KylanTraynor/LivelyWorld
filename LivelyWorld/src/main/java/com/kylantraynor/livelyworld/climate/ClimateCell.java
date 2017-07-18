@@ -40,7 +40,7 @@ public class ClimateCell extends VCell {
 	private double cellArea = Double.NaN;
 	private Weather weather = Weather.CLEAR;
 	private double humidityMultiplier;
-	private Temperature tropopauseTemp;
+	private Temperature tropopauseTemp = new Temperature(225);
 	private double largestDistance;
 	
 	private Temperature minTemp;
@@ -57,7 +57,7 @@ public class ClimateCell extends VCell {
 	}
 	
 	@Override
-	public ClimateCell[] getNeighbours(){
+	public synchronized ClimateCell[] getNeighbours(){
 		ClimateCell[] result = new ClimateCell[super.getNeighbours().length];
 		for(int i = 0; i < super.getNeighbours().length; i++){
 			result[i] = (ClimateCell) super.getNeighbours()[i];
@@ -70,15 +70,10 @@ public class ClimateCell extends VCell {
 	}
 	
 	public double getHumidityGeneration(){
-		if(!Double.isNaN(humidityGeneration)) return humidityGeneration;
-		humidityGeneration = Climate.getSurfaceHumidityGeneration(getWorld(), getX(), getZ());
 		return humidityGeneration;
 	}
 	
 	public Temperature getTropopauseTemperature(){
-		if(tropopauseTemp == null){
-			tropopauseTemp = new Temperature(225);
-		}
 		return tropopauseTemp;
 	}
 	
@@ -119,23 +114,13 @@ public class ClimateCell extends VCell {
 	}
 
 	public double getAltitude() {
-		if(!Double.isNaN(altitude)) return altitude;
-		int y = this.getY();
-		oceanDepth = 0;
-		while(y > 1 && world.getBlockAt(x, y, z).isLiquid() ){
-			oceanDepth++;
-			y--;
-		}
-		return altitude;
+		return y; // Could be improved by making an average of the y of the surface blocks around it.
 	}
 
 	public Temperature getTemperature() {
-		if (temperature != null) return temperature;
-		temperature = getBaseTemperature();
-		humidityMultiplier = Double.NaN;
 		return temperature;
 	}
-
+	
 	public double getArea(){
 		if(!Double.isNaN(cellArea)){
 			return cellArea;
@@ -425,6 +410,7 @@ public class ClimateCell extends VCell {
 		x = (int) this.getSite().getX();
 		z = (int) this.getSite().getZ();
 		y = (int) world.getHighestBlockYAt(x, z) - 1;
+		humidityGeneration = Climate.getSurfaceHumidityGeneration(getWorld(), getX(), getZ());
 		this.temperature = getTemperature().bringTo(new Climate(getLocation()).getAreaSurfaceTemperature(), 0);
 		Biome b = world.getBiome((int)getSite().getX(), (int)getSite().getZ());
 		if(b == Biome.DESERT || 
@@ -434,6 +420,12 @@ public class ClimateCell extends VCell {
 				b == Biome.MESA_ROCK) {
 			
 			humidity = 0;
+		}
+		oceanDepth = 0;
+		int oceanY = y;
+		while(oceanY > 1 && world.getBlockAt(x, oceanY, z).isLiquid() ){
+			oceanDepth++;
+			oceanY--;
 		}
 		updatePressure();
 		updateMap();

@@ -77,101 +77,104 @@ public class ClimateModule {
 					}
 				}
 			}
-			
 		};
 		
 		weatherEffectsUpdater = new BukkitRunnable() {
 
 			@Override
 			public void run() {
-				for(ClimateCell c : playerCache.values()){
-					if(c == null) continue;
-					int mostDist = (int) c.getMostDistance();
-					int doubleMostDist = 2 * mostDist;
-					switch (c.getWeather()){
-					case CLEAR:
-						if(Math.random() <= 1.0){
-							for(int i = 0; i < 100; i++){
-								int random_x = (int) ((Math.random() * doubleMostDist) - mostDist);
-								int random_z = (int) ((Math.random() * doubleMostDist) - mostDist);
-								int x = (int)c.getSite().getX() + random_x;
-								int z = (int)c.getSite().getZ() + random_z;
-								int chunkX = x >> 4; // /16
-								int chunkZ = z >> 4; // /16
-								if(!c.getWorld().isChunkLoaded(chunkX, chunkZ)){
-									continue;
-								}
-								Block b = c.getWorld().getHighestBlockAt(x, z);
-								if(!b.getChunk().isLoaded()) return;
-								while(b.getType() == Material.AIR){
-									b = b.getRelative(BlockFace.DOWN);
-								}
-								if(c.getTemperature().isCelsiusAbove(5)){
-									ClimateUtils.melt(b);
+				if(Bukkit.getOnlinePlayers().size() > 0){
+					for(Player p : Bukkit.getOnlinePlayers()){
+						ClimateCell c = getClimateCellFor(p);
+						if(c == null) continue;
+						int mostDist = (int) 300;
+						int doubleMostDist = 2 * mostDist;
+						switch (c.getWeather()){
+						case CLEAR:
+							if(Math.random() <= 1.0 / c.getPlayersWithin().length){
+								for(int i = 0; i < 20; i++){
+									int random_x = (int) ((Math.random() * doubleMostDist) - mostDist);
+									int random_z = (int) ((Math.random() * doubleMostDist) - mostDist);
+									int x = p.getLocation().getBlockX() + random_x;
+									int z = p.getLocation().getBlockZ() + random_z;
+									int chunkX = x >> 4; // /16
+									int chunkZ = z >> 4; // /16
+									if(!p.getWorld().isChunkLoaded(chunkX, chunkZ)){
+										continue;
+									}
+									Block b = p.getWorld().getHighestBlockAt(x, z);
+									while(b.getType() == Material.AIR){
+										b = b.getRelative(BlockFace.DOWN);
+									}
+									if(c.getTemperature().isCelsiusAbove(5)){
+										ClimateUtils.melt(b);
+									}
 								}
 							}
-						}
-						break;
-					case OVERCAST:
-						break;
-					case RAIN:
-						break;
-					case SNOW:
-						if(Math.random() <= 0.95){
-							for(int i = 0; i < 100; i++){
+							break;
+						case OVERCAST:
+							break;
+						case RAIN:
+							break;
+						case SNOW:
+							if(Math.random() <= 0.95 / c.getPlayersWithin().length){
+								for(int i = 0; i < 20; i++){
+									int random_x = (int) ((Math.random() * doubleMostDist) - mostDist);
+									int random_z = (int) ((Math.random() * doubleMostDist) - mostDist);
+									int x = p.getLocation().getBlockX() + random_x;
+									int z = p.getLocation().getBlockZ() + random_z;
+									int chunkX = x >> 4; // /16
+									int chunkZ = z >> 4; // /16
+									if(!c.getWorld().isChunkLoaded(chunkX, chunkZ)){
+										continue;
+									}
+									Block b = c.getWorld().getHighestBlockAt((int) c.getSite().getX() + random_x, (int)c.getSite().getZ() + random_z);
+									SnowFallTask task = new SnowFallTask(getPlugin().getClimateModule(), b.getWorld(), b.getX(), b.getY() + 1, b.getZ());
+									task.runTaskLater(getPlugin(), 1);
+								}
+							}
+							break;
+						case STORM:
+							break;
+						case SNOWSTORM:
+							if(Math.random() <= 1.0 / c.getPlayersWithin().length){
+								for(int i = 0; i < 200; i++){
+									int random_x = (int) ((Math.random() * doubleMostDist) - mostDist);
+									int random_z = (int) ((Math.random() * doubleMostDist) - mostDist);
+									int x = p.getLocation().getBlockX() + random_x;
+									int z = p.getLocation().getBlockZ() + random_z;
+									int chunkX = x >> 4; // /16
+									int chunkZ = z >> 4; // /16
+									if(!c.getWorld().isChunkLoaded(chunkX, chunkZ)){
+										continue;
+									}
+									Block b = c.getWorld().getHighestBlockAt((int) c.getSite().getX() + random_x, (int)c.getSite().getZ() + random_z);
+									SnowFallTask task = new SnowFallTask(getPlugin().getClimateModule(), b.getWorld(), b.getX(), b.getY() + 1, b.getZ());
+									task.runTaskLater(getPlugin(), 1);
+								}
+							}
+							break;
+						case THUNDERSTORM:
+							if(Math.random() <= 0.1 / c.getPlayersWithin().length){
 								int random_x = (int) ((Math.random() * doubleMostDist) - mostDist);
 								int random_z = (int) ((Math.random() * doubleMostDist) - mostDist);
-								int x = (int)c.getSite().getX() + random_x;
-								int z = (int)c.getSite().getZ() + random_z;
+								int x = p.getLocation().getBlockX() + random_x;
+								int z = p.getLocation().getBlockZ() + random_z;
 								int chunkX = x >> 4; // /16
 								int chunkZ = z >> 4; // /16
 								if(!c.getWorld().isChunkLoaded(chunkX, chunkZ)){
 									continue;
 								}
 								Block b = c.getWorld().getHighestBlockAt((int) c.getSite().getX() + random_x, (int)c.getSite().getZ() + random_z);
-								SnowFallTask task = new SnowFallTask(getPlugin().getClimateModule(), b.getWorld(), b.getX(), b.getY() + 1, b.getZ());
-								task.runTaskLater(getPlugin(), 1);
+								spawnLightning(b.getRelative(BlockFace.UP));
 							}
+							break;
+						default:
+							break;
 						}
-						break;
-					case STORM:
-						break;
-					case SNOWSTORM:
-						if(Math.random() <= 1.0){
-							for(int i = 0; i < 200; i++){
-								int random_x = (int) ((Math.random() * doubleMostDist) - mostDist);
-								int random_z = (int) ((Math.random() * doubleMostDist) - mostDist);
-								int x = (int)c.getSite().getX() + random_x;
-								int z = (int)c.getSite().getZ() + random_z;
-								int chunkX = x >> 4; // /16
-								int chunkZ = z >> 4; // /16
-								if(!c.getWorld().isChunkLoaded(chunkX, chunkZ)){
-									continue;
-								}
-								Block b = c.getWorld().getHighestBlockAt((int) c.getSite().getX() + random_x, (int)c.getSite().getZ() + random_z);
-								SnowFallTask task = new SnowFallTask(getPlugin().getClimateModule(), b.getWorld(), b.getX(), b.getY() + 1, b.getZ());
-								task.runTaskLater(getPlugin(), 1);
-							}
-						}
-						break;
-					case THUNDERSTORM:
-						if(Math.random() <= 0.1){
-							int random_x = (int) ((Math.random() * doubleMostDist) - mostDist);
-							int random_z = (int) ((Math.random() * doubleMostDist) - mostDist);
-							int x = (int)c.getSite().getX() + random_x;
-							int z = (int)c.getSite().getZ() + random_z;
-							int chunkX = x >> 4; // /16
-							int chunkZ = z >> 4; // /16
-							if(!c.getWorld().isChunkLoaded(chunkX, chunkZ)){
-								continue;
-							}
-							Block b = c.getWorld().getHighestBlockAt((int) c.getSite().getX() + random_x, (int)c.getSite().getZ() + random_z);
-							spawnLightning(b.getRelative(BlockFace.UP));
-						}
-						break;
-					default:
-						break;
 					}
+				} else {
+					
 				}
 			}
 			
@@ -699,7 +702,12 @@ public class ClimateModule {
 	}
 
 	public ClimateCell getClimateCellFor(Player p) {
-		return playerCache.get(p.getUniqueId().toString());
+		ClimateCell result = playerCache.get(p.getUniqueId().toString());
+		if(result == null){
+			updatePlayerCell(p);
+			result = playerCache.get(p.getUniqueId().toString());
+		}
+		return result;
 	}
 
 	public Map<String, ClimateCell> getPlayerCache() {

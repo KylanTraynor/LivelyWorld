@@ -418,13 +418,15 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 	public Location getLowestNear(World world, int startX, int startY,
 			int startZ) {
 		int snowBaseLevel = 8;
-		if (world.getBlockAt(startX, startY - 1, startZ).getType() == Material.SNOW) {
-			snowBaseLevel = world.getBlockAt(startX, startY - 1, startZ)
-					.getData();
+		Block sb = world.getBlockAt(startX, startY - 1, startZ);
+		if (sb.getType() == Material.SNOW) {
+			snowBaseLevel = ClimateUtils.getSnowLayers(sb);
 		}
 
-		for (int x = startX - 1; x <= startX + 1; x++) {
-			for (int z = startZ - 1; z <= startZ + 1; z++) {
+		int xIncrement = Math.random() >= 0.5 ? 1 : -1; 
+		int zIncrement = Math.random() >= 0.5 ? 1 : -1;
+		for (int x = startX - xIncrement; x <= startX + 1 && x >= startX - 1; x += xIncrement) {
+			for (int z = startZ - zIncrement; z <= startZ + 1 && z >= startZ - 1; z += zIncrement) {
 				if (x * x == 1 && z * z == 1)
 					continue;
 				Block b = world.getBlockAt(x, startY, z);
@@ -440,7 +442,7 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 							return new Location(world, x, b.getY() + 1, z);
 						}
 					} else if (b.getType() == Material.SNOW) {
-						if (b.getData() < snowBaseLevel) {
+						if (ClimateUtils.getSnowLayers(b) < snowBaseLevel) {
 							return new Location(world, x, b.getY() + 1, z);
 						}
 					}

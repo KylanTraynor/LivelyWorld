@@ -118,7 +118,7 @@ public class ClimateUtils {
 		} else if(b.getType() == Material.FROSTED_ICE){
 			
 		} else if(b.getType() == Material.ICE){
-			b.setType(Material.FROSTED_ICE);
+			setWaterHeight(b, 8, false);
 		} else if(b.getType() == Material.PACKED_ICE){
 			b.setType(Material.ICE);
 		}

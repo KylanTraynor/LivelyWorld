@@ -13,28 +13,24 @@ public class Climate {
 
 	public static double getHumidity(Material m) {
 		switch (m) {
-		case COBBLESTONE:
-		case GRAVEL:
 		case SAND:
 		case STONE:
-		case SMOOTH_BRICK:
-		case DOUBLE_STEP:
-		case STEP:
 		case SANDSTONE:
 		case RED_SANDSTONE:
+		case CONCRETE_POWDER:
 		case STAINED_CLAY:
-			return -0.1;
+			return -0.2;
 		case SNOW:
-			return 0.1;
+			return 0.3;
 		case GRASS:
-			return 0.2;
+			return 0.4;
 		case DOUBLE_PLANT:
 		case LONG_GRASS:
 		case YELLOW_FLOWER:
 		case RED_ROSE:
 		case LEAVES:
 		case LEAVES_2:
-			return 0.2;
+			return 0.4;
 		case WATER:
 		case STATIONARY_WATER:
 			return 1;
@@ -293,6 +289,7 @@ public class Climate {
 			for(int z = blockZ - 8; z <= blockZ + 8; z++){
 				Material mat = LivelyWorld.getInstance().getHighestMaterial(w, x, z);
 				if(mat == null) continue;
+				//int y = w.getHighestBlockYAt(x, z);
 				temp += Climate.getInertialTemperatureFor(mat).getValue();
 				//temp += Climate.getTemperatureFor(mat, w, x, 0, z, false).getValue();
 				//temp += (new Climate(b.getLocation()).getTemperature().value);

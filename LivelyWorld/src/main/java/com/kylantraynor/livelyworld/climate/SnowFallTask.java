@@ -52,7 +52,7 @@ public class SnowFallTask extends BukkitRunnable {
 			} else if (b.getRelative(BlockFace.DOWN).getType().isSolid()) {
 				b.setType(Material.SNOW);
 			} else if (ClimateUtils.isWater(b.getRelative(BlockFace.DOWN))){
-				b.getRelative(BlockFace.DOWN).setType(Material.FROSTED_ICE);
+				b.getRelative(BlockFace.DOWN).setType(Material.ICE); // Should be turned back into Frosted Ice eventually.
 				ClimateUtils.setSnowLayers(b, ClimateUtils.getSnowLayers(b) + 1);
 			} else if (b.getRelative(BlockFace.DOWN).getType() != Material.SIGN_POST
 					&& b.getRelative(BlockFace.DOWN).getType() != Material.SIGN

@@ -135,10 +135,15 @@ public class ClimateMap {
 		return lowestTemperature;
 	}
 
+	/**
+	 * Returns the temperature at the location from averaging the surrounding {@link ClimateCell}.
+	 * @param location
+	 * @return {@link Temperature} which can be NaN.
+	 */
 	public Temperature getTemperatureAt(Location location) {
 		
 		ClimateCell cell = getClimateCellAt(location);
-		if(cell == null) return null;
+		if(cell == null) return Temperature.NaN;
 		VectorXZ v = new VectorXZ((float) location.getX(), (float) location.getZ());
 		
 		ClimateCell cell2 = null;

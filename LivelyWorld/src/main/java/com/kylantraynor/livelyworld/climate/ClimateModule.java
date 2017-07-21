@@ -27,6 +27,7 @@ public class ClimateModule {
 	private Planet defaultPlanet;
 	
 	private final int cellUpdates = 3;
+	private final int weatherEffectBlocks = 100;
 
 	private BukkitRunnable climateUpdater;
 	private BukkitRunnable weatherUpdater;
@@ -89,6 +90,60 @@ public class ClimateModule {
 						if(c == null) continue;
 						int mostDist = (int) 300;
 						int doubleMostDist = 2 * mostDist;
+						
+						for(int i = 0; i < weatherEffectBlocks; i++){
+							int random_x = (int) ((Math.random() * doubleMostDist) - mostDist);
+							int random_z = (int) ((Math.random() * doubleMostDist) - mostDist);
+							int x = p.getLocation().getBlockX() + random_x;
+							int z = p.getLocation().getBlockZ() + random_z;
+							int chunkX = x >> 4; // /16
+							int chunkZ = z >> 4; // /16
+							if(!p.getWorld().isChunkLoaded(chunkX, chunkZ)){
+								continue;
+							}
+							Block b = p.getWorld().getHighestBlockAt(x, z);
+							while(b.getType() == Material.AIR){
+								b = b.getRelative(BlockFace.DOWN);
+							}
+							ClimateCell cell = ClimateUtils.getClimateCellAt(b.getLocation());
+							if(cell == null) continue;
+							switch(cell.getWeather()){
+							case CLEAR:
+								if(Math.random() < 0.1){
+									if(Climate.getAreaTemperatureFor(b.getLocation()).isCelsiusAbove(5)){
+										ClimateUtils.melt(b);
+									}
+								}
+								break;
+							case OVERCAST:
+								break;
+							case RAIN:
+								break;
+							case SNOW:
+								if(Math.random() < 0.5){
+									SnowFallTask task = new SnowFallTask(getPlugin().getClimateModule(), b.getWorld(), b.getX(), b.getY() + 1, b.getZ());
+									task.runTaskLater(getPlugin(), 1);
+								}
+								break;
+							case SNOWSTORM:
+								if(Math.random() < 1.0){
+									SnowFallTask task2 = new SnowFallTask(getPlugin().getClimateModule(), b.getWorld(), b.getX(), b.getY() + 1, b.getZ());
+									task2.runTaskLater(getPlugin(), 1);
+								}
+								break;
+							case STORM:
+								break;
+							case THUNDERSTORM:
+								if(Math.random() < 0.05 / weatherEffectBlocks){
+									spawnLightning(b.getRelative(BlockFace.UP));
+								}
+								break;
+							default:
+								break;
+							
+							}
+						}
+						
 						switch (c.getWeather()){
 						case CLEAR:
 							if(Math.random() <= 1.0 / c.getPlayersWithin().length){

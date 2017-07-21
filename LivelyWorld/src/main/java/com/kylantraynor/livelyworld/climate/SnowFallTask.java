@@ -39,7 +39,7 @@ public class SnowFallTask extends BukkitRunnable {
 			ClimateMap map = p.getClimateMap(world);
 			if(map == null) return;
 			ClimateCell cell = map.getClimateCellAt(b.getLocation());
-			if(map.getTemperatureAt(b.getLocation()).isCelsiusAbove(0)) return;
+			if(Climate.getAreaTemperatureFor(b.getLocation()).isAbove(1)) return;
 			
 			if (b.getRelative(BlockFace.DOWN).getType() == Material.SNOW) {
 				Block snow = b.getRelative(BlockFace.DOWN);

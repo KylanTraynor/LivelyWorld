@@ -215,7 +215,11 @@ public class Climate {
 			return new Temperature(tMax);
 		} else {
 			double temp = tMin;
-			temp += (tMax - tMin) * getPlanet().getSunRadiation(location.clone().add(0, 1, 0));
+			if(location.getBlock().getType() == Material.AIR){
+				temp += ClimateUtils.getTemperatureAt(location).getValue();
+			} else {
+				temp += (tMax - tMin) * getPlanet().getSunRadiation(location.clone().add(0, 1, 0));
+			}
 			return new Temperature(temp);
 		}
 	}
@@ -231,17 +235,25 @@ public class Climate {
 	}
 
 	public Temperature getAreaTemperature() {
+		return getAreaTemperatureFor(location);
+	}
+	
+	public static Temperature getAreaTemperatureFor(Location location){
 		double temp = 0;
 		for (int x = location.getBlockX() - 8; x <= location.getBlockX() + 8; x++) {
 			for (int y = location.getBlockY() - 8; y <= location.getBlockY() + 8; y++) {
 				for (int z = location.getBlockZ() - 8; z <= location
 						.getBlockZ() + 8; z++) {
-					Block b = getWorld().getBlockAt(x, y, z);
-					if(b == null) continue;
-					double distanceSquared = b.getLocation().add(0.5, 0.5, 0.5)
-							.distanceSquared(location);
-					temp += (new Climate(b.getLocation()).getTemperature().value - temp)
-							/ (distanceSquared);
+					double dx = location.getX() - (x + 0.5);
+					double dy = location.getY() - (y + 0.5);
+					double dz = location.getZ() - (z + 0.5);
+					double distanceSquared = dx * dx + dy * dy + dz * dz;
+					if(distanceSquared == 0){
+						temp += (Climate.getTemperatureFor(location.getWorld().getBlockAt(x, y, z).getType(), location.getWorld(), x, y, z, true).value - temp);
+					} else {
+						temp += (Climate.getTemperatureFor(location.getWorld().getBlockAt(x, y, z).getType(), location.getWorld(), x, y, z, true).value - temp)
+								/ (distanceSquared);
+					}
 				}
 			}
 		}
@@ -251,6 +263,9 @@ public class Climate {
 	public static Temperature getTemperatureFor(Material type, World w, int x, int y, int z, boolean shaded){
 		double tMax = Climate.getMaxTemperatureFor(type).getValue();
 		double tMin = Climate.getInertialTemperatureFor(type).getValue();
+		if(type == Material.AIR){
+			tMax = ClimateUtils.getTemperatureAt(new Location(w, x, y, z)).getValue();
+		}
 		if (isHeatSource(type)) {
 			return new Temperature(tMax);
 		} else {
@@ -260,7 +275,11 @@ public class Climate {
 			if(shaded){
 				temp += (tMax - tMin) * p.getSunRadiation(new Location(w, x, y + 1, z));
 			} else {
-				temp += (tMax - tMin) * p.getSunDirectRadiation(w, x, y + 1, z);
+				if(type == Material.AIR){
+					temp += (tMax - tMin);
+				} else {
+					temp += (tMax - tMin) * p.getSunDirectRadiation(w, x, y + 1, z);
+				}
 			}
 			return new Temperature(temp);
 		}

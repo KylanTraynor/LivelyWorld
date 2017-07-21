@@ -27,7 +27,7 @@ public class ClimateModule {
 	private Planet defaultPlanet;
 	
 	private final int cellUpdates = 3;
-	private final int weatherEffectBlocks = 100;
+	private final int weatherEffectBlocks = 20;
 
 	private BukkitRunnable climateUpdater;
 	private BukkitRunnable weatherUpdater;
@@ -117,7 +117,7 @@ public class ClimateModule {
 							switch(cell.getWeather()){
 							case CLEAR:
 								if(Math.random() < 0.1){
-									if(Climate.getAreaTemperatureFor(b.getLocation()).isCelsiusAbove(5)){
+									if(cell.getTemperature().isCelsiusAbove(5)){
 										ClimateUtils.melt(b);
 									}
 								}

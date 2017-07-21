@@ -88,7 +88,7 @@ public class ClimateUtils {
 			block = block.getRelative(BlockFace.DOWN);
 			depth++;
 		}
-		while(depth > 2)
+		while(depth > 0)
 		{
 			block = block.getRelative(BlockFace.UP);
 			depth--;
@@ -96,10 +96,12 @@ public class ClimateUtils {
 				block.setType(Material.PACKED_ICE);
 			} else if(block.getType() == Material.FROSTED_ICE && depth > 5) {
 				block.setType(Material.ICE);
-			} else if (block.getType() == Material.SNOW_BLOCK && depth > 2){
+			} else if ((block.getType() == Material.SNOW_BLOCK || block.getType() == Material.FROSTED_ICE) && depth > 2){
 				block.setType(Material.ICE);
 			} else if (isWater(block)){
 				block.setType(Material.ICE); // Should eventually be changed into frosted ICE.
+			} else {
+				block.setType(Material.SNOW_BLOCK);
 			}
 		}
 	}
@@ -116,7 +118,7 @@ public class ClimateUtils {
 				setWaterHeight(b, getSnowLayers(b), false);
 			}
 		} else if(b.getType() == Material.FROSTED_ICE){
-			
+			setWaterHeight(b, 8, false);
 		} else if(b.getType() == Material.ICE){
 			setWaterHeight(b, 8, false);
 		} else if(b.getType() == Material.PACKED_ICE){

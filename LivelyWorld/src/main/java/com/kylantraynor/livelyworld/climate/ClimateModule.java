@@ -117,7 +117,7 @@ public class ClimateModule {
 							switch(cell.getWeather()){
 							case CLEAR:
 								double tdiff = c.getTemperature().getValue() - Temperature.fromCelsius(5).getValue();
-								if(Math.random() < 0.1 * (tdiff / 5)){
+								if(Math.random() < 0.1 * (tdiff / 2)){
 									if(cell.getTemperature().isCelsiusAbove(5)){
 										ClimateUtils.melt(b);
 									}
@@ -129,14 +129,14 @@ public class ClimateModule {
 								break;
 							case SNOW:
 								double tdiff1 = Temperature.fromCelsius(5).getValue() - c.getTemperature().getValue();
-								if(Math.random() < 0.5 * (tdiff1 / 5)){
+								if(Math.random() < 0.5 * (tdiff1 / 2)){
 									SnowFallTask task = new SnowFallTask(getPlugin().getClimateModule(), b.getWorld(), b.getX(), b.getY() + 1, b.getZ());
 									task.runTaskLater(getPlugin(), 1);
 								}
 								break;
 							case SNOWSTORM:
 								double tdiff2 = Temperature.fromCelsius(5).getValue() - c.getTemperature().getValue();
-								if(Math.random() < 1.0 * (tdiff2 / 5)){
+								if(Math.random() < 1.0 * (tdiff2 / 2)){
 									SnowFallTask task = new SnowFallTask(getPlugin().getClimateModule(), b.getWorld(), b.getX(), b.getY() + 1, b.getZ());
 									task.runTaskLater(getPlugin(), 1);
 								}

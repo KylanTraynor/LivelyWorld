@@ -144,4 +144,13 @@ public class ClimateUtils {
 			b.setData((byte) (8 - height));
 		}
 	}
+	
+	public static Temperature getAltitudeWeightedTemperature(ClimateCell c, double y1){
+		if(c == null) return Temperature.NaN;
+		double temp = c.getTemperature().getValue();
+		double y = c.getAltitude();
+		
+		double result = temp - ((y1 - y) * 0.08);
+		return new Temperature(result);
+	}
 }

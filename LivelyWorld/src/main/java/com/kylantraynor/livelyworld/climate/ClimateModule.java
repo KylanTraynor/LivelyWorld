@@ -27,7 +27,7 @@ public class ClimateModule {
 	private Planet defaultPlanet;
 	
 	private final int cellUpdates = 3;
-	private final int weatherEffectBlocks = 20;
+	private final int weatherEffectBlocks = 60;
 
 	private BukkitRunnable climateUpdater;
 	private BukkitRunnable weatherUpdater;
@@ -151,7 +151,7 @@ public class ClimateModule {
 							
 							}
 						}
-						
+						/*
 						switch (c.getWeather()){
 						case CLEAR:
 							if(Math.random() <= 1.0 / c.getPlayersWithin().length){
@@ -235,6 +235,7 @@ public class ClimateModule {
 						default:
 							break;
 						}
+						*/
 					}
 				} else {
 					

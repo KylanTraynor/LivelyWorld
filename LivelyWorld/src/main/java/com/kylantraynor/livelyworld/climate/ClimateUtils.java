@@ -63,6 +63,7 @@ public class ClimateUtils {
 	}
 	
 	public static void setSnowLayers(Block block, int layers){
+		layers = layers > 8 ? 8 : layers;
 		int oldLayers = getSnowLayers(block);
 		if(layers == 0){
 			block.setType(Material.AIR);
@@ -110,10 +111,11 @@ public class ClimateUtils {
 		return block.getType() == Material.WATER || block.getType() == Material.STATIONARY_WATER;
 	}
 
-	public static void melt(Block b) {
+	public static void melt(Block b, int d) {
+		if(d <= 0) return;
 		if(isSnow(b)){
-			if(getSnowLayers(b) > 1){
-				setSnowLayers(b, getSnowLayers(b) - 1);
+			if(getSnowLayers(b) > d){
+				setSnowLayers(b, getSnowLayers(b) - d);
 			} else {
 				setWaterHeight(b, getSnowLayers(b), false);
 			}

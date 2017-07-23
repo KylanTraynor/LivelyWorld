@@ -116,11 +116,9 @@ public class ClimateModule {
 							if(cell == null) continue;
 							switch(cell.getWeather()){
 							case CLEAR:
-								double tdiff = c.getTemperature().getValue() - Temperature.fromCelsius(5).getValue();
+								double tdiff = cell.getTemperature().getValue() - Temperature.fromCelsius(5).getValue();
 								if(Math.random() < 0.1 * (tdiff / 2)){
-									if(cell.getTemperature().isCelsiusAbove(5)){
-										ClimateUtils.melt(b);
-									}
+									ClimateUtils.melt(b, (int) Math.ceil(tdiff/6));
 								}
 								break;
 							case OVERCAST:

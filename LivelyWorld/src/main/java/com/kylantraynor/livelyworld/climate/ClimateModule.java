@@ -27,7 +27,7 @@ public class ClimateModule {
 	private Planet defaultPlanet;
 	
 	private final int cellUpdates = 3;
-	private final int weatherEffectBlocks = 60;
+	private final int weatherEffectBlocks = 200;
 
 	private BukkitRunnable climateUpdater;
 	private BukkitRunnable weatherUpdater;

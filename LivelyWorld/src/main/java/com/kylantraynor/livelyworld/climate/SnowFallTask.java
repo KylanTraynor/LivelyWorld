@@ -6,6 +6,8 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import com.kylantraynor.livelyworld.LivelyWorld;
+
 public class SnowFallTask extends BukkitRunnable {
 
 	private ClimateModule module;

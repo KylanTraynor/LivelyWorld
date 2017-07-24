@@ -11,14 +11,14 @@ import com.kylantraynor.livelyworld.LivelyWorld;
 public class SnowFallTask extends BukkitRunnable {
 
 	private ClimateModule module;
-	private World world;
+	private ClimateCell cell;
 	private int x;
 	private int y;
 	private int z;
 
-	public SnowFallTask(ClimateModule module, World w, int x, int y, int z) {
+	public SnowFallTask(ClimateModule module, ClimateCell cell, int x, int y, int z) {
 		this.module = module;
-		this.world = w;
+		this.cell = cell;
 		this.x = x;
 		this.y = y;
 		this.z = z;
@@ -32,16 +32,12 @@ public class SnowFallTask extends BukkitRunnable {
 	}
 
 	private void processSnowFall() {
-		Block b = module.getPlugin().getLowestNear(world, x, y, z).getBlock();
+		Block b = module.getPlugin().getLowestNear(cell.getWorld(), x, y, z).getBlock();
 		if (getBlock().equals(b) || Math.random() < 0.01) {
 			module.updateBiome(b);
 			// Stop if temperature is above 1
-			Planet p = Planet.getPlanet(this.world);
-			if(p == null) return;
-			ClimateMap map = p.getClimateMap(world);
-			if(map == null) return;
-			ClimateCell cell = map.getClimateCellAt(b.getLocation());
-			if(ClimateUtils.getAltitudeWeightedTemperature(cell, b.getY()).isCelsiusAbove(1)) return;
+			ClimateCell cell = ClimateUtils.getClimateCellAt(b.getLocation(), this.cell);
+			if(ClimateUtils.getAltitudeWeightedTemperature(cell, b.getY()).isCelsiusAbove(3)) return;
 			
 			if (b.getRelative(BlockFace.DOWN).getType() == Material.SNOW) {
 				Block snow = b.getRelative(BlockFace.DOWN);
@@ -63,14 +59,14 @@ public class SnowFallTask extends BukkitRunnable {
 				b.getRelative(BlockFace.DOWN).setType(Material.SNOW);
 			}
 		} else {
-			SnowFallTask snowFallTask = new SnowFallTask(module, world,
+			SnowFallTask snowFallTask = new SnowFallTask(module, cell,
 					b.getX(), b.getY(), b.getZ());
 			snowFallTask.runTaskLater(module.getPlugin(), 2);
 		}
 	}
 
 	public Block getBlock() {
-		return world.getBlockAt(x, y, z);
+		return cell.getWorld().getBlockAt(x, y, z);
 	}
 
 }

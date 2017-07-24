@@ -127,7 +127,7 @@ public class ClimateModule {
 							case SNOW:
 								double tdiff1 = Temperature.fromCelsius(5).getValue() - ClimateUtils.getAltitudeWeightedTemperature(cell, b.getY()).getValue();
 								if(Math.random() < 0.5 * (tdiff1 / 2)){
-									SnowFallTask task = new SnowFallTask(getPlugin().getClimateModule(), b.getWorld(), b.getX(), b.getY() + 1, b.getZ());
+									SnowFallTask task = new SnowFallTask(getPlugin().getClimateModule(), cell, b.getX(), b.getY() + 1, b.getZ());
 									task.runTaskLater(getPlugin(), 1);
 								}
 								break;
@@ -135,7 +135,7 @@ public class ClimateModule {
 							case SNOWSTORM:
 								double tdiff2 = Temperature.fromCelsius(5).getValue() - ClimateUtils.getAltitudeWeightedTemperature(cell, b.getY()).getValue();
 								if(Math.random() < 1.0 * (tdiff2 / 2)){
-									SnowFallTask task = new SnowFallTask(getPlugin().getClimateModule(), b.getWorld(), b.getX(), b.getY() + 1, b.getZ());
+									SnowFallTask task = new SnowFallTask(getPlugin().getClimateModule(), cell, b.getX(), b.getY() + 1, b.getZ());
 									task.runTaskLater(getPlugin(), 1);
 								}
 								break;
@@ -334,10 +334,10 @@ public class ClimateModule {
 					|| topBlock.getRelative(BlockFace.UP).getType() == Material.SNOW_BLOCK) {
 				topBlock = topBlock.getRelative(BlockFace.UP);
 			}
-			if(map.getTemperatureAt(topBlock.getLocation()).isCelsiusAbove(0)){
+			if(ClimateUtils.getAltitudeWeightedTemperature(c, topBlock.getY()).isCelsiusAbove(0)){
 				ClimateUtils.setSnowLayers(topBlock, ClimateUtils.getSnowLayers(topBlock) - 1);
-			} else if (map.getClimateCellAt(topBlock.getLocation()).getWeather() != Weather.CLEAR){
-				SnowFallTask task = new SnowFallTask(this, topBlock.getWorld(), topBlock.getX(), topBlock.getY(), topBlock.getZ());
+			} else if (c.getWeather() != Weather.CLEAR){
+				SnowFallTask task = new SnowFallTask(this, c, topBlock.getX(), topBlock.getY(), topBlock.getZ());
 				task.runTaskLater(this.getPlugin(), 1);
 			}
 		} else if ((b.getType() == Material.WATER || b.getType() == Material.STATIONARY_WATER)) {

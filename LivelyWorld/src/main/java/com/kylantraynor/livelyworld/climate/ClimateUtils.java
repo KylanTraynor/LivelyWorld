@@ -7,6 +7,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 
 import com.kylantraynor.livelyworld.LivelyWorld;
+import com.kylantraynor.voronoi.VectorXZ;
 
 public class ClimateUtils {
 
@@ -40,6 +41,20 @@ public class ClimateUtils {
 	}
 	
 	public static ClimateCell getClimateCellAt(Location location){
+		return getClimateCellAt(location, null);
+	}
+	
+	public static ClimateCell getClimateCellAt(Location location, ClimateCell ref){
+		if(ref != null){
+			if(location.getWorld() == ref.getWorld()){
+				VectorXZ v = new VectorXZ((float) location.getBlockX(), (float) location.getBlockZ());
+				if(ref.isInside(v)) return ref;
+				for(ClimateCell c : ref.getNeighbours()){
+					if(c == null) continue;
+					if(c.isInside(v)) return c;
+				}
+			}
+		}
 		Planet planet = Planet.getPlanet(location.getWorld());
 		if(planet == null) return null;
 		ClimateMap map = planet.getClimateMap(location.getWorld());

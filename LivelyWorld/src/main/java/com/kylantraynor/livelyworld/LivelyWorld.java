@@ -402,8 +402,7 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 				climate.updateBiome(event.getBlock());
 			}
 			event.setCancelled(true);
-			SnowFallTask snowFallTask = new SnowFallTask(climate, event
-					.getBlock().getWorld(), event.getBlock().getX(), event
+			SnowFallTask snowFallTask = new SnowFallTask(climate, ClimateUtils.getClimateCellAt(event.getBlock().getLocation()), event.getBlock().getX(), event
 					.getBlock().getY(), event.getBlock().getZ());
 
 			snowFallTask.runTaskLater(this, 1);

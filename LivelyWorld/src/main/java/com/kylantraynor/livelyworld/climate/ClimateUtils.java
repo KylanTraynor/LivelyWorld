@@ -7,6 +7,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 
 import com.kylantraynor.livelyworld.LivelyWorld;
+import com.kylantraynor.voronoi.VCell;
 import com.kylantraynor.voronoi.VectorXZ;
 
 public class ClimateUtils {
@@ -163,9 +164,63 @@ public class ClimateUtils {
 	public static Temperature getAltitudeWeightedTemperature(ClimateCell c, double y1){
 		if(c == null) return Temperature.NaN;
 		double temp = c.getTemperature().getValue();
-		double y = c.getAltitude();
 		
-		double result = temp - ((y1 - y) * 0.08);
+		double result = temp - ((y1 - 48) * 0.08);
 		return new Temperature(result);
+	}
+	
+	public static Temperature getAltitudeWeightedTriangleTemperature(ClimateCell c, Location l){
+		ClimateTriangle t = getClimateTriangle(l, c);
+		double temp = t.getTemperatureAt(l.getX(), l.getZ()).getValue();
+		
+		double result = temp - ((l.getY() - 48) * 0.08);
+		return new Temperature(result);
+	}
+	
+	public static ClimateTriangle getClimateTriangle(Location location, ClimateCell ref){
+		VectorXZ v = new VectorXZ((float) location.getX(), (float) location.getZ());
+		ClimateCell cell = null;
+		if(ref != null){
+			if(ref.isInside(v)){
+				cell = ref;
+			} else {
+				for(ClimateCell c : ref.getNeighbours()){
+					if(c == null) continue;
+					if(c.isInside(v)) cell = c;
+				}
+				if(cell == null){
+					cell = getClimateCellAt(location);
+				}
+			}
+		} else {
+			cell = ClimateUtils.getClimateCellAt(location);
+		}
+		
+		if(cell == null) return null;
+		
+		ClimateCell cell2 = null;
+		ClimateCell cell3 = null;
+		
+		for(VCell c : cell.getNeighbours()){
+			if(c == null) continue;
+			if(cell3 == null) cell3 = (ClimateCell)c;
+			else {
+				if(cell3.getSite().distanceSquared(v) > c.getSite().distanceSquared(v)){
+					if(cell2 == null) cell2 = (ClimateCell) c;
+					else if(cell2.getSite().distanceSquared(v) > c.getSite().distanceSquared(v)){
+						cell3 = cell2;
+						cell2 = (ClimateCell)c;
+					} else {
+						cell3 = (ClimateCell)c;
+					}
+				}
+			}
+		}
+		
+		if(cell2 == null || cell3 == null){
+			// Shouldn't happen.
+			return new ClimateTriangle(cell, cell, cell);
+		}
+		return new ClimateTriangle(cell, cell2, cell3);
 	}
 }

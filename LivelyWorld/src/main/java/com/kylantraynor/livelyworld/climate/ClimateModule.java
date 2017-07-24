@@ -116,7 +116,7 @@ public class ClimateModule {
 							if(cell == null) continue;
 							switch(cell.getWeather()){
 							case CLEAR:
-								double tdiff = ClimateUtils.getAltitudeWeightedTemperature(cell, b.getY()).getValue() - Temperature.fromCelsius(5).getValue();
+								double tdiff = ClimateUtils.getAltitudeWeightedTriangleTemperature(cell, b.getLocation()).getValue() - Temperature.fromCelsius(5).getValue();
 								if(Math.random() < 0.1 * (tdiff / 2)){
 									ClimateUtils.melt(b, (int) Math.ceil(tdiff/6));
 								}
@@ -125,7 +125,7 @@ public class ClimateModule {
 								break;
 							case RAIN:
 							case SNOW:
-								double tdiff1 = Temperature.fromCelsius(5).getValue() - ClimateUtils.getAltitudeWeightedTemperature(cell, b.getY()).getValue();
+								double tdiff1 = Temperature.fromCelsius(5).getValue() - ClimateUtils.getAltitudeWeightedTriangleTemperature(cell, b.getLocation()).getValue();
 								if(Math.random() < 0.5 * (tdiff1 / 2)){
 									SnowFallTask task = new SnowFallTask(getPlugin().getClimateModule(), cell, b.getX(), b.getY() + 1, b.getZ());
 									task.runTaskLater(getPlugin(), 1);
@@ -133,7 +133,7 @@ public class ClimateModule {
 								break;
 							case STORM:
 							case SNOWSTORM:
-								double tdiff2 = Temperature.fromCelsius(5).getValue() - ClimateUtils.getAltitudeWeightedTemperature(cell, b.getY()).getValue();
+								double tdiff2 = Temperature.fromCelsius(5).getValue() - ClimateUtils.getAltitudeWeightedTriangleTemperature(cell, b.getLocation()).getValue();
 								if(Math.random() < 1.0 * (tdiff2 / 2)){
 									SnowFallTask task = new SnowFallTask(getPlugin().getClimateModule(), cell, b.getX(), b.getY() + 1, b.getZ());
 									task.runTaskLater(getPlugin(), 1);

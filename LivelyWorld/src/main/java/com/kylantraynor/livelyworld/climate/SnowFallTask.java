@@ -37,7 +37,7 @@ public class SnowFallTask extends BukkitRunnable {
 			module.updateBiome(b);
 			// Stop if temperature is above 1
 			ClimateCell cell = ClimateUtils.getClimateCellAt(b.getLocation(), this.cell);
-			if(ClimateUtils.getAltitudeWeightedTemperature(cell, b.getY()).isCelsiusAbove(3)) return;
+			if(ClimateUtils.getAltitudeWeightedTriangleTemperature(cell, b.getLocation()).isCelsiusAbove(3)) return;
 			
 			if (b.getRelative(BlockFace.DOWN).getType() == Material.SNOW) {
 				Block snow = b.getRelative(BlockFace.DOWN);

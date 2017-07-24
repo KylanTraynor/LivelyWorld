@@ -38,25 +38,29 @@ public class SnowFallTask extends BukkitRunnable {
 			// Stop if temperature is above 1
 			ClimateCell cell = ClimateUtils.getClimateCellAt(b.getLocation(), this.cell);
 			if(ClimateUtils.getAltitudeWeightedTriangleTemperature(cell, b.getLocation()).isCelsiusAbove(3)) return;
-			
-			if (b.getRelative(BlockFace.DOWN).getType() == Material.SNOW) {
-				Block snow = b.getRelative(BlockFace.DOWN);
+			Block below = b.getRelative(BlockFace.DOWN);
+			if (below.getType() == Material.SNOW) {
+				Block snow = below;
 				ClimateUtils.setSnowLayers(snow, ClimateUtils.getSnowLayers(snow) + 1);
 				/*if (snow.getData() < 6) {
 					snow.setData((byte) (snow.getData() + 1));
 				} else {
 					snow.setType(Material.SNOW_BLOCK);
 				}*/
-			} else if (b.getRelative(BlockFace.DOWN).getType().isSolid()) {
-				b.setType(Material.SNOW);
-			} else if (ClimateUtils.isWater(b.getRelative(BlockFace.DOWN))){ 
-				ClimateUtils.setSnowLayers(b.getRelative(BlockFace.DOWN), 7); // should be turned back into frosted ice eventually.
+			} else if (below.getType().isSolid()) {
+				if(below.getType() == Material.ICE || below.getType() == Material.PACKED_ICE || below.getType() == Material.FROSTED_ICE){
+					b.setType(Material.SNOW_BLOCK);
+				} else {
+					b.setType(Material.SNOW);
+				}
+			} else if (ClimateUtils.isWater(below)){ 
+				ClimateUtils.setSnowLayers(below, 7); // should be turned back into frosted ice eventually.
 				ClimateUtils.setSnowLayers(b, ClimateUtils.getSnowLayers(b) + 1);
-			} else if (b.getRelative(BlockFace.DOWN).getType() != Material.SIGN_POST
-					&& b.getRelative(BlockFace.DOWN).getType() != Material.SIGN
-					&& b.getRelative(BlockFace.DOWN).getType() != Material.RAILS) {
-				b.getRelative(BlockFace.DOWN).breakNaturally();
-				b.getRelative(BlockFace.DOWN).setType(Material.SNOW);
+			} else if (below.getType() != Material.SIGN_POST
+					&& below.getType() != Material.SIGN
+					&& below.getType() != Material.RAILS) {
+				below.breakNaturally();
+				below.setType(Material.SNOW);
 			}
 		} else {
 			SnowFallTask snowFallTask = new SnowFallTask(module, cell,

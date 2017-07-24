@@ -5,6 +5,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockEvent;
 import org.bukkit.event.block.BlockFadeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -15,11 +16,12 @@ import com.kylantraynor.livelyworld.LivelyWorld;
 public class ClimateListener implements Listener{
 	
 	@EventHandler
-	public void onBlockFade(BlockFadeEvent e){
+	public void onBlock(BlockEvent e){
 		if(e.getBlock().getType() == Material.SNOW){
 			Block b = e.getBlock().getRelative(BlockFace.DOWN);
 			if(b.getType() == Material.ICE || b.getType() == Material.FROSTED_ICE || b.getType() == Material.PACKED_ICE){
-				e.setCancelled(true);
+				LivelyWorld.getInstance().getLogger().info("Event type " + e.getEventName() + " " + e.getClass().getName());
+				//e.setCancelled(true);
 			}
 		}
 	}

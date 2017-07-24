@@ -124,7 +124,6 @@ public class ClimateModule {
 							case OVERCAST:
 								break;
 							case RAIN:
-								break;
 							case SNOW:
 								double tdiff1 = Temperature.fromCelsius(5).getValue() - ClimateUtils.getAltitudeWeightedTemperature(cell, b.getY()).getValue();
 								if(Math.random() < 0.5 * (tdiff1 / 2)){
@@ -132,14 +131,13 @@ public class ClimateModule {
 									task.runTaskLater(getPlugin(), 1);
 								}
 								break;
+							case STORM:
 							case SNOWSTORM:
 								double tdiff2 = Temperature.fromCelsius(5).getValue() - ClimateUtils.getAltitudeWeightedTemperature(cell, b.getY()).getValue();
 								if(Math.random() < 1.0 * (tdiff2 / 2)){
 									SnowFallTask task = new SnowFallTask(getPlugin().getClimateModule(), b.getWorld(), b.getX(), b.getY() + 1, b.getZ());
 									task.runTaskLater(getPlugin(), 1);
 								}
-								break;
-							case STORM:
 								break;
 							case THUNDERSTORM:
 								if(Math.random() < 0.05 / weatherEffectBlocks){

@@ -180,7 +180,7 @@ public class ClimateCell extends VCell {
 			maxTemp = Climate.getAreaSurfaceMaxTemperature(world, x, z);
 		}
 		double dif = maxTemp.getValue() - minTemp.getValue();
-		return new Temperature(minTemp.getValue() + (dif * Planet.getPlanet(world).getSunDirectRadiation(world, x, y, z)));
+		return new Temperature(minTemp.getValue() + (dif * Planet.getPlanet(world).getSunDirectRadiation(world, x, y, z))  -  0.08 * (getAltitude() - 48));
 		//return Climate.getAreaSurfaceTemperature(getLocation().getWorld(), getLocation().getBlockX(), getLocation().getBlockZ());
 	}
 	

@@ -15,7 +15,7 @@ import com.kylantraynor.livelyworld.LivelyWorld;
 
 public class ClimateListener implements Listener{
 	
-	@EventHandler
+	/*@EventHandler
 	public void onBlock(BlockEvent e){
 		if(e.getBlock().getType() == Material.SNOW){
 			Block b = e.getBlock().getRelative(BlockFace.DOWN);
@@ -24,7 +24,7 @@ public class ClimateListener implements Listener{
 				//e.setCancelled(true);
 			}
 		}
-	}
+	}*/
 	
 	@EventHandler
 	public void onPlayerMove(PlayerMoveEvent e){

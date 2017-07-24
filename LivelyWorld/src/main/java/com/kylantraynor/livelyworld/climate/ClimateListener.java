@@ -1,7 +1,11 @@
 package com.kylantraynor.livelyworld.climate;
 
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockFadeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -9,6 +13,16 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import com.kylantraynor.livelyworld.LivelyWorld;
 
 public class ClimateListener implements Listener{
+	
+	@EventHandler
+	public void onBlockFade(BlockFadeEvent e){
+		if(e.getBlock().getType() == Material.SNOW){
+			Block b = e.getBlock().getRelative(BlockFace.DOWN);
+			if(b.getType() == Material.ICE || b.getType() == Material.FROSTED_ICE || b.getType() == Material.PACKED_ICE){
+				e.setCancelled(true);
+			}
+		}
+	}
 	
 	@EventHandler
 	public void onPlayerMove(PlayerMoveEvent e){

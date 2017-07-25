@@ -118,6 +118,7 @@ public class ClimateModule {
 							case CLEAR:
 								double tdiff = ClimateUtils.getAltitudeWeightedTriangleTemperature(cell, b.getLocation()).getValue() - Temperature.fromCelsius(5).getValue();
 								if(Math.random() < 0.1 * (tdiff / 2)){
+									b = getHighestSnowBlockAround(b, 2);
 									ClimateUtils.melt(b, (int) Math.ceil(tdiff/6));
 								}
 								break;
@@ -238,6 +239,31 @@ public class ClimateModule {
 				} else {
 					
 				}
+			}
+
+			private Block getHighestSnowBlockAround(Block b, int range) {
+				Block result = b;
+				for(int x = b.getX() - range; x <= b.getX() + range; x++){
+					for(int z = b.getZ() - range; z <= b.getZ() + range; z++){
+						Block block = b.getWorld().getBlockAt(x, b.getY(), z);
+						switch(block.getType()){
+						case SNOW_BLOCK:
+						case SNOW:
+							if(block.getType() == Material.SNOW_BLOCK){
+								while(ClimateUtils.isSnow(block.getRelative(BlockFace.UP))){
+									block = block.getRelative(BlockFace.UP);
+								}
+							}
+							if(ClimateUtils.getSnowLayers(block) > ClimateUtils.getSnowLayers(result)){
+								result = block;
+							}
+							break;
+						default:
+							
+						}
+					}
+				}
+				return result;
 			}
 			
 		};

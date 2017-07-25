@@ -19,7 +19,9 @@ import org.dynmap.markers.MarkerSet;
 
 import com.kylantraynor.livelyworld.climate.ClimateCell;
 import com.kylantraynor.livelyworld.climate.ClimateMap;
+import com.kylantraynor.livelyworld.climate.ClimateUtils;
 import com.kylantraynor.livelyworld.climate.Planet;
+import com.kylantraynor.livelyworld.climate.Temperature;
 
 public class DynmapHook {
 	private DynmapAPI api;
@@ -129,7 +131,9 @@ public class DynmapHook {
 			}
 			StringBuilder sb = new StringBuilder();
 			sb.append("Weather: " + c.getWeather().toString().toLowerCase());
-			sb.append("<br />Temperature: " + c.getTemperature().toString("C") + "/" + c.getTemperature().toString("F"));
+			Temperature temp = ClimateUtils.getAltitudeWeightedTemperature(c, c.getAltitude());
+			sb.append("<br />Temperature at " + c.getAltitude() + "Y: " + temp.toString("C") + "/" + temp.toString("F"));
+			sb.append("<br />Temperature at Ocean Height: " + c.getTemperature().toString("C") + "/" + c.getTemperature().toString("F"));
 			sb.append("<br />Humidity: " + (int) c.getRelativeHumidity() + "%");
 			sb.append("<br />Precipitations: " + (int) c.getPrecipitations() + " g/m3");
 			sb.append("<br />Pressure: " + (int) (c.getLowAltitudePressure() * 0.01) + " hPa");

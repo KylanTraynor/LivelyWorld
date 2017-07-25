@@ -123,7 +123,7 @@ public class ClimateUtils {
 			} else if ((block.getType() == Material.SNOW_BLOCK || block.getType() == Material.FROSTED_ICE) && depth > 4){
 				block.setType(Material.ICE);
 			} else if (isWater(block)){
-				block.setType(Material.ICE); // Should eventually be changed into frosted ICE.
+				block.setType(Material.FROSTED_ICE); // Should eventually be changed into frosted ICE.
 			} else {
 				block.setType(Material.SNOW_BLOCK);
 			}
@@ -143,7 +143,7 @@ public class ClimateUtils {
 				setWaterHeight(b, getSnowLayers(b), false);
 			}
 		} else if(b.getType() == Material.FROSTED_ICE){
-			setWaterHeight(b, 8, false);
+			//setWaterHeight(b, 8, true);
 		} else if(b.getType() == Material.ICE){
 			setWaterHeight(b, 8, false);
 		} else if(b.getType() == Material.PACKED_ICE){

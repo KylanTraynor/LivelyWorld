@@ -247,7 +247,7 @@ public class ClimateModule {
 									block = block.getRelative(BlockFace.UP);
 								}
 							}
-							if(ClimateUtils.getSnowLayers(block) > ClimateUtils.getSnowLayers(result)){
+							if(ClimateUtils.getSnowLayers(block) > ClimateUtils.getSnowLayers(result) || block.getY() > result.getY()){
 								result = block;
 							}
 							break;

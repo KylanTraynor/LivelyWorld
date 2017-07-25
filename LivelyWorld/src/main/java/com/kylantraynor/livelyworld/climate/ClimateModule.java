@@ -105,16 +105,7 @@ public class ClimateModule {
 							while(b.getType() == Material.AIR){
 								b = b.getRelative(BlockFace.DOWN);
 							}
-							ClimateCell cell = null;
-							VectorXZ v = new VectorXZ(x, z);
-							if(!c.isInside(v)){
-								for(ClimateCell ci : c.getNeighbours()){
-									if(ci == null) continue;
-									if(ci.isInside(v)) cell = ci;
-								}
-							} else {
-								cell = c;
-							}
+							ClimateCell cell = ClimateUtils.getClimateCellAt(b.getLocation(), c);
 							if(cell == null) continue;
 							switch(cell.getWeather()){
 							case CLEAR:

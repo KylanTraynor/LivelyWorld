@@ -52,7 +52,14 @@ public class ClimateUtils {
 				if(ref.isInside(v)) return ref;
 				for(ClimateCell c : ref.getNeighbours()){
 					if(c == null) continue;
-					if(c.isInside(v)) return c;
+					if(c.isInside(v)) {
+						return c;
+					} else {
+						for (ClimateCell c2 : c.getNeighbours()){
+							if (c2 == null) continue;
+							if(c2.isInside(v)) return c2;
+						}
+					}
 				}
 			}
 		}

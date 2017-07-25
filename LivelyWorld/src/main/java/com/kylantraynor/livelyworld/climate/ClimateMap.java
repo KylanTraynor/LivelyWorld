@@ -29,7 +29,7 @@ public class ClimateMap {
 	private SizedList<ClimateCell> cache = new SizedList<ClimateCell>(10);
 
 	public ClimateMap(World world) {
-		this(world, 500);
+		this(world, 300);
 	}
 
 	public ClimateMap(World world, int resolution) {

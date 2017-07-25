@@ -112,6 +112,8 @@ public class ClimateModule {
 									if(ci == null) continue;
 									if(ci.isInside(v)) cell = ci;
 								}
+							} else {
+								cell = c;
 							}
 							if(cell == null) continue;
 							switch(cell.getWeather()){

@@ -54,8 +54,12 @@ public class SnowFallTask extends BukkitRunnable {
 					b.setType(Material.SNOW);
 				}
 			} else if (ClimateUtils.isWater(below)){ 
-				ClimateUtils.setSnowLayers(below, 7); // should be turned back into frosted ice eventually.
-				ClimateUtils.setSnowLayers(b, ClimateUtils.getSnowLayers(b) + 1);
+				if(below.getData() == 0){
+					below.setType(Material.FROSTED_ICE);
+					ClimateUtils.setSnowLayers(b, ClimateUtils.getSnowLayers(b) + 1);
+				} else {
+					ClimateUtils.setSnowLayers(below, ClimateUtils.getWaterHeight(below));
+				}
 			} else if (below.getType() != Material.SIGN_POST
 					&& below.getType() != Material.SIGN
 					&& below.getType() != Material.RAILS) {

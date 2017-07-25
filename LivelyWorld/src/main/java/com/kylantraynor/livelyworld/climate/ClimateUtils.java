@@ -223,4 +223,10 @@ public class ClimateUtils {
 		}
 		return new ClimateTriangle(cell, cell2, cell3);
 	}
+
+	public static int getWaterHeight(Block b) {
+		int result = 8 - b.getData();
+		if(result <= 0) result = 8;
+		return result;
+	}
 }

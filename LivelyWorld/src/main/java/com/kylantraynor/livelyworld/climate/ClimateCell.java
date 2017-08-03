@@ -321,7 +321,7 @@ public class ClimateCell extends VCell {
 		//updateTemperature();
 		updateHumidity();
 		updateWeather();
-		updateMap();
+		//updateMap();
 	}
 
 	private void updateTemperature() {

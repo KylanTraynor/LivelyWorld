@@ -178,7 +178,14 @@ public class DynmapHook {
 			double[] yline = {c.getAltitude(), c.getAltitude() + c.getLowWind().getY()};
 			double[] zline = {c.getZ(), c.getZ() + (c.getLowWind().getZ() * 50)};
 			PolyLineMarker l = windSet.createPolyLineMarker(windid, "" + c.getLowWind().getSpeed(), false, c.getWorld().getName(), xline, yline, zline, false);
-			l.setLineStyle(1, 0, Color.BLACK.asRGB());
+			if(l == null){
+				/*l = windSet.findPolyLineMarker(windid);
+				if(l == null){
+					Bukkit.getServer().getLogger().severe("Failed to create Wind display.");
+				}*/
+			} else {
+				l.setLineStyle(1, 0, Color.BLACK.asRGB());
+			}
 			
 			// Creates Area Marker
 			AreaMarker m = temperaturesSet.createAreaMarker(cellid, c.getTemperature().toString("C") + "/"

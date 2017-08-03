@@ -17,7 +17,8 @@ public class WindVector {
 	}
 	
 	public WindVector normalize(){
-		double total = x + y + z;
+		double total = x * x + y * y + z * z;
+		total = Math.sqrt(total);
 		return new WindVector(x / total, y / total, z / total, speed);
 	}
 	

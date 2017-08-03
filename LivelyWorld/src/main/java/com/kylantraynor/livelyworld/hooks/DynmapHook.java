@@ -184,7 +184,7 @@ public class DynmapHook {
 					Bukkit.getServer().getLogger().severe("Failed to create Wind display.");
 				}*/
 			} else {
-				l.setLineStyle(1, 0, Color.BLACK.asRGB());
+				l.setLineStyle(1, 2, Color.BLACK.asRGB());
 			}
 			
 			// Creates Area Marker

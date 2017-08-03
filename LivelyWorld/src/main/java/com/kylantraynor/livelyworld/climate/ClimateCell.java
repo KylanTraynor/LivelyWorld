@@ -234,7 +234,7 @@ public class ClimateCell extends VCell {
 			}
 		}
 		double dp = highestPressure.getLowAltitudePressure() - this.getLowAltitudePressure();
-		LivelyWorld.getInstance().getLogger().info("Highest Pressure : " + highestPressure.getLowAltitudePressure() + ", this : " + this.getLowAltitudePressure());
+		//LivelyWorld.getInstance().getLogger().info("Highest Pressure : " + highestPressure.getLowAltitudePressure() + ", this : " + this.getLowAltitudePressure());
 		if(dp > 0){
 			double humidityRatio = highestPressure.getHumidity() / highestPressure.getAmountOnBlock();
 			double transfer = ClimateUtils.getGasAmount(Math.abs(dp), getAirVolumeOnBlock(), getTemperature());
@@ -254,7 +254,7 @@ public class ClimateCell extends VCell {
 			highestPressure.bringTemperatureTo(this.getTemperature(), (highestPressure.getAmountOnBlock() / (double) transfer) * 0.5);
 			this.bringTemperatureTo(temp, (getAmountOnBlock() / (double) transfer) * 0.5);
 			this.lowWind = new WindVector(this.getX() - highestPressure.getX(), this.getAltitude() - highestPressure.getAltitude(), this.getZ() - highestPressure.getZ(), transfer).normalize();
-			LivelyWorld.getInstance().getLogger().info("Wind set to " + lowWind.toString());
+			//LivelyWorld.getInstance().getLogger().info("Wind set to " + lowWind.toString());
 		} else {
 			this.lowWind = WindVector.ZERO;
 		}

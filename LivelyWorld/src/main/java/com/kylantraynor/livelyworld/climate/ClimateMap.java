@@ -106,6 +106,9 @@ public class ClimateMap {
 	}
 
 	private int lastCellUpdateId = 0;
+	private double highestHumidity;
+	private double lowestLowPressure;
+	private double highestLowPressure;
 	
 	public void randomCellUpdate() {
 		lastCellUpdateId = lastCellUpdateId >= getCells().length - 1 ? 0 : lastCellUpdateId + 1;
@@ -174,5 +177,38 @@ public class ClimateMap {
 		}
 		ClimateTriangle t = new ClimateTriangle(cell, cell2, cell3);
 		return t.getTemperatureAt(v);
+	}
+
+	public double getCurrentHighestHumidity() {
+		double highest = highestHumidity;
+		for(ClimateCell c : getCells()){
+			if(c.getHumidity() > highest){
+				highest = c.getHumidity();
+			}
+		}
+		highestHumidity = highest;
+		return highestHumidity;
+	}
+
+	public double getCurrentLowestLowPressure() {
+		double lowest = lowestLowPressure;
+		for(ClimateCell c : getCells()){
+			if(c.getLowAltitudePressure() < lowest){
+				lowest = c.getLowAltitudePressure();
+			}
+		}
+		lowestLowPressure = lowest;
+		return lowestLowPressure;
+	}
+	
+	public double getCurrentHighestLowPressure() {
+		double highest = highestLowPressure;
+		for(ClimateCell c : getCells()){
+			if(c.getLowAltitudePressure() > highest){
+				highest = c.getLowAltitudePressure();
+			}
+		}
+		highestLowPressure = highest;
+		return highestLowPressure;
 	}
 }

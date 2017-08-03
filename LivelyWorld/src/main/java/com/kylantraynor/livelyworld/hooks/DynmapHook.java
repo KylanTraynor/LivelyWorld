@@ -18,6 +18,7 @@ import org.dynmap.markers.MarkerIcon;
 import org.dynmap.markers.MarkerSet;
 import org.dynmap.markers.PolyLineMarker;
 
+import com.kylantraynor.livelyworld.LivelyWorld;
 import com.kylantraynor.livelyworld.climate.ClimateCell;
 import com.kylantraynor.livelyworld.climate.ClimateMap;
 import com.kylantraynor.livelyworld.climate.ClimateUtils;
@@ -135,15 +136,58 @@ public class DynmapHook {
 				Bukkit.getServer().getLogger().severe("Failed to create marker area.");
 				return;
 			}
-			m.setLabel(c.getTemperature().toString("C") + "/" + c.getTemperature().toString("F"));
+			switch(LivelyWorld.getInstance().getClimateModule().getMapType()){
+			case "PRECIPITATIONS":
+				m.setLabel(c.getPrecipitations() + " g");
+				break;
+			case "HIGHPRESSURE":
+				m.setLabel(c.getHighAltitudePressure() / 100 + " hPa");
+				break;
+			case "LOWPRESSURE":
+				m.setLabel(c.getLowAltitudePressure() / 100 + " hPa");
+				break;
+			case "HUMIDITY":
+				m.setLabel(c.getHumidity() + " g/m3 (" + (int)c.getRelativeHumidity() + "%");
+				break;
+			default:
+				m.setLabel(c.getTemperature().toString("C") + "/" + c.getTemperature().toString("F"));
+			}
 		}
-		double min = c.getMap().getCurrentLowestTemperature().getValue();
-		double max = c.getMap().getCurrentHighestTemperature().getValue();
-		double cappedTemperature = Math.max(Math.min(c.getTemperature().getValue(), max), min) - min;
-		int value = (int) (cappedTemperature * 255 / (max - min));
-		int red = value;
-		int green = (int) (255 * Math.sin((value) * Math.PI / 255));
-		int blue = 255 - value;
+		double min = 0;
+		double max = 0;
+		double value = 0;
+		switch(LivelyWorld.getInstance().getClimateModule().getMapType()){
+		case "LOWPRESSURE":
+			min = c.getMap().getCurrentLowestLowPressure();
+			max = c.getMap().getCurrentHighestLowPressure();
+			value = c.getLowAltitudePressure();
+			break;
+		case "HUMIDITY":
+			min = 0;
+			max = c.getMap().getCurrentHighestHumidity();
+			value = c.getHumidity();
+			break;
+		default:
+			min = c.getMap().getCurrentLowestTemperature().getValue();
+			max = c.getMap().getCurrentHighestTemperature().getValue();
+			value = c.getTemperature().getValue();
+		}
+		double cappedValue = Math.max(Math.min(value, max), min) - min;
+		int rgbValue = (int) (cappedValue * 255 / (max - min));
+		int red = 0;
+		int green = 0;
+		int blue = 0;
+		switch(LivelyWorld.getInstance().getClimateModule().getMapType()){
+		case "HUMIDITY": case "PRECIPITATIONS":
+			red = 255 - rgbValue;
+			green = (int) (255 * Math.sin((rgbValue) * Math.PI / 255));
+			blue = rgbValue;
+			break;
+		default:
+			red = rgbValue;
+			green = (int) (255 * Math.sin((rgbValue) * Math.PI / 255));
+			blue = 255 - rgbValue;
+		}
 		m.setFillStyle(0.80, Color.fromRGB(red, green, blue).asRGB());
 		m.setLineStyle(1, 0, Color.fromRGB(red, green, blue).asRGB());
 	}

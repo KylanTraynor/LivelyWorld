@@ -29,6 +29,8 @@ public class ClimateModule {
 	
 	private final int cellUpdates = 3;
 	private final int weatherEffectBlocks = 200;
+	
+	private String mapType = "TEMP";
 
 	private BukkitRunnable climateUpdater;
 	private BukkitRunnable weatherUpdater;
@@ -427,6 +429,13 @@ public class ClimateModule {
 					return;
 				}
 				switch(args[2].toUpperCase()){
+				case "MAPTYPE":
+					if(sender.isOp()){
+						this.mapType = args[3].toUpperCase();
+					} else {
+						sender.sendMessage(ChatColor.RED + "You need to be op to use this command.");
+					}
+					break;
 				case "WEATHER":
 					Player p = (Player) sender;
 					Planet pl = Planet.getPlanet(p.getWorld());
@@ -804,5 +813,9 @@ public class ClimateModule {
 
 	public Map<String, ClimateCell> getPlayerCache() {
 		return playerCache;
+	}
+
+	public String getMapType() {
+		return mapType;
 	}
 }

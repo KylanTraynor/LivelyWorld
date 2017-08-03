@@ -251,8 +251,8 @@ public class ClimateCell extends VCell {
 			addAmount(transfer);
 			highestPressure.addAmount(-transfer);
 			Temperature temp = highestPressure.getTemperature();
-			highestPressure.bringTemperatureTo(this.getTemperature(), (highestPressure.getAmountOnBlock() / (double) transfer) * 0.5);
-			this.bringTemperatureTo(temp, (getAmountOnBlock() / (double) transfer) * 0.5);
+			highestPressure.bringTemperatureTo(this.getTemperature(), (highestPressure.getAmountOnBlock() / (double) transfer) * 0.25);
+			this.bringTemperatureTo(temp, (getAmountOnBlock() / (double) transfer) * 0.25);
 			this.lowWind = new WindVector(this.getX() - highestPressure.getX(), this.getAltitude() - highestPressure.getAltitude(), this.getZ() - highestPressure.getZ(), transfer);//.normalize();
 			//LivelyWorld.getInstance().getLogger().info("Wind set to " + lowWind.toString());
 		} else {

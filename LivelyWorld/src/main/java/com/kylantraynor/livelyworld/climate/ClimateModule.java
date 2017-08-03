@@ -426,6 +426,7 @@ public class ClimateModule {
 			case "SET":
 				if(args.length == 2){
 					sender.sendMessage(ChatColor.GRAY + "/livelyworld climate set Weather <weather>");
+					sender.sendMessage(ChatColor.GRAY + "/livelyworld climate set MapType <type>");
 					return;
 				}
 				switch(args[2].toUpperCase()){

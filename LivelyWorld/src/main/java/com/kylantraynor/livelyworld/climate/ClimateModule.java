@@ -19,6 +19,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import com.kylantraynor.livelyworld.LivelyWorld;
+import com.kylantraynor.livelyworld.hooks.HookManager;
 import com.kylantraynor.voronoi.VectorXZ;
 
 public class ClimateModule {
@@ -285,6 +286,16 @@ public class ClimateModule {
 		};
 
 		climateUpdater.runTaskTimer(plugin, 21L, 1L);
+		
+		weatherUpdater = new BukkitRunnable() {
+
+			@Override
+			public void run() {
+				HookManager.getDynmap().updateWeather();
+			}
+			
+		};
+		weatherUpdater.runTaskTimer(plugin, 22L, 20 * 5);
 	}
 
 	public void onDisable() {

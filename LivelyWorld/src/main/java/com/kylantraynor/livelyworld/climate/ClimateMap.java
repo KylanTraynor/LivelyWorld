@@ -109,11 +109,9 @@ public class ClimateMap {
 	
 	public void randomCellUpdate() {
 		lastCellUpdateId = lastCellUpdateId >= getCells().length - 1 ? 0 : lastCellUpdateId + 1;
-		if(lastCellUpdateId == 0){
-			for(ClimateCell c : getCells()){
-				c.updateMap();
-			}
-		}
+		/*if(lastCellUpdateId == 0){
+			HookManager.getDynmap().updateWeather();
+		}*/
 		if (getCells()[lastCellUpdateId] != null)
 			getCells()[lastCellUpdateId].update();
 	}

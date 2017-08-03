@@ -116,14 +116,40 @@ public class DynmapHook {
 	private void updateWeather(World w) {
 		Planet planet = Planet.getPlanet(w);
 		ClimateMap map = planet.getClimateMap(w);
+		for(ClimateCell c : map.getCells()){
+			updateClimateCellArea(c);
+		}
 		for (ClimateCell c : map.getCells()) {
 			updateClimateCell(c);
 		}
 	}
+	
+	public void updateClimateCellArea(ClimateCell c){
+		String cellid = "" + c.getX() + "_" + c.getZ() + "_weathercell";
+		AreaMarker m = temperaturesSet.createAreaMarker(cellid, c.getTemperature().toString("C") + "/"
+				+ c.getTemperature().toString("F")
+				, false, c.getWorld().getName(), c.getVerticesX(), c.getVerticesZ(), false);
+		if(m == null){
+			m = temperaturesSet.findAreaMarker(cellid);
+			if(m == null){
+				Bukkit.getServer().getLogger().severe("Failed to create marker area.");
+				return;
+			}
+			m.setLabel(c.getTemperature().toString("C") + "/" + c.getTemperature().toString("F"));
+		}
+		double min = c.getMap().getCurrentLowestTemperature().getValue();
+		double max = c.getMap().getCurrentHighestTemperature().getValue();
+		double cappedTemperature = Math.max(Math.min(c.getTemperature().getValue(), max), min) - min;
+		int value = (int) (cappedTemperature * 255 / (max - min));
+		int red = value;
+		int green = (int) (255 * Math.sin((value) * Math.PI / 255));
+		int blue = 255 - value;
+		m.setFillStyle(0.80, Color.fromRGB(red, green, blue).asRGB());
+		m.setLineStyle(1, 0, Color.fromRGB(red, green, blue).asRGB());
+	}
 
 	public void updateClimateCell(ClimateCell c) {
 		String id = "" + c.getX() + "_" + c.getZ() + "_weathericon";
-		String cellid = "" + c.getX() + "_" + c.getZ() + "_weathercell";
 		String windid = "" + c.getX() + "_" + c.getZ() + "_weatherwind";
 		String weatherMarker = "weather_"
 				+ c.getWeather().toString().toLowerCase();
@@ -190,28 +216,6 @@ public class DynmapHook {
 			} else {
 				l.setLineStyle(1, 2, Color.BLACK.asRGB());
 			}
-			
-			// Creates Area Marker
-			AreaMarker m = temperaturesSet.createAreaMarker(cellid, c.getTemperature().toString("C") + "/"
-					+ c.getTemperature().toString("F")
-					, false, c.getWorld().getName(), c.getVerticesX(), c.getVerticesZ(), false);
-			if(m == null){
-				m = temperaturesSet.findAreaMarker(cellid);
-				if(m == null){
-					Bukkit.getServer().getLogger().severe("Failed to create marker area.");
-					return;
-				}
-				m.setLabel(c.getTemperature().toString("C") + "/" + c.getTemperature().toString("F"));
-			}
-			double min = c.getMap().getCurrentLowestTemperature().getValue();
-			double max = c.getMap().getCurrentHighestTemperature().getValue();
-			double cappedTemperature = Math.max(Math.min(c.getTemperature().getValue(), max), min) - min;
-			int value = (int) (cappedTemperature * 255 / (max - min));
-			int red = value;
-			int green = (int) (255 * Math.sin((value) * Math.PI / 255));
-			int blue = 255 - value;
-			m.setFillStyle(0.80, Color.fromRGB(red, green, blue).asRGB());
-			m.setLineStyle(1, 0, Color.fromRGB(red, green, blue).asRGB());
 		}
 	}
 }

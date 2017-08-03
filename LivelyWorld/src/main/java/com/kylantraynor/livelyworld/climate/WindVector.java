@@ -21,6 +21,11 @@ public class WindVector {
 		return new WindVector(x / total, y / total, z / total, speed);
 	}
 	
+	@Override
+	public String toString(){
+		return "" + getX() + "," + getY() + "," + getZ() + "," + getSpeed();
+	}
+	
 	public double getX(){
 		return x;
 	}

@@ -174,9 +174,9 @@ public class DynmapHook {
 			markerList.put(id, weather);
 			
 			// Creates Wind Marker
-			double[] xline = {c.getX(), c.getX() + (c.getLowWind().getX() * 50)};
-			double[] yline = {c.getAltitude(), c.getAltitude() + c.getLowWind().getY()};
-			double[] zline = {c.getZ(), c.getZ() + (c.getLowWind().getZ() * 50)};
+			double[] xline = {c.getX(), c.getX() + (-c.getLowWind().getX())};
+			double[] yline = {c.getAltitude(), c.getAltitude() + (-c.getLowWind().getY())};
+			double[] zline = {c.getZ(), c.getZ() + (-c.getLowWind().getX())};
 			PolyLineMarker l = windSet.createPolyLineMarker(windid, "" + c.getLowWind().getSpeed(), false, c.getWorld().getName(), xline, yline, zline, false);
 			if(l == null){
 				l = windSet.findPolyLineMarker(windid);

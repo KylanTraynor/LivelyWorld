@@ -16,6 +16,7 @@ import org.dynmap.markers.Marker;
 import org.dynmap.markers.MarkerAPI;
 import org.dynmap.markers.MarkerIcon;
 import org.dynmap.markers.MarkerSet;
+import org.dynmap.markers.PolyLineMarker;
 
 import com.kylantraynor.livelyworld.climate.ClimateCell;
 import com.kylantraynor.livelyworld.climate.ClimateMap;
@@ -28,6 +29,7 @@ public class DynmapHook {
 	private MarkerAPI markerAPI;
 
 	private MarkerSet weatherSet;
+	private MarkerSet windSet;
 	private MarkerSet temperaturesSet;
 
 	private HashMap<String, Marker> markerList = new HashMap<String, Marker>();
@@ -38,6 +40,7 @@ public class DynmapHook {
 		markerAPI = api.getMarkerAPI();
 
 		loadWeatherMarkerSet();
+		loadWindMarkerSet();
 		loadTemperaturesMarkerSet();
 	}
 
@@ -59,6 +62,26 @@ public class DynmapHook {
 		}
 		weatherSet.setLayerPriority(10);
 		weatherSet.setHideByDefault(true);
+	}
+	
+	private void loadWindMarkerSet() {
+		windSet = markerAPI.getMarkerSet("livelyworld.markerset.wind");
+		if (windSet == null) {
+			windSet = markerAPI.createMarkerSet(
+					"livelyworld.markerset.wind", "Wind", null, false);
+		} else {
+			windSet.setMarkerSetLabel("Wind");
+		}
+		if (windSet == null) {
+			Bukkit.getServer().getLogger().severe("Error creating marker set");
+			return;
+		}
+		int minzoom = 0;
+		if (minzoom > 0) {
+			windSet.setMinZoom(minzoom);
+		}
+		windSet.setLayerPriority(10);
+		windSet.setHideByDefault(true);
 	}
 	
 	private void loadTemperaturesMarkerSet() {
@@ -99,9 +122,9 @@ public class DynmapHook {
 	}
 
 	public void updateClimateCell(ClimateCell c) {
-		String id = "" + (int) c.getSite().getX() + "_"
-				+ (int) c.getSite().getZ() + "_weathericon";
-		String cellid = "" + (int) c.getSite().getX() + "_" + (int) c.getSite().getX() + "_weathercell";
+		String id = "" + c.getX() + "_" + c.getZ() + "_weathericon";
+		String cellid = "" + c.getX() + "_" + c.getZ() + "_weathercell";
+		String windid = "" + c.getX() + "_" + c.getZ() + "_weatherwind";
 		String weatherMarker = "weather_"
 				+ c.getWeather().toString().toLowerCase();
 		MarkerIcon weatherIcon = null;
@@ -149,6 +172,13 @@ public class DynmapHook {
 			sb.append("<br />High Air Pressure: " + (int) (c.getHighAltitudePressure() * 0.01) + " hPa");
 			weather.setDescription(sb.toString());
 			markerList.put(id, weather);
+			
+			// Creates Wind Marker
+			double[] xline = {c.getX(), c.getX() + c.getLowWind().getX()};
+			double[] yline = {c.getAltitude(), c.getAltitude() + c.getLowWind().getY()};
+			double[] zline = {c.getZ(), c.getZ() + c.getLowWind().getZ()};
+			PolyLineMarker l = windSet.createPolyLineMarker(windid, "" + c.getLowWind().getSpeed(), false, c.getWorld().getName(), xline, yline, zline, false);
+			l.setLineStyle(1, 0, Color.BLACK.asRGB());
 			
 			// Creates Area Marker
 			AreaMarker m = temperaturesSet.createAreaMarker(cellid, c.getTemperature().toString("C") + "/"

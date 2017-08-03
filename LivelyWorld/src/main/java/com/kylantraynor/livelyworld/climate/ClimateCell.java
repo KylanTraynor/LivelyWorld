@@ -42,6 +42,8 @@ public class ClimateCell extends VCell {
 	private double humidityMultiplier;
 	private Temperature tropopauseTemp = new Temperature(225);
 	private double largestDistance;
+	private WindVector lowWind = new WindVector(0,0,0,0);
+	private WindVector highWind = new WindVector(0,0,0,0);
 	
 	private Temperature minTemp;
 	private Temperature maxTemp;
@@ -250,6 +252,9 @@ public class ClimateCell extends VCell {
 			Temperature temp = highestPressure.getTemperature();
 			highestPressure.bringTemperatureTo(this.getTemperature(), (highestPressure.getAmountOnBlock() / (double) transfer) * 0.5);
 			this.bringTemperatureTo(temp, (getAmountOnBlock() / (double) transfer) * 0.5);
+			this.lowWind = new WindVector(this.getX() - highestPressure.getX(), this.getAltitude() - highestPressure.getAltitude(), this.getZ() - highestPressure.getZ(), transfer).normalize();
+		} else {
+			this.lowWind = WindVector.ZERO;
 		}
 	}
 	
@@ -274,6 +279,9 @@ public class ClimateCell extends VCell {
 			transfer = Math.min(transfer, getAmountHigh());
 			lowestPressure.addHighAmount(transfer);
 			this.addHighAmount(-transfer);
+			this.highWind = new WindVector(lowestPressure.getX() - this.getX(), 0, lowestPressure.getZ() - this.getZ(), transfer).normalize();
+		} else {
+			this.highWind = WindVector.ZERO;
 		}
 	}
 
@@ -293,6 +301,14 @@ public class ClimateCell extends VCell {
 
 	public double getAmountHigh() {
 		return airAmountHigh;
+	}
+	
+	public WindVector getLowWind(){
+		return lowWind;
+	}
+	
+	public WindVector getHighWind(){
+		return highWind;
 	}
 
 	public void update() {

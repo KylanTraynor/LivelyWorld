@@ -183,7 +183,7 @@ public class DynmapHook {
 				if(l == null){
 					Bukkit.getServer().getLogger().severe("Failed to create Wind display.");
 				} else {
-					l.setCornerLocations(xline, yline, zline);
+					//l.setCornerLocations(xline, yline, zline);
 					l.setLabel("" + c.getLowWind().getSpeed());
 				}
 			} else {

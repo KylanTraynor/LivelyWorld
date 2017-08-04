@@ -187,17 +187,17 @@ public class ClimateModule {
 			@Override
 			public void run() {
 				for(Planet p : Planet.planets){
-					for(ClimateCell c : p.getClimateMap().getCells()){
+					/*for(ClimateCell c : p.getClimateMap().getCells()){
 						c.updateIrradiance();
 						c.updateHumidity();
 						c.updateWeather();
 					}
 					for(ClimateCell c : p.getClimateMap().getCells()){
 						c.updateWinds();
-					}
-					/*for(int i = 0; i < cellUpdates; i++){
-						p.getClimateMap().randomCellUpdate();
 					}*/
+					for(int i = 0; i < cellUpdates; i++){
+						p.getClimateMap().randomCellUpdate();
+					}
 				}
 				/*for (World w : Bukkit.getServer().getWorlds()) {
 					Planet p = Planet.getPlanet(w);

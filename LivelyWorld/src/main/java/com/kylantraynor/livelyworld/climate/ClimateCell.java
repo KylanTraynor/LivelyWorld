@@ -204,13 +204,11 @@ public class ClimateCell extends VCell {
 	public void updateIrradiance() {
 		Temperature target = getSurfaceTemperature();
 		if(target.getValue() > temperature.getValue()){
-			temperature = getTemperature().bringTo(target, getUpInertia());
+			bringTemperatureTo(target, getUpInertia());
 		} else {
-			temperature = getTemperature().bringTo(target, getDownInertia());
+			bringTemperatureTo(target, getDownInertia());
 		}
-		humidityMultiplier = Double.NaN;
-		highAltitudePressure = Double.NaN;
-		lowAltitudePressure = Double.NaN;
+		bringHighTemperatureTo(getTropopauseTemperature(), 100);
 	}
 	
 	private void moveVertically() {
@@ -326,9 +324,10 @@ public class ClimateCell extends VCell {
 
 	public void update() {
 		updateIrradiance();
-		moveLowAir();
+		/*moveLowAir();
 		moveVertically();
-		moveHighAir();
+		moveHighAir();*/
+		updateWinds();
 		//updateTemperature();
 		updateHumidity();
 		updateWeather();

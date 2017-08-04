@@ -428,11 +428,11 @@ public class ClimateCell extends VCell {
 	}
 	
 	public void updateLowPressure(){
-		lowAltitudePressure = ClimateUtils.getGasPressure(getAirVolumeOnBlock(), airAmountOnBlock, temperature);
+		lowAltitudePressure = ClimateUtils.getGasPressure(getAirVolumeOnBlock(), airAmountOnBlock, getTemperature());
 	}
 	
 	public void updateHighPressure(){
-		highAltitudePressure = ClimateUtils.getGasPressure(getHighVolume(), airAmountHigh, getTropopauseTemperature());
+		highAltitudePressure = ClimateUtils.getGasPressure(getHighVolume(), airAmountHigh, getHighTemperature());
 	}
 
 	public void setWeather(Weather weather) {
@@ -534,6 +534,7 @@ public class ClimateCell extends VCell {
 	
 	public void processLowTransfer(ClimateCell from, ClimateCell to){
 		double dp = from.getLowAltitudePressure() - to.getLowAltitudePressure();
+		if(dp <= 0) return;
 		double transfer = Math.min(ClimateUtils.getGasAmount(dp/2, from.getAirVolumeOnBlock(), from.getTemperature()), from.getAmountOnBlock());
 		double humidityRatio = from.getHumidity() / from.getAmountOnBlock();
 		double humidityTransfer = humidityRatio * transfer;
@@ -548,6 +549,7 @@ public class ClimateCell extends VCell {
 	
 	public void processHighTransfer(ClimateCell from, ClimateCell to){
 		double dp = to.getHighAltitudePressure() - from.getHighAltitudePressure();
+		if(dp <= 0) return;
 		double transfer = Math.min(ClimateUtils.getGasAmount(dp/2, from.getHighVolume(), from.getHighTemperature()), from.getAmountHigh());
 		to.incomingHighAir += transfer;
 		from.outgoingHighAir += transfer;

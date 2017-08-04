@@ -520,17 +520,17 @@ public class ClimateCell extends VCell {
 			// move to lower pressure.
 			if(lowestLowPressure != this){
 				processLowTransfer(this, lowestLowPressure);
-			} else {
+			} else if(highestLowPressure != this) {
 				processLowTransfer(highestLowPressure, this);
 			}
 			if(lowestHighPressure != this){
 				processHighTransfer(this, lowestHighPressure);
-			} else {
+			} else if(highestHighPressure != this) {
 				processHighTransfer(highestHighPressure, this);
 			}
 		}
-		this.addAmount(incomingLowAir - outgoingLowAir);
-		this.addHighAmount(incomingHighAir - outgoingHighAir);
+		/*this.addAmount(incomingLowAir - outgoingLowAir);
+		this.addHighAmount(incomingHighAir - outgoingHighAir);*/
 	}
 	
 	public void processLowTransfer(ClimateCell from, ClimateCell to){
@@ -539,12 +539,12 @@ public class ClimateCell extends VCell {
 		double transfer = Math.min(ClimateUtils.getGasAmount(dp/2, from.getAirVolumeOnBlock(), from.getTemperature()), from.getAmountOnBlock());
 		double humidityRatio = from.getHumidity() / from.getAmountOnBlock();
 		double humidityTransfer = humidityRatio * transfer;
-		to.incomingLowAir += transfer;
-		from.outgoingLowAir += transfer;
 		to.humidity += humidityTransfer;
 		from.humidity -= humidityTransfer;
 		to.bringTemperatureTo(from.getTemperature(), (to.getAmountOnBlock() / transfer) * 0.1);
 		from.bringTemperatureTo(to.getTemperature(), (from.getAmountOnBlock() / transfer) * 0.1);
+		to.addAmount(transfer);
+		from.addAmount(-transfer);
 		from.lowWind = new WindVector(to.getX() - from.getX(), to.getY() - from.getY(), to.getZ() - from.getZ(), transfer);
 	}
 	
@@ -552,10 +552,10 @@ public class ClimateCell extends VCell {
 		double dp = to.getHighAltitudePressure() - from.getHighAltitudePressure();
 		if(dp <= 0) return;
 		double transfer = Math.min(ClimateUtils.getGasAmount(dp/2, from.getHighVolume(), from.getHighTemperature()), from.getAmountHigh());
-		to.incomingHighAir += transfer;
-		from.outgoingHighAir += transfer;
 		to.bringHighTemperatureTo(from.getHighTemperature(), (to.getAmountHigh() / transfer) * 0.1);
 		from.bringHighTemperatureTo(to.getHighTemperature(), (from.getAmountHigh() / transfer) * 0.1);
+		to.addHighAmount(transfer);
+		from.addHighAmount(-transfer);
 		from.highWind = new WindVector(to.getX() - from.getX(), to.getY() - from.getY(), to.getZ() - from.getZ(), transfer);
 	}
 

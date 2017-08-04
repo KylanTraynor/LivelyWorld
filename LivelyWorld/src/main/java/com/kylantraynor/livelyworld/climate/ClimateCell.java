@@ -549,7 +549,10 @@ public class ClimateCell extends VCell {
 	public void processLowTransfer(ClimateCell from, ClimateCell to){
 		double dp = from.getLowAltitudePressure() - to.getLowAltitudePressure();
 		if(dp <= 0) return;
-		double transfer = Math.min(ClimateUtils.getGasAmount(dp/2, from.getAirVolumeOnBlock(), from.getTemperature()), from.getAmountOnBlock());
+		double meanP = (to.getLowAltitudePressure() + from.getLowAltitudePressure())/2;
+		double fromExcess = ClimateUtils.getGasAmount(meanP, from.getAirVolumeOnBlock(), from.getTemperature()) - from.getAmountOnBlock();
+		double toLack = ClimateUtils.getGasAmount(meanP, to.getAirVolumeOnBlock(), to.getTemperature()) - to.getAmountOnBlock();
+		double transfer = Math.min(fromExcess, toLack);
 		double humidityRatio = from.getHumidity() / from.getAmountOnBlock();
 		double humidityTransfer = humidityRatio * transfer;
 		to.humidity += humidityTransfer;
@@ -564,7 +567,10 @@ public class ClimateCell extends VCell {
 	public void processHighTransfer(ClimateCell from, ClimateCell to){
 		double dp = to.getHighAltitudePressure() - from.getHighAltitudePressure();
 		if(dp <= 0) return;
-		double transfer = Math.min(ClimateUtils.getGasAmount(dp/2, from.getHighVolume(), from.getHighTemperature()), from.getAmountHigh());
+		double meanP = (to.getHighAltitudePressure() + from.getHighAltitudePressure())/2;
+		double fromExcess = ClimateUtils.getGasAmount(meanP, from.getHighVolume(), from.getHighTemperature()) - from.getAmountHigh();
+		double toLack = ClimateUtils.getGasAmount(meanP, to.getHighVolume(), to.getHighTemperature()) - to.getAmountHigh();
+		double transfer = Math.min(fromExcess, toLack);
 		to.bringHighTemperatureTo(from.getHighTemperature(), (to.getAmountHigh() / transfer) * 0.01);
 		from.bringHighTemperatureTo(to.getHighTemperature(), (from.getAmountHigh() / transfer) * 0.01);
 		to.addHighAmount(transfer);

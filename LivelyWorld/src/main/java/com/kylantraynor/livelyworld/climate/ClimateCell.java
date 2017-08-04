@@ -505,14 +505,14 @@ public class ClimateCell extends VCell {
 			// move air up.
 			transfer = incomingLowAir;
 			incomingLowAir = 0;
-			highAirAmount += (long) transfer;
+			this.addHighAmount(transfer);
 			this.bringHighTemperatureTo(this.getTemperature(), (this.getAmountHigh() / transfer) * 0.1);
 			this.bringTemperatureTo(this.getHighTemperature(), (this.getAmountOnBlock() / transfer) * 0.1);
 		} else if(lowestHighTemp == this && highestTemp != this){ // Heavy air
 			// move air down.
 			transfer = incomingHighAir;
 			incomingHighAir = 0;
-			airAmountOnBlock += (long)transfer;
+			this.addAmount(transfer);
 			this.bringHighTemperatureTo(this.getTemperature(), (this.getAmountHigh() / transfer) * 0.1);
 			this.bringTemperatureTo(this.getHighTemperature(), (this.getAmountOnBlock() / transfer) * 0.1);
 		} else {

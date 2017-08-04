@@ -500,6 +500,8 @@ public class ClimateCell extends VCell {
 			airAmountOnBlock += (long)incomingHighAir;
 			incomingHighAir = 0;
 		} else {
+			this.lowWind = WindVector.ZERO;
+			this.highWind = WindVector.ZERO;
 			// move to lower pressure.
 			if(lowestLowPressure != this){
 				double dp = this.getLowAltitudePressure() - lowestLowPressure.getLowAltitudePressure();

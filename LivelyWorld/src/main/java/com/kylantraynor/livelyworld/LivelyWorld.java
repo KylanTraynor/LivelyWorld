@@ -699,8 +699,6 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 
 		switch (cmd.getName().toUpperCase()) {
 		case "LIVELYWORLD":
-			if (!(sender instanceof Player))
-				return false;
 			if (args.length >= 1) {
 				switch (args[0].toUpperCase()) {
 				case "WATER":

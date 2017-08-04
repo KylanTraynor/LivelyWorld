@@ -29,14 +29,26 @@ public class ClimateMap {
 	private SizedList<ClimateCell> cache = new SizedList<ClimateCell>(10);
 
 	public ClimateMap(World world) {
-		this(world, 300);
+		this(world, 40);
 	}
 
 	public ClimateMap(World world, int resolution) {
 		this.world = world;
 		this.resolution = resolution;
 	}
+	
+	public double incrementGenerationZ(double z, double step){
+		if(z < 0){
+			z+= step;
+		}
+		z = -z;
+		return z;
+	}
 
+	public double zAdjustedXStep(double z, double step){
+		return Math.max(step * Math.cos(z / Planet.getPlanet(world).getMaxZ()), 1);
+	}
+	
 	public void generateMap() {
 		if (HookManager.hasWorldBorder()) {
 
@@ -48,15 +60,32 @@ public class ClimateMap {
 			float maxZ = (float) (center.getZ() + hook.getWorldRadiusZ(world));
 			int halfRes = resolution / 2;
 			List<VSite> sites = new ArrayList<VSite>();
-			for (int x = (int) minX + halfRes; x < maxX - halfRes; x += resolution) {
-				for (int z = (int) minZ + halfRes; z < maxZ - halfRes; z += resolution) {
+			
+			double zRange = Math.max(Math.abs(minZ), Math.abs(maxZ));
+			double zStep = (zRange * 2) / resolution;
+			double xStep = (maxX - minX) / resolution;
+			
+			for(double z = - zRange; z <= zStep || z >= zStep; z = incrementGenerationZ(z, zStep)){
+				if(z < minZ || z > maxZ) continue;
+				double zAdjustedXStep = zAdjustedXStep(z, xStep);
+				for(double x = maxX; x >= minX; x -= zAdjustedXStep){
 					VSite s = new VSite(
-							(float) (x + Math.random() * resolution - resolution / 2),
-							(float) (z + Math.random() * resolution - resolution / 2),
+							(float) (x + Math.random() * zAdjustedXStep),
+							(float) (z + Math.random() * zStep),
 							1);
 					sites.add(s);
 				}
 			}
+			
+			/*for (int x = (int) minX + halfRes; x < maxX - halfRes; x += resolution) {
+				for (int z = (int) minZ + halfRes; z < maxZ - halfRes; z += resolution) {
+					VSite s = new VSite(
+							(float) (x + (((2 * Math.random()) - 1) * resolution)),
+							(float) (z + (((2 * Math.random()) - 1) * resolution)),
+							1);
+					sites.add(s);
+				}
+			}*/
 			this.generator = new Voronoi<ClimateCell>(ClimateCell.class,
 					sites.toArray(new VSite[sites.size()]), minX, minZ, maxX,
 					maxZ);

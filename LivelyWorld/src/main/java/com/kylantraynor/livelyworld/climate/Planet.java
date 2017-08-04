@@ -83,6 +83,14 @@ public class Planet {
 	public double getAngleFromEquator(double zPosition) {
 		return (Math.abs(zPosition) / getMaxZ()) * HalfPI;
 	}
+	
+	public double getZFromAngle(double angle){
+		return getZFromRadAngle(angle * (HalfPI / 90));
+	}
+	
+	public double getZFromRadAngle(double radAngle){
+		return (radAngle / HalfPI) * getMaxZ();
+	}
 
 	public Calendar getCurrentIRLDate() {
 		return Calendar.getInstance();

@@ -152,6 +152,8 @@ public class ClimateMap {
 	private double highestLowPressure;
 	private double highestHighPressure;
 	private double lowestHighPressure;
+	private double highestWindSpeed;
+	public boolean hasChanged;
 	
 	public void randomCellUpdate() {
 		lastCellUpdateId = lastCellUpdateId >= getCells().length - 1 ? 0 : lastCellUpdateId + 1;
@@ -160,27 +162,19 @@ public class ClimateMap {
 		}*/
 		if (getCells()[lastCellUpdateId] != null)
 			getCells()[lastCellUpdateId].update();
+		
+		this.hasChanged = true;
 	}
 	
 	public Temperature getCurrentHighestTemperature(){
-		double highest = highestTemperature.getValue();
-		for(ClimateCell c : getCells()){
-			if(c.getTemperature().getValue() > highest){
-				highest = c.getTemperature().getValue();
-			}
-		}
-		highestTemperature = new Temperature(highest);
+		if(!hasChanged) return highestTemperature;
+		updateMinMaxValues();
 		return highestTemperature;
 	}
 	
 	public Temperature getCurrentLowestTemperature(){
-		double lowest = lowestTemperature.getValue();
-		for(ClimateCell c : getCells()){
-			if(c.getTemperature().getValue() < lowest){
-				lowest = c.getTemperature().getValue();
-			}
-		}
-		lowestTemperature = new Temperature(lowest);
+		if(!hasChanged) return lowestTemperature;
+		updateMinMaxValues();
 		return lowestTemperature;
 	}
 
@@ -223,57 +217,71 @@ public class ClimateMap {
 	}
 
 	public double getCurrentHighestHumidity() {
-		double highest = highestHumidity;
-		for(ClimateCell c : getCells()){
-			if(c.getHumidity() > highest){
-				highest = c.getHumidity();
-			}
-		}
-		highestHumidity = highest;
+		if(!hasChanged) return highestHumidity;
+		updateMinMaxValues();
 		return highestHumidity;
 	}
 
 	public double getCurrentLowestLowPressure() {
-		double lowest = lowestLowPressure;
-		for(ClimateCell c : getCells()){
-			if(c.getLowAltitudePressure() < lowest){
-				lowest = c.getLowAltitudePressure();
-			}
-		}
-		lowestLowPressure = lowest;
+		if(!hasChanged) return lowestLowPressure;
+		updateMinMaxValues();
 		return lowestLowPressure;
 	}
 	
 	public double getCurrentHighestLowPressure() {
-		double highest = highestLowPressure;
-		for(ClimateCell c : getCells()){
-			if(c.getLowAltitudePressure() > highest){
-				highest = c.getLowAltitudePressure();
-			}
-		}
-		highestLowPressure = highest;
+		if(!hasChanged) return highestLowPressure;
+		updateMinMaxValues();
 		return highestLowPressure;
 	}
 
 	public double getCurrentLowestHighPressure() {
-		double lowest = lowestHighPressure;
-		for(ClimateCell c : getCells()){
-			if(c.getHighAltitudePressure() < lowest){
-				lowest = c.getHighAltitudePressure();
-			}
-		}
-		lowestHighPressure = lowest;
+		if(!hasChanged) return lowestHighPressure;
+		updateMinMaxValues();
 		return lowestHighPressure;
 	}
 	
 	public double getCurrentHighestHighPressure() {
-		double highest = highestHighPressure;
+		if(!hasChanged) return highestHighPressure;
+		updateMinMaxValues();
+		return highestHighPressure;
+	}
+	
+	public double getCurrentMaxWindSpeed(){
+		if(!hasChanged) return highestWindSpeed;
+		updateMinMaxValues();
+		return highestWindSpeed;
+	}
+	
+	public void updateMinMaxValues(){
 		for(ClimateCell c : getCells()){
-			if(c.getHighAltitudePressure() > highest){
-				highest = c.getHighAltitudePressure();
+			if(c.getTemperature().getValue() > highestTemperature.getValue()){
+				highestTemperature = c.getTemperature();
+			}
+			if(c.getTemperature().getValue() < lowestTemperature.getValue()){
+				lowestTemperature = c.getTemperature();
+			}
+			if(c.getLowAltitudePressure() > highestLowPressure){
+				highestLowPressure = c.getLowAltitudePressure();
+			}
+			if(c.getLowAltitudePressure() < lowestLowPressure){
+				lowestLowPressure = c.getLowAltitudePressure();
+			}
+			if(c.getHighAltitudePressure() > highestHighPressure){
+				highestHighPressure = c.getHighAltitudePressure();
+			}
+			if(c.getHighAltitudePressure() < lowestHighPressure){
+				lowestHighPressure = c.getHighAltitudePressure();
+			}
+			if(c.getHumidity() > highestHumidity){
+				highestHumidity = c.getHumidity();
+			}
+			if(c.getHumidity() < highestHumidity){
+				highestHumidity = c.getHumidity();
+			}
+			if(c.getLowWind().getSpeed() > highestWindSpeed){
+				highestWindSpeed = c.getLowWind().getSpeed();
 			}
 		}
-		highestHighPressure = highest;
-		return highestHighPressure;
+		this.hasChanged = false;
 	}
 }

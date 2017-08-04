@@ -30,7 +30,7 @@ public class ClimateMap {
 	private SizedList<ClimateCell> cache = new SizedList<ClimateCell>(10);
 
 	public ClimateMap(World world) {
-		this(world, 100);
+		this(world, 80);
 	}
 
 	public ClimateMap(World world, int resolution) {
@@ -67,7 +67,8 @@ public class ClimateMap {
 			double zStep = (zRange * 2 * ratio) / resolution;
 			double xStep = (maxX - minX) / resolution;
 			
-			for(double z = - zRange; z < zStep || z > zStep; z = incrementGenerationZ(z, zStep)){
+			for(double z = - zRange; z <= -zStep || z >= zStep; z = incrementGenerationZ(z, zStep)){
+				if(z == 0) break;
 				if(z < minZ || z > maxZ) continue;
 				LivelyWorld.getInstance().getLogger().info("Current Z = " + z);
 				double zAdjustedXStep = zAdjustedXStep(z, xStep);
@@ -78,6 +79,14 @@ public class ClimateMap {
 							1);
 					sites.add(s);
 				}
+			}
+			double zAdjustedXStep = zAdjustedXStep(0, xStep);
+			for(double x = maxX; x >= minX; x -= zAdjustedXStep){
+				VSite s = new VSite(
+						(float) (x + Math.random() * zAdjustedXStep),
+						(float) (Math.random() * zStep),
+						1);
+				sites.add(s);
 			}
 			
 			/*for (int x = (int) minX + halfRes; x < maxX - halfRes; x += resolution) {

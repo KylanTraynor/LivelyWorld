@@ -471,6 +471,8 @@ public class ClimateCell extends VCell {
 	}
 
 	public void updateWinds() {
+		this.lowWind = WindVector.ZERO;
+		this.highWind = WindVector.ZERO;
 		double transfer = 0;
 		ClimateCell highestTemp = this;
 		ClimateCell lowestHighTemp = this;
@@ -493,15 +495,19 @@ public class ClimateCell extends VCell {
 		}
 		if(highestTemp == this && lowestHighTemp != this){ // Light air
 			// move air up.
-			highAirAmount += (long)incomingLowAir;
+			transfer = incomingLowAir;
 			incomingLowAir = 0;
+			highAirAmount += (long) transfer;
+			this.bringHighTemperatureTo(this.getTemperature(), (this.getAmountHigh() / transfer) * 0.1);
+			this.bringTemperatureTo(this.getHighTemperature(), (this.getAmountOnBlock() / transfer) * 0.1);
 		} else if(lowestHighTemp == this && highestTemp != this){ // Heavy air
 			// move air down.
-			airAmountOnBlock += (long)incomingHighAir;
+			transfer = incomingHighAir;
 			incomingHighAir = 0;
+			airAmountOnBlock += (long)transfer;
+			this.bringHighTemperatureTo(this.getTemperature(), (this.getAmountHigh() / transfer) * 0.1);
+			this.bringTemperatureTo(this.getHighTemperature(), (this.getAmountOnBlock() / transfer) * 0.1);
 		} else {
-			this.lowWind = WindVector.ZERO;
-			this.highWind = WindVector.ZERO;
 			// move to lower pressure.
 			if(lowestLowPressure != this){
 				double dp = this.getLowAltitudePressure() - lowestLowPressure.getLowAltitudePressure();
@@ -515,6 +521,8 @@ public class ClimateCell extends VCell {
 				lowestLowPressure.bringTemperatureTo(this.getTemperature(), (lowestLowPressure.getAmountOnBlock() / transfer) * 0.1);
 				this.bringTemperatureTo(lowestLowPressure.getTemperature(), (this.getAmountOnBlock() / transfer) * 0.1);
 				this.lowWind = new WindVector(lowestLowPressure.getX() - this.getX(), lowestLowPressure.getY() - this.getY(), lowestLowPressure.getZ() - this.getZ(), transfer);
+			} else {
+				
 			}
 			if(lowestHighPressure != this){
 				double dp = this.getHighAltitudePressure() - lowestHighPressure.getHighAltitudePressure();

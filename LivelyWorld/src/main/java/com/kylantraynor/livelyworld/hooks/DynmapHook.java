@@ -162,6 +162,10 @@ public class DynmapHook {
 			max = c.getMap().getCurrentHighestLowPressure();
 			value = c.getLowAltitudePressure();
 			break;
+		case "HIGHPRESSURE":
+			min = c.getMap().getCurrentLowestHighPressure();
+			max = c.getMap().getCurrentHighestHighPressure();
+			value = c.getHighAltitudePressure();
 		case "HUMIDITY":
 			min = 0;
 			max = c.getMap().getCurrentHighestHumidity();

@@ -33,6 +33,7 @@ public class ClimateCell extends VCell {
 	private double airAmountOnBlock = Double.NaN;
 	private double airAmountHigh = Double.NaN;
 	private Temperature temperature = Temperature.fromCelsius(15);
+	private Temperature highTemperature = new Temperature(225);
 	private ClimateMap map;
 	private double precipitations = 0;
 	private double altitude = Double.NaN;
@@ -44,6 +45,12 @@ public class ClimateCell extends VCell {
 	private double largestDistance;
 	private WindVector lowWind = new WindVector(0,0,0,0);
 	private WindVector highWind = new WindVector(0,0,0,0);
+	private double airMovingUp = 0;
+	private double airMovingDown = 0;
+	private double incomingLowAir = 0;
+	private double outgoingLowAir = 0;
+	private double incomingHighAir = 0;
+	private double outgoingHighAir = 0;
 	
 	private Temperature minTemp;
 	private Temperature maxTemp;
@@ -263,8 +270,12 @@ public class ClimateCell extends VCell {
 	private void bringTemperatureTo(Temperature temp, double inertia){
 		temperature = getTemperature().bringTo(temp, inertia);
 		humidityMultiplier = Double.NaN;
-		highAltitudePressure = Double.NaN;
 		lowAltitudePressure = Double.NaN;
+	}
+	
+	private void bringHighTemperatureTo(Temperature temp, double inertia){
+		highTemperature = getHighTemperature().bringTo(temp, inertia);
+		highAltitudePressure = Double.NaN;
 	}
 	
 	private void moveHighAir(){
@@ -328,7 +339,7 @@ public class ClimateCell extends VCell {
 		temperature = ClimateUtils.getGasTemperature(this.getLowAltitudePressure(), this.getAirVolumeOnBlock(), this.getAmountOnBlock());
 	}
 
-	private void updateHumidity() {
+	void updateHumidity() {
 		double saturation = Math.max(75 - getRelativeHumidity(), 0) * 0.01;
 		if(saturation > 0){
 			humidity += (getHumidityGeneration() * saturation);
@@ -348,7 +359,7 @@ public class ClimateCell extends VCell {
 		humidity = (humidity < 0 ? 0 : humidity);
 	}
 
-	private void updateWeather() {
+	void updateWeather() {
 		if (getTemperature().isCelsiusAbove(30) && getRelativeHumidity() > 75) {
 			weather = Weather.THUNDERSTORM;
 		} else if (getRelativeHumidity() >= 80){
@@ -458,5 +469,67 @@ public class ClimateCell extends VCell {
 
 	public double getPrecipitations() {
 		return precipitations;
+	}
+
+	public void updateWinds() {
+		double transfer = 0;
+		ClimateCell highestTemp = this;
+		ClimateCell lowestHighTemp = this;
+		ClimateCell lowestLowPressure = this;
+		ClimateCell lowestHighPressure = this;
+		for(ClimateCell c : getNeighbours()){
+			if(c == null)continue;
+			if(c.getTemperature().getValue() > highestTemp.getTemperature().getValue()){
+				highestTemp = c;
+			}
+			if(c.getHighTemperature().getValue() < lowestHighTemp.getHighTemperature().getValue()){
+				lowestHighTemp = c;
+			}
+			if(c.getLowAltitudePressure() < lowestLowPressure.getLowAltitudePressure()){
+				lowestLowPressure = c;
+			}
+			if(c.getHighAltitudePressure() < lowestHighPressure.getHighAltitudePressure()){
+				lowestHighPressure = c;
+			}
+		}
+		if(highestTemp == this && lowestHighTemp != this){ // Light air
+			// move air up.
+			highAirAmount += (long)incomingLowAir;
+			incomingLowAir = 0;
+		} else if(lowestHighTemp == this && highestTemp != this){ // Heavy air
+			// move air down.
+			airAmountOnBlock += (long)incomingHighAir;
+			incomingHighAir = 0;
+		} else {
+			// move to lower pressure.
+			if(lowestLowPressure != this){
+				double dp = this.getLowAltitudePressure() - lowestLowPressure.getLowAltitudePressure();
+				transfer = Math.min(ClimateUtils.getGasAmount(dp/2, this.getAirVolumeOnBlock(), this.getTemperature()), this.getAmountOnBlock());
+				double humidityRatio = this.getHumidity() / this.getAmountOnBlock();
+				double humidityTransfer = humidityRatio * transfer;
+				lowestLowPressure.incomingLowAir += transfer;
+				this.outgoingLowAir += transfer;
+				lowestLowPressure.humidity += humidityTransfer;
+				this.humidity -= humidityTransfer;
+				lowestLowPressure.bringTemperatureTo(this.getTemperature(), (lowestLowPressure.getAmountOnBlock() / transfer) * 0.1);
+				this.bringTemperatureTo(lowestLowPressure.getTemperature(), (this.getAmountOnBlock() / transfer) * 0.1);
+				this.lowWind = new WindVector(lowestLowPressure.getX() - this.getX(), lowestLowPressure.getY() - this.getY(), lowestLowPressure.getZ() - this.getZ(), transfer);
+			}
+			if(lowestHighPressure != this){
+				double dp = this.getHighAltitudePressure() - lowestHighPressure.getHighAltitudePressure();
+				transfer = Math.min(ClimateUtils.getGasAmount(dp/2, this.getHighVolume(), this.getHighTemperature()), this.getAmountHigh());
+				lowestHighPressure.incomingHighAir += transfer;
+				this.outgoingHighAir += transfer;
+				lowestHighPressure.bringHighTemperatureTo(this.getHighTemperature(), (lowestHighPressure.getAmountHigh() / transfer) * 0.1);
+				this.bringHighTemperatureTo(lowestHighPressure.getHighTemperature(), (this.getAmountHigh() / transfer) * 0.1);
+				this.highWind = new WindVector(lowestHighPressure.getX() - this.getX(), lowestHighPressure.getY() - this.getY(), lowestHighPressure.getZ() - this.getZ(), transfer);
+			}
+		}
+		this.addAmount(incomingLowAir - outgoingLowAir);
+		this.addHighAmount(incomingHighAir - outgoingHighAir);
+	}
+
+	public Temperature getHighTemperature() {
+		return highTemperature;
 	}
 }

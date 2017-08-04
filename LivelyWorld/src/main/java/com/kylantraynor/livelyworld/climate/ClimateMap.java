@@ -58,11 +58,12 @@ public class ClimateMap {
 			float minZ = (float) (center.getZ() - hook.getWorldRadiusZ(world));
 			float maxX = (float) (center.getX() + hook.getWorldRadiusX(world));
 			float maxZ = (float) (center.getZ() + hook.getWorldRadiusZ(world));
-			int halfRes = resolution / 2;
+			//int halfRes = resolution / 2;
+			double ratio = (maxX - minX)/(maxZ - minZ);
 			List<VSite> sites = new ArrayList<VSite>();
 			
 			double zRange = Math.max(Math.abs(minZ), Math.abs(maxZ));
-			double zStep = (zRange * 2) / resolution;
+			double zStep = (zRange * 2 * ratio) / resolution;
 			double xStep = (maxX - minX) / resolution;
 			
 			for(double z = - zRange; z <= zStep || z >= zStep; z = incrementGenerationZ(z, zStep)){

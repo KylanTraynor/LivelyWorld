@@ -514,8 +514,8 @@ public class ClimateCell extends VCell {
 			double dt = this.getTemperature().getValue() - lowestTemp.getTemperature().getValue();
 			if(dt > 0){
 				transfer = ClimateUtils.getGasAmount(this.getLowAltitudePressure(), this.getAirVolumeOnBlock(), new Temperature(dt));
-				this.bringHighTemperatureTo(this.getTemperature(), (this.getAmountHigh() / transfer) * 0.01);
-				this.bringTemperatureTo(this.getHighTemperature(), (this.getAmountOnBlock() / transfer) * 0.01);
+				this.bringHighTemperatureTo(this.getTemperature(), (this.getAmountHigh() / transfer) * 0.001);
+				this.bringTemperatureTo(this.getHighTemperature(), (this.getAmountOnBlock() / transfer) * 0.001);
 				this.addHighAmount(transfer);
 				this.addAmount(-transfer);
 			}
@@ -524,8 +524,8 @@ public class ClimateCell extends VCell {
 			double dt = highestHighTemp.getHighTemperature().getValue() - this.getHighTemperature().getValue();
 			if(dt > 0){
 				transfer = ClimateUtils.getGasAmount(this.getHighAltitudePressure(), this.getAmountHigh(), new Temperature(dt));
-				this.bringHighTemperatureTo(this.getTemperature(), (this.getAmountHigh() / transfer) * 0.01);
-				this.bringTemperatureTo(this.getHighTemperature(), (this.getAmountOnBlock() / transfer) * 0.01);
+				this.bringHighTemperatureTo(this.getTemperature(), (this.getAmountHigh() / transfer) * 0.001);
+				this.bringTemperatureTo(this.getHighTemperature(), (this.getAmountOnBlock() / transfer) * 0.001);
 				this.addAmount(transfer);
 				this.addHighAmount(-transfer);
 			}
@@ -557,8 +557,8 @@ public class ClimateCell extends VCell {
 		double humidityTransfer = humidityRatio * transfer;
 		to.humidity += humidityTransfer;
 		from.humidity -= humidityTransfer;
-		to.bringTemperatureTo(from.getTemperature(), (to.getAmountOnBlock() / transfer) * 0.01);
-		from.bringTemperatureTo(to.getTemperature(), (from.getAmountOnBlock() / transfer) * 0.01);
+		to.bringTemperatureTo(from.getTemperature(), (to.getAmountOnBlock() / transfer) * 0.001);
+		from.bringTemperatureTo(to.getTemperature(), (from.getAmountOnBlock() / transfer) * 0.001);
 		to.addAmount(transfer);
 		from.addAmount(-transfer);
 		from.lowWind = new WindVector(to.getX() - from.getX(), to.getY() - from.getY(), to.getZ() - from.getZ(), transfer);
@@ -571,8 +571,8 @@ public class ClimateCell extends VCell {
 		double fromExcess = ClimateUtils.getGasAmount(meanP, from.getHighVolume(), from.getHighTemperature()) - from.getAmountHigh();
 		double toLack = ClimateUtils.getGasAmount(meanP, to.getHighVolume(), to.getHighTemperature()) - to.getAmountHigh();
 		double transfer = Math.min(fromExcess, toLack);
-		to.bringHighTemperatureTo(from.getHighTemperature(), (to.getAmountHigh() / transfer) * 0.01);
-		from.bringHighTemperatureTo(to.getHighTemperature(), (from.getAmountHigh() / transfer) * 0.01);
+		to.bringHighTemperatureTo(from.getHighTemperature(), (to.getAmountHigh() / transfer) * 0.001);
+		from.bringHighTemperatureTo(to.getHighTemperature(), (from.getAmountHigh() / transfer) * 0.001);
 		to.addHighAmount(transfer);
 		from.addHighAmount(-transfer);
 		from.highWind = new WindVector(to.getX() - from.getX(), to.getY() - from.getY(), to.getZ() - from.getZ(), transfer);

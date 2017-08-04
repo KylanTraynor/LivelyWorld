@@ -10,6 +10,7 @@ import java.util.UUID;
 import org.bukkit.Location;
 import org.bukkit.World;
 
+import com.kylantraynor.livelyworld.LivelyWorld;
 import com.kylantraynor.livelyworld.Utils.SizedList;
 import com.kylantraynor.livelyworld.hooks.HookManager;
 import com.kylantraynor.livelyworld.hooks.WorldBorderHook;
@@ -39,7 +40,7 @@ public class ClimateMap {
 	
 	public double incrementGenerationZ(double z, double step){
 		if(z < 0){
-			z+= step;
+			z = Math.min(z + step, 0);
 		}
 		z = -z;
 		return z;
@@ -66,8 +67,9 @@ public class ClimateMap {
 			double zStep = (zRange * 2 * ratio) / resolution;
 			double xStep = (maxX - minX) / resolution;
 			
-			for(double z = - zRange; z <= zStep || z >= zStep; z = incrementGenerationZ(z, zStep)){
+			for(double z = - zRange; z < zStep || z > zStep; z = incrementGenerationZ(z, zStep)){
 				if(z < minZ || z > maxZ) continue;
+				LivelyWorld.getInstance().getLogger().info("Current Z = " + z);
 				double zAdjustedXStep = zAdjustedXStep(z, xStep);
 				for(double x = maxX; x >= minX; x -= zAdjustedXStep){
 					VSite s = new VSite(

@@ -346,6 +346,12 @@ public class ClimateModule {
 					+ "/livelyworld climate get <property>");
 		} else if (args.length >= 2) {
 			switch (args[1].toUpperCase()) {
+			case "CLEARMAPDATA":
+				for(Planet p : Planet.planets){
+					p.getClimateMap().clearMinMaxValues();
+				}
+				sender.sendMessage(ChatColor.GREEN + "Cleared map data!");
+				break;
 			case "SET":
 				if(args.length == 2){
 					sender.sendMessage(ChatColor.GRAY + "/livelyworld climate set Weather <weather>");

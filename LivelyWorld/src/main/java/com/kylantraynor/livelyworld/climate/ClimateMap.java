@@ -147,12 +147,12 @@ public class ClimateMap {
 	}
 
 	private int lastCellUpdateId = 0;
-	private double highestHumidity;
-	private double lowestLowPressure;
-	private double highestLowPressure;
-	private double highestHighPressure;
-	private double lowestHighPressure;
-	private double highestWindSpeed;
+	private double highestHumidity = 0;
+	private double lowestLowPressure = 101300;
+	private double highestLowPressure = 101300;
+	private double highestHighPressure = 70000;
+	private double lowestHighPressure = 70000;
+	private double highestWindSpeed = 0;
 	public boolean hasChanged;
 	
 	public void randomCellUpdate() {
@@ -283,5 +283,17 @@ public class ClimateMap {
 			}
 		}
 		this.hasChanged = false;
+	}
+	
+	public void clearMinMaxValues(){
+		highestTemperature = Temperature.fromCelsius(20);
+		lowestTemperature = Temperature.fromCelsius(0);
+		highestLowPressure = 101300;
+		lowestLowPressure = 101300;
+		highestHighPressure = 70000;
+		lowestHighPressure = 70000;
+		highestHumidity = 0;
+		highestWindSpeed = 0;
+		this.hasChanged = true;
 	}
 }

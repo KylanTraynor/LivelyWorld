@@ -198,7 +198,7 @@ public class ClimateCell extends VCell {
 	}
 	
 	public double getUpInertia(){
-		return (getAmountOnBlock() * 0.000001) + getWaterVolumeOnBlock() + (getHumidity() * 0.5);
+		return (getAmountOnBlock() * 0.000001) + (getWaterVolumeOnBlock()*10) + (getHumidity() * 0.5);
 	}
 
 	public void updateIrradiance() {
@@ -509,15 +509,14 @@ public class ClimateCell extends VCell {
 				highestHighPressure = c;
 			}
 		}
-		if(false){
-		/*if(highestTemp == this && lowestHighTemp != this){ // Light air
+		if(highestTemp == this && lowestHighTemp != this){ // Light air
 			// move air up.
 			double dt = this.getTemperature().getValue() - lowestTemp.getTemperature().getValue();
 			if(dt > 0){
 				transfer = ClimateUtils.getGasAmount(this.getLowAltitudePressure(), this.getAirVolumeOnBlock(), new Temperature(dt));
 				Temperature t = this.getHighTemperature();
-				this.bringHighTemperatureTo(this.getTemperature(), (this.getAmountHigh() / transfer) * 0.001);
-				this.bringTemperatureTo(t, (this.getAmountOnBlock() / transfer) * 0.001);
+				this.bringHighTemperatureTo(this.getTemperature(), (this.getAmountHigh() / transfer) * 0.1);
+				this.bringTemperatureTo(t, (this.getAmountOnBlock() / transfer) * 0.1);
 				this.addHighAmount(transfer);
 				this.addAmount(-transfer);
 			}
@@ -527,11 +526,10 @@ public class ClimateCell extends VCell {
 			if(dt > 0){
 				transfer = ClimateUtils.getGasAmount(this.getHighAltitudePressure(), this.getAmountHigh(), new Temperature(dt));
 				Temperature t = getHighTemperature();
-				this.bringHighTemperatureTo(this.getTemperature(), (this.getAmountHigh() / transfer) * 0.001);
-				this.bringTemperatureTo(t, (this.getAmountOnBlock() / transfer) * 0.001);
+				this.bringHighTemperatureTo(this.getTemperature(), (this.getAmountHigh() / transfer) * 0.1);
+				this.bringTemperatureTo(t, (this.getAmountOnBlock() / transfer) * 0.1);
 				this.addAmount(transfer);
 				this.addHighAmount(-transfer);
-			}*/
 		} else {
 			// move to lower pressure.
 			if(lowestLowPressure != this){

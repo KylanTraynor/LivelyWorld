@@ -195,7 +195,7 @@ public class DynmapHook {
 		}
 		double cappedValue = Math.max(Math.min(value, max), min) - min;
 		double normalizedValue = cappedValue / (max - min);
-		int rgbValue = (int) normalizedValue * 255;
+		int rgbValue = (int) (normalizedValue * 255);
 		int red = 0;
 		int green = 0;
 		int blue = 0;

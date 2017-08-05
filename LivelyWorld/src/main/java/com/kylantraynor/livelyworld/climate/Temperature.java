@@ -25,6 +25,7 @@ public class Temperature {
 	}
 
 	public Temperature bringTo(Temperature t, double inertia) {
+		if(inertia < 0) inertia = 0;
 		double oldt = this.value;
 		double targett = t.value;
 		if(inertia + 1 == 0) return new Temperature(t.getValue());

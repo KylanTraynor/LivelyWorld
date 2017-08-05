@@ -208,7 +208,7 @@ public class ClimateCell extends VCell {
 		} else {
 			bringTemperatureTo(target, getDownInertia());
 		}
-		bringHighTemperatureTo(getTropopauseTemperature(), 100);
+		//bringHighTemperatureTo(getTropopauseTemperature(), 100);
 	}
 	
 	private void moveVertically() {

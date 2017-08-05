@@ -55,10 +55,20 @@ public class SnowFallTask extends BukkitRunnable {
 				}
 			} else if (ClimateUtils.isWater(below)){ 
 				if(below.getData() == 0){
-					below.setType(Material.FROSTED_ICE);
-					ClimateUtils.setSnowLayers(b, ClimateUtils.getSnowLayers(b) + 1);
+					if(below.getRelative(BlockFace.EAST).getType().isSolid()
+							|| below.getRelative(BlockFace.NORTH).getType().isSolid()
+							|| below.getRelative(BlockFace.SOUTH).getType().isSolid()
+							|| below.getRelative(BlockFace.WEST).getType().isSolid()){
+						below.setType(Material.FROSTED_ICE);
+						ClimateUtils.setSnowLayers(b, ClimateUtils.getSnowLayers(b) + 1);
+					}
 				} else {
-					ClimateUtils.setSnowLayers(below, ClimateUtils.getWaterHeight(below));
+					if(below.getRelative(BlockFace.EAST).getType().isSolid()
+							|| below.getRelative(BlockFace.NORTH).getType().isSolid()
+							|| below.getRelative(BlockFace.SOUTH).getType().isSolid()
+							|| below.getRelative(BlockFace.WEST).getType().isSolid()){
+						ClimateUtils.setSnowLayers(below, ClimateUtils.getWaterHeight(below));
+					}
 				}
 			} else if (below.getType() != Material.SIGN_POST
 					&& below.getType() != Material.SIGN

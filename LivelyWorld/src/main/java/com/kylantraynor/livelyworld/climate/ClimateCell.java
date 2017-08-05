@@ -530,6 +530,7 @@ public class ClimateCell extends VCell {
 				this.bringTemperatureTo(t, (this.getAmountOnBlock() / transfer) * 0.1);
 				this.addAmount(transfer);
 				this.addHighAmount(-transfer);
+			}
 		} else {
 			// move to lower pressure.
 			if(lowestLowPressure != this){

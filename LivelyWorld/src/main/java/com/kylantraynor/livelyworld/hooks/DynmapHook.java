@@ -147,7 +147,10 @@ public class DynmapHook {
 				m.setLabel(c.getLowAltitudePressure() / 100 + " hPa");
 				break;
 			case "HUMIDITY":
-				m.setLabel(c.getHumidity() + " g/m3 (" + (int)c.getRelativeHumidity() + "%");
+				m.setLabel(c.getHumidity() + " g/m3 (" + (int)c.getRelativeHumidity() + "%)");
+				break;
+			case "HIGHTEMP":
+				m.setLabel(c.getHighTemperature().toString("C") + "/" + c.getHighTemperature().toString("F"));
 				break;
 			default:
 				m.setLabel(c.getTemperature().toString("C") + "/" + c.getTemperature().toString("F"));
@@ -171,6 +174,11 @@ public class DynmapHook {
 			min = 0;
 			max = c.getMap().getCurrentHighestHumidity();
 			value = c.getHumidity();
+			break;
+		case "HIGHTEMP":
+			min = c.getMap().getCurrentLowestHighTemperature().getValue();
+			max = c.getMap().getCurrentHighestHighTemperature().getValue();
+			value = c.getHighTemperature().getValue();
 			break;
 		default:
 			min = c.getMap().getCurrentLowestTemperature().getValue();

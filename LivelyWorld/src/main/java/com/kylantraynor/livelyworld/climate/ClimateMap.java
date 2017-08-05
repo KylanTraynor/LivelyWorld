@@ -154,6 +154,8 @@ public class ClimateMap {
 	private double lowestHighPressure = 70000;
 	private double highestWindSpeed = 0;
 	public boolean hasChanged;
+	private Temperature highestHighTemperature = Temperature.fromCelsius(0);
+	private Temperature lowestHighTemperature = Temperature.fromCelsius(0);
 	
 	public void randomCellUpdate() {
 		lastCellUpdateId = lastCellUpdateId >= getCells().length - 1 ? 0 : lastCellUpdateId + 1;
@@ -176,6 +178,18 @@ public class ClimateMap {
 		if(!hasChanged) return lowestTemperature;
 		updateMinMaxValues();
 		return lowestTemperature;
+	}
+	
+	public Temperature getCurrentHighestHighTemperature(){
+		if(!hasChanged) return highestHighTemperature;
+		updateMinMaxValues();
+		return highestHighTemperature;
+	}
+	
+	public Temperature getCurrentLowestHighTemperature(){
+		if(!hasChanged) return lowestHighTemperature;
+		updateMinMaxValues();
+		return lowestHighTemperature;
 	}
 
 	/**
@@ -259,6 +273,12 @@ public class ClimateMap {
 			}
 			if(c.getTemperature().getValue() < lowestTemperature.getValue()){
 				lowestTemperature = c.getTemperature();
+			}
+			if(c.getHighTemperature().getValue() > highestHighTemperature.getValue()){
+				highestHighTemperature = c.getTemperature();
+			}
+			if(c.getHighTemperature().getValue() < lowestHighTemperature.getValue()){
+				lowestHighTemperature = c.getTemperature();
 			}
 			if(c.getLowAltitudePressure() > highestLowPressure){
 				highestLowPressure = c.getLowAltitudePressure();

@@ -266,7 +266,9 @@ public class ClimateCell extends VCell {
 	}
 	
 	private void bringTemperatureTo(Temperature temp, double inertia){
+		LivelyWorld.getInstance().getLogger().info("From " + temperature.toString());
 		temperature = getTemperature().bringTo(temp, inertia);
+		LivelyWorld.getInstance().getLogger().info("To " + temperature.toString() + " (inertia: " + inertia + ", target: " + temp.toString() + ")");
 		humidityMultiplier = Double.NaN;
 		lowAltitudePressure = Double.NaN;
 	}

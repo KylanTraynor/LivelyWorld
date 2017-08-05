@@ -114,7 +114,12 @@ public class ClimateModule {
 							case CLEAR:
 								double tdiff = ClimateUtils.getAltitudeWeightedTriangleTemperature(cell, b.getLocation()).getValue() - Temperature.fromCelsius(5).getValue();
 								if(Math.random() < 0.1 * (tdiff / 2)){
-									b = getHighestSnowBlockAround(b, 2);
+									while(b.getRelative(BlockFace.DOWN).getType() == Material.AIR ||
+											b.getRelative(BlockFace.DOWN).getType() == Material.LEAVES ||
+											b.getRelative(BlockFace.DOWN).getType() == Material.LEAVES_2){
+										b = b.getRelative(BlockFace.DOWN);
+									}
+									b = getHighestSnowBlockAround(b, 3);
 									ClimateUtils.melt(b, (int) Math.ceil(tdiff/6));
 								}
 								break;

@@ -249,6 +249,7 @@ public class DynmapHook {
 			markerList.put(id, weather);
 			
 			// Creates Wind Marker
+			/*
 			double windSpeed = c.getLowWind().getSpeed();
 			double windRatio = windSpeed / c.getMap().getCurrentMaxWindSpeed();
 			
@@ -268,6 +269,7 @@ public class DynmapHook {
 			} else {
 				l.setLineStyle(1, 2, Color.BLACK.asRGB());
 			}
+			*/
 		}
 	}
 }

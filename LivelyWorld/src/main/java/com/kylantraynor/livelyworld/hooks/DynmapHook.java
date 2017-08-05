@@ -206,7 +206,10 @@ public class DynmapHook {
 			blue = rgbValue;
 			break;
 		case "WIND":
-			double angle = c.getLowWind().getRadAngle() + Math.PI;
+			double angle = c.getLowWind().getRadAngle();
+			if(angle < 0){
+				angle = angle + 2*Math.PI;
+			}
 			if(!Double.isNaN(angle)){
 				double x = normalizedValue * (1 - Math.abs(((angle / (Math.PI / 3)) % 2) - 1));
 				if(angle < (Math.PI / 3)){

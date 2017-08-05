@@ -531,18 +531,17 @@ public class ClimateCell extends VCell {
 				this.addAmount(transfer);
 				this.addHighAmount(-transfer);
 			}
-		} else {
-			// move to lower pressure.
-			if(lowestLowPressure != this){
-				processLowTransfer(this, lowestLowPressure);
-			} else if(highestLowPressure != this) {
-				processLowTransfer(highestLowPressure, this);
-			}
-			if(lowestHighPressure != this){
-				processHighTransfer(this, lowestHighPressure);
-			} else if(highestHighPressure != this) {
-				processHighTransfer(highestHighPressure, this);
-			}
+		}
+		// move to lower pressure.
+		if(lowestLowPressure != this){
+			processLowTransfer(this, lowestLowPressure);
+		} else if(highestLowPressure != this) {
+			processLowTransfer(highestLowPressure, this);
+		}
+		if(lowestHighPressure != this){
+			processHighTransfer(this, lowestHighPressure);
+		} else if(highestHighPressure != this) {
+			processHighTransfer(highestHighPressure, this);
 		}
 		/*this.addAmount(incomingLowAir - outgoingLowAir);
 		this.addHighAmount(incomingHighAir - outgoingHighAir);*/

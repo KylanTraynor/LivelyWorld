@@ -695,6 +695,8 @@ public class ClimateModule {
 				block.setBiome(Biome.PLAINS);
 			} else if(temp.isCelsiusAbove(35) && (humidity / c.getMap().getCurrentHighestHumidity() < 0.1)){
 				block.setBiome(Biome.DESERT);
+			} else if(humidity / c.getMap().getCurrentHighestHumidity() > 0.25){
+				block.setBiome(Biome.JUNGLE);
 			}
 			break;
 		case FROZEN_OCEAN:

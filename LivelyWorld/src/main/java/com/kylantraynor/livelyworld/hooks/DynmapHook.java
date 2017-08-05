@@ -152,6 +152,9 @@ public class DynmapHook {
 			case "HIGHTEMP":
 				m.setLabel(c.getHighTemperature().toString("C") + "/" + c.getHighTemperature().toString("F"));
 				break;
+			case "WIND":
+				m.setLabel("" + c.getLowWind().getSpeed());
+				break;
 			default:
 				m.setLabel(c.getTemperature().toString("C") + "/" + c.getTemperature().toString("F"));
 			}
@@ -180,6 +183,11 @@ public class DynmapHook {
 			max = c.getMap().getCurrentHighestHighTemperature().getValue();
 			value = c.getHighTemperature().getValue();
 			break;
+		case "WIND":
+			min = 0;
+			max = c.getMap().getCurrentMaxWindSpeed();
+			value = c.getLowWind().getSpeed();
+			break;
 		default:
 			min = c.getMap().getCurrentLowestTemperature().getValue();
 			max = c.getMap().getCurrentHighestTemperature().getValue();
@@ -195,6 +203,11 @@ public class DynmapHook {
 			red = 255 - rgbValue;
 			green = (int) (255 * Math.sin((rgbValue) * Math.PI / 255));
 			blue = rgbValue;
+			break;
+		case "WIND":
+			red = (int) (((-c.getLowWind().getX() + 1) / 2) * rgbValue);
+			green = (int) (((c.getLowWind().getY() + 1) / 2) * rgbValue);
+			blue = (int) (((c.getLowWind().getZ() + 1) / 2) * rgbValue);
 			break;
 		default:
 			red = rgbValue;
@@ -257,7 +270,7 @@ public class DynmapHook {
 			markerList.put(id, weather);
 			
 			// Creates Wind Marker
-			
+			/*
 			double windSpeed = c.getLowWind().getSpeed();
 			double windRatio = windSpeed / c.getMap().getCurrentMaxWindSpeed();
 			
@@ -277,6 +290,7 @@ public class DynmapHook {
 			} else {
 				l.setLineStyle(1, 2, Color.BLACK.asRGB());
 			}
+			*/
 		}
 	}
 }

@@ -490,10 +490,10 @@ public class ClimateCell extends VCell {
 			if(c.getTemperature().getValue() < lowestTemp.getTemperature().getValue()){
 				lowestTemp = c;
 			}
-			if(c.getHighTemperature().getValue() <= lowestHighTemp.getHighTemperature().getValue()){
+			if(c.getHighTemperature().getValue() < lowestHighTemp.getHighTemperature().getValue()){
 				lowestHighTemp = c;
 			}
-			if(c.getHighTemperature().getValue() >= highestHighTemp.getHighTemperature().getValue()){
+			if(c.getHighTemperature().getValue() > highestHighTemp.getHighTemperature().getValue()){
 				highestHighTemp = c;
 			}
 			if(c.getLowAltitudePressure() < lowestLowPressure.getLowAltitudePressure()){

@@ -509,7 +509,8 @@ public class ClimateCell extends VCell {
 				highestHighPressure = c;
 			}
 		}
-		if(highestTemp == this && lowestHighTemp != this){ // Light air
+		if(false){
+		/*if(highestTemp == this && lowestHighTemp != this){ // Light air
 			// move air up.
 			double dt = this.getTemperature().getValue() - lowestTemp.getTemperature().getValue();
 			if(dt > 0){
@@ -530,7 +531,7 @@ public class ClimateCell extends VCell {
 				this.bringTemperatureTo(t, (this.getAmountOnBlock() / transfer) * 0.001);
 				this.addAmount(transfer);
 				this.addHighAmount(-transfer);
-			}
+			}*/
 		} else {
 			// move to lower pressure.
 			if(lowestLowPressure != this){

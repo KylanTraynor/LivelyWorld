@@ -490,10 +490,10 @@ public class ClimateCell extends VCell {
 			if(c.getTemperature().getValue() < lowestTemp.getTemperature().getValue()){
 				lowestTemp = c;
 			}
-			if(c.getHighTemperature().getValue() < lowestHighTemp.getHighTemperature().getValue()){
+			if(c.getHighTemperature().getValue() <= lowestHighTemp.getHighTemperature().getValue()){
 				lowestHighTemp = c;
 			}
-			if(c.getHighTemperature().getValue() > highestHighTemp.getHighTemperature().getValue()){
+			if(c.getHighTemperature().getValue() >= highestHighTemp.getHighTemperature().getValue()){
 				highestHighTemp = c;
 			}
 			if(c.getLowAltitudePressure() < lowestLowPressure.getLowAltitudePressure()){
@@ -514,8 +514,9 @@ public class ClimateCell extends VCell {
 			double dt = this.getTemperature().getValue() - lowestTemp.getTemperature().getValue();
 			if(dt > 0){
 				transfer = ClimateUtils.getGasAmount(this.getLowAltitudePressure(), this.getAirVolumeOnBlock(), new Temperature(dt));
+				Temperature t = this.getHighTemperature();
 				this.bringHighTemperatureTo(this.getTemperature(), (this.getAmountHigh() / transfer) * 0.001);
-				this.bringTemperatureTo(this.getHighTemperature(), (this.getAmountOnBlock() / transfer) * 0.001);
+				this.bringTemperatureTo(t, (this.getAmountOnBlock() / transfer) * 0.001);
 				this.addHighAmount(transfer);
 				this.addAmount(-transfer);
 			}
@@ -524,8 +525,9 @@ public class ClimateCell extends VCell {
 			double dt = highestHighTemp.getHighTemperature().getValue() - this.getHighTemperature().getValue();
 			if(dt > 0){
 				transfer = ClimateUtils.getGasAmount(this.getHighAltitudePressure(), this.getAmountHigh(), new Temperature(dt));
+				Temperature t = getHighTemperature();
 				this.bringHighTemperatureTo(this.getTemperature(), (this.getAmountHigh() / transfer) * 0.001);
-				this.bringTemperatureTo(this.getHighTemperature(), (this.getAmountOnBlock() / transfer) * 0.001);
+				this.bringTemperatureTo(t, (this.getAmountOnBlock() / transfer) * 0.001);
 				this.addAmount(transfer);
 				this.addHighAmount(-transfer);
 			}

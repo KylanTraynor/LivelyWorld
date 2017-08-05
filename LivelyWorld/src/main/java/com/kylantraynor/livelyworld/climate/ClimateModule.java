@@ -220,7 +220,7 @@ public class ClimateModule {
 			}
 			
 		};
-		weatherUpdater.runTaskTimer(plugin, 22L, 20 * 5);
+		weatherUpdater.runTaskTimer(plugin, 22L, (Planet.getPlanet(Bukkit.getWorld("world")).getClimateMap().getCells().length)/cellUpdates);
 	}
 
 	public void onDisable() {

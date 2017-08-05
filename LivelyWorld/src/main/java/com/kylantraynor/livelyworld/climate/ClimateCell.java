@@ -564,7 +564,7 @@ public class ClimateCell extends VCell {
 		from.bringTemperatureTo(to.getTemperature(), (from.getAmountOnBlock() / transfer) * 0.001);
 		to.addAmount(transfer);
 		from.addAmount(-transfer);
-		from.lowWind = new WindVector(to.getX() - from.getX(), to.getY() - from.getY(), to.getZ() - from.getZ(), transfer);
+		from.lowWind = new WindVector(to.getX() - from.getX(), to.getY() - from.getY(), to.getZ() - from.getZ(), transfer).normalize();
 	}
 	
 	public void processHighTransfer(ClimateCell from, ClimateCell to){
@@ -578,7 +578,7 @@ public class ClimateCell extends VCell {
 		from.bringHighTemperatureTo(to.getHighTemperature(), (from.getAmountHigh() / transfer) * 0.001);
 		to.addHighAmount(transfer);
 		from.addHighAmount(-transfer);
-		from.highWind = new WindVector(to.getX() - from.getX(), to.getY() - from.getY(), to.getZ() - from.getZ(), transfer);
+		from.highWind = new WindVector(to.getX() - from.getX(), to.getY() - from.getY(), to.getZ() - from.getZ(), transfer).normalize();
 	}
 
 	public Temperature getHighTemperature() {

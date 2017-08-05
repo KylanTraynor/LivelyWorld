@@ -205,9 +205,12 @@ public class DynmapHook {
 			blue = rgbValue;
 			break;
 		case "WIND":
-			red = (int) (((-c.getLowWind().getX() + 1) / 2) * rgbValue);
-			green = (int) (((c.getLowWind().getY() + 1) / 2) * rgbValue);
-			blue = (int) (((c.getLowWind().getZ() + 1) / 2) * rgbValue);
+			double angle = c.getLowWind().getRadAngle();
+			if(!Double.isNaN(angle)){
+				red = (int) Math.cos(angle) * rgbValue;
+				green = (int) Math.cos(angle - (Math.PI / 3)) * rgbValue;
+				blue = (int) Math.cos(angle - ((Math.PI * 2)/3)) * rgbValue;
+			}
 			break;
 		default:
 			red = rgbValue;

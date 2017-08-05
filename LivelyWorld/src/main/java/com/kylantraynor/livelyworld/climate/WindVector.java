@@ -58,4 +58,9 @@ public class WindVector {
 	public void setSpeed(double speed){
 		this.speed = speed;
 	}
+	
+	public double getRadAngle(){
+		if(speed == 0) return Double.NaN;
+		return Math.atan2(y, x);
+	}
 }

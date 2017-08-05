@@ -620,7 +620,10 @@ public class ClimateModule {
 		if(p == null) return;
 		ClimateMap map = p.getClimateMap(block.getWorld());
 		if(map == null) return;
-		Temperature temp = map.getTemperatureAt(block.getLocation());
+		ClimateCell c = map.getClimateCellAt(block.getLocation());
+		ClimateTriangle t = ClimateUtils.getClimateTriangle(block.getLocation(), c);
+		Temperature temp = t.getTemperatureAt(block.getX(), block.getZ());
+		double humidity = t.getHumidityAt(block.getX(), block.getZ());
 		if(temp.isNaN()) return;
 		switch (block.getBiome()) {
 		case COLD_BEACH:
@@ -680,13 +683,17 @@ public class ClimateModule {
 			if(temp.isCelsiusBelow(0)){
 				block.setBiome(Biome.ICE_FLATS);
 			} else if(temp.isCelsiusAbove(25)){
-				block.setBiome(Biome.SAVANNA);
+				if(humidity / c.getMap().getCurrentHighestHumidity() > 0.25){
+					block.setBiome(Biome.JUNGLE);
+				} else {
+					block.setBiome(Biome.SAVANNA);
+				}
 			}
 			break;
 		case SAVANNA:
 			if(temp.isCelsiusBelow(20)){
 				block.setBiome(Biome.PLAINS);
-			} else if(temp.isCelsiusAbove(35)){
+			} else if(temp.isCelsiusAbove(35) && (humidity / c.getMap().getCurrentHighestHumidity() < 0.1)){
 				block.setBiome(Biome.DESERT);
 			}
 			break;

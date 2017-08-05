@@ -194,7 +194,8 @@ public class DynmapHook {
 			value = c.getTemperature().getValue();
 		}
 		double cappedValue = Math.max(Math.min(value, max), min) - min;
-		int rgbValue = (int) (cappedValue * 255 / (max - min));
+		double normalizedValue = cappedValue / (max - min);
+		int rgbValue = (int) normalizedValue * 255;
 		int red = 0;
 		int green = 0;
 		int blue = 0;
@@ -207,9 +208,26 @@ public class DynmapHook {
 		case "WIND":
 			double angle = c.getLowWind().getRadAngle();
 			if(!Double.isNaN(angle)){
-				red = (int) Math.cos(angle) * rgbValue;
-				green = (int) Math.cos(angle - (Math.PI / 3)) * rgbValue;
-				blue = (int) Math.cos(angle - ((Math.PI * 2)/3)) * rgbValue;
+				double x = normalizedValue * (1 - Math.abs(((angle / (Math.PI / 3)) % 2) - 1));
+				if(angle < (Math.PI / 3)){
+					red = (int) (normalizedValue * 255);
+					green = (int) (x * 255);
+				} else if(angle < (2 * Math.PI) / 3){
+					red = (int) (x * 255);
+					green = (int) (normalizedValue * 255);
+				} else if(angle < Math.PI){
+					green = (int) (normalizedValue * 255);
+					blue = (int) (x * 255);
+				} else if(angle < (4 * Math.PI) / 3){
+					green = (int) (x * 255);
+					blue = (int) (normalizedValue * 255);
+				} else if(angle < (5 * Math.PI) / 3){
+					red = (int) (x * 255);
+					blue = (int) (normalizedValue * 255);
+				} else {
+					red = (int) (normalizedValue * 255);
+					blue = (int) (x * 255);
+				}
 			}
 			break;
 		default:

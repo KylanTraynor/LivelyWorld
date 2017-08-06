@@ -257,6 +257,7 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 
 	private void loadDatabase() {
 		this.database = new SQLite(this);
+		this.database.load();
 	}
 
 	protected void updateBlock(Block b, Player p) {

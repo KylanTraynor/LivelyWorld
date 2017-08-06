@@ -112,12 +112,16 @@ public class ClimateMap {
 		if(data.size() > 0){
 			LivelyWorld.getInstance().getLogger().info(data.size() + " previous data has been found."); 
 		} else {
-			LivelyWorld.getInstance().getLogger().warning(data.size() + "No previous climate data could be found.");
+			LivelyWorld.getInstance().getLogger().warning("No previous climate data could be found.");
 		}
 		for(int i = 0; i < generator.getCells().length; i++){
 			generator.getCells()[i].setWorld(world);
 			generator.getCells()[i].setMap(this);
-			generator.getCells()[i].init(data.get(i));
+			if(data.size() > i){
+				generator.getCells()[i].init(data.get(i));
+			} else {
+				generator.getCells()[i].init(null);
+			}
 		}
 		/*for (ClimateCell c : generator.getCells()) {
 			c.setWorld(world);

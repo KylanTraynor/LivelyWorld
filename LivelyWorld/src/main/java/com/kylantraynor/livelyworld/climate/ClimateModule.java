@@ -228,7 +228,7 @@ public class ClimateModule {
 		weatherUpdater.runTaskTimer(plugin, 22L, (Planet.getPlanet(Bukkit.getWorld("world")).getClimateMap().getCells().length)/cellUpdates);
 	}
 
-	public void onDisable() {
+	public void disable() {
 		saveClimateMaps();
 		Planet.planets.clear();
 		climateUpdater.cancel();

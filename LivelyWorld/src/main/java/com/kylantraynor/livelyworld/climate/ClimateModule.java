@@ -237,6 +237,8 @@ public class ClimateModule {
 	}
 
 	private void saveClimateMaps() {
+		plugin.getLogger().info("Cleaning up all climate data.");
+		LivelyWorld.getInstance().getDatabase().clearClimateCellsData();
 		for(Planet p : Planet.planets){
 			ClimateMap map = p.getClimateMap();
 			if(map != null){

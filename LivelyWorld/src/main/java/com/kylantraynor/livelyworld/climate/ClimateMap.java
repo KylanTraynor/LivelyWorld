@@ -107,11 +107,23 @@ public class ClimateMap {
 			return;
 
 		this.generator.generate();
-		for (ClimateCell c : generator.getCells()) {
+		LivelyWorld.getInstance().getLogger().info("Attempting to load previous climate data for map...");
+		List<ClimateCellData> data = LivelyWorld.getInstance().getDatabase().getAllClimateCellData();
+		if(data.size() > 0){
+			LivelyWorld.getInstance().getLogger().info(data.size() + " previous data has been found."); 
+		} else {
+			LivelyWorld.getInstance().getLogger().warning(data.size() + "No previous climate data could be found.");
+		}
+		for(int i = 0; i < generator.getCells().length; i++){
+			generator.getCells()[i].setWorld(world);
+			generator.getCells()[i].setMap(this);
+			generator.getCells()[i].init(data.get(i));
+		}
+		/*for (ClimateCell c : generator.getCells()) {
 			c.setWorld(world);
 			c.setMap(this);
 			c.init();
-		}
+		}*/
 		generated = true;
 	}
 
@@ -315,5 +327,11 @@ public class ClimateMap {
 		highestHumidity = 0;
 		highestWindSpeed = 0;
 		this.hasChanged = true;
+	}
+
+	public void saveAllData() {
+		for(int i = 0; i < getCells().length; i++){
+			LivelyWorld.getInstance().getDatabase().setClimateCellData(i, getCells()[i].getData());
+		}
 	}
 }

@@ -402,20 +402,28 @@ public class ClimateCell extends VCell {
 		return map;
 	}
 	
-	public void init(){
+	public void init(ClimateCellData data){
 		x = (int) this.getSite().getX();
 		z = (int) this.getSite().getZ();
 		y = (int) world.getHighestBlockYAt(x, z) - 1;
 		humidityGeneration = Climate.getSurfaceHumidityGeneration(getWorld(), getX(), getZ());
-		this.temperature = new Climate(getLocation()).getAreaSurfaceTemperature();
-		Biome b = world.getBiome((int)getSite().getX(), (int)getSite().getZ());
-		if(b == Biome.DESERT || 
-				b == Biome.DESERT_HILLS || 
-				b == Biome.MESA || 
-				b == Biome.MESA_CLEAR_ROCK || 
-				b == Biome.MESA_ROCK) {
-			
-			humidity = 0;
+		if(data != null){
+			this.temperature = new Temperature(data.getTemperature());
+			this.highTemperature = new Temperature(data.getHighTemperature());
+			humidity = data.getHumidity();
+			lowAltitudePressure = data.getPressure();
+			highAltitudePressure = data.getHighPressure();
+		} else {
+			this.temperature = new Climate(getLocation()).getAreaSurfaceTemperature();
+			Biome b = world.getBiome((int)getSite().getX(), (int)getSite().getZ());
+			if(b == Biome.DESERT || 
+					b == Biome.DESERT_HILLS || 
+					b == Biome.MESA || 
+					b == Biome.MESA_CLEAR_ROCK || 
+					b == Biome.MESA_ROCK) {
+				
+				humidity = 0;
+			}
 		}
 		oceanDepth = 0;
 		int oceanY = y;
@@ -423,8 +431,8 @@ public class ClimateCell extends VCell {
 			oceanDepth++;
 			oceanY--;
 		}
-		airAmountOnBlock = ClimateUtils.getGasAmount(lowAltitudePressure, getAirVolumeOnBlock(), getBaseTemperature());
-		airAmountHigh = ClimateUtils.getGasAmount(highAltitudePressure, getHighVolume(), getTropopauseTemperature());
+		airAmountOnBlock = ClimateUtils.getGasAmount(lowAltitudePressure, getAirVolumeOnBlock(), getTemperature());
+		airAmountHigh = ClimateUtils.getGasAmount(highAltitudePressure, getHighVolume(), getHighTemperature());
 		updateMap();
 	}
 	
@@ -582,5 +590,14 @@ public class ClimateCell extends VCell {
 
 	public Temperature getHighTemperature() {
 		return highTemperature;
+	}
+	
+	public ClimateCellData getData(){
+		return new ClimateCellData(
+				getTemperature().getValue(), 
+				getHighTemperature().getValue(), 
+				getLowAltitudePressure(),
+				getHighAltitudePressure(),
+				getHumidity());
 	}
 }

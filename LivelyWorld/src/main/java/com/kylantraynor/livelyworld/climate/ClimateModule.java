@@ -229,10 +229,22 @@ public class ClimateModule {
 	}
 
 	public void onDisable() {
+		saveClimateMaps();
 		Planet.planets.clear();
 		climateUpdater.cancel();
 		weatherUpdater.cancel();
 		weatherEffectsUpdater.cancel();
+	}
+
+	private void saveClimateMaps() {
+		for(Planet p : Planet.planets){
+			ClimateMap map = p.getClimateMap();
+			if(map != null){
+				plugin.getLogger().info("Saving climate data for planet " + p.getName()+ "...");
+				map.saveAllData();
+				plugin.getLogger().info("Saved!");
+			}
+		}
 	}
 
 	public LivelyWorld getPlugin() {

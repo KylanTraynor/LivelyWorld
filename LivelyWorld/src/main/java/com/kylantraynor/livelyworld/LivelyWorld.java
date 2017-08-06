@@ -58,6 +58,8 @@ import com.kylantraynor.livelyworld.climate.Planet;
 import com.kylantraynor.livelyworld.climate.SnowFallTask;
 import com.kylantraynor.livelyworld.climate.Temperature;
 import com.kylantraynor.livelyworld.creatures.CreaturesModule;
+import com.kylantraynor.livelyworld.database.Database;
+import com.kylantraynor.livelyworld.database.sqlite.SQLite;
 import com.kylantraynor.livelyworld.deterioration.DeteriorationModule;
 import com.kylantraynor.livelyworld.gravity.GravityModule;
 import com.kylantraynor.livelyworld.hooks.HookManager;
@@ -69,6 +71,9 @@ import com.kylantraynor.livelyworld.water.TidesModule;
 public class LivelyWorld extends JavaPlugin implements Listener {
 
 	private static final String PLUGIN_NAME = "LivelyWorld";
+	
+	private Database database;
+	private boolean useSQLite = true;
 
 	private boolean usingPathways = true;
 	private PathwaysModule pathways;
@@ -120,6 +125,7 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 		PluginManager pm = getServer().getPluginManager();
 
 		loadConfig();
+		loadDatabase();
 
 		if (usingPathways) {
 			pathways = new PathwaysModule();
@@ -247,6 +253,10 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 		};
 		randomBlockPicker.runTaskTimerAsynchronously(this, 10L,
 				blockUpdatePeriod);
+	}
+
+	private void loadDatabase() {
+		this.database = new SQLite(this);
 	}
 
 	protected void updateBlock(Block b, Player p) {
@@ -813,5 +823,13 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 	
 	public static LivelyWorld getInstance(){
 		return currentInstance;
+	}
+
+	public Database getDatabase() {
+		return database;
+	}
+
+	public void setDatabase(Database database) {
+		this.database = database;
 	}
 }

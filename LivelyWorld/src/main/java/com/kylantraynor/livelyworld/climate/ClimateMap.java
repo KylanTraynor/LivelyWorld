@@ -160,7 +160,7 @@ public class ClimateMap {
 	public void randomCellUpdate() {
 		lastCellUpdateId = lastCellUpdateId >= getCells().length - 1 ? 0 : lastCellUpdateId + 1;
 		/*if(lastCellUpdateId == 0){
-			HookManager.getDynmap().updateWeather();
+			this.highestHumidity = 0;
 		}*/
 		if (getCells()[lastCellUpdateId] != null)
 			getCells()[lastCellUpdateId].update();

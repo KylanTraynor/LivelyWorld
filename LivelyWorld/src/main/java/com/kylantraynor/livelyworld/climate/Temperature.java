@@ -42,6 +42,7 @@ public class Temperature {
 	}
 
 	public String toString(Player p) {
+		if(isNaN()) return "NaN";
 		if (playerSystem.containsKey(p)) {
 			switch (playerSystem.get(p)) {
 			case "K":
@@ -56,6 +57,7 @@ public class Temperature {
 	}
 
 	public String toString(String system) {
+		if(isNaN()) return "NaN";
 		switch (system) {
 		case "C":
 			return "" + getRoundedValue(this.value - 273.15) + "\u00BA" + "C";
@@ -68,6 +70,7 @@ public class Temperature {
 
 	@Override
 	public String toString() {
+		if(isNaN()) return "NaN";
 		return "" + getRoundedValue(this.value) + "°K";
 	}
 	

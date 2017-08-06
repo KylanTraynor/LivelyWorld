@@ -141,7 +141,7 @@ public abstract class Database {
         try {
             conn = getSQLConnection();
             ps = conn.prepareStatement("DELETE FROM " + prefix + "climate_cells;");
-            ps.executeLargeUpdate();
+            ps.executeUpdate();
             return;
         } catch (SQLException ex) {
             getPlugin().getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute(), ex);

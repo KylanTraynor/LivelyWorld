@@ -123,6 +123,7 @@ public class ClimateCell extends VCell {
 	}
 
 	public Temperature getTemperature() {
+		if(temperature.isNaN()) temperature = getBaseTemperature();
 		return temperature;
 	}
 	

@@ -195,11 +195,11 @@ public class ClimateCell extends VCell {
 	}
 	
 	public double getDownInertia(){
-		return (getAmountOnBlock() * 0.00001) + (getWaterVolumeOnBlock()*100) + (getHumidity() * 5);
+		return (getAmountOnBlock() * 0.00001) + (getWaterVolumeOnBlock()*10) + (getHumidity() * 5);
 	}
 	
 	public double getUpInertia(){
-		return (getAmountOnBlock() * 0.000001) + (getWaterVolumeOnBlock()*10) + (getHumidity() * 0.5);
+		return (getAmountOnBlock() * 0.000001) + (getWaterVolumeOnBlock()) + (getHumidity() * 0.5);
 	}
 
 	public void updateIrradiance() {

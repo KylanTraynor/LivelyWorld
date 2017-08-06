@@ -52,7 +52,7 @@ public abstract class Database {
             		result = new ClimateCellData(
             				rs.getDouble("temperature"),
             				rs.getDouble("high_temperature"),
-            				rs.getDouble("pressure"),
+            				rs.getDouble("low_pressure"),
             				rs.getDouble("high_pressure"),
             				rs.getDouble("humidity"));
             	}
@@ -86,7 +86,7 @@ public abstract class Database {
             	result.add(new ClimateCellData(
             				rs.getDouble("temperature"),
             				rs.getDouble("high_temperature"),
-            				rs.getDouble("pressure"),
+            				rs.getDouble("low_pressure"),
             				rs.getDouble("high_pressure"),
             				rs.getDouble("humidity")));
             }
@@ -111,7 +111,7 @@ public abstract class Database {
         PreparedStatement ps = null;
         try {
             conn = getSQLConnection();
-            ps = conn.prepareStatement("REPLACE INTO " + prefix + "climate_cells (id,temperature,high_temperature,pressure,high_pressure,humidity) VALUES(?,?,?,?,?,?);"); // IMPORTANT. In SQLite class, We made 3 colums. player, Kills, Total.
+            ps = conn.prepareStatement("REPLACE INTO " + prefix + "climate_cells (id,temperature,high_temperature,low_pressure,high_pressure,humidity) VALUES(?,?,?,?,?,?);"); // IMPORTANT. In SQLite class, We made 3 colums. player, Kills, Total.
             ps.setInt(1, id);                                                                 
             ps.setDouble(2, data.getTemperature());
             ps.setDouble(3, data.getHighTemperature());
@@ -140,7 +140,7 @@ public abstract class Database {
         PreparedStatement ps = null;
         try {
             conn = getSQLConnection();
-            ps = conn.prepareStatement("DELETE * FROM " + prefix + "climate_cells;");
+            ps = conn.prepareStatement("DELETE FROM " + prefix + "climate_cells;");
             ps.executeLargeUpdate();
             return;
         } catch (SQLException ex) {

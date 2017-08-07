@@ -446,7 +446,7 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 				if (b.getType() == Material.AIR) {
 					b = b.getRelative(BlockFace.DOWN);
 					if (b.getType() == Material.AIR) {
-						while (b.getRelative(BlockFace.DOWN).getType() == Material.AIR) {
+						while (b.getRelative(BlockFace.DOWN).getType() == Material.AIR && b.getY() > 1) {
 							b = b.getRelative(BlockFace.DOWN);
 						}
 						if (b.getType() == Material.AIR) {

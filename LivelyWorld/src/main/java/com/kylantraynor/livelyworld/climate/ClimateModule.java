@@ -28,7 +28,7 @@ public class ClimateModule {
 	private Planet defaultPlanet;
 	
 	private final int cellUpdates = 6;
-	private final int weatherEffectBlocks = 200;
+	private final int weatherEffectBlocks = 100;
 	
 	private String mapType = "TEMP";
 
@@ -105,7 +105,7 @@ public class ClimateModule {
 								continue;
 							}
 							Block b = p.getWorld().getHighestBlockAt(x, z);
-							while(b.getType() == Material.AIR){
+							while(b.getType() == Material.AIR && b.getY() > 1){
 								b = b.getRelative(BlockFace.DOWN);
 							}
 							ClimateCell cell = ClimateUtils.getClimateCellAt(b.getLocation(), c);
@@ -114,9 +114,10 @@ public class ClimateModule {
 							case CLEAR:
 								double tdiff = ClimateUtils.getAltitudeWeightedTriangleTemperature(cell, b.getLocation()).getValue() - Temperature.fromCelsius(5).getValue();
 								if(Math.random() < 0.1 * (tdiff / 2)){
-									while(b.getRelative(BlockFace.DOWN).getType() == Material.AIR ||
+									while((b.getRelative(BlockFace.DOWN).getType() == Material.AIR ||
 											b.getRelative(BlockFace.DOWN).getType() == Material.LEAVES ||
-											b.getRelative(BlockFace.DOWN).getType() == Material.LEAVES_2){
+											b.getRelative(BlockFace.DOWN).getType() == Material.LEAVES_2) &&
+											b.getY() > 1){
 										b = b.getRelative(BlockFace.DOWN);
 									}
 									b = getHighestSnowBlockAround(b, 3);

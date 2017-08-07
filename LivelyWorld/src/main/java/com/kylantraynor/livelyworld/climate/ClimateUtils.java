@@ -7,6 +7,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 
 import com.kylantraynor.livelyworld.LivelyWorld;
+import com.kylantraynor.livelyworld.Utils;
 import com.kylantraynor.voronoi.VCell;
 import com.kylantraynor.voronoi.VectorXZ;
 
@@ -233,5 +234,23 @@ public class ClimateUtils {
 		int result = 8 - b.getData();
 		if(result <= 0) result = 8;
 		return result;
+	}
+	
+	public static boolean isAcceptableTemperature(Temperature current, Temperature ideal, Temperature min, Temperature max){
+		if(current.isBelow(min)) return false;
+		if(current.isAbove(max)) return false;
+		double cValue = current.getValue();
+		double iValue = ideal.getValue();
+		double minValue = min.getValue();
+		double maxValue = max.getValue();
+		double rdm = Math.random();
+		double probability = 1;
+		if(cValue > iValue){
+			probability = Utils.simpleDistributionDensity(cValue, iValue, (maxValue - iValue) / 3);
+		} else {
+			probability = Utils.simpleDistributionDensity(cValue, iValue, (iValue - minValue) / 3);
+		}
+		if(rdm <= probability) return true;
+		return false;
 	}
 }

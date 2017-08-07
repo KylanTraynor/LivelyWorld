@@ -112,4 +112,12 @@ public class Temperature {
 	public boolean isNaN(){
 		return Double.isNaN(value);
 	}
+
+	public boolean isBelow(Temperature temp) {
+		return isBelow(temp.getValue());
+	}
+	
+	public boolean isAbove(Temperature temp){
+		return isAbove(temp.getValue());
+	}
 }

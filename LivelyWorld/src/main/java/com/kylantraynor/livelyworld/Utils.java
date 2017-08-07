@@ -7,6 +7,8 @@ import org.bukkit.block.Block;
 
 public class Utils {
 	
+	private static double sqrt2PI = Math.sqrt(2 * Math.PI);
+	
 	public static class SizedList<T> extends ArrayList<T>{
 		private int maxSize;
 
@@ -41,4 +43,24 @@ public class Utils {
 		}
 	}
 	
+	
+	public static double sigmoid(double x){
+		return 1/(1 + Math.exp(-x));
+	}
+	
+	public static double sigmoidDerivative(double sigmoid){
+		return sigmoid * (1 - sigmoid);
+	}
+	
+	public static double normalDistrubitionDensity(double x, double mean, double stdv){
+		double distanceSquared = (x - mean) * (x - mean);
+		double variance = stdv * stdv;
+		return (1 / (sqrt2PI * stdv)) * Math.exp((- distanceSquared) / (2 * variance));
+	}
+	
+	public static double simpleDistributionDensity(double x, double mean, double stdv){
+		double distanceSquared = (x - mean) * (x - mean);
+		double variance = stdv * stdv;
+		return Math.exp(- distanceSquared / (2 * variance));
+	}
 }

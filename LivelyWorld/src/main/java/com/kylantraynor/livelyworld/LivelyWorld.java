@@ -750,46 +750,54 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 	@EventHandler
 	public void onBlockGrow(BlockGrowEvent event) {
 		if (usingClimate) {
-			switch (event.getBlock().getType()) {
-			case CACTUS:
-				Temperature temp = ClimateUtils.getTemperatureAt(event.getBlock().getLocation());
-				if(temp.isNaN()) return;
-				double tempDistance = temp.getValue() - (273.15 + 35);
-				if (Math.random() * Math.abs(tempDistance) > 1) {
-					event.setCancelled(true);
-				}
-				break;
-			case CROPS:
-				BlockState state = event.getBlock().getState();
-				Crops crops = (Crops) state.getData();
+			BlockState state = event.getBlock().getState();
+			if(state instanceof Crops){
+				Crops crops = (Crops) state;
+				Temperature temp = null;
 				switch(crops.getItemType()){
-				case CROPS:
-					Temperature temp1 = ClimateUtils.getTemperatureAt(event.getBlock().getLocation());
-					if(temp1.isNaN()) return;
-					double tempDistance2 = Math.abs(temp1.getValue() - Temperature.fromCelsius(14.85).getValue());
-					if(Math.random() * tempDistance2 > 1){
+				case CROPS: // WHEAT
+					temp = ClimateUtils.getTemperatureAt(event.getBlock().getLocation());
+					if(temp.isNaN()) return;
+					if(!ClimateUtils.isAcceptableTemperature(temp, Temperature.fromCelsius(18.5), Temperature.fromCelsius(4), Temperature.fromCelsius(37))){
 						event.setCancelled(true);
 						return;
 					}
-					/*
-					Planet p = Planet.getPlanet(event.getBlock().getWorld());
-					if(p != null){
-						ClimateMap cm = p.getClimateMap(event.getBlock().getWorld());
-						if(cm == null) break;
-						ClimateCell cc = cm.getClimateCellAt(event.getBlock().getLocation());
-						if(cc == null) break;
-						double tempDistance2 = Math.abs(cc.getTemperature().getValue() - (14.85 + 273.15));
-						if (Math.random() * tempDistance2 > 1) {
-							event.setCancelled(true);
-						}
+					break;
+				case CARROT: case BEETROOT_BLOCK:
+					temp = ClimateUtils.getTemperatureAt(event.getBlock().getLocation());
+					if(temp.isNaN()) return;
+					if(!ClimateUtils.isAcceptableTemperature(temp, Temperature.fromCelsius(16.5), Temperature.fromCelsius(5), Temperature.fromCelsius(35))){
+						event.setCancelled(true);
+						return;
 					}
-					*/
+					break;
+				case POTATO:
+					temp = ClimateUtils.getTemperatureAt(event.getBlock().getLocation());
+					if(temp.isNaN()) return;
+					if(!ClimateUtils.isAcceptableTemperature(temp, Temperature.fromCelsius(17.5), Temperature.fromCelsius(5), Temperature.fromCelsius(30))){
+						event.setCancelled(true);
+						return;
+					}
+					break;
+				case NETHER_WARTS:
 					break;
 				default:
 					break;
 				}
-			default:
-				break;
+			} else {
+				switch (event.getBlock().getType()) {
+				case CACTUS:
+					Temperature temp = ClimateUtils.getTemperatureAt(event.getBlock().getLocation());
+					if(temp.isNaN()) return;
+					double tempDistance = temp.getValue() - (273.15 + 35);
+					if (Math.random() * Math.abs(tempDistance) > 1) {
+						event.setCancelled(true);
+						return;
+					}
+					break;
+				default:
+					break;
+				}
 			}
 		}
 	}

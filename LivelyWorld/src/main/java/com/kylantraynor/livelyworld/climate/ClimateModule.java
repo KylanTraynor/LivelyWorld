@@ -110,6 +110,7 @@ public class ClimateModule {
 							}
 							ClimateCell cell = ClimateUtils.getClimateCellAt(b.getLocation(), c);
 							if(cell == null) continue;
+							updateBiome(b, cell);
 							switch(cell.getWeather()){
 							case CLEAR:
 								double tdiff = ClimateUtils.getAltitudeWeightedTriangleTemperature(cell, b.getLocation()).getValue() - Temperature.fromCelsius(5).getValue();
@@ -629,16 +630,18 @@ public class ClimateModule {
 			}
 		}
 	}
+	
+	public void updateBiome(Block block){
+		updateBiome(block, null);
+	}
 
-	public void updateBiome(Block block) {
-		Planet p = Planet.getPlanet(block.getWorld());
-		if(p == null) return;
-		ClimateMap map = p.getClimateMap(block.getWorld());
-		if(map == null) return;
-		ClimateCell c = map.getClimateCellAt(block.getLocation());
+	public void updateBiome(Block block, ClimateCell ref) {
+		ClimateCell c = ClimateUtils.getClimateCellAt(block.getLocation(), ref);
+		if(c == null) return;
 		ClimateTriangle t = ClimateUtils.getClimateTriangle(block.getLocation(), c);
 		Temperature temp = t.getTemperatureAt(block.getX(), block.getZ());
 		double humidity = t.getHumidityAt(block.getX(), block.getZ());
+		if(c.getMap().getCurrentHighestHumidity() == 0) return;
 		if(temp.isNaN()) return;
 		switch (block.getBiome()) {
 		case COLD_BEACH:
@@ -688,7 +691,36 @@ public class ClimateModule {
 			}
 			break;
 		case EXTREME_HILLS:
+			if(temp.isCelsiusBelow(0)){
+				block.setBiome(Biome.ICE_MOUNTAINS);
+			} else if(temp.isCelsiusAbove(25)){
+				if(humidity / c.getMap().getCurrentHighestHumidity() > 0.25){
+					block.setBiome(Biome.JUNGLE_HILLS);
+				} else {
+					block.setBiome(Biome.SAVANNA_ROCK);
+				}
+			}
 			break;
+		case JUNGLE_HILLS:
+			if(temp.isCelsiusBelow(20)){
+				block.setBiome(Biome.EXTREME_HILLS);
+			} else if(humidity / c.getMap().getCurrentHighestHumidity() <  0.20){
+				block.setBiome(Biome.SAVANNA_ROCK);
+			}
+			break;
+		case SAVANNA_ROCK:
+			if(temp.isCelsiusBelow(20)){
+				block.setBiome(Biome.EXTREME_HILLS);
+			} else if(temp.isCelsiusAbove(35) && (humidity / c.getMap().getCurrentHighestHumidity() < 0.1)){
+				block.setBiome(Biome.DESERT_HILLS);
+			} else if(humidity / c.getMap().getCurrentHighestHumidity() > 0.25){
+				block.setBiome(Biome.JUNGLE_HILLS);
+			}
+			break;
+		case DESERT_HILLS:
+			if(humidity / c.getMap().getCurrentHighestHumidity() > 0.15){
+				block.setBiome(Biome.SAVANNA_ROCK);
+			}
 		case ICE_FLATS:
 			if(temp.isCelsiusAbove(5)){
 				block.setBiome(Biome.PLAINS);
@@ -714,6 +746,10 @@ public class ClimateModule {
 				block.setBiome(Biome.JUNGLE);
 			}
 			break;
+		case DESERT:
+			if(humidity / c.getMap().getCurrentHighestHumidity() > 0.15){
+				block.setBiome(Biome.SAVANNA);
+			}
 		case FROZEN_OCEAN:
 			if(temp.isCelsiusAbove(-5)){
 				block.setBiome(Biome.OCEAN);

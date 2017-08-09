@@ -253,4 +253,10 @@ public class ClimateUtils {
 		if(rdm <= probability) return true;
 		return false;
 	}
+
+	public static double getSunRadiation(Location loc){
+		Planet p = Planet.getPlanet(loc.getWorld());
+		if(p == null) return loc.getBlock().getLightFromSky() / 15;
+		return p.getSunRadiation(loc);
+	}
 }

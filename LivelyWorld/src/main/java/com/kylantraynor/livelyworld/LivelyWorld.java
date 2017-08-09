@@ -752,6 +752,10 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 		if (usingClimate) {
 			BlockState state = event.getBlock().getState();
 			if(state instanceof Crops){
+				if(ClimateUtils.getSunRadiation(state.getLocation()) < Math.random()){
+					event.setCancelled(true);
+					return;
+				}
 				Crops crops = (Crops) state;
 				Temperature temp = null;
 				switch(crops.getItemType()){

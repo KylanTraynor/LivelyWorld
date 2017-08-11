@@ -82,7 +82,9 @@ public class WaterChunk {
 		for(int y = 0; y < 256; y++){
 			for(int x = 0; x < 16; x++){
 				for(int z = 0; z < 16; z++){
-					list.add(data[x][y][z].getSQLReplaceString(table));
+					WaterData d = data[x][y][z];
+					if(d == null) continue;
+					list.add(d.getSQLReplaceString(table));
 				}
 			}
 		}

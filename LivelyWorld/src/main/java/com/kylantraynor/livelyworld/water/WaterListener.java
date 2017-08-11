@@ -1,5 +1,6 @@
 package com.kylantraynor.livelyworld.water;
 
+import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
@@ -8,6 +9,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
+import org.bukkit.event.world.ChunkLoadEvent;
+import org.bukkit.event.world.ChunkUnloadEvent;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import com.kylantraynor.livelyworld.LivelyWorld;
 import com.kylantraynor.livelyworld.Utils;
@@ -47,6 +51,32 @@ public class WaterListener implements Listener{
 			return;
 		default:
 		}
+	}
+	
+	@EventHandler
+	public void onChunkLoad(ChunkLoadEvent event){
+		Chunk c = event.getChunk();
+		WaterChunk wc = WaterChunk.get(c.getWorld(), c.getX(), c.getZ());
+		BukkitRunnable br = new BukkitRunnable(){
+			@Override
+			public void run() {
+				wc.load();
+			}
+		};
+		br.runTaskAsynchronously(LivelyWorld.getInstance());
+	}
+	
+	@EventHandler
+	public void onChunkUnload(ChunkUnloadEvent event){
+		Chunk c = event.getChunk();
+		WaterChunk wc = WaterChunk.get(c.getWorld(), c.getX(), c.getZ());
+		BukkitRunnable br = new BukkitRunnable(){
+			@Override
+			public void run() {
+				wc.unload();
+			}
+		};
+		br.runTaskAsynchronously(LivelyWorld.getInstance());
 	}
 
 }

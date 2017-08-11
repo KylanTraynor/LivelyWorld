@@ -10,6 +10,7 @@ import com.kylantraynor.livelyworld.LivelyWorld;
 import com.kylantraynor.livelyworld.database.Database;
 
 public class WaterChunk {
+	static List<WaterChunk> loadedChunks = new ArrayList<WaterChunk>(); 
 	WaterData[][][] data = new WaterData[16][256][16];
 	
 	boolean isLoaded = false;
@@ -23,20 +24,28 @@ public class WaterChunk {
 		this.z = z;
 	}
 	
-	public void load(){
+	public synchronized void load(){
 		if(isLoaded) return;
 		Database db = LivelyWorld.getInstance().getDatabase();
 		if(db != null){
 			db.loadWaterChunk(this);
+			loadedChunks.add(this);
+			isLoaded = true;
 		}
 	}
 	
-	public void save(){
+	public synchronized void save(){
 		if(!isLoaded) return;
 		Database db = LivelyWorld.getInstance().getDatabase();
 		if(db != null){
 			db.saveWaterChunk(this);
 		}
+	}
+	
+	public synchronized void unload(){
+		save();
+		loadedChunks.remove(this);
+		isLoaded = false;
 	}
 	
 	public int getX(){
@@ -77,5 +86,14 @@ public class WaterChunk {
 			}
 		}
 		return list.iterator();
+	}
+	
+	public synchronized static WaterChunk get(World world, int x, int z){
+		for(WaterChunk c : loadedChunks){
+			if(c.getWorld() == world && c.getX() == x && c.getZ() == z){
+				return c;
+			}
+		}
+		return new WaterChunk(world, x, z);
 	}
 }

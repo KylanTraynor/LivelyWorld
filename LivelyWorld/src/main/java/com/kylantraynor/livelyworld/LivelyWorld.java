@@ -67,6 +67,7 @@ import com.kylantraynor.livelyworld.pathways.PathwaysModule;
 import com.kylantraynor.livelyworld.sounds.SoundManager;
 import com.kylantraynor.livelyworld.vegetation.VegetationModule;
 import com.kylantraynor.livelyworld.water.TidesModule;
+import com.kylantraynor.livelyworld.water.WaterListener;
 
 public class LivelyWorld extends JavaPlugin implements Listener {
 
@@ -166,6 +167,7 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 		if (usingTides) {
 			tides = new TidesModule(this);
 			tides.enable();
+			pm.registerEvents(new WaterListener(), this);
 		}
 
 		if (usingGravity) {

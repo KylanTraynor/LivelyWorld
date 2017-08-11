@@ -241,11 +241,11 @@ public abstract class Database {
         WaterData result = null;
         try {
             conn = getSQLConnection();
-            ps = conn.prepareStatement("SELECT * FROM " + prefix + "water WHERE x='"+waterChunk.getX()+"';");
+            //ps = conn.prepareStatement("SELECT * FROM " + prefix + "water WHERE x='"+waterChunk.getX()+"';");
     
             rs = ps.executeQuery();
             while(rs.next()){
-            	result = new WaterData(loc, rs.getInt("moisture"), rs.getDouble("currentDirection"), rs.getDouble("currentStrength"));
+            	//result = new WaterData(loc, rs.getInt("moisture"), rs.getDouble("currentDirection"), rs.getDouble("currentStrength"));
             }
         } catch (SQLException ex) {
             getPlugin().getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute(), ex);
@@ -259,6 +259,6 @@ public abstract class Database {
                 getPlugin().getLogger().log(Level.SEVERE, Errors.sqlConnectionClose(), ex);
             }
         }
-        return result;
+        //return result;
 	}
 }

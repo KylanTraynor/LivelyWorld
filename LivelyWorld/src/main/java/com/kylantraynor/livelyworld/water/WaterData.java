@@ -78,11 +78,14 @@ public class WaterData {
 	
 	public String getSQLReplaceString(String table){
 		return "REPLACE INTO " + table + " " +
-				"(location,moisture,currentDirection,currentStrength) " +
+				"(id,moisture,currentDirection,currentStrength,x,y,z) " +
 				"VALUES("+
 				Utils.getBlockLocationStringNoWorld(loc)+","+
 				moisture+","+
 				currentDirection+","+
-				currentStrength+ ");";
+				currentStrength+","+
+				loc.getBlockX()+","+
+				loc.getBlockY()+","+
+				loc.getBlockZ()+");";
 	}
 }

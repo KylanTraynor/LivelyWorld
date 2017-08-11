@@ -28,11 +28,14 @@ public class SQLite extends Database{
             ");";
     
     public String SQLiteCreateWaterTable = "CREATE TABLE IF NOT EXISTS " + prefix + "water (" +
-    		"`location` VARCHAR(32) NOT NULL," +
+    		"`id` VARCHAR(32) NOT NULL," +
     		"`moisture` INTEGER NOT NULL," +
     		"`currentDirection` FLOAT NOT NULL," +
     		"`currentStrength` FLOAT NOT NULL," +
-    		"PRIMARY KEY (`location`)"+
+    		"`x` INTEGER NOT NULL," +
+    		"`y` INTEGER NOT NULL," +
+    		"`z` INTEGER NOT NULL," +
+    		"PRIMARY KEY (`id`)"+
     		");";
 
     // SQL creation stuff, You can leave the blow stuff untouched.

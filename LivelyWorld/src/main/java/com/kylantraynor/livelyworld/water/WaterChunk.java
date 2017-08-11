@@ -43,6 +43,7 @@ public class WaterChunk {
 	}
 	
 	public synchronized void unload(){
+		if(getWorld().isChunkLoaded(getX(), getZ())) return;
 		save();
 		loadedChunks.remove(this);
 		isLoaded = false;

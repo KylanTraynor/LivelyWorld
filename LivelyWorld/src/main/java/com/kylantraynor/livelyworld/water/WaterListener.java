@@ -57,6 +57,7 @@ public class WaterListener implements Listener{
 	public void onChunkLoad(ChunkLoadEvent event){
 		Chunk c = event.getChunk();
 		WaterChunk wc = WaterChunk.get(c.getWorld(), c.getX(), c.getZ());
+		if(wc.isLoaded) return;
 		BukkitRunnable br = new BukkitRunnable(){
 			@Override
 			public void run() {
@@ -76,7 +77,7 @@ public class WaterListener implements Listener{
 				wc.unload();
 			}
 		};
-		br.runTaskAsynchronously(LivelyWorld.getInstance());
+		br.runTaskLaterAsynchronously(LivelyWorld.getInstance(), 20 * 5);
 	}
 
 }

@@ -1,8 +1,5 @@
 package com.kylantraynor.livelyworld.water;
 
-import java.time.temporal.ChronoUnit;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
@@ -32,11 +29,11 @@ public class WaterData {
 					}
 				});
 	private Location loc = null;
-	private int moisture = 0;
-	private double currentDirection = 0;
-	private double currentStrength = 0;
+	private byte moisture = 0;
+	private float currentDirection = 0;
+	private byte currentStrength = 0;
 	
-	public WaterData(Location loc, int moisture, double currentDirection, double currentStrength){
+	public WaterData(Location loc, byte moisture, float currentDirection, byte currentStrength){
 		this.loc = loc;
 		this.moisture = moisture;
 		this.currentDirection = currentDirection;
@@ -47,7 +44,7 @@ public class WaterData {
 		return loc;
 	}
 	
-	public int getMoisture(){
+	public byte getMoisture(){
 		return moisture;
 	}
 	

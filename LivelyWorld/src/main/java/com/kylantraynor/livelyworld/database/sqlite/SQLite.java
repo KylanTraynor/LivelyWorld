@@ -29,9 +29,9 @@ public class SQLite extends Database{
     
     public String SQLiteCreateWaterTable = "CREATE TABLE IF NOT EXISTS " + prefix + "water (" +
     		"`id` VARCHAR(32) NOT NULL," +
-    		"`moisture` INTEGER NOT NULL," +
-    		"`currentDirection` FLOAT NOT NULL," +
-    		"`currentStrength` FLOAT NOT NULL," +
+    		"`moisture` TINYINT NOT NULL," +
+    		"`currentDirection` REAL NOT NULL," +
+    		"`currentStrength` TINYINT NOT NULL," +
     		"`x` INTEGER NOT NULL," +
     		"`y` INTEGER NOT NULL," +
     		"`z` INTEGER NOT NULL," +

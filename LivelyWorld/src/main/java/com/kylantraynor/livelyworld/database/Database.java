@@ -254,6 +254,7 @@ public abstract class Database {
             	//result = new WaterData(loc, rs.getInt("moisture"), rs.getDouble("currentDirection"), rs.getDouble("currentStrength"));
             }
         } catch (SQLException ex) {
+        	getPlugin().getLogger().log(Level.SEVERE, chunk.getSQLSelectStatement(prefix+"water"));
             getPlugin().getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute(), ex);
         } finally {
             try {

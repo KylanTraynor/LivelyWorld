@@ -178,10 +178,44 @@ public class ClimateMap {
 		/*if(lastCellUpdateId == 0){
 			this.highestHumidity = 0;
 		}*/
-		if (getCells()[lastCellUpdateId] != null)
-			getCells()[lastCellUpdateId].update();
-		
-		this.hasChanged = true;
+		ClimateCell c = getCells()[lastCellUpdateId];
+		if (c != null)
+		{
+			c.update();
+			if(c.getTemperature().getValue() < lowestTemperature.getValue()){
+				lowestTemperature = c.getTemperature();
+			}
+			if(c.getTemperature().getValue() > highestTemperature.getValue()){
+				highestTemperature = c.getTemperature();
+			}
+			if(c.getHighTemperature().getValue() < lowestHighTemperature.getValue()){
+				lowestHighTemperature = c.getHighTemperature();
+			}
+			if(c.getHighTemperature().getValue() > lowestHighTemperature.getValue()){
+				highestHighTemperature = c.getHighTemperature();
+			}
+			if(c.getLowAltitudePressure() > highestLowPressure){
+				highestLowPressure = c.getLowAltitudePressure();
+			}
+			if(c.getLowAltitudePressure() < lowestLowPressure){
+				lowestLowPressure = c.getLowAltitudePressure();
+			}
+			if(c.getHighAltitudePressure() > highestHighPressure){
+				highestHighPressure = c.getHighAltitudePressure();
+			}
+			if(c.getHighAltitudePressure() < lowestHighPressure){
+				lowestHighPressure = c.getHighAltitudePressure();
+			}
+			if(c.getHumidity() > highestHumidity){
+				highestHumidity = c.getHumidity();
+			}
+			if(c.getHumidity() < highestHumidity){
+				highestHumidity = c.getHumidity();
+			}
+			if(c.getLowWind().getSpeed() > highestWindSpeed){
+				highestWindSpeed = c.getLowWind().getSpeed();
+			}
+		}
 	}
 	
 	public Temperature getCurrentHighestTemperature(){

@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -234,17 +235,22 @@ public abstract class Database {
 		this.plugin = plugin;
 	}
 
-	public void loadWaterChunk(WaterChunk waterChunk) {
+	public void loadWaterChunk(WaterChunk chunk) {
 		Connection conn = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
-        WaterData result = null;
         try {
             conn = getSQLConnection();
-            //ps = conn.prepareStatement("SELECT * FROM " + prefix + "water WHERE x='"+waterChunk.getX()+"';");
+            ps = conn.prepareStatement(chunk.getSQLSelectStatement(prefix + "water"));
     
             rs = ps.executeQuery();
             while(rs.next()){
+            	chunk.setAt(
+            			new WaterData(
+            					new Location(chunk.getWorld(), rs.getInt("x"), rs.getInt("y"), rs.getInt("z")),
+            					rs.getInt("moisture"),
+            					rs.getDouble("currentDirection"),
+            					rs.getDouble("currentStrength")));
             	//result = new WaterData(loc, rs.getInt("moisture"), rs.getDouble("currentDirection"), rs.getDouble("currentStrength"));
             }
         } catch (SQLException ex) {
@@ -260,5 +266,31 @@ public abstract class Database {
             }
         }
         //return result;
+	}
+
+	public void saveWaterChunk(WaterChunk chunk) {
+		Connection conn = null;
+        PreparedStatement ps = null;
+        try {
+            conn = getSQLConnection();
+            Iterator<String> data = chunk.getSQLReplaceStatements(prefix + "water");
+            while(data.hasNext()){
+            	ps = conn.prepareStatement(data.next());
+            	ps.executeUpdate();
+            }
+            return;
+        } catch (SQLException ex) {
+            getPlugin().getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute(), ex);
+        } finally {
+            try {
+                if (ps != null)
+                    ps.close();
+                if (conn != null)
+                    conn.close();
+            } catch (SQLException ex) {
+                getPlugin().getLogger().log(Level.SEVERE, Errors.sqlConnectionClose(), ex);
+            }
+        }
+        return;  
 	}
 }

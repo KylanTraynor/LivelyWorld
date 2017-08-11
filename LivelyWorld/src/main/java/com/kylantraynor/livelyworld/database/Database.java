@@ -35,6 +35,7 @@ public abstract class Database {
         connection = getSQLConnection();
         try{
             PreparedStatement ps = connection.prepareStatement("SELECT * FROM " + prefix + "climate_cells" + " WHERE id = ?");
+            ps.setInt(1, 0);
             ResultSet rs = ps.executeQuery();
             close(ps,rs);
     

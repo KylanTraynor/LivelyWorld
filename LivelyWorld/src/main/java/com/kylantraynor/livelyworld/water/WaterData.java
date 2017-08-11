@@ -51,6 +51,12 @@ public class WaterData {
 		return moisture;
 	}
 	
+	/**
+	 * Gets the water data at this location.
+	 * Try to keep this async whenever possible since it might try to load from database.
+	 * @param loc
+	 * @return
+	 */
 	public static WaterData getAt(Location loc){
 		WaterData d = null;
 		try {
@@ -59,6 +65,15 @@ public class WaterData {
 			e.printStackTrace();
 		}
 		return d;
+	}
+	
+	/**
+	 * Gets the water data at this location, but only if it's already been loaded.
+	 * @param loc
+	 * @return
+	 */
+	public static WaterData getLoadedWaterDataAt(Location loc){
+		return loadedData.getIfPresent(Utils.getBlockLocationString(loc));
 	}
 	
 	public String getSQLReplaceString(String table){

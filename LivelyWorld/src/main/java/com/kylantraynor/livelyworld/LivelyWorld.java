@@ -848,4 +848,8 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 	public void setDatabase(Database database) {
 		this.database = database;
 	}
+
+	public int getOceanY() {
+		return 48;
+	}
 }

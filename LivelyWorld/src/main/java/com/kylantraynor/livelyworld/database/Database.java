@@ -8,8 +8,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
+import org.bukkit.Location;
+
 import com.kylantraynor.livelyworld.LivelyWorld;
+import com.kylantraynor.livelyworld.Utils;
 import com.kylantraynor.livelyworld.climate.ClimateCellData;
+import com.kylantraynor.livelyworld.water.WaterData;
 
 public abstract class Database {
     private LivelyWorld plugin;
@@ -133,6 +137,57 @@ public abstract class Database {
             }
         }
         return;        
+    }
+    
+    public void setWaterData(Location loc, WaterData data) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        try {
+            conn = getSQLConnection();
+            ps = conn.prepareStatement(data.getSQLReplaceString(prefix + "water"));
+            ps.executeUpdate();
+            return;
+        } catch (SQLException ex) {
+            getPlugin().getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute(), ex);
+        } finally {
+            try {
+                if (ps != null)
+                    ps.close();
+                if (conn != null)
+                    conn.close();
+            } catch (SQLException ex) {
+                getPlugin().getLogger().log(Level.SEVERE, Errors.sqlConnectionClose(), ex);
+            }
+        }
+        return;        
+    }
+    
+    public WaterData getWaterDataAt(Location loc){
+    	Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        WaterData result = null;
+        try {
+            conn = getSQLConnection();
+            ps = conn.prepareStatement("SELECT * FROM " + prefix + "water WHERE location='"+Utils.getBlockLocationStringNoWorld(loc)+"';");
+    
+            rs = ps.executeQuery();
+            while(rs.next()){
+            	result = new WaterData(loc, rs.getInt("moisture"), rs.getDouble("currentDirection"), rs.getDouble("currentStrength"));
+            }
+        } catch (SQLException ex) {
+            getPlugin().getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute(), ex);
+        } finally {
+            try {
+                if (ps != null)
+                    ps.close();
+                if (conn != null)
+                    conn.close();
+            } catch (SQLException ex) {
+                getPlugin().getLogger().log(Level.SEVERE, Errors.sqlConnectionClose(), ex);
+            }
+        }
+        return result;
     }
     
     public void clearClimateCellsData(){

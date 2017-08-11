@@ -129,8 +129,9 @@ public class ClimateUtils {
 		}
 	}
 
+	@Deprecated
 	public static boolean isWater(Block block) {
-		return block.getType() == Material.WATER || block.getType() == Material.STATIONARY_WATER;
+		return Utils.isWater(block);
 	}
 
 	public static void melt(Block b, int d) {

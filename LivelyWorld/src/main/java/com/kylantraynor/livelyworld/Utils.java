@@ -2,6 +2,8 @@ package com.kylantraynor.livelyworld;
 
 import java.util.ArrayList;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 
@@ -43,6 +45,13 @@ public class Utils {
 		}
 	}
 	
+	public static String getBlockLocationString(Location loc){
+		return "" + loc.getWorld().getName() + "_" + loc.getBlockX() + "_" + loc.getBlockY() + "_" + loc.getBlockZ();
+	}
+	
+	public static String getBlockLocationStringNoWorld(Location loc){
+		return "" + loc.getBlockX() + "_" + loc.getBlockY() + "_" + loc.getBlockZ();
+	}
 	
 	public static double sigmoid(double x){
 		return 1/(1 + Math.exp(-x));
@@ -62,5 +71,22 @@ public class Utils {
 		double distanceSquared = (x - mean) * (x - mean);
 		double variance = stdv * stdv;
 		return Math.exp(- distanceSquared / (2 * variance));
+	}
+
+	public static Location getBlockLocationFromString(String key) {
+		String[] args = key.split("_");
+		if(args.length == 4){
+			try{
+				return new Location(Bukkit.getWorld(args[0]), Integer.parseInt(args[1]), Integer.parseInt(args[2]), Integer.parseInt(args[3]));
+			} catch(Exception ex){
+				ex.printStackTrace();
+				return null;
+			}
+		}
+		return null;
+	}
+
+	public static boolean isWater(Block block) {
+		return block.getType() == Material.WATER || block.getType() == Material.STATIONARY_WATER;
 	}
 }

@@ -58,9 +58,12 @@ public class WaterChunk {
 		try {
 			fileLock.lock();
 			try{
+				LivelyWorld.getInstance().getLogger().info("Attempting to load chunk " + getX() + "_" + getZ());
 				if(isLoaded) return;
+				LivelyWorld.getInstance().getLogger().info("Loading chunk " + getX() + "_" + getZ() + " from file.");
 				loadFromFile();
 				isLoaded = true;
+				LivelyWorld.getInstance().getLogger().info("Chunk " + getX() + "_" + getZ() + " is loaded.");
 			} finally {
 				fileLock.unlock();
 			}
@@ -74,7 +77,9 @@ public class WaterChunk {
 		try {
 			fileLock.lock();
 			try{
+				LivelyWorld.getInstance().getLogger().info("Attempting to save chunk " + getX() + "_" + getZ());
 				if(!isLoaded) return;
+				LivelyWorld.getInstance().getLogger().info("Saving chunk " + getX() + "_" + getZ() + " to file.");
 				saveToFile();
 			} finally {
 				fileLock.unlock();
@@ -89,10 +94,12 @@ public class WaterChunk {
 		try {
 			fileLock.lock();
 			try{
+				LivelyWorld.getInstance().getLogger().info("Attempting to unload chunk " + getX() + "_" + getZ());
 				if(!isLoaded) return;
 				save();
 				loadedChunks.remove(this);
 				isLoaded = false;
+				LivelyWorld.getInstance().getLogger().info("Chunk " + getX() + "_" + getZ() + " is unloaded.");
 			} finally {
 				fileLock.unlock();
 			}

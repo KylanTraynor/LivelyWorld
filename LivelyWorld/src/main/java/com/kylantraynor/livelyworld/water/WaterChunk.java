@@ -337,4 +337,9 @@ public class WaterChunk {
 	public boolean isLoaded() {
 		return this.isLoaded;
 	}
+	
+	private void setLoaded(boolean b){
+		LivelyWorld.getInstance().getLogger().info("Setting chunk " + getX() + "_" + getZ() + " to loaded = " + b + " Previous = " + isLoaded);
+		this.isLoaded = b;
+	}
 }

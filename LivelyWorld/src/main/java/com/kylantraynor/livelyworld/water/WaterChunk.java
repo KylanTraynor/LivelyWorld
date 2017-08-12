@@ -62,7 +62,7 @@ public class WaterChunk {
 				if(isLoaded) return;
 				LivelyWorld.getInstance().getLogger().info("Loading chunk " + getX() + "_" + getZ() + " from file.");
 				loadFromFile();
-				isLoaded = true;
+				setLoaded(true);
 				LivelyWorld.getInstance().getLogger().info("Chunk " + getX() + "_" + getZ() + " is loaded. (" + isLoaded + ")");
 			} finally {
 				fileLock.unlock();
@@ -98,7 +98,7 @@ public class WaterChunk {
 				if(!isLoaded) return;
 				save();
 				loadedChunks.remove(this);
-				isLoaded = false;
+				setLoaded(false);
 				LivelyWorld.getInstance().getLogger().info("Chunk " + getX() + "_" + getZ() + " is unloaded.");
 			} finally {
 				fileLock.unlock();

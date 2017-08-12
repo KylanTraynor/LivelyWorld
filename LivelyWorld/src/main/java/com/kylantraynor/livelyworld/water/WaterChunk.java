@@ -196,7 +196,6 @@ public class WaterChunk {
 	}
 	
 	public void saveToFile(){
-		LivelyWorld.getInstance().getLogger().info("Trying to save file.");
 		try {
 			fileLock.lock();
 			try{
@@ -206,9 +205,7 @@ public class WaterChunk {
 					try {
 						dataLock.lock();
 						try{
-							LivelyWorld.getInstance().getLogger().info("Saving file...");
 							s.write(data);
-							LivelyWorld.getInstance().getLogger().info("File saved!");
 						} finally {
 							dataLock.unlock();
 						}
@@ -236,7 +233,6 @@ public class WaterChunk {
 	}
 	
 	public void loadFromFile(){
-		LivelyWorld.getInstance().getLogger().info("Trying to load chunk.");
 		try {
 			fileLock.lock();
 			try{
@@ -267,9 +263,7 @@ public class WaterChunk {
 						try{
 							dataLock.lock();
 							try{
-								LivelyWorld.getInstance().getLogger().info("Loading data.");
 								data = o.toByteArray();
-								LivelyWorld.getInstance().getLogger().info("Done.");
 							} finally {
 								dataLock.unlock();
 							}

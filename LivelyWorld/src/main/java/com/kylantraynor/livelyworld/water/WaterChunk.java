@@ -176,13 +176,17 @@ public class WaterChunk {
 	
 	public File getFile(){
 		File dir1 = new File(LivelyWorld.getInstance().getDataFolder(), "BlockData");
+		if(!dir1.exists()){
+			dir1.mkdir();
+		}
 		File dir2 = new File(dir1, getWorld().getName());
 		if(!dir2.exists()){
-			dir2.mkdirs();
+			dir2.mkdir();
 		}
 		File f = new File(dir2, "" + getX() + "_" + getZ() + ".cbd");
 		if(!f.exists()){
 			try {
+				LivelyWorld.getInstance().getLogger().info("Creating file " + f.getName() +".");
 				f.createNewFile();
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -192,6 +196,7 @@ public class WaterChunk {
 	}
 	
 	public void saveToFile(){
+		LivelyWorld.getInstance().getLogger().info("Trying to save file.");
 		try {
 			fileLock.lock();
 			try{
@@ -201,7 +206,9 @@ public class WaterChunk {
 					try {
 						dataLock.lock();
 						try{
+							LivelyWorld.getInstance().getLogger().info("Saving file...");
 							s.write(data);
+							LivelyWorld.getInstance().getLogger().info("File saved!");
 						} finally {
 							dataLock.unlock();
 						}
@@ -229,6 +236,7 @@ public class WaterChunk {
 	}
 	
 	public void loadFromFile(){
+		LivelyWorld.getInstance().getLogger().info("Trying to load chunk.");
 		try {
 			fileLock.lock();
 			try{
@@ -259,7 +267,9 @@ public class WaterChunk {
 						try{
 							dataLock.lock();
 							try{
+								LivelyWorld.getInstance().getLogger().info("Loading data.");
 								data = o.toByteArray();
+								LivelyWorld.getInstance().getLogger().info("Done.");
 							} finally {
 								dataLock.unlock();
 							}

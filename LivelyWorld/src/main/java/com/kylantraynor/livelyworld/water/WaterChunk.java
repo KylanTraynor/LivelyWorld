@@ -237,6 +237,7 @@ public class WaterChunk {
 			fileLock.lock();
 			try{
 				try {
+					if(getFile().length() <= 0) return;
 					InputStream s = new InflaterInputStream(new FileInputStream(getFile()));
 					int length =16 *16*256*4;
 					byte[] bucket = new byte[length];

@@ -26,15 +26,6 @@ public class SQLite extends Database{
             "`humidity` FLOAT NOT NULL," +
             "PRIMARY KEY (`id`)" +
             ");";
-    
-    public String SQLiteCreateWaterTable = "CREATE TABLE IF NOT EXISTS " + prefix + "water (" +
-    		"`id` VARCHAR(32) NOT NULL," +
-    		"`data` INTEGER NOT NULL," +
-    		"`x` INTEGER NOT NULL," +
-    		"`y` INTEGER NOT NULL," +
-    		"`z` INTEGER NOT NULL," +
-    		"PRIMARY KEY (`id`)"+
-    		");";
 
     // SQL creation stuff, You can leave the blow stuff untouched.
     public Connection getSQLConnection() {
@@ -66,7 +57,6 @@ public class SQLite extends Database{
         try {
             Statement s = connection.createStatement();
             s.executeUpdate(SQLiteCreateClimateCellsTable);
-            s.executeUpdate(SQLiteCreateWaterTable);
             s.close();
         } catch (SQLException e) {
             e.printStackTrace();

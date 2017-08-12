@@ -5,17 +5,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 
 import org.bukkit.Location;
 
 import com.kylantraynor.livelyworld.LivelyWorld;
-import com.kylantraynor.livelyworld.Utils;
 import com.kylantraynor.livelyworld.climate.ClimateCellData;
-import com.kylantraynor.livelyworld.water.WaterChunk;
-import com.kylantraynor.livelyworld.water.WaterData;
 
 public abstract class Database {
     private LivelyWorld plugin;
@@ -142,58 +138,6 @@ public abstract class Database {
         return;        
     }
     
-    public void setWaterData(Location loc, WaterData data) {
-        Connection conn = null;
-        PreparedStatement ps = null;
-        try {
-            conn = getSQLConnection();
-            ps = conn.prepareStatement(data.getSQLReplaceString(prefix + "water"));
-            ps.executeUpdate();
-            return;
-        } catch (SQLException ex) {
-            getPlugin().getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute(), ex);
-        } finally {
-            try {
-                if (ps != null)
-                    ps.close();
-                if (conn != null)
-                    conn.close();
-            } catch (SQLException ex) {
-                getPlugin().getLogger().log(Level.SEVERE, Errors.sqlConnectionClose(), ex);
-            }
-        }
-        return;        
-    }
-    
-    public WaterData getWaterDataAt(Location loc){
-    	Connection conn = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-        WaterData result = null;
-        try {
-            conn = getSQLConnection();
-            ps = conn.prepareStatement("SELECT * FROM " + prefix + "water WHERE location='"+Utils.getBlockLocationStringNoWorld(loc)+"';");
-    
-            rs = ps.executeQuery();
-            while(rs.next()){
-            	result = new WaterData(loc, rs.getInt("data"));
-            	//result = new WaterData(loc, rs.getByte("moisture"), rs.getByte("currentDirection"), rs.getByte("currentStrength"));
-            }
-        } catch (SQLException ex) {
-            getPlugin().getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute(), ex);
-        } finally {
-            try {
-                if (ps != null)
-                    ps.close();
-                if (conn != null)
-                    conn.close();
-            } catch (SQLException ex) {
-                getPlugin().getLogger().log(Level.SEVERE, Errors.sqlConnectionClose(), ex);
-            }
-        }
-        return result;
-    }
-    
     public void clearClimateCellsData(){
     	Connection conn = null;
         PreparedStatement ps = null;
@@ -235,63 +179,5 @@ public abstract class Database {
 
 	public void setPlugin(LivelyWorld plugin) {
 		this.plugin = plugin;
-	}
-
-	public void loadWaterChunk(WaterChunk chunk) {
-		Connection conn = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-        try {
-            conn = getSQLConnection();
-            ps = conn.prepareStatement(chunk.getSQLSelectStatement(prefix + "water"));
-    
-            rs = ps.executeQuery();
-            while(rs.next()){
-            	chunk.setAt( new WaterData(
-            			new Location(chunk.getWorld(), rs.getInt("x"), rs.getInt("y"), rs.getInt("z")),
-            			rs.getInt("data"))
-            	);
-            	//result = new WaterData(loc, rs.getInt("moisture"), rs.getDouble("currentDirection"), rs.getDouble("currentStrength"));
-            }
-        } catch (SQLException ex) {
-        	getPlugin().getLogger().log(Level.SEVERE, chunk.getSQLSelectStatement(prefix+"water"));
-            getPlugin().getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute(), ex);
-        } finally {
-            try {
-                if (ps != null)
-                    ps.close();
-                if (conn != null)
-                    conn.close();
-            } catch (SQLException ex) {
-                getPlugin().getLogger().log(Level.SEVERE, Errors.sqlConnectionClose(), ex);
-            }
-        }
-        //return result;
-	}
-
-	public void saveWaterChunk(WaterChunk chunk) {
-		Connection conn = null;
-        PreparedStatement ps = null;
-        try {
-            conn = getSQLConnection();
-            Iterator<String> data = chunk.getSQLReplaceStatements(prefix + "water");
-            while(data.hasNext()){
-            	ps = conn.prepareStatement(data.next());
-            	ps.executeUpdate();
-            }
-            return;
-        } catch (SQLException ex) {
-            getPlugin().getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute(), ex);
-        } finally {
-            try {
-                if (ps != null)
-                    ps.close();
-                if (conn != null)
-                    conn.close();
-            } catch (SQLException ex) {
-                getPlugin().getLogger().log(Level.SEVERE, Errors.sqlConnectionClose(), ex);
-            }
-        }
-        return;  
 	}
 }

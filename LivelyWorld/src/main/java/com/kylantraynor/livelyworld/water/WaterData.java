@@ -1,142 +1,119 @@
 package com.kylantraynor.livelyworld.water;
 
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-
+import org.bukkit.Chunk;
 import org.bukkit.Location;
+import org.bukkit.World;
 
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-import com.kylantraynor.livelyworld.LivelyWorld;
 import com.kylantraynor.livelyworld.Utils;
-import com.kylantraynor.livelyworld.database.Database;
 
 public class WaterData {
-	private static LoadingCache<String, WaterData> loadedData =
-			CacheBuilder.newBuilder()
-				.maximumSize(1000)
-				.expireAfterAccess(5, TimeUnit.MINUTES)
-				.build(new CacheLoader<String, WaterData>(){
-					public WaterData load(String key){
-						Database db = LivelyWorld.getInstance().getDatabase();
-						if(db != null){
-							Location loc = Utils.getBlockLocationFromString(key);
-							if(loc == null) return null;
-							return db.getWaterDataAt(loc);
-						}
-						return null;
-					}
-				});
-	private Location loc = null;
-	private int data = 0;
-	private byte moisture = 0;
-	private byte currentDirection = 0;
-	private byte currentStrength = 0;
+	
+	private WaterChunk chunk = null;
+	private int x = 0;
+	private int y = 0;
+	private int z = 0;
 	
 	private static int moistureCode = 0;
 	private static int inCurrentCode = 3;
 	private static int outCurrentCode = 9;
 	private static int inStrengthCode = 6;
 	private static int outStrengthCode = 12;
+	private static int saltCode = 15;
 	
-	public WaterData(Location loc, int moisture, int inCurrent, int outCurrent, int inStrength, int outStrength){
-		this.loc = loc;
-		moisture = Utils.constrainTo(moisture, 0, 7);
-		inCurrent = Utils.constrainTo(inCurrent, 0, 7);
-		outCurrent = Utils.constrainTo(outCurrent,  0, 7);
-		inStrength = Utils.constrainTo(inStrength, 0, 7);
-		outStrength = Utils.constrainTo(outStrength, 0, 7);
-		data = 0;
-		data += moisture;
-		data += (inCurrent << inCurrentCode);
-		data += (outCurrent << outCurrentCode);
-		data += (inStrength << inStrengthCode);
-		data += (outStrength << outStrengthCode);
+	public WaterData(WaterChunk chunk, int x, int y, int z){
+		this.x = x;
+		this.y = y;
+		this.z = z;
+		this.chunk = chunk;
 	}
 	
-	public WaterData(Location location, int data) {
-		this.loc = location;
-		this.data = data;
+	public WaterData(Chunk chunk, int x, int y, int z){
+		this(WaterChunk.get(chunk.getWorld(), chunk.getX(), chunk.getZ()), x, y, z);
+	}
+	
+	public WaterData(World world, int x, int y, int z){
+		this(WaterChunk.get(world, x >> 4, z >> 4), x % 16, y, z % 16);
+	}
+	
+	public WaterData(Location loc){
+		this(loc.getWorld(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
 	}
 
 	public Location getLocation(){
-		return loc;
+		return new Location(getWorld(), getX(), getY(), getZ());
 	}
 	
-	public int getMoisture(){
-		return (data & (7 << moistureCode)) >> moistureCode;
+	public World getWorld(){
+		return chunk.getWorld();
 	}
 	
-	public void setMoisture(int value){
-		data = (data & (~(7 << moistureCode))) + (Utils.constrainTo(value, 0, 7) << moistureCode);
+	public int getChunkX(){ return x; }
+	
+	public int getChunkZ(){ return z; }
+	
+	public int getX(){ return (chunk.getX() << 4) + x; }
+	
+	public int getY(){ return y; }
+	
+	public int getZ(){ return (chunk.getZ() << 4) + z; }
+	
+	public int getData(){
+		return chunk.getData(x, y, z);
+	}
+	
+	public void setData(int value){
+		chunk.setData(value, x, y, z);
+	}
+	
+	public int getLevel(){
+		return (getData() & (7 << moistureCode)) >> moistureCode;
+	}
+	
+	public void setLevel(int value){
+		setData((getData() & (~(7 << moistureCode))) + (Utils.constrainTo(value, 0, 7) << moistureCode));
 	}
 	
 	public int getInCurrentDirection(){
-		return (data & (7 << inCurrentCode)) >> inCurrentCode;
+		return (getData() & (7 << inCurrentCode)) >> inCurrentCode;
 	}
 	
 	public void setInCurrentDirection(int value){
-		data = (data & (~(7 << inCurrentCode))) + (Utils.constrainTo(value, 0, 7) << inCurrentCode);
+		setData((getData() & (~(7 << inCurrentCode))) + (Utils.constrainTo(value, 0, 7) << inCurrentCode));
 	}
 	
 	public int getOutCurrentDirection(){
-		return (data & (7 << outCurrentCode)) >> outCurrentCode;
+		return (getData() & (7 << outCurrentCode)) >> outCurrentCode;
 	}
 	
 	public void setOutCurrentDirection(int value){
-		data = (data & (~(7 << outCurrentCode))) + (Utils.constrainTo(value, 0, 7) << outCurrentCode);
+		setData((getData() & (~(7 << outCurrentCode))) + (Utils.constrainTo(value, 0, 7) << outCurrentCode));
 	}
 	
 	public int getInCurrentStrength(){
-		return (data & (7 << inStrengthCode)) >> inStrengthCode;
+		return (getData() & (7 << inStrengthCode)) >> inStrengthCode;
 	}
 	
 	public void setInCurrentStrength(int value){
-		data = (data & (~(7 << inStrengthCode))) + (Utils.constrainTo(value, 0, 7) << inStrengthCode);
+		setData((getData() & (~(7 << inStrengthCode))) + (Utils.constrainTo(value, 0, 7) << inStrengthCode));
 	}
 	
 	public int getOutCurrentStrength(){
-		return (data & (7 << outStrengthCode)) >> outStrengthCode;
+		return (getData() & (7 << outStrengthCode)) >> outStrengthCode;
 	}
 	
 	public void setOutCurrentStrength(int value){
-		data = (data & (~(7 << outStrengthCode))) + (Utils.constrainTo(value, 0, 7) << outStrengthCode);
+		setData((getData() & (~(7 << outStrengthCode))) + (Utils.constrainTo(value, 0, 7) << outStrengthCode));
 	}
 	
-	/**
-	 * Gets the water data at this location.
-	 * Try to keep this async whenever possible since it might try to load from database.
-	 * @param loc
-	 * @return
-	 */
-	public static WaterData getAt(Location loc){
-		WaterData d = null;
-		try {
-			d = loadedData.get(Utils.getBlockLocationString(loc));
-		} catch (ExecutionException e) {
-			e.printStackTrace();
-		}
-		return d;
+	public int getSalt(){
+		return (getData() & (7 << saltCode)) >> saltCode;
 	}
 	
-	/**
-	 * Gets the water data at this location, but only if it's already been loaded.
-	 * @param loc
-	 * @return
-	 */
-	public static WaterData getLoadedWaterDataAt(Location loc){
-		return loadedData.getIfPresent(Utils.getBlockLocationString(loc));
+	public void setSalt(int value){
+		setData((getData() & (~(7 << saltCode))) + (Utils.constrainTo(value, 0, 7) << saltCode));
 	}
 	
-	public String getSQLReplaceString(String table){
-		return "REPLACE INTO " + table + " " +
-				"(id,data,x,y,z) " +
-				"VALUES("+
-				Utils.getBlockLocationStringNoWorld(loc)+","+
-				data+","+
-				loc.getBlockX()+","+
-				loc.getBlockY()+","+
-				loc.getBlockZ()+");";
+	public boolean isSalted(){
+		return getSalt() > 0;
 	}
 }

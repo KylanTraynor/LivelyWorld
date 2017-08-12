@@ -25,10 +25,10 @@ public class WaterChunk {
 	private Utils.Lock dataLock = new Utils.Lock();
 	private static Utils.Lock fileLock = new Utils.Lock();
 	
-	boolean isLoaded = false;
-	final int x;
-	final int z;
-	final World world;
+	private boolean isLoaded = false;
+	private final int x;
+	private final int z;
+	private final World world;
 	
 	public WaterChunk(World w, int x, int z){
 		this.world = w;

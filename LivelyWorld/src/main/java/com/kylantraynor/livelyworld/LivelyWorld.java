@@ -164,8 +164,8 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 			sounds.enable();
 		}
 
+		tides = new TidesModule(this);
 		if (usingTides) {
-			tides = new TidesModule(this);
 			tides.enable();
 			pm.registerEvents(new WaterListener(), this);
 		}
@@ -395,6 +395,7 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 
 	@Override
 	public void onDisable() {
+		getServer().getScheduler().cancelTasks(this);
 		if (sounds != null) {
 			sounds.disable();
 		}
@@ -404,10 +405,7 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 		if (climate != null) {
 			climate.disable();
 		}
-		if(tides != null){
-			tides.disable();
-		}
-		getServer().getScheduler().cancelTasks(this);
+		tides.disable();
 		randomBlockPicker = null;
 		saveConfig();
 	}
@@ -856,5 +854,9 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 
 	public int getOceanY() {
 		return 48;
+	}
+
+	public TidesModule getWaterModule() {
+		return tides;
 	}
 }

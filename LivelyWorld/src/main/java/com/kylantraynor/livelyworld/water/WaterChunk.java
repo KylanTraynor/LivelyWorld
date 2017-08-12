@@ -20,7 +20,7 @@ import com.kylantraynor.livelyworld.LivelyWorld;
 import com.kylantraynor.livelyworld.Utils;
 
 public class WaterChunk {
-	static List<WaterChunk> loadedChunks = new ArrayList<WaterChunk>(); 
+	static List<WaterChunk> chunks = new ArrayList<WaterChunk>(); 
 	byte[] data = new byte[16 * 16 * 256 * 4];
 	private Utils.Lock dataLock = new Utils.Lock();
 	private static Utils.Lock fileLock = new Utils.Lock();
@@ -62,7 +62,6 @@ public class WaterChunk {
 				if(isLoaded) return;
 				LivelyWorld.getInstance().getLogger().info("Loading chunk " + getX() + "_" + getZ() + " from file.");
 				loadFromFile();
-				loadedChunks.add(this);
 				setLoaded(true);
 				LivelyWorld.getInstance().getLogger().info("Chunk " + getX() + "_" + getZ() + " is loaded. (" + isLoaded + ")");
 			} finally {
@@ -98,7 +97,6 @@ public class WaterChunk {
 				LivelyWorld.getInstance().getLogger().info("Attempting to unload chunk " + getX() + "_" + getZ() + " ("+isLoaded+")");
 				if(!isLoaded) return;
 				save();
-				loadedChunks.remove(this);
 				setLoaded(false);
 				LivelyWorld.getInstance().getLogger().info("Chunk " + getX() + "_" + getZ() + " is unloaded.");
 			} finally {
@@ -162,28 +160,32 @@ public class WaterChunk {
 	}
 	
 	public static WaterChunk get(World world, int x, int z){
+		WaterChunk wc = null;
 		try {
 			fileLock.lock();
 			try{
-				for(WaterChunk c : loadedChunks){
+				for(WaterChunk c : chunks){
 					if(c.getWorld() == world && c.getX() == x && c.getZ() == z){
-						return c;
+						wc = c;
+						break;
 					}
 				}
+				wc = new WaterChunk(world,x,z);
+				chunks.add(wc);
 			} finally {
 				fileLock.unlock();
 			}
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		return new WaterChunk(world, x, z);
+		return wc;
 	}
 	
 	public static void unloadAll(){
 		try {
 			fileLock.lock();
 			try{
-				for(WaterChunk c : loadedChunks.toArray(new WaterChunk[loadedChunks.size()])){
+				for(WaterChunk c : chunks.toArray(new WaterChunk[chunks.size()])){
 					c.unload();
 				}
 			} finally {

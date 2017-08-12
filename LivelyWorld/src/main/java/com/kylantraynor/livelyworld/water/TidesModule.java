@@ -88,9 +88,12 @@ public class TidesModule {
 	}
 	
 	public void disable(){
-		plugin.getLogger().info("Unloading all water chunks.");
-		WaterChunk.unloadAll();
-		plugin.getLogger().info("Done!");
+		if(this.enabled){
+			this.enabled = false;
+			plugin.getLogger().info("Unloading all water chunks.");
+			WaterChunk.unloadAll();
+			plugin.getLogger().info("Done!");
+		}
 	}
 
 	public void updateOceanLevelFor(Player p) {

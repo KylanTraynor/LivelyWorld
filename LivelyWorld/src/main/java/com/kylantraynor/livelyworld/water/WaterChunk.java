@@ -202,10 +202,12 @@ public class WaterChunk {
 				OutputStream s = null;
 				try {
 					s = new DeflaterOutputStream(new FileOutputStream(getFile()));
+					int length = data.length;
+					int startIndex = ((getX() % 32) * 32 * length) + ((getZ() % 32) * length);
 					try {
 						dataLock.lock();
 						try{
-							s.write(data);
+							s.write(data, startIndex, length);
 						} finally {
 							dataLock.unlock();
 						}

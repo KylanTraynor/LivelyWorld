@@ -32,7 +32,7 @@ public class WaterData {
 	}
 	
 	public WaterData(World world, int x, int y, int z){
-		this(WaterChunk.get(world, x >> 4, z >> 4), x % 16, y, z % 16);
+		this(WaterChunk.get(world, x >> 4, z >> 4), Math.floorMod(x, 16), y, Math.floorMod(z, 16));
 	}
 	
 	public WaterData(Location loc){

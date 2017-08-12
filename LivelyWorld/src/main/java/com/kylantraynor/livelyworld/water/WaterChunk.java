@@ -225,7 +225,7 @@ public class WaterChunk {
 				try {
 					s = new DeflaterOutputStream(new FileOutputStream(getFile()));
 					int length = data.length;
-					int startIndex = ((getX() % 32) * 32 * length) + ((getZ() % 32) * length);
+					int startIndex = (Math.floorMod(getX(), 32) * 32 * length) + (Math.floorMod(getZ(),32) * length);
 					if(getFile().length() == 0){
 						byte[] filler = new byte[length * 32 * 32];
 						for(int i = 0; i < length; i++){
@@ -287,7 +287,7 @@ public class WaterChunk {
 					if(getFile().length() <= 0) return;
 					InflaterInputStream s = new InflaterInputStream(new FileInputStream(getFile()));
 					int length =16*16*256*4;
-					int startIndex = ((getX() % 32) * 32 * length) + ((getZ() % 32) * length);
+					int startIndex = (Math.floorMod(getX(), 32) * 32 * length) + (Math.floorMod(getZ(), 32) * length);
 					byte[] bucket = new byte[length];
 					ByteArrayOutputStream o = null;
 					try{

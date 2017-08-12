@@ -333,4 +333,8 @@ public class WaterChunk {
 			e1.printStackTrace();
 		}
 	}
+
+	public boolean isLoaded() {
+		return this.isLoaded;
+	}
 }

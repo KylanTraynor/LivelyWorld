@@ -6,13 +6,11 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.locks.Lock;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterInputStream;
 
@@ -199,28 +197,51 @@ public class WaterChunk {
 		try {
 			fileLock.lock();
 			try{
-				OutputStream s = null;
+				DeflaterOutputStream s = null;
 				try {
 					s = new DeflaterOutputStream(new FileOutputStream(getFile()));
 					int length = data.length;
 					int startIndex = ((getX() % 32) * 32 * length) + ((getZ() % 32) * length);
-					try {
+					if(getFile().length() == 0){
+						byte[] filler = new byte[length * 32 * 32];
+						for(int i = 0; i < length; i++){
+							try{
+								dataLock.lock();
+								try{
+									filler[i + startIndex] = data[i]; 
+								} finally {
+									dataLock.unlock();
+								}
+							} catch (InterruptedException e){
+								e.printStackTrace();
+							}
+						}
+						try {
+							s.write(filler, 0, filler.length);
+							s.flush();
+						} catch (IOException e) {
+							e.printStackTrace();
+						} finally {
+							try {
+								s.close();
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+						}
+					} else {
 						dataLock.lock();
 						try{
 							s.write(data, startIndex, length);
+							s.flush();
+						} catch (IOException e){
+							e.printStackTrace();
 						} finally {
 							dataLock.unlock();
-						}
-						s.flush();
-					} catch (IOException e) {
-						e.printStackTrace();
-					} catch (InterruptedException e){
-						e.printStackTrace();
-					} finally {
-						try {
-							s.close();
-						} catch (IOException e) {
-							e.printStackTrace();
+							try {
+								s.close();
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
 						}
 					}
 				} catch (FileNotFoundException e) {

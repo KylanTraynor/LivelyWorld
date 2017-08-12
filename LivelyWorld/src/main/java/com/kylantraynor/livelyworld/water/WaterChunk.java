@@ -23,7 +23,7 @@ public class WaterChunk {
 	static List<WaterChunk> loadedChunks = Collections.synchronizedList(new ArrayList<WaterChunk>()); 
 	byte[] data = new byte[16 * 16 * 256 * 4];
 	private Utils.Lock dataLock = new Utils.Lock();
-	private Utils.Lock fileLock = new Utils.Lock();
+	private static Utils.Lock fileLock = new Utils.Lock();
 	
 	boolean isLoaded = false;
 	final int x;
@@ -154,12 +154,21 @@ public class WaterChunk {
 	}
 	
 	public static WaterChunk get(World world, int x, int z){
-		synchronized(loadedChunks){
-			for(WaterChunk c : loadedChunks){
-				if(c.getWorld() == world && c.getX() == x && c.getZ() == z){
-					return c;
+		try {
+			fileLock.lock();
+			try{
+				synchronized(loadedChunks){
+				for(WaterChunk c : loadedChunks){
+					if(c.getWorld() == world && c.getX() == x && c.getZ() == z){
+						return c;
+					}
 				}
+				}
+			} finally {
+				fileLock.unlock();
 			}
+		} catch (InterruptedException e) {
+			e.printStackTrace();
 		}
 		return new WaterChunk(world, x, z);
 	}

@@ -20,9 +20,12 @@ public class Utils {
 		public synchronized void lock()
 			throws InterruptedException{
 			Thread callingThread = Thread.currentThread();
+			LivelyWorld.getInstance().getLogger().info("Locked thread: " + callingThread.getId());
 		    while(isLocked && lockedBy != callingThread){
 		    	wait();
 		    }
+		    LivelyWorld.getInstance().getLogger().info("Unlocked thread: " + callingThread.getId() + "("+lockedCount+")");
+		    LivelyWorld.getInstance().getLogger().info("Locking by thread: " + callingThread.getId());
 		    isLocked = true;
 		    lockedCount++;
 		    lockedBy = callingThread;
@@ -32,6 +35,7 @@ public class Utils {
 			if(Thread.currentThread() == this.lockedBy){
 				lockedCount--;
 				if(lockedCount == 0){
+					LivelyWorld.getInstance().getLogger().info("Unlocking by thread: " + this.lockedBy);
 					isLocked = false;
 					notify();
 		    	}

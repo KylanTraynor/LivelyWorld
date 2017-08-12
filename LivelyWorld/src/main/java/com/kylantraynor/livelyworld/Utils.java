@@ -85,6 +85,10 @@ public class Utils {
 		}
 		return null;
 	}
+	
+	public static int constrainTo(int value, int min, int max){
+		return value > max ? max : (value < min ? min : value);
+	}
 
 	public static boolean isWater(Block block) {
 		return block.getType() == Material.WATER || block.getType() == Material.STATIONARY_WATER;

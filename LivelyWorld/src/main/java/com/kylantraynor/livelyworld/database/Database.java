@@ -176,7 +176,8 @@ public abstract class Database {
     
             rs = ps.executeQuery();
             while(rs.next()){
-            	result = new WaterData(loc, rs.getByte("moisture"), rs.getFloat("currentDirection"), rs.getByte("currentStrength"));
+            	result = new WaterData(loc, rs.getInt("data"));
+            	//result = new WaterData(loc, rs.getByte("moisture"), rs.getByte("currentDirection"), rs.getByte("currentStrength"));
             }
         } catch (SQLException ex) {
             getPlugin().getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute(), ex);
@@ -246,12 +247,10 @@ public abstract class Database {
     
             rs = ps.executeQuery();
             while(rs.next()){
-            	chunk.setAt(
-            			new WaterData(
-            					new Location(chunk.getWorld(), rs.getInt("x"), rs.getInt("y"), rs.getInt("z")),
-            					rs.getByte("moisture"),
-            					rs.getFloat("currentDirection"),
-            					rs.getByte("currentStrength")));
+            	chunk.setAt( new WaterData(
+            			new Location(chunk.getWorld(), rs.getInt("x"), rs.getInt("y"), rs.getInt("z")),
+            			rs.getInt("data"))
+            	);
             	//result = new WaterData(loc, rs.getInt("moisture"), rs.getDouble("currentDirection"), rs.getDouble("currentStrength"));
             }
         } catch (SQLException ex) {

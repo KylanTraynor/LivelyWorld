@@ -29,23 +29,79 @@ public class WaterData {
 					}
 				});
 	private Location loc = null;
+	private int data = 0;
 	private byte moisture = 0;
-	private float currentDirection = 0;
+	private byte currentDirection = 0;
 	private byte currentStrength = 0;
 	
-	public WaterData(Location loc, byte moisture, float currentDirection, byte currentStrength){
+	private static int moistureCode = 0;
+	private static int inCurrentCode = 3;
+	private static int outCurrentCode = 9;
+	private static int inStrengthCode = 6;
+	private static int outStrengthCode = 12;
+	
+	public WaterData(Location loc, int moisture, int inCurrent, int outCurrent, int inStrength, int outStrength){
 		this.loc = loc;
-		this.moisture = moisture;
-		this.currentDirection = currentDirection;
-		this.currentStrength = currentStrength;
+		moisture = Utils.constrainTo(moisture, 0, 7);
+		inCurrent = Utils.constrainTo(inCurrent, 0, 7);
+		outCurrent = Utils.constrainTo(outCurrent,  0, 7);
+		inStrength = Utils.constrainTo(inStrength, 0, 7);
+		outStrength = Utils.constrainTo(outStrength, 0, 7);
+		data = 0;
+		data += moisture;
+		data += (inCurrent << inCurrentCode);
+		data += (outCurrent << outCurrentCode);
+		data += (inStrength << inStrengthCode);
+		data += (outStrength << outStrengthCode);
 	}
 	
+	public WaterData(Location location, int data) {
+		this.loc = location;
+		this.data = data;
+	}
+
 	public Location getLocation(){
 		return loc;
 	}
 	
-	public byte getMoisture(){
-		return moisture;
+	public int getMoisture(){
+		return (data & (7 << moistureCode)) >> moistureCode;
+	}
+	
+	public void setMoisture(int value){
+		data = (data & (~(7 << moistureCode))) + (Utils.constrainTo(value, 0, 7) << moistureCode);
+	}
+	
+	public int getInCurrentDirection(){
+		return (data & (7 << inCurrentCode)) >> inCurrentCode;
+	}
+	
+	public void setInCurrentDirection(int value){
+		data = (data & (~(7 << inCurrentCode))) + (Utils.constrainTo(value, 0, 7) << inCurrentCode);
+	}
+	
+	public int getOutCurrentDirection(){
+		return (data & (7 << outCurrentCode)) >> outCurrentCode;
+	}
+	
+	public void setOutCurrentDirection(int value){
+		data = (data & (~(7 << outCurrentCode))) + (Utils.constrainTo(value, 0, 7) << outCurrentCode);
+	}
+	
+	public int getInCurrentStrength(){
+		return (data & (7 << inStrengthCode)) >> inStrengthCode;
+	}
+	
+	public void setInCurrentStrength(int value){
+		data = (data & (~(7 << inStrengthCode))) + (Utils.constrainTo(value, 0, 7) << inStrengthCode);
+	}
+	
+	public int getOutCurrentStrength(){
+		return (data & (7 << outStrengthCode)) >> outStrengthCode;
+	}
+	
+	public void setOutCurrentStrength(int value){
+		data = (data & (~(7 << outStrengthCode))) + (Utils.constrainTo(value, 0, 7) << outStrengthCode);
 	}
 	
 	/**
@@ -75,12 +131,10 @@ public class WaterData {
 	
 	public String getSQLReplaceString(String table){
 		return "REPLACE INTO " + table + " " +
-				"(id,moisture,currentDirection,currentStrength,x,y,z) " +
+				"(id,data,x,y,z) " +
 				"VALUES("+
 				Utils.getBlockLocationStringNoWorld(loc)+","+
-				moisture+","+
-				currentDirection+","+
-				currentStrength+","+
+				data+","+
 				loc.getBlockX()+","+
 				loc.getBlockY()+","+
 				loc.getBlockZ()+");";

@@ -8,6 +8,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.RandomAccessFile;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -20,7 +21,7 @@ import com.kylantraynor.livelyworld.LivelyWorld;
 import com.kylantraynor.livelyworld.Utils;
 
 public class WaterChunk {
-	static List<WaterChunk> chunks = new ArrayList<WaterChunk>(); 
+	static List<WeakReference<WaterChunk>> chunks = new ArrayList<WeakReference<WaterChunk>>(); 
 	byte[] data = new byte[16 * 16 * 256 * 4];
 	private Utils.Lock dataLock = new Utils.Lock();
 	private static Utils.Lock fileLock = new Utils.Lock();
@@ -164,14 +165,23 @@ public class WaterChunk {
 		try {
 			fileLock.lock();
 			try{
-				for(WaterChunk c : chunks){
+				List<WeakReference<WaterChunk>> refsToClear = new ArrayList<WeakReference<WaterChunk>>();
+				for(WeakReference<WaterChunk> ref : chunks){
+					WaterChunk c = ref.get();
+					if(c == null){
+						refsToClear.add(ref);
+						continue;
+					}
 					if(c.getWorld() == world && c.getX() == x && c.getZ() == z){
 						wc = c;
 						break;
 					}
 				}
+				for(int i = 0; i < refsToClear.size(); i++){
+					chunks.remove(refsToClear.get(i));
+				}
 				wc = new WaterChunk(world,x,z);
-				chunks.add(wc);
+				chunks.add(new WeakReference<WaterChunk>(wc));
 			} finally {
 				fileLock.unlock();
 			}
@@ -185,7 +195,9 @@ public class WaterChunk {
 		try {
 			fileLock.lock();
 			try{
-				for(WaterChunk c : chunks.toArray(new WaterChunk[chunks.size()])){
+				for(WeakReference<WaterChunk> ref : chunks){
+					WaterChunk c = ref.get();
+					if(c == null) continue;
 					c.unload();
 				}
 			} finally {

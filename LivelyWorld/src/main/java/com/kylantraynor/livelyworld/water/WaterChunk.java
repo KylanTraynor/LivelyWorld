@@ -183,10 +183,10 @@ public class WaterChunk {
 		if(!dir2.exists()){
 			dir2.mkdir();
 		}
-		File f = new File(dir2, "" + getX() + "_" + getZ() + ".cbd");
+		File f = new File(dir2, "" + (getX() >> 5) + "_" + (getZ() >> 5) + ".rbd");
 		if(!f.exists()){
 			try {
-				LivelyWorld.getInstance().getLogger().info("Creating file " + f.getName() +".");
+				LivelyWorld.getInstance().getLogger().info("Creating region file " + f.getName() +".");
 				f.createNewFile();
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -238,16 +238,23 @@ public class WaterChunk {
 			try{
 				try {
 					if(getFile().length() <= 0) return;
-					InputStream s = new InflaterInputStream(new FileInputStream(getFile()));
-					int length =16 *16*256*4;
+					InflaterInputStream s = new InflaterInputStream(new FileInputStream(getFile()));
+					int length =16*16*256*4;
+					int startIndex = ((getX() % 32) * 32 * length) + ((getZ() % 32) * length);
 					byte[] bucket = new byte[length];
 					ByteArrayOutputStream o = null;
 					try{
 						o = new ByteArrayOutputStream(bucket.length);
+						int bytesToSkip = startIndex - 1;
+						while(bytesToSkip > 0){
+							bytesToSkip -= s.skip(bytesToSkip);
+						}
+						int totalBytesRead = 0;
 						int bytesRead = 0;
-						while(bytesRead >= 0){
+						while(bytesRead >= 0 && totalBytesRead < length){
 							bytesRead = s.read(bucket);
 							if(bytesRead > 0){
+								totalBytesRead += bytesRead;
 								o.write(bucket, 0, bytesRead);
 							}
 						}

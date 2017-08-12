@@ -20,7 +20,7 @@ import com.kylantraynor.livelyworld.LivelyWorld;
 import com.kylantraynor.livelyworld.Utils;
 
 public class WaterChunk {
-	static List<WaterChunk> loadedChunks = Collections.synchronizedList(new ArrayList<WaterChunk>()); 
+	static List<WaterChunk> loadedChunks = new ArrayList<WaterChunk>(); 
 	byte[] data = new byte[16 * 16 * 256 * 4];
 	private Utils.Lock dataLock = new Utils.Lock();
 	private static Utils.Lock fileLock = new Utils.Lock();
@@ -164,12 +164,10 @@ public class WaterChunk {
 		try {
 			fileLock.lock();
 			try{
-				synchronized(loadedChunks){
 				for(WaterChunk c : loadedChunks){
 					if(c.getWorld() == world && c.getX() == x && c.getZ() == z){
 						return c;
 					}
-				}
 				}
 			} finally {
 				fileLock.unlock();
@@ -181,10 +179,17 @@ public class WaterChunk {
 	}
 	
 	public static void unloadAll(){
-		synchronized(loadedChunks){
-			for(WaterChunk c : loadedChunks.toArray(new WaterChunk[loadedChunks.size()])){
-				c.unload();
+		try {
+			fileLock.lock();
+			try{
+				for(WaterChunk c : loadedChunks.toArray(new WaterChunk[loadedChunks.size()])){
+					c.unload();
+				}
+			} finally {
+				fileLock.unlock();
 			}
+		} catch (InterruptedException e) {
+			e.printStackTrace();
 		}
 	}
 	

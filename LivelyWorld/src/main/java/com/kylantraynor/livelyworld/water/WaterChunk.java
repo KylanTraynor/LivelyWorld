@@ -165,20 +165,15 @@ public class WaterChunk {
 		try {
 			fileLock.lock();
 			try{
-				List<WeakReference<WaterChunk>> refsToClear = new ArrayList<WeakReference<WaterChunk>>();
 				for(WeakReference<WaterChunk> ref : chunks){
 					WaterChunk c = ref.get();
 					if(c == null){
-						refsToClear.add(ref);
 						continue;
 					}
 					if(c.getWorld() == world && c.getX() == x && c.getZ() == z){
 						wc = c;
 						break;
 					}
-				}
-				for(int i = 0; i < refsToClear.size(); i++){
-					chunks.remove(refsToClear.get(i));
 				}
 				wc = new WaterChunk(world,x,z);
 				chunks.add(new WeakReference<WaterChunk>(wc));

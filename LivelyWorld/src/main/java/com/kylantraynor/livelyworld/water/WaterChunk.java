@@ -58,12 +58,12 @@ public class WaterChunk {
 		try {
 			fileLock.lock();
 			try{
-				LivelyWorld.getInstance().getLogger().info("Attempting to load chunk " + getX() + "_" + getZ());
+				//LivelyWorld.getInstance().getLogger().info("Attempting to load chunk " + getX() + "_" + getZ());
 				if(isLoaded) return;
-				LivelyWorld.getInstance().getLogger().info("Loading chunk " + getX() + "_" + getZ() + " from file.");
+				//LivelyWorld.getInstance().getLogger().info("Loading chunk " + getX() + "_" + getZ() + " from file.");
 				loadFromFile();
 				setLoaded(true);
-				LivelyWorld.getInstance().getLogger().info("Chunk " + getX() + "_" + getZ() + " is loaded. (" + isLoaded + ")");
+				//LivelyWorld.getInstance().getLogger().info("Chunk " + getX() + "_" + getZ() + " is loaded. (" + isLoaded + ")");
 			} finally {
 				fileLock.unlock();
 			}
@@ -77,9 +77,9 @@ public class WaterChunk {
 		try {
 			fileLock.lock();
 			try{
-				LivelyWorld.getInstance().getLogger().info("Attempting to save chunk " + getX() + "_" + getZ());
+				//LivelyWorld.getInstance().getLogger().info("Attempting to save chunk " + getX() + "_" + getZ());
 				if(!isLoaded) return;
-				LivelyWorld.getInstance().getLogger().info("Saving chunk " + getX() + "_" + getZ() + " to file.");
+				//LivelyWorld.getInstance().getLogger().info("Saving chunk " + getX() + "_" + getZ() + " to file.");
 				saveToFile();
 			} finally {
 				fileLock.unlock();
@@ -94,11 +94,11 @@ public class WaterChunk {
 		try {
 			fileLock.lock();
 			try{
-				LivelyWorld.getInstance().getLogger().info("Attempting to unload chunk " + getX() + "_" + getZ() + " ("+isLoaded+")");
+				//LivelyWorld.getInstance().getLogger().info("Attempting to unload chunk " + getX() + "_" + getZ() + " ("+isLoaded+")");
 				if(!isLoaded) return;
 				save();
 				setLoaded(false);
-				LivelyWorld.getInstance().getLogger().info("Chunk " + getX() + "_" + getZ() + " is unloaded.");
+				//LivelyWorld.getInstance().getLogger().info("Chunk " + getX() + "_" + getZ() + " is unloaded.");
 			} finally {
 				fileLock.unlock();
 			}
@@ -342,7 +342,7 @@ public class WaterChunk {
 	}
 	
 	private void setLoaded(boolean b){
-		LivelyWorld.getInstance().getLogger().info("Setting chunk " + getX() + "_" + getZ() + " to loaded = " + b + " Previous = " + isLoaded);
+		//LivelyWorld.getInstance().getLogger().info("Setting chunk " + getX() + "_" + getZ() + " to loaded = " + b + " Previous = " + isLoaded);
 		this.isLoaded = b;
 	}
 }

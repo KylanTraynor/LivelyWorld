@@ -86,6 +86,12 @@ public class TidesModule {
 		tidesTask.runTaskTimer(plugin, 20 * 10, interval);
 
 	}
+	
+	public void disable(){
+		plugin.getLogger().info("Unloading all water chunks.");
+		WaterChunk.unloadAll();
+		plugin.getLogger().info("Done!");
+	}
 
 	public void updateOceanLevelFor(Player p) {
 		Location current;

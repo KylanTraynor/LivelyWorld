@@ -404,6 +404,9 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 		if (climate != null) {
 			climate.disable();
 		}
+		if(tides != null){
+			tides.disable();
+		}
 		getServer().getScheduler().cancelTasks(this);
 		randomBlockPicker = null;
 		saveConfig();

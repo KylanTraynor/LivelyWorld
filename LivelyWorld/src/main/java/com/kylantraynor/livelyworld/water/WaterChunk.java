@@ -155,7 +155,7 @@ public class WaterChunk {
 		return world;
 	}
 	
-	public synchronized static WaterChunk get(World world, int x, int z){
+	public static WaterChunk get(World world, int x, int z){
 		synchronized(loadedChunks){
 			for(WaterChunk c : loadedChunks){
 				if(c.getWorld() == world && c.getX() == x && c.getZ() == z){
@@ -164,6 +164,14 @@ public class WaterChunk {
 			}
 		}
 		return new WaterChunk(world, x, z);
+	}
+	
+	public static void unloadAll(){
+		synchronized(loadedChunks){
+			for(WaterChunk c : loadedChunks.toArray(new WaterChunk[loadedChunks.size()])){
+				c.unload();
+			}
+		}
 	}
 	
 	public File getFile(){

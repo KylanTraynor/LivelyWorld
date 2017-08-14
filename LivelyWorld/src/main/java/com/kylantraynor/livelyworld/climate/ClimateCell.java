@@ -348,11 +348,11 @@ public class ClimateCell extends VCell {
 		if(weather == Weather.OVERCAST || weather == Weather.SNOW){
 			precipitation = 0.5 * (Math.max(getRelativeHumidity() - 50, 0) * 0.01);
 		} else if(weather == Weather.RAIN || weather == Weather.SNOWSTORM){
-			precipitation = 1 * (Math.max(getRelativeHumidity() - 50, 0) * 0.01);
+			precipitation = 1.1 * (Math.max(getRelativeHumidity() - 20, 0) * 0.01);
 		} else if(weather == Weather.STORM){
-			precipitation = 1.1 * (Math.max(getRelativeHumidity() - 50, 0) * 0.01);
+			precipitation = 1.3 * (Math.max(getRelativeHumidity() - 20, 0) * 0.01);
 		} else if(weather == Weather.THUNDERSTORM){
-			precipitation = 1.1 * (Math.max(getRelativeHumidity() - 50, 0) * 0.01);
+			precipitation = 1.3 * (Math.max(getRelativeHumidity() - 20, 0) * 0.01);
 		}
 		this.precipitations += precipitation;
 		humidity -= precipitation;

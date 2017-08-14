@@ -1,5 +1,6 @@
 package com.kylantraynor.livelyworld.climate;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -87,71 +88,71 @@ public class ClimateModule {
 
 			@Override
 			public void run() {
-				if(Bukkit.getOnlinePlayers().size() > 0){
-					for(Player p : Bukkit.getOnlinePlayers()){
-						ClimateCell c = getClimateCellFor(p);
-						if(c == null) continue;
-						int mostDist = (int) 300;
-						int doubleMostDist = 2 * mostDist;
+				Collection<? extends Player> plist = Bukkit.getOnlinePlayers();
+				if(plist.size() > 0){
+					Player p = plist.toArray(new Player[plist.size()])[(int) Math.floor(Math.random() * plist.size())];//.toArray(new Player[Bu]);
+					ClimateCell c = getClimateCellFor(p);
+					if(c == null) return;
+					int mostDist = (int) 300;
+					int doubleMostDist = 2 * mostDist;
+					
+					for(int i = 0; i < weatherEffectBlocks; i++){
+						int random_x = (int) ((Math.random() * doubleMostDist) - mostDist);
+						int random_z = (int) ((Math.random() * doubleMostDist) - mostDist);
+						int x = p.getLocation().getBlockX() + random_x;
+						int z = p.getLocation().getBlockZ() + random_z;
+						int chunkX = x >> 4; // /16
+						int chunkZ = z >> 4; // /16
+						if(!p.getWorld().isChunkLoaded(chunkX, chunkZ)){
+							continue;
+						}
+						Block b = p.getWorld().getHighestBlockAt(x, z);
+						while(b.getType() == Material.AIR && b.getY() > 1){
+							b = b.getRelative(BlockFace.DOWN);
+						}
+						ClimateCell cell = ClimateUtils.getClimateCellAt(b.getLocation(), c);
+						if(cell == null) continue;
+						updateBiome(b, cell);
+						switch(cell.getWeather()){
+						case CLEAR:
+							double tdiff = ClimateUtils.getAltitudeWeightedTriangleTemperature(cell, b.getLocation()).getValue() - Temperature.fromCelsius(5).getValue();
+							if(Math.random() < 0.1 * (tdiff / 2)){
+								while((b.getRelative(BlockFace.DOWN).getType() == Material.AIR ||
+										b.getRelative(BlockFace.DOWN).getType() == Material.LEAVES ||
+										b.getRelative(BlockFace.DOWN).getType() == Material.LEAVES_2) &&
+										b.getY() > 1){
+									b = b.getRelative(BlockFace.DOWN);
+								}
+								b = getHighestSnowBlockAround(b, 3);
+								ClimateUtils.melt(b, (int) Math.ceil(tdiff/6));
+							}
+							break;
+						case OVERCAST:
+							break;
+						case RAIN:
+						case SNOW:
+							double tdiff1 = Temperature.fromCelsius(5).getValue() - ClimateUtils.getAltitudeWeightedTriangleTemperature(cell, b.getLocation()).getValue();
+							if(Math.random() < 0.5 * (tdiff1 / 2)){
+								SnowFallTask task = new SnowFallTask(getPlugin().getClimateModule(), cell, b.getX(), b.getY() + 1, b.getZ());
+								task.runTaskLater(getPlugin(), 1);
+							}
+							break;
+						case STORM:
+						case SNOWSTORM:
+							double tdiff2 = Temperature.fromCelsius(5).getValue() - ClimateUtils.getAltitudeWeightedTriangleTemperature(cell, b.getLocation()).getValue();
+							if(Math.random() < 1.0 * (tdiff2 / 2)){
+								SnowFallTask task = new SnowFallTask(getPlugin().getClimateModule(), cell, b.getX(), b.getY() + 1, b.getZ());
+								task.runTaskLater(getPlugin(), 1);
+							}
+							break;
+						case THUNDERSTORM:
+							if(Math.random() < 0.05 / weatherEffectBlocks){
+								spawnLightning(b.getRelative(BlockFace.UP));
+							}
+							break;
+						default:
+							break;
 						
-						for(int i = 0; i < weatherEffectBlocks; i++){
-							int random_x = (int) ((Math.random() * doubleMostDist) - mostDist);
-							int random_z = (int) ((Math.random() * doubleMostDist) - mostDist);
-							int x = p.getLocation().getBlockX() + random_x;
-							int z = p.getLocation().getBlockZ() + random_z;
-							int chunkX = x >> 4; // /16
-							int chunkZ = z >> 4; // /16
-							if(!p.getWorld().isChunkLoaded(chunkX, chunkZ)){
-								continue;
-							}
-							Block b = p.getWorld().getHighestBlockAt(x, z);
-							while(b.getType() == Material.AIR && b.getY() > 1){
-								b = b.getRelative(BlockFace.DOWN);
-							}
-							ClimateCell cell = ClimateUtils.getClimateCellAt(b.getLocation(), c);
-							if(cell == null) continue;
-							updateBiome(b, cell);
-							switch(cell.getWeather()){
-							case CLEAR:
-								double tdiff = ClimateUtils.getAltitudeWeightedTriangleTemperature(cell, b.getLocation()).getValue() - Temperature.fromCelsius(5).getValue();
-								if(Math.random() < 0.1 * (tdiff / 2)){
-									while((b.getRelative(BlockFace.DOWN).getType() == Material.AIR ||
-											b.getRelative(BlockFace.DOWN).getType() == Material.LEAVES ||
-											b.getRelative(BlockFace.DOWN).getType() == Material.LEAVES_2) &&
-											b.getY() > 1){
-										b = b.getRelative(BlockFace.DOWN);
-									}
-									b = getHighestSnowBlockAround(b, 3);
-									ClimateUtils.melt(b, (int) Math.ceil(tdiff/6));
-								}
-								break;
-							case OVERCAST:
-								break;
-							case RAIN:
-							case SNOW:
-								double tdiff1 = Temperature.fromCelsius(5).getValue() - ClimateUtils.getAltitudeWeightedTriangleTemperature(cell, b.getLocation()).getValue();
-								if(Math.random() < 0.5 * (tdiff1 / 2)){
-									SnowFallTask task = new SnowFallTask(getPlugin().getClimateModule(), cell, b.getX(), b.getY() + 1, b.getZ());
-									task.runTaskLater(getPlugin(), 1);
-								}
-								break;
-							case STORM:
-							case SNOWSTORM:
-								double tdiff2 = Temperature.fromCelsius(5).getValue() - ClimateUtils.getAltitudeWeightedTriangleTemperature(cell, b.getLocation()).getValue();
-								if(Math.random() < 1.0 * (tdiff2 / 2)){
-									SnowFallTask task = new SnowFallTask(getPlugin().getClimateModule(), cell, b.getX(), b.getY() + 1, b.getZ());
-									task.runTaskLater(getPlugin(), 1);
-								}
-								break;
-							case THUNDERSTORM:
-								if(Math.random() < 0.05 / weatherEffectBlocks){
-									spawnLightning(b.getRelative(BlockFace.UP));
-								}
-								break;
-							default:
-								break;
-							
-							}
 						}
 					}
 				} else {

@@ -21,6 +21,7 @@ public class WaterListener implements Listener{
 	@EventHandler(ignoreCancelled = true)
 	public void onBlockFromTo(BlockFromToEvent event){
 		if(!Utils.isWater(event.getBlock())) return;
+		if(!event.getBlock().getWorld().getName().equals("world")) return;
 		Biome fromBiome = event.getBlock().getBiome();
 		switch(fromBiome){
 		case OCEAN:

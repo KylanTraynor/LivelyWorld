@@ -27,6 +27,7 @@ public class ClimateCell extends VCell {
 	private World world;
 	private double lowAltitudePressure = 101300;
 	private double highAltitudePressure = 70000;
+	private double normalPressureDifference = lowAltitudePressure - highAltitudePressure;
 	private double airVolume = Double.NaN;
 	private Long airAmount = null;
 	private Long highAirAmount = null;
@@ -35,6 +36,7 @@ public class ClimateCell extends VCell {
 	private double airAmountHigh = Double.NaN;
 	private Temperature temperature = Temperature.fromCelsius(15);
 	private Temperature highTemperature = new Temperature(225);
+	private Temperature ntd = new Temperature(temperature.getValue() - highTemperature.getValue());
 	private ClimateMap map;
 	private double precipitations = 0;
 	private double altitude = Double.NaN;
@@ -482,30 +484,33 @@ public class ClimateCell extends VCell {
 		double transfer = 0;
 		ClimateCell highestTemp = null;
 		ClimateCell lowestHighTemp = null;
-		ClimateCell lowestLowPressure = this;
-		ClimateCell highestLowPressure = this;
-		ClimateCell lowestHighPressure = this;
-		ClimateCell highestHighPressure = this;
-		ClimateCell lowestTemp = this;
-		ClimateCell highestHighTemp = this;
+		ClimateCell lowestLowPressure = null;
+		ClimateCell highestLowPressure = null;
+		ClimateCell lowestHighPressure = null;
+		ClimateCell highestHighPressure = null;
+		ClimateCell lowestTemp = null;
+		ClimateCell highestHighTemp = null;
 		for(ClimateCell c : getNeighbours()){
 			if(c == null)continue;
-			if(highestTemp == null)
+			if(highestTemp == null){
 				highestTemp = c;
-			else {
-				if(c.getTemperature().getValue() > highestTemp.getTemperature().getValue()){
-					highestTemp = c;
-				}
+				lowestHighTemp = c;
+				lowestLowPressure = c;
+				highestLowPressure = c;
+				lowestHighPressure = c;
+				highestHighPressure = c;
+				lowestTemp = c;
+				highestHighTemp = c;
+				continue;
+			}
+			if(c.getTemperature().getValue() > highestTemp.getTemperature().getValue()){
+				highestTemp = c;
 			}
 			if(c.getTemperature().getValue() < lowestTemp.getTemperature().getValue()){
 				lowestTemp = c;
 			}
-			if(lowestHighTemp == null)
+			if(c.getHighTemperature().getValue() < lowestHighTemp.getHighTemperature().getValue()){
 				lowestHighTemp = c;
-			else {
-				if(c.getHighTemperature().getValue() < lowestHighTemp.getHighTemperature().getValue()){
-					lowestHighTemp = c;
-				}
 			}
 			if(c.getHighTemperature().getValue() > highestHighTemp.getHighTemperature().getValue()){
 				highestHighTemp = c;
@@ -523,7 +528,26 @@ public class ClimateCell extends VCell {
 				highestHighPressure = c;
 			}
 		}
-		if(highestTemp != null && lowestHighTemp != null){
+		if(highestTemp != null && lowestHighTemp != null && lowestTemp != null && highestHighTemp != null){
+			if(highestTemp.getTemperature().getValue() < this.getTemperature().getValue()){
+				highestTemp = this;
+			}
+			if(lowestTemp.getTemperature().getValue() > this.getTemperature().getValue()){
+				lowestTemp = this;
+			}
+			if(highestHighTemp.getHighTemperature().getValue() < this.getHighTemperature().getValue()){
+				highestHighTemp = this;
+			}
+			if(lowestHighTemp.getHighTemperature().getValue() > this.getHighTemperature().getValue()){
+				lowestHighTemp = this;
+			}
+			
+			if(highestTemp == this && lowestHighTemp != this){
+				processVerticalTransfer(this, this);
+			} else if(lowestHighTemp == this && highestTemp != this){
+				processVerticalTransfer(this, this);
+			}
+			
 			/*if(highestTemp.getTemperature().getValue() < this.getTemperature().getValue() &&
 					lowestHighTemp.getHighTemperature().getValue() <= this.getHighTemperature().getValue()){ // Light air
 				// move air up.
@@ -550,6 +574,22 @@ public class ClimateCell extends VCell {
 				}
 			}*/
 		}
+		
+		if(lowestLowPressure == null || highestLowPressure == null || lowestHighPressure == null || highestHighPressure == null) return;
+		
+		if(lowestLowPressure.getLowAltitudePressure() > this.getLowAltitudePressure()){
+			lowestLowPressure = this;
+		}
+		if(highestLowPressure.getLowAltitudePressure() < this.getLowAltitudePressure()){
+			highestLowPressure = this;
+		}
+		if(lowestHighPressure.getHighAltitudePressure() > this.getHighAltitudePressure()){
+			lowestHighPressure = this;
+		}
+		if(highestHighPressure.getHighAltitudePressure() < this.getHighAltitudePressure()){
+			highestHighPressure = this;
+		}
+		
 		// move to lower pressure.
 		if(lowestLowPressure != this){
 			processLowTransfer(this, lowestLowPressure);
@@ -565,6 +605,31 @@ public class ClimateCell extends VCell {
 		this.addHighAmount(incomingHighAir - outgoingHighAir);*/
 	}
 	
+	public void processVerticalTransfer(ClimateCell from, ClimateCell to){
+		double dt = (from.getTemperature().getValue() - ntd.getValue()) - to.getHighTemperature().getValue();
+		if(dt > 0){ // move light air up
+			double meanHighT = ((from.getTemperature().getValue() - ntd.getValue()) + to.getHighTemperature().getValue()) / 2;
+			double meanLowT = (from.getTemperature().getValue() + (to.getTemperature().getValue() + ntd.getValue())) / 2;
+			double lowExcess = Math.abs(ClimateUtils.getGasAmount(from.getLowAltitudePressure(), from.getAirVolumeOnBlock(), new Temperature(meanLowT)));
+			double highLack = Math.abs(ClimateUtils.getGasAmount(to.getHighAltitudePressure(), to.getHighVolume(), new Temperature(meanHighT)));
+			double transfer = Math.min(lowExcess, highLack);
+			to.bringHighTemperatureTo(from.getTemperature().remove(ntd), (to.getAmountHigh() / transfer) * 0.001);
+			from.bringTemperatureTo(to.getHighTemperature().add(ntd), (from.getAmountOnBlock() / transfer) * 0.001);
+			to.addHighAmount(transfer);
+			from.addAmount(-transfer);
+		} else if(dt < 0){ // move heavy air down
+			double meanHighT = (from.getHighTemperature().getValue() + (to.getTemperature().getValue() - ntd.getValue())) / 2;
+			double meanLowT = ((from.getHighTemperature().getValue() + ntd.getValue()) + to.getTemperature().getValue()) / 2;
+			double lowLack = Math.abs(ClimateUtils.getGasAmount(to.getLowAltitudePressure(), to.getAirVolumeOnBlock(), new Temperature(meanLowT)));
+			double highExcess = Math.abs(ClimateUtils.getGasAmount(from.getHighAltitudePressure(), from.getHighVolume(), new Temperature(meanHighT)));
+			double transfer = Math.min(lowLack, highExcess);
+			to.bringTemperatureTo(from.getHighTemperature().add(ntd), (to.getAmountHigh() / transfer) * 0.001);
+			from.bringHighTemperatureTo(to.getTemperature().remove(ntd), (from.getAmountOnBlock() / transfer) * 0.001);
+			to.addAmount(transfer);
+			from.addHighAmount(-transfer);
+		}
+	}
+	
 	public void processLowTransfer(ClimateCell from, ClimateCell to){
 		double dp = from.getLowAltitudePressure() - to.getLowAltitudePressure();
 		if(dp <= 0) return;
@@ -576,8 +641,9 @@ public class ClimateCell extends VCell {
 		double humidityTransfer = humidityRatio * transfer;
 		to.humidity += humidityTransfer;
 		from.humidity -= humidityTransfer;
+		Temperature toTemp = to.getTemperature();
 		to.bringTemperatureTo(from.getTemperature(), (to.getAmountOnBlock() / transfer) * 0.001);
-		from.bringTemperatureTo(to.getTemperature(), (from.getAmountOnBlock() / transfer) * 0.001);
+		from.bringTemperatureTo(toTemp, (from.getAmountOnBlock() / transfer) * 0.001);
 		to.addAmount(transfer);
 		from.addAmount(-transfer);
 		from.lowWind = new WindVector(to.getX() - from.getX(), to.getY() - from.getY(), to.getZ() - from.getZ(), transfer).normalize();
@@ -590,8 +656,9 @@ public class ClimateCell extends VCell {
 		double fromExcess = Math.abs(ClimateUtils.getGasAmount(meanP, from.getHighVolume(), from.getHighTemperature()) - from.getAmountHigh());
 		double toLack = Math.abs(ClimateUtils.getGasAmount(meanP, to.getHighVolume(), to.getHighTemperature()) - to.getAmountHigh());
 		double transfer = Math.min(fromExcess, toLack);
+		Temperature toTemp = to.getHighTemperature();
 		to.bringHighTemperatureTo(from.getHighTemperature(), (to.getAmountHigh() / transfer) * 0.001);
-		from.bringHighTemperatureTo(to.getHighTemperature(), (from.getAmountHigh() / transfer) * 0.001);
+		from.bringHighTemperatureTo(toTemp, (from.getAmountHigh() / transfer) * 0.001);
 		to.addHighAmount(transfer);
 		from.addHighAmount(-transfer);
 		from.highWind = new WindVector(to.getX() - from.getX(), to.getY() - from.getY(), to.getZ() - from.getZ(), transfer).normalize();

@@ -484,8 +484,8 @@ public class ClimateCell extends VCell {
 		this.lowWind = WindVector.ZERO;
 		this.highWind = WindVector.ZERO;
 		double transfer = 0;
-		ClimateCell highestTemp = this;
-		ClimateCell lowestHighTemp = this;
+		ClimateCell highestTemp = null;
+		ClimateCell lowestHighTemp = null;
 		ClimateCell lowestLowPressure = this;
 		ClimateCell highestLowPressure = this;
 		ClimateCell lowestHighPressure = this;
@@ -494,14 +494,20 @@ public class ClimateCell extends VCell {
 		ClimateCell highestHighTemp = this;
 		for(ClimateCell c : getNeighbours()){
 			if(c == null)continue;
-			if(c.getTemperature().getValue() > highestTemp.getTemperature().getValue()){
-				highestTemp = c;
+			if(highestTemp == null) highestTemp = c;
+			else {
+				if(c.getTemperature().getValue() > highestTemp.getTemperature().getValue()){
+					highestTemp = c;
+				}
 			}
 			if(c.getTemperature().getValue() < lowestTemp.getTemperature().getValue()){
 				lowestTemp = c;
 			}
-			if(c.getHighTemperature().getValue() < lowestHighTemp.getHighTemperature().getValue()){
-				lowestHighTemp = c;
+			if(lowestHighTemp == null) lowestHighTemp = c;
+			else {
+				if(c.getHighTemperature().getValue() < lowestHighTemp.getHighTemperature().getValue()){
+					lowestHighTemp = c;
+				}
 			}
 			if(c.getHighTemperature().getValue() > highestHighTemp.getHighTemperature().getValue()){
 				highestHighTemp = c;
@@ -519,7 +525,8 @@ public class ClimateCell extends VCell {
 				highestHighPressure = c;
 			}
 		}
-		if(highestTemp == this && lowestHighTemp != this){ // Light air
+		if(highestTemp.getTemperature().getValue() < this.getTemperature().getValue() &&
+				lowestHighTemp.getHighTemperature().getValue() <= this.getHighTemperature().getValue()){ // Light air
 			// move air up.
 			double dt = this.getTemperature().getValue() - lowestTemp.getTemperature().getValue();
 			if(dt > 0){
@@ -530,7 +537,8 @@ public class ClimateCell extends VCell {
 				this.addHighAmount(transfer);
 				this.addAmount(-transfer);
 			}
-		} else if(lowestHighTemp == this && highestTemp != this){ // Heavy air
+		} else if(lowestHighTemp.getHighTemperature().getValue() > this.getHighTemperature().getValue() &&
+				highestTemp.getTemperature().getValue() >= this.getTemperature().getValue()){ // Heavy air
 			// move air down.
 			double dt = highestHighTemp.getHighTemperature().getValue() - this.getHighTemperature().getValue();
 			if(dt > 0){

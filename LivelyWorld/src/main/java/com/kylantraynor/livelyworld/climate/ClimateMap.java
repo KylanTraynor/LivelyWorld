@@ -1,11 +1,22 @@
 package com.kylantraynor.livelyworld.climate;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 import java.util.UUID;
+import java.util.zip.DeflaterOutputStream;
+import java.util.zip.InflaterInputStream;
 
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -108,7 +119,7 @@ public class ClimateMap {
 
 		this.generator.generate();
 		LivelyWorld.getInstance().getLogger().info("Attempting to load previous climate data for map...");
-		List<ClimateCellData> data = LivelyWorld.getInstance().getDatabase().getAllClimateCellData();
+		List<ClimateCellData> data = loadAllData();
 		if(data.size() > 0){
 			LivelyWorld.getInstance().getLogger().info(data.size() + " previous data has been found."); 
 		} else {
@@ -366,10 +377,83 @@ public class ClimateMap {
 		highestWindSpeed = 0;
 		this.hasChanged = true;
 	}
+	
+	public File getFile(){
+		File d1 = new File(LivelyWorld.getInstance().getDataFolder(), "ClimateMaps");
+		File f = new File(d1, world.getName() + ".cmp");
+		if(!d1.exists()){
+			d1.mkdir();
+		}
+		if(!f.exists()){
+			try {
+				f.createNewFile();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return f;
+	}
 
 	public void saveAllData() {
+		byte[] bytes = new byte[getCells().length * ClimateCellData.getByteSize()];
+		ByteBuffer buff = ByteBuffer.wrap(bytes);
 		for(int i = 0; i < getCells().length; i++){
-			LivelyWorld.getInstance().getDatabase().setClimateCellData(i, getCells()[i].getData());
+			getCells()[i].getData().saveInto(buff);
 		}
+		
+		try{
+			OutputStream out = null;
+			try{
+				out = new DeflaterOutputStream(new FileOutputStream(getFile()));
+				out.write(bytes);
+			} finally {
+				out.close();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		/*for(int i = 0; i < getCells().length; i++){
+			LivelyWorld.getInstance().getDatabase().setClimateCellData(i, getCells()[i].getData());
+		}*/
+	}
+	
+	public List<ClimateCellData> loadAllData(){
+		List<ClimateCellData> data = new ArrayList<ClimateCellData>();
+		byte[] result = null;
+	    try {
+	    	InputStream input =  new InflaterInputStream(new FileInputStream(getFile()));
+	    	result = readAndClose(input);
+	    } catch (FileNotFoundException ex){
+	    	ex.printStackTrace();
+	    }
+	    if(result != null){
+	    	ByteBuffer buff = ByteBuffer.wrap(result);
+	    	while(buff.remaining() >= ClimateCellData.getByteSize()){
+	    		data.add(ClimateCellData.loadFrom(buff));
+	    	}
+	    }
+	    return data;
+	}
+	
+	public byte[] readAndClose(InputStream stream){
+		byte[] bucket = new byte[32*1024]; 
+	    ByteArrayOutputStream result = null; 
+	    try  {
+	    	try {
+	    		result = new ByteArrayOutputStream(bucket.length);
+	    		int bytesRead = 0;
+	    		while(bytesRead != -1){
+	    			bytesRead = stream.read(bucket);
+	    			if(bytesRead > 0){
+	    				result.write(bucket, 0, bytesRead);
+	    			}
+	    		}
+	    	} finally {
+	    		stream.close();
+	    	}
+	    } catch (IOException ex){
+	      ex.printStackTrace();;
+	    }
+	    return result.toByteArray();
 	}
 }

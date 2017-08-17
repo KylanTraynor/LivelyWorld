@@ -665,6 +665,7 @@ public class ClimateCell extends VCell {
 	}
 
 	public Temperature getHighTemperature() {
+		if(highTemperature.isNaN()) highTemperature = getTropopauseTemperature();
 		return highTemperature;
 	}
 	

@@ -528,49 +528,18 @@ public class ClimateCell extends VCell {
 				highestHighPressure = c;
 			}
 		}
-		if(highestTemp != null && lowestHighTemp != null && lowestTemp != null && highestHighTemp != null){
+		/*if(highestTemp != null && lowestHighTemp != null && lowestTemp != null && highestHighTemp != null){
 			if(highestTemp.getTemperature().getValue() < this.getTemperature().getValue()){
 				highestTemp = this;
 			}
-			/*if(lowestTemp.getTemperature().getValue() > this.getTemperature().getValue()){
-				lowestTemp = this;
-			}*/
-			/*if(highestHighTemp.getHighTemperature().getValue() < this.getHighTemperature().getValue()){
-				highestHighTemp = this;
-			}*/
 			if(lowestHighTemp.getHighTemperature().getValue() > this.getHighTemperature().getValue()){
 				lowestHighTemp = this;
 			}
 			
-			if(highestTemp == this || lowestHighTemp == this)
+			if(highestTemp == this || lowestHighTemp == this){
 				processVerticalTransfer(highestTemp, lowestHighTemp);
-			
-			/*if(highestTemp.getTemperature().getValue() < this.getTemperature().getValue() &&
-					lowestHighTemp.getHighTemperature().getValue() <= this.getHighTemperature().getValue()){ // Light air
-				// move air up.
-				double dt = this.getTemperature().getValue() - lowestTemp.getTemperature().getValue();
-				if(dt > 0){
-					transfer = ClimateUtils.getGasAmount(this.getLowAltitudePressure(), this.getAirVolumeOnBlock(), new Temperature(dt));
-					Temperature t = this.getHighTemperature();
-					this.bringHighTemperatureTo(this.getTemperature(), (this.getAmountHigh() / transfer) * 0.1);
-					this.bringTemperatureTo(t, (this.getAmountOnBlock() / transfer) * 0.1);
-					this.addHighAmount(transfer);
-					this.addAmount(-transfer);
-				}
-			} else if(lowestHighTemp.getHighTemperature().getValue() > this.getHighTemperature().getValue() &&
-					highestTemp.getTemperature().getValue() >= this.getTemperature().getValue()){ // Heavy air
-				// move air down.
-				double dt = highestHighTemp.getHighTemperature().getValue() - this.getHighTemperature().getValue();
-				if(dt > 0){
-					transfer = ClimateUtils.getGasAmount(this.getHighAltitudePressure(), this.getAmountHigh(), new Temperature(dt));
-					Temperature t = getHighTemperature();
-					this.bringHighTemperatureTo(this.getTemperature(), (this.getAmountHigh() / transfer) * 0.1);
-					this.bringTemperatureTo(t, (this.getAmountOnBlock() / transfer) * 0.1);
-					this.addAmount(transfer);
-					this.addHighAmount(-transfer);
-				}
-			}*/
-		}
+			}
+		}*/
 		
 		if(lowestLowPressure == null || highestLowPressure == null || lowestHighPressure == null || highestHighPressure == null) return;
 		

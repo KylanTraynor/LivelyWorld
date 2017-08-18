@@ -532,21 +532,18 @@ public class ClimateCell extends VCell {
 			if(highestTemp.getTemperature().getValue() < this.getTemperature().getValue()){
 				highestTemp = this;
 			}
-			if(lowestTemp.getTemperature().getValue() > this.getTemperature().getValue()){
+			/*if(lowestTemp.getTemperature().getValue() > this.getTemperature().getValue()){
 				lowestTemp = this;
-			}
-			if(highestHighTemp.getHighTemperature().getValue() < this.getHighTemperature().getValue()){
+			}*/
+			/*if(highestHighTemp.getHighTemperature().getValue() < this.getHighTemperature().getValue()){
 				highestHighTemp = this;
-			}
+			}*/
 			if(lowestHighTemp.getHighTemperature().getValue() > this.getHighTemperature().getValue()){
 				lowestHighTemp = this;
 			}
 			
-			if(highestTemp == this && lowestHighTemp != this){
-				processVerticalTransfer(this, this);
-			} else if(lowestHighTemp == this && highestTemp != this){
-				processVerticalTransfer(this, this);
-			}
+			if(highestTemp == this || lowestHighTemp == this)
+				processVerticalTransfer(highestTemp, lowestHighTemp);
 			
 			/*if(highestTemp.getTemperature().getValue() < this.getTemperature().getValue() &&
 					lowestHighTemp.getHighTemperature().getValue() <= this.getHighTemperature().getValue()){ // Light air

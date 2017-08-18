@@ -220,7 +220,7 @@ public class ClimateModule {
 
 		climateUpdater.runTaskTimer(plugin, 21L, 1L);
 		
-		weatherUpdater = new BukkitRunnable() {
+		/*weatherUpdater = new BukkitRunnable() {
 
 			@Override
 			public void run() {
@@ -228,7 +228,7 @@ public class ClimateModule {
 			}
 			
 		};
-		weatherUpdater.runTaskTimer(plugin, 22L, (Planet.getPlanet(Bukkit.getWorld("world")).getClimateMap().getCells().length)/cellUpdates);
+		weatherUpdater.runTaskTimer(plugin, 22L, (Planet.getPlanet(Bukkit.getWorld("world")).getClimateMap().getCells().length)/cellUpdates);*/
 	}
 
 	public void disable() {

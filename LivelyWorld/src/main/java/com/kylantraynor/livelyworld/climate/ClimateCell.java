@@ -606,7 +606,7 @@ public class ClimateCell extends VCell {
 		double dt = (from.getTemperature().getValue() - ntd.getValue()) - to.getHighTemperature().getValue();
 		if(dt > 0){ // move light air up
 			double meanHighT = ((from.getTemperature().getValue() - ntd.getValue()) + to.getHighTemperature().getValue()) / 2;
-			double meanLowT = (from.getTemperature().getValue() + (to.getTemperature().getValue() + ntd.getValue())) / 2;
+			double meanLowT = (from.getTemperature().getValue() + (to.getHighTemperature().getValue() + ntd.getValue())) / 2;
 			double lowExcess = Math.abs(ClimateUtils.getGasAmount(from.getLowAltitudePressure(), from.getAirVolumeOnBlock(), new Temperature(meanLowT)));
 			double highLack = Math.abs(ClimateUtils.getGasAmount(to.getHighAltitudePressure(), to.getHighVolume(), new Temperature(meanHighT)));
 			double transfer = Math.min(lowExcess, highLack);

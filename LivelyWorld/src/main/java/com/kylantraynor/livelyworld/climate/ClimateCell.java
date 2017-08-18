@@ -610,8 +610,10 @@ public class ClimateCell extends VCell {
 			double lowExcess = Math.abs(ClimateUtils.getGasAmount(from.getLowAltitudePressure(), from.getAirVolumeOnBlock(), new Temperature(meanLowT)));
 			double highLack = Math.abs(ClimateUtils.getGasAmount(to.getHighAltitudePressure(), to.getHighVolume(), new Temperature(meanHighT)));
 			double transfer = Math.min(lowExcess, highLack);
-			to.bringHighTemperatureTo(from.getTemperature().remove(ntd), (to.getAmountHigh() / transfer) * 0.001);
-			from.bringTemperatureTo(to.getHighTemperature().add(ntd), (from.getAmountOnBlock() / transfer) * 0.001);
+			to.highTemperature = new Temperature(meanHighT);
+			from.temperature = new Temperature(meanLowT);
+			/*to.bringHighTemperatureTo(meanHighT, (to.getAmountHigh() / transfer) * 0.001);
+			from.bringTemperatureTo(to.getHighTemperature().add(ntd), (from.getAmountOnBlock() / transfer) * 0.001);*/
 			to.addHighAmount(transfer);
 			from.addAmount(-transfer);
 		} else if(dt < 0){ // move heavy air down
@@ -620,8 +622,10 @@ public class ClimateCell extends VCell {
 			double lowLack = Math.abs(ClimateUtils.getGasAmount(to.getLowAltitudePressure(), to.getAirVolumeOnBlock(), new Temperature(meanLowT)));
 			double highExcess = Math.abs(ClimateUtils.getGasAmount(from.getHighAltitudePressure(), from.getHighVolume(), new Temperature(meanHighT)));
 			double transfer = Math.min(lowLack, highExcess);
-			to.bringTemperatureTo(from.getHighTemperature().add(ntd), (to.getAmountHigh() / transfer) * 0.001);
-			from.bringHighTemperatureTo(to.getTemperature().remove(ntd), (from.getAmountOnBlock() / transfer) * 0.001);
+			to.temperature = new Temperature(meanLowT);
+			from.highTemperature = new Temperature(meanHighT);
+			/*to.bringTemperatureTo(from.getHighTemperature().add(ntd), (to.getAmountHigh() / transfer) * 0.001);
+			from.bringHighTemperatureTo(to.getTemperature().remove(ntd), (from.getAmountOnBlock() / transfer) * 0.001);*/
 			to.addAmount(transfer);
 			from.addHighAmount(-transfer);
 		}

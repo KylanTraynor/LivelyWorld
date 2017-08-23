@@ -36,6 +36,7 @@ import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.ItemDespawnEvent;
 import org.bukkit.event.entity.ItemSpawnEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
@@ -749,11 +750,11 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 			burn.onBlockBurn(event);
 		}
 	}
-
+	
 	@EventHandler
 	public void onBlockGrow(BlockGrowEvent event) {
 		if (usingClimate) {
-			if(Math.random() > 0.01){
+			if(Math.random() > 0.05){
 				event.setCancelled(true);
 				return;
 			}

@@ -219,6 +219,7 @@ public class WaterChunk {
 				WaterChunk c = chunks.get(0);
 				c.unload();
 				chunks.remove(0);
+				LivelyWorld.getInstance().getLogger().info("" + chunks.size() + " remaining.");
 			}
 		}
 		/*for(WeakReference<WaterChunk> ref : chunks){

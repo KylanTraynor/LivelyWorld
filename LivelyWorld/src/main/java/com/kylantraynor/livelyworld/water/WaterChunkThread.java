@@ -48,7 +48,7 @@ public class WaterChunkThread extends Thread {
 			}
 			if(c.isLoaded() && !c.getWorld().isChunkLoaded(c.getX(), c.getZ())){
 				c.unload();
-				LivelyWorld.getInstance().getLogger().info("Unloading Chunk at " + c.getX() + ", " + c.getZ() + ", Total: " + WaterChunk.chunks.size());
+				//LivelyWorld.getInstance().getLogger().info("Unloading Chunk at " + c.getX() + ", " + c.getZ() + ", Total: " + WaterChunk.chunks.size());
 				WaterChunk.chunks.remove(i);
 				return;
 			}

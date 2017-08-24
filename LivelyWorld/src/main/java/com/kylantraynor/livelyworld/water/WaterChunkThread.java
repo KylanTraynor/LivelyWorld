@@ -1,5 +1,7 @@
 package com.kylantraynor.livelyworld.water;
 
+import com.kylantraynor.livelyworld.LivelyWorld;
+
 public class WaterChunkThread extends Thread {
 	
 	private String name = "WaterChunk Thread";
@@ -31,6 +33,7 @@ public class WaterChunkThread extends Thread {
 				}
 				if(c.isLoaded() && !c.getWorld().isChunkLoaded(c.getX(), c.getZ())){
 					c.unload();
+					LivelyWorld.getInstance().getLogger().info("Unloading Chunk at " + c.getX() + ", " + c.getZ());
 					WaterChunk.chunks.remove(i);
 					return;
 				}

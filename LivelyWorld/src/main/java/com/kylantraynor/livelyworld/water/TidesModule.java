@@ -441,6 +441,24 @@ public class TidesModule {
 			String[] args) {
 		if (args.length >= 2) {
 			switch (args[1].toUpperCase()) {
+			case "GET":
+				if(args.length >= 3){
+					switch(args[2].toUpperCase()) {
+					case "MOISTURE":
+						Player p = (Player) sender;
+						BukkitRunnable br = new BukkitRunnable(){
+							@Override
+							public void run() {
+								WaterChunk c = WaterChunk.get(p.getWorld(), p.getLocation().getBlockX() >> 4, p.getLocation().getBlockZ() >> 4);
+								WaterData wd = c.getAt(p.getLocation().getBlockX() % 16, p.getLocation().getBlockY()-1, p.getLocation().getBlockZ() % 16);
+								p.sendMessage("DEBUG : Chunk loaded: " + c.isLoaded() + ", Data Level: " + wd.getLevel() + ", Data Salt: " + wd.getSalt());
+							}
+						};
+						br.runTaskAsynchronously(plugin);
+						break;
+					}
+				}
+				break;
 			case "TOGGLE":
 				if (args.length >= 3) {
 					switch (args[2].toUpperCase()) {

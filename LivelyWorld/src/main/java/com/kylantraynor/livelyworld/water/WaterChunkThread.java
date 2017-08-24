@@ -12,10 +12,26 @@ public class WaterChunkThread extends Thread {
 				unloadChunks();
 			    loadChunks();
 			    updateChunks();
+			    cleanList();
 			}
 		} catch (Exception e){
 			e.printStackTrace();
 			WaterChunk.unloadAll();
+		}
+	}
+
+	private void cleanList() {
+		int i = 0;
+		while(i < WaterChunk.chunks.size()){
+			WaterChunk c = WaterChunk.chunks.get(i);
+			if(c == null){
+				i++; continue;
+			}
+			if(!c.isLoaded() && !c.getWorld().isChunkLoaded(c.getX(), c.getZ())){
+				WaterChunk.chunks.remove(i);
+				continue;
+			}
+			i++;
 		}
 	}
 

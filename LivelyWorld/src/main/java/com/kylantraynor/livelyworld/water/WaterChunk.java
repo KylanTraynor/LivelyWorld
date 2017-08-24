@@ -12,6 +12,7 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterInputStream;
 
@@ -21,7 +22,7 @@ import com.kylantraynor.livelyworld.LivelyWorld;
 import com.kylantraynor.livelyworld.Utils;
 
 public class WaterChunk {
-	final static List<WaterChunk> chunks = new ArrayList<WaterChunk>(); 
+	final static CopyOnWriteArrayList<WaterChunk> chunks = new CopyOnWriteArrayList<WaterChunk>(); 
 	static boolean disabled = false;
 	
 	final byte[] data = new byte[16 * 16 * 256 * 4];
@@ -171,20 +172,18 @@ public class WaterChunk {
 	
 	public static WaterChunk get(World world, int x, int z){
 		
-		synchronized(chunks){
-			int i = 0;
-			while(i < chunks.size()){
-				WaterChunk c = chunks.get(i);
-				if(c.getWorld().equals(world) && c.getX() == x && c.getZ() == z){
-					return c;
-				}
-				i++;
+		int i = 0;
+		while(i < chunks.size()){
+			WaterChunk c = chunks.get(i);
+			if(c.getWorld().equals(world) && c.getX() == x && c.getZ() == z){
+				return c;
 			}
-		
-			WaterChunk wc = new WaterChunk(world,x,z);
-			chunks.add(wc);
-			return wc;
+			i++;
 		}
+	
+		WaterChunk wc = new WaterChunk(world,x,z);
+		chunks.add(wc);
+		return wc;
 		/*
 		WaterChunk wc = null;
 		try {
@@ -214,13 +213,11 @@ public class WaterChunk {
 	public static void unloadAll(){
 		if(disabled) return;
 		disabled = true;
-		synchronized(chunks){
-			while(!chunks.isEmpty()){
-				WaterChunk c = chunks.get(0);
-				c.unload();
-				chunks.remove(0);
-				LivelyWorld.getInstance().getLogger().info("" + chunks.size() + " remaining.");
-			}
+		while(!chunks.isEmpty()){
+			WaterChunk c = chunks.get(0);
+			c.unload();
+			chunks.remove(0);
+			LivelyWorld.getInstance().getLogger().info("" + chunks.size() + " remaining.");
 		}
 		/*for(WeakReference<WaterChunk> ref : chunks){
 			WaterChunk c = ref.get();

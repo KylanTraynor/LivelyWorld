@@ -21,7 +21,7 @@ import com.kylantraynor.livelyworld.LivelyWorld;
 import com.kylantraynor.livelyworld.Utils;
 
 public class WaterChunk {
-	final static List<WeakReference<WaterChunk>> chunks = Collections.synchronizedList(new ArrayList<WeakReference<WaterChunk>>()); 
+	final static List<WaterChunk> chunks = new ArrayList<WaterChunk>(); 
 	static boolean disabled = false;
 	
 	final byte[] data = new byte[16 * 16 * 256 * 4];
@@ -29,8 +29,6 @@ public class WaterChunk {
 	private final int x;
 	private final int z;
 	private final World world;
-	private boolean requested = false;
-	private boolean unrequested;
 	private static Utils.Lock fileLock = new Utils.Lock();
 	
 	public WaterChunk(World w, int x, int z){
@@ -176,11 +174,7 @@ public class WaterChunk {
 		synchronized(chunks){
 			int i = 0;
 			while(i < chunks.size()){
-				WaterChunk c = chunks.get(i).get();
-				if(c == null){
-					chunks.remove(i);
-					continue;
-				}
+				WaterChunk c = chunks.get(i);
 				if(c.getWorld().equals(world) && c.getX() == x && c.getZ() == z){
 					return c;
 				}
@@ -188,7 +182,7 @@ public class WaterChunk {
 			}
 		
 			WaterChunk wc = new WaterChunk(world,x,z);
-			chunks.add(new WeakReference<WaterChunk>(wc));
+			chunks.add(wc);
 			return wc;
 		}
 		/*
@@ -222,10 +216,8 @@ public class WaterChunk {
 		disabled = true;
 		synchronized(chunks){
 			while(!chunks.isEmpty()){
-				WaterChunk c = chunks.get(0).get();
-				if( c != null ) {
-					c.unload();
-				}
+				WaterChunk c = chunks.get(0);
+				c.unload();
 				chunks.remove(0);
 			}
 		}
@@ -383,21 +375,5 @@ public class WaterChunk {
 	private void setLoaded(boolean b){
 		//LivelyWorld.getInstance().getLogger().info("Setting chunk " + getX() + "_" + getZ() + " to loaded = " + b + " Previous = " + isLoaded);
 		this.isLoaded = b;
-	}
-
-	public boolean isRequested() {
-		return requested ;
-	}
-	
-	public void setRequested(boolean value){
-		this.requested = value;
-	}
-
-	public boolean isUnrequested() {
-		return this.unrequested;
-	}
-	
-	public void setUnrequested(boolean value){
-		this.unrequested = value;
 	}
 }

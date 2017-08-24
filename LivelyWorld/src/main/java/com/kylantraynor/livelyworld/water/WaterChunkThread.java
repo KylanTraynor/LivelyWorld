@@ -25,13 +25,12 @@ public class WaterChunkThread extends Thread {
 		synchronized(WaterChunk.chunks){
 			int i = 0;
 			while(i < WaterChunk.chunks.size()){
-				WaterChunk c = WaterChunk.chunks.get(i).get();
+				WaterChunk c = WaterChunk.chunks.get(i);
 				if(c == null){
 					i++; continue;
 				}
-				if(c.isUnrequested() && c.isLoaded()){
+				if(c.isLoaded() && !c.getWorld().isChunkLoaded(c.getX(), c.getZ())){
 					c.unload();
-					c.setUnrequested(false);
 					return;
 				}
 				i++;
@@ -43,13 +42,12 @@ public class WaterChunkThread extends Thread {
 		synchronized(WaterChunk.chunks){
 			int i = 0;
 			while(i < WaterChunk.chunks.size()){
-				WaterChunk c = WaterChunk.chunks.get(i).get();
+				WaterChunk c = WaterChunk.chunks.get(i);
 				if(c == null){
 					i++; continue;
 				}
-				if(c.isRequested() && !c.isLoaded()){
+				if(!c.isLoaded() && c.getWorld().isChunkLoaded(c.getX(), c.getZ())){
 					c.load();
-					c.setRequested(false);
 					return;
 				}
 				i++;

@@ -31,6 +31,7 @@ public class WaterChunkThread extends Thread {
 				}
 				if(c.isLoaded() && !c.getWorld().isChunkLoaded(c.getX(), c.getZ())){
 					c.unload();
+					WaterChunk.chunks.remove(i);
 					return;
 				}
 				i++;

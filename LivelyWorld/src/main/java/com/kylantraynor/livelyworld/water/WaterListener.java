@@ -56,21 +56,17 @@ public class WaterListener implements Listener{
 	
 	@EventHandler
 	public void onChunkLoad(ChunkLoadEvent event){
-		if(WaterChunk.disabled) return;
+		/*if(WaterChunk.disabled) return;
 		if(!LivelyWorld.getInstance().getWaterModule().isEnabled()) return;
 		Chunk c = event.getChunk();
 		if(!c.getWorld().getName().equals("world")) return;
-		//WaterChunk wc = WaterChunk.get(c.getWorld(), c.getX(), c.getZ());
-		/*if(wc != null){
-			if(!wc.isLoaded()) wc.setRequested(true);
-		}*/
 		BukkitRunnable br = new BukkitRunnable(){
 			@Override
 			public void run() {
 				WaterChunk wc = WaterChunk.get(c.getWorld(), c.getX(), c.getZ());
 			}
 		};
-		br.runTaskAsynchronously(LivelyWorld.getInstance());
+		br.runTaskAsynchronously(LivelyWorld.getInstance());*/
 	}
 	
 	@EventHandler
@@ -78,10 +74,10 @@ public class WaterListener implements Listener{
 		if(WaterChunk.disabled) return;
 		Chunk c = event.getChunk();
 		if(!c.getWorld().getName().equals("world")) return;
-		WaterChunk wc = WaterChunk.get(c.getWorld(), c.getX(), c.getZ());
-		if(wc != null){
+		WaterChunk.get(c.getWorld(), c.getX(), c.getZ());
+		/*if(wc != null){
 			if(wc.isLoaded()) wc.setUnrequested(true);
-		}
+		}*/
 		/*BukkitRunnable br = new BukkitRunnable(){
 			@Override
 			public void run() {

@@ -145,7 +145,7 @@ public class TidesModule {
 		 * Material material = null; byte data = 0;
 		 */
 		if (isActualBeach(location)) {
-			updateOceanLevel(location, 0.0, baseViewDistance);
+			updateOceanLevel(location, 0.0, baseViewDistanceSquared);
 		}
 		/*
 		 * long days = location.getWorld().getFullTime() / 24000; int phase =
@@ -233,10 +233,7 @@ public class TidesModule {
 	}
 
 	private void sendBlockChange(Location location, Material material,
-			byte data, Double minRange, Double maxRange) {
-
-		double minRangeSquared = minRange * minRange;
-		double maxRangeSquared = maxRange * maxRange;
+			byte data, Double minRangeSquared, Double maxRangeSquared) {
 
 		if (location == null)
 			return;
@@ -270,9 +267,9 @@ public class TidesModule {
 			if(p.getGameMode() == GameMode.SPECTATOR) continue;
 			
 			if (location.getWorld().equals(p.getWorld())) {
-				if (maxRange != null) {
-					if (location.distanceSquared(p.getLocation()) <= maxRangeSquared
-							&& location.distanceSquared(p.getLocation()) >= minRangeSquared) {
+				if (maxRangeSquared != null) {
+					double distanceSquared = location.distanceSquared(p.getLocation());
+					if (distanceSquared <= maxRangeSquared && distanceSquared >= minRangeSquared) {
 						p.sendBlockChange(location, material, data);
 					}
 				} else {

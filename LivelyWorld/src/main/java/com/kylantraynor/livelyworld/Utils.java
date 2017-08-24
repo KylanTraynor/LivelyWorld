@@ -131,4 +131,27 @@ public class Utils {
 	public static boolean isWater(Block block) {
 		return block.getType() == Material.WATER || block.getType() == Material.STATIONARY_WATER;
 	}
+	
+	public static int getWaterHeight(Block b) {
+		int result = 8 - b.getData();
+		if(result <= 0) result = 8;
+		return result;
+	}
+	
+	public static void setWaterHeight(Block b, int height, boolean canSource){
+		if(height == 0){
+			b.setType(Material.AIR);
+			b.setData((byte)0);
+		} else if(height == 8){
+			b.setType(Material.WATER);
+			if(canSource){
+				b.setData((byte)0);
+			} else {
+				b.setData((byte) 8);
+			}
+		} else {
+			b.setType(Material.WATER);
+			b.setData((byte) (8 - height));
+		}
+	}
 }

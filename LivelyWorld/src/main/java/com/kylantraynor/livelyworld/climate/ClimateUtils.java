@@ -151,21 +151,9 @@ public class ClimateUtils {
 		}
 	}
 	
+	@Deprecated
 	public static void setWaterHeight(Block b, int height, boolean canSource){
-		if(height == 0){
-			b.setType(Material.AIR);
-			b.setData((byte)0);
-		} else if(height == 8){
-			b.setType(Material.WATER);
-			if(canSource){
-				b.setData((byte)0);
-			} else {
-				b.setData((byte) 8);
-			}
-		} else {
-			b.setType(Material.WATER);
-			b.setData((byte) (8 - height));
-		}
+		Utils.setWaterHeight(b, height, canSource);
 	}
 	
 	public static Temperature getAltitudeWeightedTemperature(ClimateCell c, double y1){
@@ -231,10 +219,9 @@ public class ClimateUtils {
 		return new ClimateTriangle(cell, cell2, cell3);
 	}
 
+	@Deprecated
 	public static int getWaterHeight(Block b) {
-		int result = 8 - b.getData();
-		if(result <= 0) result = 8;
-		return result;
+		return Utils.getWaterHeight(b);
 	}
 	
 	public static boolean isAcceptableTemperature(Temperature current, Temperature ideal, Temperature min, Temperature max){

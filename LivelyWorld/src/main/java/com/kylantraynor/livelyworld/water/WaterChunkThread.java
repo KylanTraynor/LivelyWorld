@@ -51,9 +51,6 @@ public class WaterChunkThread extends Thread {
 				LivelyWorld.getInstance().getLogger().info("Unloading Chunk at " + c.getX() + ", " + c.getZ() + ", Total: " + WaterChunk.chunks.size());
 				WaterChunk.chunks.remove(i);
 				return;
-			} else if(!c.getWorld().isChunkLoaded(c.getX(), c.getZ())){
-				WaterChunk.chunks.remove(i);
-				return;
 			}
 			i++;
 		}

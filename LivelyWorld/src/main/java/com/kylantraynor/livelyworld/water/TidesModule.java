@@ -450,7 +450,7 @@ public class TidesModule {
 							@Override
 							public void run() {
 								WaterChunk c = WaterChunk.get(p.getWorld(), p.getLocation().getBlockX() >> 4, p.getLocation().getBlockZ() >> 4);
-								WaterData wd = c.getAt(p.getLocation().getBlockX() % 16, p.getLocation().getBlockY()-1, p.getLocation().getBlockZ() % 16);
+								WaterData wd = c.getAt(Math.floorMod(p.getLocation().getBlockX(),16), p.getLocation().getBlockY()-1, Math.floorMod(p.getLocation().getBlockZ(),16));
 								p.sendMessage("DEBUG : Chunk loaded: " + c.isLoaded() + ", Data Level: " + wd.getLevel() + ", Data Salt: " + wd.getSalt());
 							}
 						};

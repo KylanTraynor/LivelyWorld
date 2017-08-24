@@ -21,15 +21,17 @@ import com.kylantraynor.livelyworld.LivelyWorld;
 import com.kylantraynor.livelyworld.Utils;
 
 public class WaterChunk {
-	static List<WeakReference<WaterChunk>> chunks = new ArrayList<WeakReference<WaterChunk>>(); 
-	byte[] data = new byte[16 * 16 * 256 * 4];
-	private Utils.Lock dataLock = new Utils.Lock();
-	private static Utils.Lock fileLock = new Utils.Lock();
+	final static List<WeakReference<WaterChunk>> chunks = Collections.synchronizedList(new ArrayList<WeakReference<WaterChunk>>()); 
+	static boolean disabled = false;
 	
+	final byte[] data = new byte[16 * 16 * 256 * 4];
 	private boolean isLoaded = false;
 	private final int x;
 	private final int z;
 	private final World world;
+	private boolean requested = false;
+	private boolean unrequested;
+	private static Utils.Lock fileLock = new Utils.Lock();
 	
 	public WaterChunk(World w, int x, int z){
 		this.world = w;
@@ -121,7 +123,13 @@ public class WaterChunk {
 		if(!isLoaded) load();
 		byte[] b = Utils.toByteArray(data);
 		int index = getIndex(x,y,z);
-		try {
+		synchronized(this.data){
+			this.data[index    ] = b[0];
+			this.data[index + 1] = b[1];
+			this.data[index + 2] = b[2];
+			this.data[index + 3] = b[3];
+		}
+		/*try {
 			dataLock.lock();
 			try{
 				this.data[index    ] = b[0];
@@ -133,7 +141,7 @@ public class WaterChunk {
 			}
 		} catch (InterruptedException e) {
 			e.printStackTrace();
-		}
+		}*/
 	}
 	
 	private int getIndex(int x, int y, int z){
@@ -143,7 +151,10 @@ public class WaterChunk {
 	int getData(int x, int y, int z) {
 		if(!isLoaded) load();
 		int index = getIndex(x, y, z);
-		try {
+		synchronized(this.data){
+			return Utils.toInt(data[index], data[index + 1], data[index + 2], data[index + 3]);
+		}
+		/*try {
 			dataLock.lock();
 			try{
 				Utils.toInt(data[index], data[index + 1], data[index + 2], data[index + 3]);
@@ -152,8 +163,8 @@ public class WaterChunk {
 			}
 		} catch (InterruptedException e) {
 			e.printStackTrace();
-		}
-		return -1;
+		}*/
+		//return -1;
 	}
 	
 	public World getWorld() {
@@ -161,6 +172,26 @@ public class WaterChunk {
 	}
 	
 	public static WaterChunk get(World world, int x, int z){
+		
+		synchronized(chunks){
+			int i = 0;
+			while(i < chunks.size()){
+				WaterChunk c = chunks.get(i).get();
+				if(c == null){
+					chunks.remove(i);
+					continue;
+				}
+				if(c.getWorld().equals(world) && c.getX() == x && c.getZ() == z){
+					return c;
+				}
+				i++;
+			}
+		
+			WaterChunk wc = new WaterChunk(world,x,z);
+			chunks.add(new WeakReference<WaterChunk>(wc));
+			return wc;
+		}
+		/*
 		WaterChunk wc = null;
 		try {
 			fileLock.lock();
@@ -183,24 +214,26 @@ public class WaterChunk {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		return wc;
+		return wc;*/
 	}
 	
 	public static void unloadAll(){
-		try {
-			fileLock.lock();
-			try{
-				for(WeakReference<WaterChunk> ref : chunks){
-					WaterChunk c = ref.get();
-					if(c == null) continue;
+		if(disabled) return;
+		disabled = true;
+		synchronized(chunks){
+			while(!chunks.isEmpty()){
+				WaterChunk c = chunks.get(0).get();
+				if( c != null ) {
 					c.unload();
 				}
-			} finally {
-				fileLock.unlock();
+				chunks.remove(0);
 			}
-		} catch (InterruptedException e) {
-			e.printStackTrace();
 		}
+		/*for(WeakReference<WaterChunk> ref : chunks){
+			WaterChunk c = ref.get();
+			if(c == null) continue;
+			c.unload();
+		}*/
 	}
 	
 	public File getFile(){
@@ -236,15 +269,8 @@ public class WaterChunk {
 					if(getFile().length() == 0){
 						byte[] filler = new byte[length * 32 * 32];
 						for(int i = 0; i < length; i++){
-							try{
-								dataLock.lock();
-								try{
-									filler[i + startIndex] = data[i]; 
-								} finally {
-									dataLock.unlock();
-								}
-							} catch (InterruptedException e){
-								e.printStackTrace();
+							synchronized(this.data){
+								filler[i + startIndex] = data[i];
 							}
 						}
 						try {
@@ -260,17 +286,17 @@ public class WaterChunk {
 							}
 						}
 					} else {
-						dataLock.lock();
 						try{
-							s.write(data, startIndex, length);
+							synchronized(this.data){
+								s.write(data, startIndex, length);
+							}
 							s.flush();
-						} catch (IOException e){
+						} catch(IOException e){
 							e.printStackTrace();
-						} finally {
-							dataLock.unlock();
-							try {
+						} finally{
+							try{
 								s.close();
-							} catch (IOException e) {
+							} catch(IOException e){
 								e.printStackTrace();
 							}
 						}
@@ -322,7 +348,13 @@ public class WaterChunk {
 						}
 					}
 					if(o.size() == length){
-						try{
+						byte[] ob = o.toByteArray();
+						synchronized(this.data){
+							for(int i = 0; i < ob.length; i++){
+								this.data[i] = ob[i];
+							}
+						}
+						/*try{
 							dataLock.lock();
 							try{
 								data = o.toByteArray();
@@ -331,7 +363,7 @@ public class WaterChunk {
 							}
 						} catch (InterruptedException e){
 							e.printStackTrace();
-						}
+						}*/
 					}
 				} catch (FileNotFoundException e) {
 					e.printStackTrace();
@@ -351,5 +383,21 @@ public class WaterChunk {
 	private void setLoaded(boolean b){
 		//LivelyWorld.getInstance().getLogger().info("Setting chunk " + getX() + "_" + getZ() + " to loaded = " + b + " Previous = " + isLoaded);
 		this.isLoaded = b;
+	}
+
+	public boolean isRequested() {
+		return requested ;
+	}
+	
+	public void setRequested(boolean value){
+		this.requested = value;
+	}
+
+	public boolean isUnrequested() {
+		return this.unrequested;
+	}
+	
+	public void setUnrequested(boolean value){
+		this.unrequested = value;
 	}
 }

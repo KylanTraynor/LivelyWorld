@@ -50,6 +50,8 @@ public class TidesModule {
 
 	private double minLevel = getBaseOceanLevel() - 0.1;
 	private double maxLevel = getBaseOceanLevel() + 2.0;
+	
+	private WaterChunkThread waterThread = new WaterChunkThread();
 
 	private boolean beachRegression = false;
 
@@ -84,13 +86,14 @@ public class TidesModule {
 		tidesTask = new TideDispatcherTask(this, interval);
 
 		tidesTask.runTaskTimer(plugin, 20 * 10, interval);
-
+		waterThread.start();
 	}
 	
 	public void disable(){
 		if(this.enabled){
 			this.enabled = false;
 			plugin.getLogger().info("Unloading all water chunks.");
+			waterThread.interrupt();
 			WaterChunk.unloadAll();
 			plugin.getLogger().info("Done!");
 		}

@@ -379,19 +379,38 @@ public class WaterChunk {
 		int x = (int) (Math.random() * 16);
 		int y = (int) (Math.random() * 256);
 		int z = (int) (Math.random() * 16);
-		
-		WaterData d = getAt(x, y, z);
-		
-		int l = d.getLevel();
 		if(y > 0){
+			WaterData d = getAt(x, y, z);
+			
+			int l = d.getLevel();
+			WaterData target = null;
 			if(!world.getChunkAt(this.x, this.z).getBlock(x, y-1, z).getType().isSolid()){
 				WaterData below = getAt(x, y-1, z);
 				int leveldiff = 7 - below.getLevel();
 				if(leveldiff > 0){
+					target = below;
 					int transfer = Math.min(leveldiff, l);
 					d.setLevel(l - transfer);
-					below.setLevel(below.getLevel() + transfer);
+					target.setLevel(target.getLevel() + transfer);
+					return;
 				}
+			}
+			if(target == null){
+				if(d.getChunkX() == 0 || d.getChunkZ() == 0 || d.getChunkX() == 15 || d.getChunkZ() == 15){
+					
+				} else {
+					int tx = d.getChunkX() + (Math.random() >= 0.5 ? 1 : -1);
+					int tz = d.getChunkZ() + (Math.random() >= 0.5 ? 1 : -1);
+					target = getAt(d.getChunkX() + tx, d.getY(), d.getChunkZ() + tz);
+					if(world.getChunkAt(this.x, this.z).getBlock(d.getChunkX() - tx, y, d.getChunkZ() - tz).getType().isSolid()){
+						target = null;
+					}
+				}
+			}
+			if(target != null){
+				int transfer = l - target.getLevel();
+				d.setLevel(l - transfer);
+				target.setLevel(target.getLevel() + transfer);
 			}
 		}
 	}

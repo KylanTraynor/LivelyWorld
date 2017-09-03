@@ -376,9 +376,9 @@ public class WaterChunk {
 	}
 	
 	public void randomTick(){
-		int x = (int) (Math.random() * 16);
-		int y = (int) (Math.random() * 256);
-		int z = (int) (Math.random() * 16);
+		int x = (int) Math.floor(Math.random() * 16);
+		int y = (int) Math.floor(Math.random() * 256);
+		int z = (int) Math.floor(Math.random() * 16);
 		if(y > 0){
 			WaterData d = getAt(x, y, z);
 			

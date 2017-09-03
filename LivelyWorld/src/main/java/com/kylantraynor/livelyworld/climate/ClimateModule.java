@@ -11,6 +11,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.WeatherType;
+import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -21,6 +22,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import com.kylantraynor.livelyworld.LivelyWorld;
 import com.kylantraynor.livelyworld.hooks.HookManager;
+import com.kylantraynor.livelyworld.water.WaterChunk;
 import com.kylantraynor.voronoi.VectorXZ;
 
 public class ClimateModule {
@@ -135,6 +137,18 @@ public class ClimateModule {
 							if(Math.random() < 0.5 * (tdiff1 / 2)){
 								SnowFallTask task = new SnowFallTask(getPlugin().getClimateModule(), cell, b.getX(), b.getY() + 1, b.getZ());
 								task.runTaskLater(getPlugin(), 1);
+							} if (Math.random() < 0.5 * (-tdiff1 / 2)){
+								final Block fb = b;
+								BukkitRunnable br = new BukkitRunnable(){
+									@Override
+									public void run() {
+										WaterChunk wc = WaterChunk.get(fb.getWorld(), chunkX, chunkZ);
+										if(wc.isLoaded()){
+											wc.addWaterAt(Math.floorMod(fb.getX(), 16), fb.getY(), fb.getZ(), 1);
+										}
+									}
+								};
+								br.runTaskAsynchronously(getPlugin());
 							}
 							break;
 						case STORM:
@@ -143,6 +157,18 @@ public class ClimateModule {
 							if(Math.random() < 1.0 * (tdiff2 / 2)){
 								SnowFallTask task = new SnowFallTask(getPlugin().getClimateModule(), cell, b.getX(), b.getY() + 1, b.getZ());
 								task.runTaskLater(getPlugin(), 1);
+							} if (Math.random() < 1.0 * (-tdiff2 / 2)){
+								final Block fb = b;
+								BukkitRunnable br = new BukkitRunnable(){
+									@Override
+									public void run() {
+										WaterChunk wc = WaterChunk.get(fb.getWorld(), chunkX, chunkZ);
+										if(wc.isLoaded()){
+											wc.addWaterAt(Math.floorMod(fb.getX(), 16), fb.getY(), fb.getZ(), 1);
+										}
+									}
+								};
+								br.runTaskAsynchronously(getPlugin());
 							}
 							break;
 						case THUNDERSTORM:

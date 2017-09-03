@@ -374,4 +374,41 @@ public class WaterChunk {
 		//LivelyWorld.getInstance().getLogger().info("Setting chunk " + getX() + "_" + getZ() + " to loaded = " + b + " Previous = " + isLoaded);
 		this.isLoaded = b;
 	}
+	
+	public void randomTick(){
+		int x = (int) (Math.random() * 16);
+		int y = (int) (Math.random() * 256);
+		int z = (int) (Math.random() * 16);
+		
+		WaterData d = getAt(x, y, z);
+		
+		int l = d.getLevel();
+		if(y > 0){
+			if(!world.getChunkAt(this.x, this.z).getBlock(x, y-1, z).getType().isSolid()){
+				WaterData below = getAt(x, y-1, z);
+				int leveldiff = 7 - below.getLevel();
+				if(leveldiff > 0){
+					int transfer = Math.min(leveldiff, l);
+					d.setLevel(l - transfer);
+					below.setLevel(below.getLevel() + transfer);
+				}
+			}
+		}
+	}
+
+	public void addWaterAt(int x, int y, int z, int amount) {
+		WaterData d = getAt(x, y, z);
+		if(7 - d.getLevel() >= amount){
+			d.setLevel(d.getLevel() + amount);
+		} else {
+			int i = 1;
+			while(amount > 0){
+				d = getAt(x, y + i, z);
+				int added = Math.min(7 - d.getLevel(), amount);
+				d.setLevel(d.getLevel() + added);
+				amount -= added;
+				i++;
+			}
+		}
+	}
 }

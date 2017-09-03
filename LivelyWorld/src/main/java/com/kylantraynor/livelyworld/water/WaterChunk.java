@@ -16,10 +16,16 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterInputStream;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.Biome;
+import org.bukkit.block.Block;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import com.kylantraynor.livelyworld.LivelyWorld;
 import com.kylantraynor.livelyworld.Utils;
+import com.kylantraynor.livelyworld.events.BlockWaterLevelChangeEvent;
 
 public class WaterChunk {
 	final static CopyOnWriteArrayList<WaterChunk> chunks = new CopyOnWriteArrayList<WaterChunk>(); 
@@ -408,9 +414,54 @@ public class WaterChunk {
 				}
 			}
 			if(target != null){
-				int transfer = l - target.getLevel();
-				d.setLevel(l - transfer);
-				target.setLevel(target.getLevel() + transfer);
+				int levelDiff = l - target.getLevel();
+				if(levelDiff != 0){
+					d.setLevel(l - levelDiff);
+					target.setLevel(target.getLevel() + levelDiff);
+					if(world.isChunkLoaded(d.getChunkX(), d.getChunkZ()) && world.isChunkLoaded(target.getChunkX(), target.getChunkZ())){
+						final Block sourceBlock = world.getBlockAt(d.getX(), d.getY(), d.getZ());
+						final int sourceLevel = d.getLevel();
+						final Block targetBlock = world.getBlockAt(target.getX(), target.getY(), target.getZ());
+						final int level = target.getLevel();
+						BukkitRunnable br = new BukkitRunnable(){
+
+							@Override
+							public void run() {
+								
+								BlockWaterLevelChangeEvent se = new BlockWaterLevelChangeEvent(sourceBlock, sourceLevel);
+								Bukkit.getPluginManager().callEvent(se);
+								if(!se.isCancelled()){
+									if(se.getBlock().getType() == Material.AIR || Utils.isWater(se.getBlock())){
+										if(se.getBlock().getBiome() != Biome.RIVER &&
+												se.getBlock().getBiome() != Biome.FROZEN_RIVER &&
+												se.getBlock().getBiome() != Biome.OCEAN &&
+												se.getBlock().getBiome() != Biome.DEEP_OCEAN &&
+												se.getBlock().getBiome() != Biome.COLD_BEACH &&
+												se.getBlock().getBiome() != Biome.STONE_BEACH){
+											Utils.setWaterHeight(se.getBlock(), se.getNewLevel(), false);
+										}
+									}
+								}
+								BlockWaterLevelChangeEvent te = new BlockWaterLevelChangeEvent(targetBlock, level);
+								Bukkit.getPluginManager().callEvent(te);
+								if(!te.isCancelled()){
+									if(te.getBlock().getType() == Material.AIR || Utils.isWater(te.getBlock())){
+										if(te.getBlock().getBiome() != Biome.RIVER &&
+												te.getBlock().getBiome() != Biome.FROZEN_RIVER &&
+												te.getBlock().getBiome() != Biome.OCEAN &&
+												te.getBlock().getBiome() != Biome.DEEP_OCEAN &&
+												te.getBlock().getBiome() != Biome.COLD_BEACH &&
+												te.getBlock().getBiome() != Biome.STONE_BEACH){
+											Utils.setWaterHeight(te.getBlock(), te.getNewLevel(), false);
+										}
+									}
+								}
+							}
+							
+						};
+						br.runTask(LivelyWorld.getInstance());
+					}
+				}
 			}
 		}
 	}

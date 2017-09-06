@@ -407,8 +407,8 @@ public class WaterChunk {
 				} else {
 					int tx = d.getChunkX() + (Math.random() >= 0.5 ? 1 : -1);
 					int tz = d.getChunkZ() + (Math.random() >= 0.5 ? 1 : -1);
-					target = getAt(d.getChunkX() + tx, d.getY(), d.getChunkZ() + tz);
-					if(world.getChunkAt(this.x, this.z).getBlock(d.getChunkX() - tx, y, d.getChunkZ() - tz).getType().isSolid()){
+					target = getAt(tx, d.getY(), tz);
+					if(world.getChunkAt(this.x, this.z).getBlock(tx, y, tz).getType().isSolid()){
 						target = null;
 					}
 				}

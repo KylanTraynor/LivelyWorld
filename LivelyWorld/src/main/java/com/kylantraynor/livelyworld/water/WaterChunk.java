@@ -382,7 +382,6 @@ public class WaterChunk {
 	}
 	
 	public void randomTick(){
-		if(!world.isChunkLoaded(this.x, this.z)) return;
 		int x = (int) Math.floor(Math.random() * 16);
 		int y = (int) Math.floor(Math.random() * 256);
 		int z = (int) Math.floor(Math.random() * 16);

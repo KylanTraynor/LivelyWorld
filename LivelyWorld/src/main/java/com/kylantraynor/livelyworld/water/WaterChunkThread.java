@@ -1,5 +1,7 @@
 package com.kylantraynor.livelyworld.water;
 
+import com.kylantraynor.livelyworld.LivelyWorld;
+
 public class WaterChunkThread extends Thread {
 	
 	private String name = "WaterChunk Thread";
@@ -40,8 +42,13 @@ public class WaterChunkThread extends Thread {
 			if(c == null){
 				i++; continue;
 			}
-			if(c.isLoaded()){
-				c.randomTick();
+			if(c.isLoaded() && c.getWorld().isChunkLoaded(c.getX(), c.getZ())){
+				try{
+					c.randomTick();
+				} catch (Exception e){
+					LivelyWorld.getInstance().getLogger().severe("Exception while ticking water chunk at " + c.getX() + "," + c.getZ()+ ".");
+					e.printStackTrace();
+				}
 			}
 			i++;
 		}

@@ -1,5 +1,8 @@
 package com.kylantraynor.livelyworld.water;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
+
 import com.kylantraynor.livelyworld.LivelyWorld;
 
 public class WaterChunkThread extends Thread {
@@ -80,6 +83,17 @@ public class WaterChunkThread extends Thread {
 			}
 			if(!c.isLoaded() && c.getWorld().isChunkLoaded(c.getX(), c.getZ())){
 				c.load();
+				return;
+			}
+			i++;
+		}
+		i = 0;
+		Chunk[] loadedChunks = Bukkit.getServer().getWorld("world").getLoadedChunks();
+		while(i < loadedChunks.length){
+			Chunk c = loadedChunks[i];
+			WaterChunk wc = WaterChunk.get(c.getWorld(), c.getX(), c.getZ());
+			if(!wc.isLoaded() && c.isLoaded()){
+				wc.load();
 				return;
 			}
 			i++;

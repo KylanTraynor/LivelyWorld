@@ -382,6 +382,7 @@ public class WaterChunk {
 	}
 	
 	public void randomTick(){
+		if(!world.isChunkLoaded(this.x, this.z)) return;
 		int x = (int) Math.floor(Math.random() * 16);
 		int y = (int) Math.floor(Math.random() * 256);
 		int z = (int) Math.floor(Math.random() * 16);
@@ -471,7 +472,7 @@ public class WaterChunk {
 		if(7 - d.getLevel() >= amount){
 			d.setLevel(d.getLevel() + amount);
 		} else {
-			int i = 1;
+			int i = 0;
 			while(amount > 0){
 				d = getAt(x, y + i, z);
 				int added = Math.min(7 - d.getLevel(), amount);

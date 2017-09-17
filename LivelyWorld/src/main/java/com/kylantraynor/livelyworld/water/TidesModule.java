@@ -442,7 +442,13 @@ public class TidesModule {
 		if (args.length >= 2) {
 			switch (args[1].toUpperCase()) {
 			case "INFO":
-				sender.sendMessage("Loaded water chunks: " + WaterChunk.chunks.size() + "/" + LivelyWorld.getInstance().getServer().getWorld("world").getLoadedChunks().length);
+				int count = 0;
+				for(int i = 0; i < WaterChunk.chunks.size(); i++){
+					if(WaterChunk.chunks.get(i).isLoaded()){
+						count++;
+					}
+				}
+				sender.sendMessage("Loaded water chunks: " + count + "/" + WaterChunk.chunks.size() + "/" + LivelyWorld.getInstance().getServer().getWorld("world").getLoadedChunks().length);
 				break;
 			case "GET":
 				if(args.length >= 3){

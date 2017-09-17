@@ -45,7 +45,7 @@ public class CreaturesModule {
             }
         } catch (final Exception e) {
             e.printStackTrace();
-            this.getPlugin().getLogger().warning("This CraftBukkit version is not supported. Auto-Breed will not work.");
+            this.getPlugin().getLogger().warning("This CraftBukkit version ("+version+") is not supported. Auto-Breed will not work.");
             this.helper = null;
         }
 		this.runnable = new BukkitRunnable(){
@@ -76,7 +76,9 @@ public class CreaturesModule {
 										b.setType(Material.AIR);
 										b.getWorld().playSound(e.getLocation(), Sound.BLOCK_GRASS_BREAK, 1, 1);
 									} else {
-										b.setType(Material.DIRT);
+										if(b.getType() != Material.HAY_BLOCK){
+											b.setType(Material.DIRT);
+										}
 										b.getWorld().playSound(e.getLocation(), Sound.BLOCK_GRASS_BREAK, 1, 1);
 									}
 									ate = true;
@@ -86,7 +88,9 @@ public class CreaturesModule {
 										b.setType(Material.AIR);
 										b.getWorld().playSound(e.getLocation(), Sound.BLOCK_GRASS_BREAK, 1, 1);
 									} else {
-										b.setType(Material.DIRT);
+										if(b.getType() != Material.HAY_BLOCK){
+											b.setType(Material.DIRT);
+										}
 										b.getWorld().playSound(e.getLocation(), Sound.BLOCK_GRASS_BREAK, 1, 1);
 									}
 									ate = true;
@@ -166,6 +170,7 @@ public class CreaturesModule {
 		if(block.getType() == Material.RED_ROSE) return true;
 		if(block.getType() == Material.LEAVES_2) return true;
 		if(block.getType() == Material.CROPS) return true;
+		if(block.getType() == Material.HAY_BLOCK) return true;
 		if(block.getType() == Material.YELLOW_FLOWER) return true;
 		return false;
 	}

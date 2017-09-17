@@ -164,8 +164,8 @@ public class ClimateUtils {
 		return new Temperature(result);
 	}
 	
-	public static Temperature getAltitudeWeightedTriangleTemperature(ClimateCell c, Location l){
-		ClimateTriangle t = getClimateTriangle(l, c);
+	public static Temperature getAltitudeWeightedTriangleTemperature(ClimateCell ref, Location l){
+		ClimateTriangle t = getClimateTriangle(l, ref);
 		double temp = t.getTemperatureAt(l.getX(), l.getZ()).getValue();
 		
 		double result = temp - ((l.getY() - 48) * 0.08);

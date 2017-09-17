@@ -513,30 +513,37 @@ public class TidesModule {
 
 	public void onVehicleMove(VehicleMoveEvent event) {
 		if (event.getVehicle().getType() == EntityType.BOAT) {
-
-			if ((event.getTo().clone().add(0, 1, 0).getBlock().isLiquid() || event
-					.getFrom().clone().add(0, 0, 0).getBlock().isLiquid())
-					&& event.getVehicle().getPassenger() != null) {
-				if (event.getVehicle().getPassenger().getVelocity().getY() < 0) {
-					event.getVehicle().setVelocity(
-							event.getVehicle()
-									.getPassenger()
-									.getVelocity()
-									.add(new Vector(0d, Math.abs(event
-											.getVehicle().getPassenger()
-											.getVelocity().getY() + 0.5), 0d))
-									.add(event
-											.getVehicle()
-											.getPassenger()
-											.getLocation()
-											.getDirection()
-											.setY(0)
-											.add(event.getVehicle()
-													.getPassenger()
-													.getLocation()
-													.getDirection().setY(0)
-													.multiply(0.2))));
-				} else {
+			if((event.getTo().getBlock().getBiome() == Biome.BEACHES || 
+					event.getTo().getBlock().getBiome() == Biome.STONE_BEACH || 
+					event.getTo().getBlock().getBiome() == Biome.OCEAN ||
+					event.getTo().getBlock().getBiome() == Biome.DEEP_OCEAN) &&
+					(event.getTo().getY() > LivelyWorld.getInstance().getOceanY() - 1 &&
+					event.getTo().getY() < LivelyWorld.getInstance().getOceanY() + 1))
+			{
+				if ((event.getTo().clone().add(0, 1, 0).getBlock().isLiquid() || event
+						.getFrom().clone().add(0, 0, 0).getBlock().isLiquid())
+						&& event.getVehicle().getPassenger() != null) {
+					if (event.getVehicle().getPassenger().getVelocity().getY() < 0) {
+						event.getVehicle().setVelocity(
+								event.getVehicle()
+										.getPassenger()
+										.getVelocity()
+										.add(new Vector(0d, Math.abs(event
+												.getVehicle().getPassenger()
+												.getVelocity().getY() + 0.5), 0d))
+										.add(event
+												.getVehicle()
+												.getPassenger()
+												.getLocation()
+												.getDirection()
+												.setY(0)
+												.add(event.getVehicle()
+														.getPassenger()
+														.getLocation()
+														.getDirection().setY(0)
+														.multiply(0.2))));
+					} else {
+					}
 				}
 			}
 		}

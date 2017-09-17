@@ -25,6 +25,7 @@ import com.kylantraynor.livelyworld.Utils;
 import com.kylantraynor.livelyworld.climate.ClimateCell;
 import com.kylantraynor.livelyworld.climate.ClimateChunk;
 import com.kylantraynor.livelyworld.climate.ClimateMap;
+import com.kylantraynor.livelyworld.climate.ClimateTriangle;
 import com.kylantraynor.livelyworld.climate.ClimateUtils;
 import com.kylantraynor.livelyworld.climate.Planet;
 import com.kylantraynor.livelyworld.climate.Temperature;
@@ -176,10 +177,12 @@ public class VegetationModule implements Listener {
 			Bukkit.getServer().getLogger().info("Trying to plant OxeyeDaisy");
 		boolean isClimateOk = false;
 		if (Planet.getPlanet(b.getWorld()) != null) {
-			ClimateChunk c = ClimateChunk.getAt(b.getLocation());
-			Temperature averageTemp = c.getAverageTemperature();
-			isClimateOk = (averageTemp.getValue() > 10.0 + 273.15 && averageTemp
-					.getValue() < 25.0 + 273.15);
+			ClimateCell c = ClimateUtils.getClimateCellAt(b.getLocation());
+			Temperature averageTemp = ClimateUtils.getAltitudeWeightedTriangleTemperature(c, b.getLocation());
+			isClimateOk = ClimateUtils.isAcceptableTemperature(averageTemp,
+					Temperature.fromCelsius(17),
+					Temperature.fromCelsius(10),
+					Temperature.fromCelsius(30));
 		}
 		if (isClimateOk) {
 			if (debug)

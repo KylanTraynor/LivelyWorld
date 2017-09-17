@@ -441,6 +441,9 @@ public class TidesModule {
 			String[] args) {
 		if (args.length >= 2) {
 			switch (args[1].toUpperCase()) {
+			case "INFO":
+				sender.sendMessage("Loaded water chunks: " + WaterChunk.chunks.size() + "/" + LivelyWorld.getInstance().getServer().getWorld("world").getLoadedChunks().length);
+				break;
 			case "GET":
 				if(args.length >= 3){
 					switch(args[2].toUpperCase()) {

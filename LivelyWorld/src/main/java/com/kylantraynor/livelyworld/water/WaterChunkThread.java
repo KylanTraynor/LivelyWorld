@@ -58,8 +58,9 @@ public class WaterChunkThread extends Thread {
 	}
 
 	private void unloadChunks() {
+		int count = 5;
 		int i = 0;
-		while(i < WaterChunk.chunks.size()){
+		while(i < WaterChunk.chunks.size() && count > 0){
 			WaterChunk c = WaterChunk.chunks.get(i);
 			if(c == null){
 				i++; continue;
@@ -68,33 +69,34 @@ public class WaterChunkThread extends Thread {
 				c.unload();
 				//LivelyWorld.getInstance().getLogger().info("Unloading Chunk at " + c.getX() + ", " + c.getZ() + ", Total: " + WaterChunk.chunks.size());
 				WaterChunk.chunks.remove(i);
-				return;
+				count--;
 			}
 			i++;
 		}
 	}
 
 	private void loadChunks() {
+		int count = 5;
 		int i = 0;
-		while(i < WaterChunk.chunks.size()){
+		while(i < WaterChunk.chunks.size() && count > 0){
 			WaterChunk c = WaterChunk.chunks.get(i);
 			if(c == null){
 				i++; continue;
 			}
 			if(!c.isLoaded() && c.getWorld().isChunkLoaded(c.getX(), c.getZ())){
 				c.load();
-				return;
+				count--;
 			}
 			i++;
 		}
 		i = 0;
 		Chunk[] loadedChunks = Bukkit.getServer().getWorld("world").getLoadedChunks();
-		while(i < loadedChunks.length){
+		while(i < loadedChunks.length && count > 0){
 			Chunk c = loadedChunks[i];
 			WaterChunk wc = WaterChunk.get(c.getWorld(), c.getX(), c.getZ());
 			if(!wc.isLoaded() && c.isLoaded()){
 				wc.load();
-				return;
+				count--;
 			}
 			i++;
 		}

@@ -317,7 +317,10 @@ public class WaterChunk {
 				if(newSectors != 0){
 					int nextChunkIndex = location*sectorLength + size + remainingPadding;
 					byte[] array = baos.toByteArray();
-					byte[] nextChunks = new byte[(int) (f.length() - nextChunkIndex)];
+					byte[] nextChunks = null;
+					if(f.length() - nextChunkIndex > 0){
+						nextChunks = new byte[(int) (f.length() - nextChunkIndex)];
+					}
 					byte[] chunkData = new byte[baos.size() + finalPadding + nextChunks.length];
 					f.readFully(nextChunks);
 					for(int i = 0; i < chunkData.length; i++){
@@ -325,7 +328,7 @@ public class WaterChunk {
 							chunkData[i] = array[i];
 						} else if(i < baos.size() + finalPadding){
 							
-						} else {
+						} else if(nextChunks != null) {
 							chunkData[i] = nextChunks[i - (baos.size() + finalPadding)];
 						}
 					}

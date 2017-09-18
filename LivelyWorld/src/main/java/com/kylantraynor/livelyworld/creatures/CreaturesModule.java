@@ -25,7 +25,7 @@ import com.kylantraynor.livelyworld.LivelyWorld;
 
 public class CreaturesModule {
 
-	private boolean autobreed = false;
+	private boolean autobreed = true;
 	private LivelyWorld plugin;
 	private BukkitRunnable runnable;
 	private AnimalsHelper helper;
@@ -58,7 +58,7 @@ public class CreaturesModule {
 						Entity[] entities = chunk.getEntities();
 						for(Entity e : entities){
 							if(isAnimal(e)){
-								if(Math.random() >= 0.25) continue;
+								if(Math.random() >= 0.15) continue;
 								Location lastLoc = endangeredAnimals.get(e.getUniqueId());
 								if(lastLoc != null){
 									if(lastLoc.getBlock() == e.getLocation().getBlock()){

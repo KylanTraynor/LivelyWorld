@@ -242,9 +242,14 @@ public class ClimateUtils {
 		return false;
 	}
 
+	/**
+	 * Returns the amount of sun radiation at this location.
+	 * @param loc as Location
+	 * @return [0-1]
+	 */
 	public static double getSunRadiation(Location loc){
 		Planet p = Planet.getPlanet(loc.getWorld());
-		if(p == null) return loc.getBlock().getLightFromSky() / 15;
+		if(p == null) return ((int)loc.getBlock().getLightFromSky()) / 15.0;
 		return p.getSunRadiation(loc);
 	}
 }

@@ -356,8 +356,11 @@ public class WaterChunk {
 			compressedSize = f.readInt();
 			if(compressedSize == 0) return;
 			compressedData = new byte[compressedSize];
-			f.seek(1024*4 + (data.length * ((getX() & 32) * 32) + (getZ() & 32)));
-			f.readFully(compressedData);
+			int startIndex = 1024*4 + (data.length * ((getX() & 32) * 32) + (getZ() & 32));
+			f.seek(startIndex);
+			if(f.length() >= startIndex + compressedSize){
+				f.readFully(compressedData);
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {

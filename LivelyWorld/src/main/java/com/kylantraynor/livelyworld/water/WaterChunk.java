@@ -383,7 +383,7 @@ public class WaterChunk {
 	        int rlen = -1;
 	        int i = 0;
 	        while ((rlen = iis.read(buf)) != -1) {
-	        	for(int b = 0; b < buf.length; b++){
+	        	for(int b = 0; b < rlen; b++){
 	        		synchronized(data){
 	        			data[i] = buf[b];
 	        		}
@@ -399,13 +399,13 @@ public class WaterChunk {
 				e.printStackTrace();
 			}
 		}
-		
+		/*
 		synchronized(data){
 			byte[] buffer = baos.toByteArray();
 			for(int i = 0; i < buffer.length; i++){
 				data[i] = buffer[i];
 			}
-		}
+		}*/
 		
 		/*try {
 			fileLock.lock();

@@ -158,7 +158,8 @@ public class CreaturesModule {
 	public boolean isAnimal(Entity e) {
 		if(e.getType() == EntityType.COW) return true;
 		if(e.getType() == EntityType.SHEEP) return true;
-		//if(e.getType() == EntityType.HORSE) return true;
+		if(e.getType() == EntityType.HORSE) return true;
+		if(e.getType() == EntityType.LLAMA) return true;
 		return false;
 	}
 	

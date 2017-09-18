@@ -327,7 +327,7 @@ public class WaterChunk {
 						} else if(i < baos.size() + finalPadding){
 							
 						} else {
-							chunkData[i] = nextChunks[i - baos.size() + finalPadding];
+							chunkData[i] = nextChunks[i - (baos.size() + finalPadding)];
 						}
 					}
 					f.seek(location * sectorLength);

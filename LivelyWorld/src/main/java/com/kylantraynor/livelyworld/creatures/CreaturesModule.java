@@ -58,6 +58,7 @@ public class CreaturesModule {
 						Entity[] entities = chunk.getEntities();
 						for(Entity e : entities){
 							if(isAnimal(e)){
+								if(e.getPassengers().size() > 0) continue;
 								if(Math.random() >= 0.05) continue;
 								Location lastLoc = endangeredAnimals.get(e.getUniqueId());
 								if(lastLoc != null){
@@ -70,28 +71,16 @@ public class CreaturesModule {
 								Animals animal = (Animals) e;
 								if(!animal.isAdult()) continue;
 								boolean ate = false;
-								if(isEdibleBlock(e.getLocation().getBlock())){
-									Block b = e.getLocation().getBlock();
-									if(isBreakableBlock(b)){
-										b.setType(Material.AIR);
-										b.getWorld().playSound(e.getLocation(), Sound.BLOCK_GRASS_BREAK, 1, 1);
+								Block edibleBlock = getEdibleBlockAround(e.getLocation().getBlock());
+								if(edibleBlock != null){
+									if(isBreakableBlock(edibleBlock)){
+										edibleBlock.setType(Material.AIR);
+										edibleBlock.getWorld().playSound(e.getLocation(), Sound.BLOCK_GRASS_BREAK, 1, 1);
 									} else {
-										if(b.getType() != Material.HAY_BLOCK){
-											b.setType(Material.DIRT);
+										if(edibleBlock.getType() != Material.HAY_BLOCK){
+											edibleBlock.setType(Material.DIRT);
 										}
-										b.getWorld().playSound(e.getLocation(), Sound.BLOCK_GRASS_BREAK, 1, 1);
-									}
-									ate = true;
-								} else if(isEdibleBlock(e.getLocation().getBlock().getRelative(BlockFace.DOWN))){
-									Block b = e.getLocation().getBlock().getRelative(BlockFace.DOWN);
-									if(isBreakableBlock(b)){
-										b.setType(Material.AIR);
-										b.getWorld().playSound(e.getLocation(), Sound.BLOCK_GRASS_BREAK, 1, 1);
-									} else {
-										if(b.getType() != Material.HAY_BLOCK){
-											b.setType(Material.DIRT);
-										}
-										b.getWorld().playSound(e.getLocation(), Sound.BLOCK_GRASS_BREAK, 1, 1);
+										edibleBlock.getWorld().playSound(e.getLocation(), Sound.BLOCK_GRASS_BREAK, 1, 1);
 									}
 									ate = true;
 								}
@@ -163,6 +152,22 @@ public class CreaturesModule {
 		if(e.getType() == EntityType.HORSE) return true;
 		if(e.getType() == EntityType.LLAMA) return true;
 		return false;
+	}
+	
+	public Block getEdibleBlockAround(Block block){
+		int xs = Math.random() > 0.5 ? 1 : -1;
+		int zs = Math.random() > 0.5 ? 1 : -1;
+		int xcrement = xs < 0 ? 1 : -1;
+		int zcrement = zs < 0 ? 1 : -1;
+		for(int x = xs; x != xs * -1; x += xcrement){
+			for(int z = zs; z != zs * -1; z += zcrement){
+				for(int y = 1; y >= -1; y--){
+					Block b = block.getRelative(x, y, z);
+					if(isEdibleBlock(b)) return b;
+				}
+			}
+		}
+		return null;
 	}
 	
 	public boolean isEdibleBlock(Block block){

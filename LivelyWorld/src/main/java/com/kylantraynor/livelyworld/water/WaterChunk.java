@@ -275,7 +275,7 @@ public class WaterChunk {
 		
 		RandomAccessFile f = null;
 		try {
-			f = new RandomAccessFile(getFile(), "wb");
+			f = new RandomAccessFile(getFile(), "rw");
 			f.seek(((getX() & 32) * 32 * 4) + ((getZ() & 32) * 4));
 			f.write(baos.size());
 			f.seek(1024*4 + (data.length * ((getX() & 32) * 32) + (getZ() & 32)));
@@ -350,7 +350,7 @@ public class WaterChunk {
 		byte[] compressedData = null;
 		RandomAccessFile f = null;
 		try {
-			f = new RandomAccessFile(getFile(), "rb");
+			f = new RandomAccessFile(getFile(), "r");
 			f.seek(((getX() & 32) * 32 * 4) + ((getZ() & 32) * 4));
 			compressedSize = f.readInt();
 			if(compressedSize == 0) return;

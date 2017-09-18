@@ -284,7 +284,9 @@ public class WaterChunk {
 			e.printStackTrace();
 		} finally {
 			try {
-				f.close();
+				if(f!=null){
+					f.close();
+				}
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -359,7 +361,9 @@ public class WaterChunk {
 			e.printStackTrace();
 		} finally {
 			try {
-				f.close();
+				if(f != null){
+					f.close();
+				}
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}

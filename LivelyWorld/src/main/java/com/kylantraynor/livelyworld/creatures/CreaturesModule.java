@@ -58,7 +58,7 @@ public class CreaturesModule {
 						Entity[] entities = chunk.getEntities();
 						for(Entity e : entities){
 							if(isAnimal(e)){
-								if(Math.random() >= 0.15) continue;
+								if(Math.random() >= 0.05) continue;
 								Location lastLoc = endangeredAnimals.get(e.getUniqueId());
 								if(lastLoc != null){
 									if(lastLoc.getBlock() == e.getLocation().getBlock()){
@@ -100,7 +100,9 @@ public class CreaturesModule {
 									if(animal.getHealth() >= mxHealth - 2 && animal.canBreed()){
 										if(getHelper() != null){
 											if(!getHelper().isInLoveMode(animal)){
-												getHelper().startLoveMode(animal);
+												if(Math.random() < 0.1){
+													getHelper().startLoveMode(animal);
+												}
 											}
 											getHelper().moveTowardOthers(animal);
 										}

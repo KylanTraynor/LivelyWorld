@@ -31,6 +31,7 @@ import com.kylantraynor.livelyworld.events.BlockWaterLevelChangeEvent;
 
 public class WaterChunk {
 	final static CopyOnWriteArrayList<WaterChunk> chunks = new CopyOnWriteArrayList<WaterChunk>(); 
+	final static int sectorLength = 1024*4;
 	static boolean disabled = false;
 	
 	final byte[] data = new byte[16 * 16 * 256 * 4];
@@ -275,12 +276,64 @@ public class WaterChunk {
 		}
 		
 		RandomAccessFile f = null;
+		int locationIndex = ((getX() & 32) * 32 * 4) + ((getZ() & 32) * 4);
+		int sizeIndex = ((1024 * 4) + ((getX() & 32) * 32 * 4) + ((getZ() & 32) * 4));
 		try {
 			f = new RandomAccessFile(getFile(), "rw");
-			f.seek(((getX() & 32) * 32 * 4) + ((getZ() & 32) * 4));
+			f.seek(locationIndex);
+			int location = f.readInt();
+			int size = 0;
+			if(location < 2){
+				location = Math.floorDiv((Math.max((int)f.length(), 1024 * 8)), sectorLength);
+				f.seek(locationIndex);
+				f.write(location);
+			} else {
+				f.seek(sizeIndex);
+				size = f.readInt();
+			}
+			f.seek(sizeIndex);
 			f.write(baos.size());
-			f.seek(1024*4 + (data.length * ((getX() & 32) * 32) + (getZ() & 32)));
-			f.write(baos.toByteArray());
+			f.seek(location * sectorLength);
+			if(location * sectorLength >= f.length()){
+				f.write(baos.toByteArray());
+				int paddingSize = sectorLength - (baos.size() & sectorLength);
+				byte[] padding = new byte[paddingSize];
+				f.write(padding);
+			} else {
+				// CHECK IF NEW SECTORS ARE NEEDED BEFORE!!
+				int remainingPadding = sectorLength - (size & sectorLength);
+				int diff = size - baos.size();
+				int finalPadding = sectorLength - (baos.size() & sectorLength);
+				int newSectors = (baos.size() + finalPadding - (size + remainingPadding)) / sectorLength;
+				if(diff >= remainingPadding){
+					int nextChunkIndex = location*sectorLength + remainingPadding;
+					byte[] array = baos.toByteArray();
+					byte[] nextChunks = new byte[(int) (f.length() - nextChunkIndex)];
+					byte[] chunkData = new byte[baos.size() + finalPadding + nextChunks.length];
+					f.readFully(nextChunks);
+					for(int i = 0; i < chunkData.length; i++){
+						if(i < baos.size()){
+							chunkData[i] = array[i];
+						} else if(i < baos.size() + finalPadding){
+							
+						} else {
+							chunkData[i] = nextChunks[i - baos.size() + finalPadding];
+						}
+					}
+					f.seek(location * sectorLength);
+					f.write(chunkData);
+					f.seek(1024 * 4);
+					while(f.getFilePointer() < 1024 * 8){
+						int loc = f.readInt();
+						if(loc > location){
+							f.seek(f.getFilePointer() - 4);
+							f.write(loc + newSectors);
+						}
+					}
+				} else {
+					f.write(baos.toByteArray());
+				}
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
@@ -353,15 +406,18 @@ public class WaterChunk {
 		try {
 			f = new RandomAccessFile(getFile(), "r");
 			if(f.length() == 0) return;
-			f.seek(((getX() & 32) * 32 * 4) + ((getZ() & 32) * 4));
-			compressedSize = f.readInt();
-			if(compressedSize == 0) return;
+			int locationIndex = ((getX() & 32) * 32 * 4) + ((getZ() & 32) * 4);
+			int sizeIndex = ((1024 * 4) + ((getX() & 32) * 32 * 4) + ((getZ() & 32) * 4));
+			
+			f.seek(locationIndex);
+			int location = f.readInt();
+			if(location < 2) return;
+			f.seek(sizeIndex);
+			int size = f.readInt();
+			
 			compressedData = new byte[compressedSize];
-			int startIndex = 1024*4 + (data.length * ((getX() & 32) * 32) + (getZ() & 32));
-			f.seek(startIndex);
-			if(f.length() >= startIndex + compressedSize){
-				f.readFully(compressedData);
-			}
+			f.seek(location * sectorLength);
+			f.readFully(compressedData);
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {

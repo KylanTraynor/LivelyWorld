@@ -312,7 +312,7 @@ public class WaterChunk {
 			} else {
 				// CHECK IF NEW SECTORS ARE NEEDED BEFORE!!
 				int remainingPadding = sectorLength - (size & sectorLength);
-				int diff = size - baos.size();
+				int diff = baos.size() - size;
 				int finalPadding = sectorLength - (baos.size() & sectorLength);
 				int newSectors = (baos.size() + finalPadding - (size + remainingPadding)) / sectorLength;
 				if(diff >= remainingPadding){

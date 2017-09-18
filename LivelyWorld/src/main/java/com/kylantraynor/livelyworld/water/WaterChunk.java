@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterInputStream;
+import java.util.zip.InflaterOutputStream;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -254,7 +255,41 @@ public class WaterChunk {
 	}
 	
 	public void saveToFile(){
+		
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		DeflaterOutputStream dos = new DeflaterOutputStream(baos);
 		try {
+			synchronized(this.data){
+				dos.write(data);
+			}
+			dos.flush();
+		} catch (IOException e2) {
+			e2.printStackTrace();
+		} finally{
+			try {
+				dos.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		RandomAccessFile f = null;
+		try {
+			f = new RandomAccessFile(getFile(), "wb");
+			f.seek(((getX() & 32) * 32 * 4) + ((getZ() & 32) * 4));
+			f.write(baos.size());
+			f.seek(1024*4 + (data.length * ((getX() & 32) * 32) + (getZ() & 32)));
+			f.write(baos.toByteArray());
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				f.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		/*try {
 			fileLock.lock();
 			try{
 				DeflaterOutputStream s = null;
@@ -305,11 +340,54 @@ public class WaterChunk {
 			}
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
-		}
+		}*/
 	}
 	
 	public void loadFromFile(){
+		int compressedSize = 0;
+		byte[] compressedData = null;
+		RandomAccessFile f = null;
 		try {
+			f = new RandomAccessFile(getFile(), "rb");
+			f.seek(((getX() & 32) * 32 * 4) + ((getZ() & 32) * 4));
+			compressedSize = f.readInt();
+			if(compressedSize == 0) return;
+			compressedData = new byte[compressedSize];
+			f.seek(1024*4 + (data.length * ((getX() & 32) * 32) + (getZ() & 32)));
+			f.readFully(compressedData);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				f.close();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+		}
+		
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		InflaterOutputStream dos = new InflaterOutputStream(baos);
+		try {
+			dos.write(compressedData);
+			dos.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				dos.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		synchronized(data){
+			byte[] buffer = baos.toByteArray();
+			for(int i = 0; i < buffer.length; i++){
+				data[i] = buffer[i];
+			}
+		}
+		
+		/*try {
 			fileLock.lock();
 			try{
 				try {
@@ -350,16 +428,6 @@ public class WaterChunk {
 								this.data[i] = ob[i];
 							}
 						}
-						/*try{
-							dataLock.lock();
-							try{
-								data = o.toByteArray();
-							} finally {
-								dataLock.unlock();
-							}
-						} catch (InterruptedException e){
-							e.printStackTrace();
-						}*/
 					}
 				} catch (FileNotFoundException e) {
 					e.printStackTrace();
@@ -369,7 +437,7 @@ public class WaterChunk {
 			}
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
-		}
+		}*/
 	}
 
 	public boolean isLoaded() {

@@ -44,11 +44,11 @@ public class AnimalsHelperHandler implements AnimalsHelper {
         try {
             Class<?> c = EntityAnimal.class;
 
-            Field bx = c.getDeclaredField("bw");
+            Field bx = c.getDeclaredField("bx");
             bx.setAccessible(true);
             bx.setInt(entity, 600);
 
-            Field by = c.getDeclaredField("bx");
+            Field by = c.getDeclaredField("by");
             by.setAccessible(true);
             by.set(entity, human);
 

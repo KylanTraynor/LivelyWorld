@@ -10,6 +10,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
@@ -760,11 +761,11 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 			}
 			BlockState state = event.getBlock().getState();
 			if(state instanceof Crops){
-				if(ClimateUtils.getSunRadiation(state.getLocation()) <= Math.random()){
+				Crops crops = (Crops) state;
+				if(ClimateUtils.getSunRadiation(state.getLocation()) <= Math.random() && crops.getItemType() != Material.NETHER_WARTS){
 					event.setCancelled(true);
 					return;
 				}
-				Crops crops = (Crops) state;
 				Temperature temp = null;
 				switch(crops.getItemType()){
 				case CROPS: // WHEAT
@@ -792,6 +793,13 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 					}
 					break;
 				case NETHER_WARTS:
+					temp = ClimateUtils.getTemperatureAt(event.getBlock().getLocation());
+					if(temp.isNaN() || event.getBlock().getBiome() == Biome.HELL) return;
+					if(!ClimateUtils.isAcceptableTemperature(temp,
+							Temperature.fromCelsius(60), Temperature.fromCelsius(40), Temperature.fromCelsius(100))){
+						event.setCancelled(true);
+						return;
+					}
 					break;
 				default:
 					break;

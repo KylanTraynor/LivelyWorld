@@ -150,7 +150,7 @@ public class WaterChunk {
 	}
 	
 	private int getIndex(int x, int y, int z){
-		return (x * 16 * 256 * 4) + (z * 256 * 4) + y * 4;
+		return (y * 16 * 16 * 4) + (x * 16 * 4) + z * 4;
 	}
 	
 	int getData(int x, int y, int z) {

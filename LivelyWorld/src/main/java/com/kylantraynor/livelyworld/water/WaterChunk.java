@@ -280,6 +280,16 @@ public class WaterChunk {
 		int sizeIndex = ((1024 * 4) + ((getX() & 32) * 32 * 4) + ((getZ() & 32) * 4));
 		try {
 			f = new RandomAccessFile(getFile(), "rw");
+			if(f.length() < 1024 * 8){
+				f.seek(locationIndex);
+				f.write(2);
+				f.seek(sizeIndex);
+				f.write(baos.size());
+				f.seek(2 * sectorLength);
+				f.write(baos.size());
+				f.write(new byte[sectorLength - (baos.size() & sectorLength)]);
+				return;
+			}
 			f.seek(locationIndex);
 			int location = f.readInt();
 			int size = 0;

@@ -1,5 +1,6 @@
 package com.kylantraynor.livelyworld.water;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -375,16 +376,25 @@ public class WaterChunk {
 		
 		if(compressedData == null) return;
 		
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		InflaterOutputStream dos = new InflaterOutputStream(baos);
+		ByteArrayInputStream bais = new ByteArrayInputStream(compressedData);
+		InflaterInputStream iis = new InflaterInputStream(bais);
 		try {
-			dos.write(compressedData);
-			dos.flush();
+			byte[] buf = new byte[5];
+	        int rlen = -1;
+	        int i = 0;
+	        while ((rlen = iis.read(buf)) != -1) {
+	        	for(int b = 0; b < buf.length; b++){
+	        		synchronized(data){
+	        			data[i] = buf[b];
+	        		}
+	        		i++;
+	        	}
+	        }
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
 			try {
-				dos.close();
+				iis.close();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

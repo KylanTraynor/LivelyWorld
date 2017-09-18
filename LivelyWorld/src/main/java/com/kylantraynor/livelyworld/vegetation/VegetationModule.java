@@ -305,6 +305,13 @@ public class VegetationModule implements Listener {
 					event.getBlock().getWorld().dropItemNaturally(event.getBlock().getLocation(), is);
 				}
 				break;
+			case NETHER_WARTS:
+				plugin.getLogger().info("Processing Nether Warts Breaking.");
+				if(crops.getState() == CropState.RIPE){
+					ItemStack is = new ItemStack(Material.NETHER_WARTS, 10);
+					event.getBlock().getWorld().dropItemNaturally(event.getBlock().getLocation(), is);
+				}
+				break;
 			case CARROT:
 				break;
 			case POTATO:

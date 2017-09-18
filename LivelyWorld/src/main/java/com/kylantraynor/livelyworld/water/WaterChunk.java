@@ -351,6 +351,7 @@ public class WaterChunk {
 		RandomAccessFile f = null;
 		try {
 			f = new RandomAccessFile(getFile(), "r");
+			if(f.length() == 0) return;
 			f.seek(((getX() & 32) * 32 * 4) + ((getZ() & 32) * 4));
 			compressedSize = f.readInt();
 			if(compressedSize == 0) return;
@@ -368,6 +369,8 @@ public class WaterChunk {
 				e1.printStackTrace();
 			}
 		}
+		
+		if(compressedData == null) return;
 		
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		InflaterOutputStream dos = new InflaterOutputStream(baos);

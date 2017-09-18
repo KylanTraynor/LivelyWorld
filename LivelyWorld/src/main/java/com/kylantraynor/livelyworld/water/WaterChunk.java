@@ -312,11 +312,10 @@ public class WaterChunk {
 			} else {
 				// CHECK IF NEW SECTORS ARE NEEDED BEFORE!!
 				int remainingPadding = sectorLength - (size & sectorLength);
-				int diff = baos.size() - size;
 				int finalPadding = sectorLength - (baos.size() & sectorLength);
 				int newSectors = (baos.size() + finalPadding - (size + remainingPadding)) / sectorLength;
-				if(diff >= remainingPadding){
-					int nextChunkIndex = location*sectorLength + remainingPadding;
+				if(newSectors != 0){
+					int nextChunkIndex = location*sectorLength + size + remainingPadding;
 					byte[] array = baos.toByteArray();
 					byte[] nextChunks = new byte[(int) (f.length() - nextChunkIndex)];
 					byte[] chunkData = new byte[baos.size() + finalPadding + nextChunks.length];

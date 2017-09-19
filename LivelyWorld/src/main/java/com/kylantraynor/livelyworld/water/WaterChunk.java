@@ -31,7 +31,7 @@ import com.kylantraynor.livelyworld.events.BlockWaterLevelChangeEvent;
 
 public class WaterChunk {
 	final static CopyOnWriteArrayList<WaterChunk> chunks = new CopyOnWriteArrayList<WaterChunk>(); 
-	final static int sectorLength = 4096;
+	final static int sectorLength = 512;
 	static boolean disabled = false;
 	
 	final byte[] data = new byte[16 * 16 * 256 * 4];
@@ -282,7 +282,7 @@ public class WaterChunk {
 			f = new RandomAccessFile(getFile(), "rw");
 			if(f.length() < 8192){
 				f.seek(locationIndex);
-				f.write(2);
+				f.write(16);
 				f.seek(sizeIndex);
 				f.write(baos.size());
 				f.seek(8192);
@@ -296,7 +296,7 @@ public class WaterChunk {
 			int location = f.readInt();
 			int size = 0;
 			LivelyWorld.getInstance().getLogger().info("Location: " + location);
-			if(location < 2){
+			if(location < 16){
 				location = Math.floorDiv((Math.max((int)f.length(), 1024 * 8)), sectorLength);
 				LivelyWorld.getInstance().getLogger().info("Location: " + location + ". fLength: " + f.length());
 				f.seek(locationIndex);
@@ -426,12 +426,12 @@ public class WaterChunk {
 		try {
 			f = new RandomAccessFile(getFile(), "r");
 			if(f.length() < 1024 * 8) return;
-			int locationIndex = ((getX() & 32) * 32 * 4) + ((getZ() & 32) * 4);
-			int sizeIndex = ((1024 * 4) + ((getX() & 32) * 32 * 4) + ((getZ() & 32) * 4));
+			int locationIndex = (Math.floorMod(getX(),32) * 32 * 4) + (Math.floorMod(getZ(),32) * 4);
+			int sizeIndex = ((1024 * 4) + (Math.floorMod(getX(),32) * 32 * 4) + (Math.floorMod(getZ(),32) * 4));
 			
 			f.seek(locationIndex);
 			int location = f.readInt();
-			if(location < 2) return;
+			if(location < 16) return;
 			f.seek(sizeIndex);
 			int size = f.readInt();
 			

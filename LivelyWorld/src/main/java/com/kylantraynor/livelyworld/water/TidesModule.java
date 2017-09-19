@@ -92,11 +92,15 @@ public class TidesModule {
 	public void disable(){
 		if(this.enabled){
 			this.enabled = false;
-			plugin.getLogger().info("Unloading all water chunks.");
-			waterThread.interrupt();
-			WaterChunk.unloadAll();
-			plugin.getLogger().info("Done!");
+			stopWaterChunksThread();
 		}
+	}
+	
+	public void stopWaterChunksThread(){
+		plugin.getLogger().info("Unloading all water chunks.");
+		waterThread.interrupt();
+		WaterChunk.unloadAll();
+		plugin.getLogger().info("Done!");
 	}
 
 	public void updateOceanLevelFor(Player p) {
@@ -449,6 +453,10 @@ public class TidesModule {
 					}
 				}
 				sender.sendMessage("Loaded water chunks: " + count + "/" + WaterChunk.chunks.size() + "/" + LivelyWorld.getInstance().getServer().getWorld("world").getLoadedChunks().length);
+				break;
+			case "STOPWATERTHREAD":
+				sender.sendMessage("Stopping water thread.");
+				stopWaterChunksThread();
 				break;
 			case "GET":
 				if(args.length >= 3){

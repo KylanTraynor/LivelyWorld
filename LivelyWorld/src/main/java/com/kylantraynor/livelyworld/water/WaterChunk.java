@@ -14,7 +14,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.zip.DataFormatException;
 import java.util.zip.DeflaterOutputStream;
+import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
 import java.util.zip.InflaterOutputStream;
 
@@ -462,8 +464,34 @@ public class WaterChunk {
 		
 		if(compressedData == null) return;
 		
-		ByteArrayInputStream bais = new ByteArrayInputStream(compressedData);
-		InflaterInputStream iis = new InflaterInputStream(bais);
+		Inflater inflater = new Inflater();
+		inflater.setInput(compressedData);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream(compressedData.length);
+		byte[] buf = new byte[512];
+		while(!inflater.finished()){
+			int count = 0;
+			try {
+				count = inflater.inflate(buf);
+			} catch (DataFormatException e) {
+				e.printStackTrace();
+			}
+			baos.write(buf, 0, count);
+		}
+		try {
+			baos.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		byte[] bao = baos.toByteArray();
+		if(bao.length == data.length){
+			synchronized(data){
+				for(int i = 0; i < data.length; i++){
+					data[i] = bao[i];
+				}
+			}
+		}
+		/*InflaterInputStream iis = new InflaterInputStream(bais);
 		try {
 			byte[] buf = new byte[512];
 	        int rlen = -1;
@@ -484,7 +512,7 @@ public class WaterChunk {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-		}
+		}*/
 		/*
 		synchronized(data){
 			byte[] buffer = baos.toByteArray();

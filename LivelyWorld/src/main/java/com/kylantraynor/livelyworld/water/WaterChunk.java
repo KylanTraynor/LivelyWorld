@@ -293,8 +293,10 @@ public class WaterChunk {
 			f.seek(locationIndex);
 			int location = f.readInt();
 			int size = 0;
+			LivelyWorld.getInstance().getLogger().info("Location: " + location);
 			if(location < 2){
 				location = Math.floorDiv((Math.max((int)f.length(), 1024 * 8)), sectorLength);
+				LivelyWorld.getInstance().getLogger().info("Location: " + location + ". fLength: " + f.length());
 				f.seek(locationIndex);
 				f.write(location);
 			} else {
@@ -303,6 +305,7 @@ public class WaterChunk {
 			}
 			f.seek(sizeIndex);
 			f.write(baos.size());
+			LivelyWorld.getInstance().getLogger().info("Location: " + location + ". Size: " + baos.size());
 			f.seek(location * sectorLength);
 			if(location * sectorLength >= f.length()){
 				f.write(baos.toByteArray());

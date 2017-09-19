@@ -321,8 +321,13 @@ public class WaterChunk {
 					if(f.length() - nextChunkIndex > 0){
 						nextChunks = new byte[(int) (f.length() - nextChunkIndex)];
 					}
-					byte[] chunkData = new byte[baos.size() + finalPadding + nextChunks.length];
-					f.readFully(nextChunks);
+					byte[] chunkData = null;
+					if(nextChunks != null){
+						chunkData = new byte[baos.size() + finalPadding + nextChunks.length];
+						f.readFully(nextChunks);
+					} else {
+						chunkData = new byte[baos.size() + finalPadding];
+					}
 					for(int i = 0; i < chunkData.length; i++){
 						if(i < baos.size()){
 							chunkData[i] = array[i];

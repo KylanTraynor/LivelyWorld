@@ -276,8 +276,8 @@ public class WaterChunk {
 		}
 		
 		RandomAccessFile f = null;
-		int locationIndex = ((getX() & 32) * 32 * 4) + ((getZ() & 32) * 4);
-		int sizeIndex = ((4096) + ((getX() & 32) * 32 * 4) + ((getZ() & 32) * 4));
+		int locationIndex = (Math.floorMod(getX(),32) * 32 * 4) + (Math.floorMod(getZ(),32) * 4);
+		int sizeIndex = ((4096) + (Math.floorMod(getX(),32) * 32 * 4) + (Math.floorMod(getZ(),32) * 4));
 		try {
 			f = new RandomAccessFile(getFile(), "rw");
 			if(f.length() < 8192){
@@ -340,8 +340,8 @@ public class WaterChunk {
 					}
 					f.seek(location * sectorLength);
 					f.write(chunkData);
-					f.seek(4096);
-					while(f.getFilePointer() < 8192){
+					f.seek(0);
+					while(f.getFilePointer() < 4096){
 						int loc = f.readInt();
 						if(loc > location){
 							f.seek(f.getFilePointer() - 4);

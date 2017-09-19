@@ -90,15 +90,19 @@ public class WaterChunkThread extends Thread {
 			i++;
 		}
 		i = 0;
-		Chunk[] loadedChunks = Bukkit.getServer().getWorld("world").getLoadedChunks();
-		while(i < loadedChunks.length && count > 0){
-			Chunk c = loadedChunks[i];
-			WaterChunk wc = WaterChunk.get(c.getWorld(), c.getX(), c.getZ());
-			if(!wc.isLoaded() && c.isLoaded()){
-				wc.load();
-				count--;
+		try{
+			Chunk[] loadedChunks = Bukkit.getServer().getWorld("world").getLoadedChunks();
+			while(i < loadedChunks.length && count > 0){
+				Chunk c = loadedChunks[i];
+				WaterChunk wc = WaterChunk.get(c.getWorld(), c.getX(), c.getZ());
+				if(!wc.isLoaded() && c.isLoaded()){
+					wc.load();
+					count--;
+				}
+				i++;
 			}
-			i++;
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 	

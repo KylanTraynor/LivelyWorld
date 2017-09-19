@@ -344,14 +344,17 @@ public class WaterChunk {
 					f.write(chunkData);
 					f.seek(0);
 					while(f.getFilePointer() < 4096){
+						int pos = (int)f.getFilePointer();
 						int loc = f.readInt();
 						if(loc > location){
-							f.seek(f.getFilePointer() - 4);
+							f.seek(pos);
 							f.write(loc + newSectors);
 						}
 					}
 				} else {
+					LivelyWorld.getInstance().getLogger().info("Rewriting at location: " + location + " (" + location*sectorLength + ") with a size of " + baos.size() + " with padding: " + finalPadding);
 					f.write(baos.toByteArray());
+					f.write(new byte[finalPadding]);
 				}
 			}
 		} catch (IOException e) {
@@ -437,6 +440,9 @@ public class WaterChunk {
 			
 			compressedData = new byte[compressedSize];
 			f.seek(location * sectorLength);
+			
+			LivelyWorld.getInstance().getLogger().info("Reading from location: " + location + " (" + location*sectorLength + ") with a size of " + size);
+			
 			f.readFully(compressedData);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -455,7 +461,7 @@ public class WaterChunk {
 		ByteArrayInputStream bais = new ByteArrayInputStream(compressedData);
 		InflaterInputStream iis = new InflaterInputStream(bais);
 		try {
-			byte[] buf = new byte[5];
+			byte[] buf = new byte[512];
 	        int rlen = -1;
 	        int i = 0;
 	        while ((rlen = iis.read(buf)) != -1) {

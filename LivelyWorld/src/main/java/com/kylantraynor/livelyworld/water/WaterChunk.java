@@ -286,14 +286,12 @@ public class WaterChunk {
 				f.seek(locationIndex);
 				f.writeInt(16);
 				f.seek(locationIndex);
-				LivelyWorld.getInstance().getLogger().info("Written location: " + f.readInt() + " (should be 16)");
 				f.seek(sizeIndex);
 				f.writeInt(baos.size());
 				f.seek(sizeIndex);
-				LivelyWorld.getInstance().getLogger().info("Written size: " + f.readInt() + " (should be " + baos.size() + ")");
 				f.seek(8192);
 				int padding = sectorLength - Math.floorMod(baos.size(), sectorLength);
-				LivelyWorld.getInstance().getLogger().info("Writing Initial Data at position 8192, size: " + baos.size() + ". padding: " + padding);
+				//LivelyWorld.getInstance().getLogger().info("Writing Initial Data at position 8192, size: " + baos.size() + ". padding: " + padding);
 				f.write(baos.toByteArray());
 				f.write(new byte[padding]);
 				return;
@@ -304,7 +302,7 @@ public class WaterChunk {
 			//LivelyWorld.getInstance().getLogger().info("Location: " + location);
 			if(location < 16){
 				location = Math.floorDiv((Math.max((int)f.length(), 1024 * 8)), sectorLength);
-				LivelyWorld.getInstance().getLogger().info("Location: " + location + ". fLength: " + f.length());
+				//LivelyWorld.getInstance().getLogger().info("Location: " + location + ". fLength: " + f.length());
 				f.seek(locationIndex);
 				f.writeInt(location);
 			} else {
@@ -313,7 +311,7 @@ public class WaterChunk {
 			}
 			f.seek(sizeIndex);
 			f.writeInt(baos.size());
-			LivelyWorld.getInstance().getLogger().info("Location: " + location + ". Size: " + baos.size() + ". old Size: " + size);
+			//LivelyWorld.getInstance().getLogger().info("Location: " + location + ". Size: " + baos.size() + ". old Size: " + size);
 			f.seek(location * sectorLength);
 			if(location * sectorLength >= f.length()){
 				f.write(baos.toByteArray());
@@ -447,7 +445,7 @@ public class WaterChunk {
 			compressedData = new byte[compressedSize];
 			f.seek(location * sectorLength);
 			
-			LivelyWorld.getInstance().getLogger().info("Reading from location: " + location + " (" + location*sectorLength + ") with a size of " + size);
+			//LivelyWorld.getInstance().getLogger().info("Reading from location: " + location + " (" + location*sectorLength + ") with a size of " + size);
 			
 			f.readFully(compressedData);
 		} catch (IOException e) {

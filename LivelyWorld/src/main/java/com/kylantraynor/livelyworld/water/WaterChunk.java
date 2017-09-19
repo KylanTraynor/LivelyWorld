@@ -282,9 +282,13 @@ public class WaterChunk {
 			f = new RandomAccessFile(getFile(), "rw");
 			if(f.length() < 8192){
 				f.seek(locationIndex);
-				f.write(16);
+				f.writeInt(16);
+				f.seek(locationIndex);
+				LivelyWorld.getInstance().getLogger().info("Written location: " + f.readInt() + " (should be 16)");
 				f.seek(sizeIndex);
-				f.write(baos.size());
+				f.writeInt(baos.size());
+				f.seek(sizeIndex);
+				LivelyWorld.getInstance().getLogger().info("Written size: " + f.readInt() + " (should be " + baos.size() + ")");
 				f.seek(8192);
 				int padding = sectorLength - Math.floorMod(baos.size(), sectorLength);
 				LivelyWorld.getInstance().getLogger().info("Writing Initial Data at position 8192, size: " + baos.size() + ". padding: " + padding);
@@ -295,18 +299,18 @@ public class WaterChunk {
 			f.seek(locationIndex);
 			int location = f.readInt();
 			int size = 0;
-			LivelyWorld.getInstance().getLogger().info("Location: " + location);
+			//LivelyWorld.getInstance().getLogger().info("Location: " + location);
 			if(location < 16){
 				location = Math.floorDiv((Math.max((int)f.length(), 1024 * 8)), sectorLength);
 				LivelyWorld.getInstance().getLogger().info("Location: " + location + ". fLength: " + f.length());
 				f.seek(locationIndex);
-				f.write(location);
+				f.writeInt(location);
 			} else {
 				f.seek(sizeIndex);
 				size = f.readInt();
 			}
 			f.seek(sizeIndex);
-			f.write(baos.size());
+			f.writeInt(baos.size());
 			LivelyWorld.getInstance().getLogger().info("Location: " + location + ". Size: " + baos.size() + ". old Size: " + size);
 			f.seek(location * sectorLength);
 			if(location * sectorLength >= f.length()){
@@ -348,7 +352,7 @@ public class WaterChunk {
 						int loc = f.readInt();
 						if(loc > location){
 							f.seek(pos);
-							f.write(loc + newSectors);
+							f.writeInt(loc + newSectors);
 						}
 					}
 				} else {
@@ -428,13 +432,13 @@ public class WaterChunk {
 		RandomAccessFile f = null;
 		try {
 			f = new RandomAccessFile(getFile(), "r");
-			if(f.length() < 1024 * 8) return;
+			if(f.length() < 8192) return;
 			int locationIndex = (Math.floorMod(getX(),32) * 32 * 4) + (Math.floorMod(getZ(),32) * 4);
-			int sizeIndex = ((1024 * 4) + (Math.floorMod(getX(),32) * 32 * 4) + (Math.floorMod(getZ(),32) * 4));
+			int sizeIndex = ((4096) + (Math.floorMod(getX(),32) * 32 * 4) + (Math.floorMod(getZ(),32) * 4));
 			
 			f.seek(locationIndex);
 			int location = f.readInt();
-			if(location < 16) return;
+			if(location < 8192 / sectorLength) return;
 			f.seek(sizeIndex);
 			int size = f.readInt();
 			

@@ -286,8 +286,10 @@ public class WaterChunk {
 				f.seek(sizeIndex);
 				f.write(baos.size());
 				f.seek(8192);
+				int padding = sectorLength - Math.floorMod(baos.size(), sectorLength);
+				LivelyWorld.getInstance().getLogger().info("Writing Initial Data at position 8192, size: " + baos.size() + ". padding: " + padding);
 				f.write(baos.toByteArray());
-				f.write(new byte[sectorLength - (baos.size() & sectorLength)]);
+				f.write(new byte[padding]);
 				return;
 			}
 			f.seek(locationIndex);
@@ -309,11 +311,11 @@ public class WaterChunk {
 			f.seek(location * sectorLength);
 			if(location * sectorLength >= f.length()){
 				f.write(baos.toByteArray());
-				f.write(new byte[sectorLength - (baos.size() & sectorLength)]);
+				f.write(new byte[sectorLength - Math.floorMod(baos.size(), sectorLength)]);
 			} else {
 				// CHECK IF NEW SECTORS ARE NEEDED BEFORE!!
-				int remainingPadding = sectorLength - (size & sectorLength);
-				int finalPadding = sectorLength - (baos.size() & sectorLength);
+				int remainingPadding = sectorLength - Math.floorMod(size, sectorLength);
+				int finalPadding = sectorLength - Math.floorMod(baos.size(), sectorLength);
 				int newSectors = (baos.size() + finalPadding - (size + remainingPadding)) / sectorLength;
 				if(newSectors != 0){
 					int nextChunkIndex = location*sectorLength + size + remainingPadding;

@@ -422,7 +422,7 @@ public class WaterChunk {
 		RandomAccessFile f = null;
 		try {
 			f = new RandomAccessFile(getFile(), "r");
-			if(f.length() == 0) return;
+			if(f.length() < 1024 * 8) return;
 			int locationIndex = ((getX() & 32) * 32 * 4) + ((getZ() & 32) * 4);
 			int sizeIndex = ((1024 * 4) + ((getX() & 32) * 32 * 4) + ((getZ() & 32) * 4));
 			

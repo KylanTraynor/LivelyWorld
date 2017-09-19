@@ -307,7 +307,7 @@ public class WaterChunk {
 			}
 			f.seek(sizeIndex);
 			f.write(baos.size());
-			LivelyWorld.getInstance().getLogger().info("Location: " + location + ". Size: " + baos.size());
+			LivelyWorld.getInstance().getLogger().info("Location: " + location + ". Size: " + baos.size() + ". old Size: " + size);
 			f.seek(location * sectorLength);
 			if(location * sectorLength >= f.length()){
 				f.write(baos.toByteArray());
@@ -319,29 +319,29 @@ public class WaterChunk {
 				int newSectors = (baos.size() + finalPadding - (size + remainingPadding)) / sectorLength;
 				if(newSectors != 0){
 					int nextChunkIndex = location*sectorLength + size + remainingPadding;
-					byte[] array = baos.toByteArray();
-					byte[] nextChunks = null;
+					//byte[] array = baos.toByteArray();
+					byte[] nextChunks = new byte[0];
 					if(f.length() - nextChunkIndex > 0){
 						nextChunks = new byte[(int) (f.length() - nextChunkIndex)];
 					}
-					byte[] chunkData = null;
-					if(nextChunks != null){
-						chunkData = new byte[baos.size() + finalPadding + nextChunks.length];
-						f.readFully(nextChunks);
-					} else {
-						chunkData = new byte[baos.size() + finalPadding];
-					}
-					for(int i = 0; i < chunkData.length; i++){
+					//byte[] chunkData = null;
+					//chunkData = new byte[baos.size() + finalPadding + nextChunks.length];
+					f.seek(nextChunkIndex);
+					f.readFully(nextChunks);
+					/*for(int i = 0; i < chunkData.length; i++){
 						if(i < baos.size()){
 							chunkData[i] = array[i];
 						} else if(i < baos.size() + finalPadding){
 							
-						} else if(nextChunks != null) {
+						} else {
 							chunkData[i] = nextChunks[i - (baos.size() + finalPadding)];
 						}
-					}
+					}*/
 					f.seek(location * sectorLength);
-					f.write(chunkData);
+					LivelyWorld.getInstance().getLogger().info("Rewriting at location: " + location + " (" + location*sectorLength + ") with a size of " + baos.size() + " with padding: " + finalPadding + " and " + newSectors + " sectors" + ". Moving " + nextChunks.length + " bytes.");
+					f.write(baos.toByteArray());
+					f.write(finalPadding);
+					f.write(nextChunks);
 					f.seek(0);
 					while(f.getFilePointer() < 4096){
 						int pos = (int)f.getFilePointer();

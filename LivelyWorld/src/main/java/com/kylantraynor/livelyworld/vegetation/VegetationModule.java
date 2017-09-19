@@ -268,7 +268,7 @@ public class VegetationModule implements Listener {
 			}
 
 		} else {
-			plugin.log(Level.INFO, "Couldn't plant sapling.");
+			//plugin.log(Level.INFO, "Couldn't plant sapling.");
 		}
 	}
 

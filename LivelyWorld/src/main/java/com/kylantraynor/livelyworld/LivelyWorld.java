@@ -805,11 +805,23 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 					break;
 				}
 			} else {
+				ClimateCell c = null;
+				Temperature temp = null;
 				switch (event.getBlock().getType()) {
 				case SUGAR_CANE:
+					c = ClimateUtils.getClimateCellAt(event.getBlock().getLocation());
+					temp = ClimateUtils.getAltitudeWeightedTriangleTemperature(c, event.getBlock().getLocation());
+					if(temp.isNaN()) return;
+					if(!ClimateUtils.isAcceptableTemperature(
+							temp, Temperature.fromCelsius(32),
+							Temperature.fromCelsius(25), Temperature.fromCelsius(38))){
+						event.setCancelled(true);
+						return;
+					}
 					break;
 				case CACTUS:
-					Temperature temp = ClimateUtils.getTemperatureAt(event.getBlock().getLocation());
+					c = ClimateUtils.getClimateCellAt(event.getBlock().getLocation());
+					temp = ClimateUtils.getAltitudeWeightedTriangleTemperature(c, event.getBlock().getLocation());
 					if(temp.isNaN()) return;
 					double tempDistance = temp.getValue() - (273.15 + 35);
 					if (Math.random() * Math.abs(tempDistance) > 1) {

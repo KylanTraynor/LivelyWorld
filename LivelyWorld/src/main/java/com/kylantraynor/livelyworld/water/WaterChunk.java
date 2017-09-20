@@ -447,7 +447,23 @@ public class WaterChunk {
 			
 			//LivelyWorld.getInstance().getLogger().info("Reading from location: " + location + " (" + location*sectorLength + ") with a size of " + size);
 			
-			f.readFully(compressedData);
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			InflaterOutputStream ios = new InflaterOutputStream(baos);
+			
+			byte[] buf = new byte[5];
+			int rlen = -1;
+			while((rlen = f.read(buf)) >= 0){
+				ios.write(buf, 0, rlen);
+			}
+			
+			if(baos.size() == data.length){
+				byte[] array = baos.toByteArray();
+				synchronized(data){
+					for(int i = 0; i < data.length; i++){
+						data[i] = array[i];
+					}
+				}
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
@@ -460,7 +476,7 @@ public class WaterChunk {
 			}
 		}
 		
-		if(compressedData == null) return;
+		/*if(compressedData == null) return;
 		
 		Inflater inflater = new Inflater();
 		inflater.setInput(compressedData);
@@ -488,7 +504,7 @@ public class WaterChunk {
 					data[i] = bao[i];
 				}
 			}
-		}
+		}*/
 		/*InflaterInputStream iis = new InflaterInputStream(bais);
 		try {
 			byte[] buf = new byte[512];

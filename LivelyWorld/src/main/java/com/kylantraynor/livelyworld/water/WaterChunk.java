@@ -447,22 +447,31 @@ public class WaterChunk {
 			
 			//LivelyWorld.getInstance().getLogger().info("Reading from location: " + location + " (" + location*sectorLength + ") with a size of " + size);
 			
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			InflaterOutputStream ios = new InflaterOutputStream(baos);
+			ByteArrayOutputStream baos = null;
+			InflaterOutputStream ios = null;
 			
-			byte[] buf = new byte[5];
-			int rlen = -1;
-			while((rlen = f.read(buf)) >= 0){
-				ios.write(buf, 0, rlen);
-			}
-			
-			if(baos.size() == data.length){
-				byte[] array = baos.toByteArray();
-				synchronized(data){
-					for(int i = 0; i < data.length; i++){
-						data[i] = array[i];
+			try{
+				baos = new ByteArrayOutputStream();
+				ios = new InflaterOutputStream(baos);
+				
+				byte[] buf = new byte[5];
+				int rlen = -1;
+				while((rlen = f.read(buf)) >= 0){
+					ios.write(buf, 0, rlen);
+				}
+				
+				ios.flush();
+				
+				if(baos.size() == data.length){
+					byte[] array = baos.toByteArray();
+					synchronized(data){
+						for(int i = 0; i < data.length; i++){
+							data[i] = array[i];
+						}
 					}
 				}
+			} finally {
+				ios.close();
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

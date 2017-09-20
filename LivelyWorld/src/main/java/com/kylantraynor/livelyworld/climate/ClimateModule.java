@@ -622,7 +622,7 @@ public class ClimateModule {
 								p.sendMessage(MessageHeader
 										+ ChatColor.GOLD
 										+ "Current temperature here: "
-										+ c.getTemperature().toString(p));
+										+ ClimateUtils.getAltitudeWeightedTriangleTemperature(c, p.getLocation()).toString(p));
 							} else {
 								p.sendMessage(MessageHeader
 										+ ChatColor.RED

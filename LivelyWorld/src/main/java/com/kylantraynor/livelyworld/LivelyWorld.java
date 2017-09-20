@@ -806,6 +806,8 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 				}
 			} else {
 				switch (event.getBlock().getType()) {
+				case SUGAR_CANE:
+					break;
 				case CACTUS:
 					Temperature temp = ClimateUtils.getTemperatureAt(event.getBlock().getLocation());
 					if(temp.isNaN()) return;

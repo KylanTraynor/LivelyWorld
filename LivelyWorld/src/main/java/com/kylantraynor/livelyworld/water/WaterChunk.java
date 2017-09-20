@@ -471,7 +471,9 @@ public class WaterChunk {
 					}
 				}
 			} finally {
-				ios.close();
+				if(ios != null){
+					ios.close();
+				}
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

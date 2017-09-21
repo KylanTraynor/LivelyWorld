@@ -647,5 +647,19 @@ public class WaterChunk {
 				i++;
 			}
 		}
+		BlockWaterLevelChangeEvent te = new BlockWaterLevelChangeEvent(this.world.getBlockAt(x, y, z), d.getLevel());
+		Bukkit.getPluginManager().callEvent(te);
+		if(!te.isCancelled()){
+			if(te.getBlock().getType() == Material.AIR || Utils.isWater(te.getBlock())){
+				if(te.getBlock().getBiome() != Biome.RIVER &&
+						te.getBlock().getBiome() != Biome.FROZEN_RIVER &&
+						te.getBlock().getBiome() != Biome.OCEAN &&
+						te.getBlock().getBiome() != Biome.DEEP_OCEAN &&
+						te.getBlock().getBiome() != Biome.COLD_BEACH &&
+						te.getBlock().getBiome() != Biome.STONE_BEACH){
+					Utils.setWaterHeight(te.getBlock(), te.getNewLevel(), false);
+				}
+			}
+		}
 	}
 }

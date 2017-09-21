@@ -291,7 +291,6 @@ public class WaterChunk {
 				f.seek(sizeIndex);
 				f.seek(8192);
 				int padding = sectorLength - Math.floorMod(baos.size(), sectorLength);
-				//LivelyWorld.getInstance().getLogger().info("Writing Initial Data at position 8192, size: " + baos.size() + ". padding: " + padding);
 				f.write(baos.toByteArray());
 				f.write(new byte[padding]);
 				return;
@@ -299,10 +298,8 @@ public class WaterChunk {
 			f.seek(locationIndex);
 			int location = f.readInt();
 			int size = 0;
-			//LivelyWorld.getInstance().getLogger().info("Location: " + location);
 			if(location < 16){
 				location = Math.floorDiv((Math.max((int)f.length(), 1024 * 8)), sectorLength);
-				//LivelyWorld.getInstance().getLogger().info("Location: " + location + ". fLength: " + f.length());
 				f.seek(locationIndex);
 				f.writeInt(location);
 			} else {
@@ -311,41 +308,31 @@ public class WaterChunk {
 			}
 			f.seek(sizeIndex);
 			f.writeInt(baos.size());
-			//LivelyWorld.getInstance().getLogger().info("Location: " + location + ". Size: " + baos.size() + ". old Size: " + size);
 			f.seek(location * sectorLength);
 			if(location * sectorLength >= f.length()){
 				f.write(baos.toByteArray());
 				f.write(new byte[sectorLength - Math.floorMod(baos.size(), sectorLength)]);
 			} else {
-				// CHECK IF NEW SECTORS ARE NEEDED BEFORE!!
 				int remainingPadding = sectorLength - Math.floorMod(size, sectorLength);
 				int finalPadding = sectorLength - Math.floorMod(baos.size(), sectorLength);
 				int newSectors = (baos.size() + finalPadding - (size + remainingPadding)) / sectorLength;
 				if(newSectors != 0){
 					int nextChunkIndex = location*sectorLength + size + remainingPadding;
-					//byte[] array = baos.toByteArray();
 					byte[] nextChunks = new byte[0];
 					if(f.length() - nextChunkIndex > 0){
 						nextChunks = new byte[(int) (f.length() - nextChunkIndex)];
 					}
-					//byte[] chunkData = null;
-					//chunkData = new byte[baos.size() + finalPadding + nextChunks.length];
 					f.seek(nextChunkIndex);
 					f.readFully(nextChunks);
-					/*for(int i = 0; i < chunkData.length; i++){
-						if(i < baos.size()){
-							chunkData[i] = array[i];
-						} else if(i < baos.size() + finalPadding){
-							
-						} else {
-							chunkData[i] = nextChunks[i - (baos.size() + finalPadding)];
-						}
-					}*/
 					f.seek(location * sectorLength);
 					LivelyWorld.getInstance().getLogger().info("Rewriting at location: " + location + " (" + location*sectorLength + ") with a size of " + baos.size() + " with padding: " + finalPadding + " and " + newSectors + " sectors" + ". Moving " + nextChunks.length + " bytes.");
+					// Write Chunk Data
+					f.setLength(location * sectorLength);
 					f.write(baos.toByteArray());
 					f.write(finalPadding);
+					// Write moved chunks
 					f.write(nextChunks);
+					// Update chunk locations
 					f.seek(0);
 					while(f.getFilePointer() < 4096){
 						int pos = (int)f.getFilePointer();
@@ -356,7 +343,7 @@ public class WaterChunk {
 						}
 					}
 				} else {
-					LivelyWorld.getInstance().getLogger().info("Rewriting at location: " + location + " (" + location*sectorLength + ") with a size of " + baos.size() + " with padding: " + finalPadding);
+					//LivelyWorld.getInstance().getLogger().info("Rewriting at location: " + location + " (" + location*sectorLength + ") with a size of " + baos.size() + " with padding: " + finalPadding);
 					f.write(baos.toByteArray());
 					f.write(new byte[finalPadding]);
 				}
@@ -372,58 +359,7 @@ public class WaterChunk {
 				e.printStackTrace();
 			}
 		}
-		/*try {
-			fileLock.lock();
-			try{
-				DeflaterOutputStream s = null;
-				try {
-					s = new DeflaterOutputStream(new FileOutputStream(getFile()));
-					int length = data.length;
-					int startIndex = (Math.floorMod(getX(), 32) * 32 * length) + (Math.floorMod(getZ(),32) * length);
-					if(getFile().length() == 0){
-						byte[] filler = new byte[length * 32 * 32];
-						for(int i = 0; i < length; i++){
-							synchronized(this.data){
-								filler[i + startIndex] = data[i];
-							}
-						}
-						try {
-							s.write(filler, 0, filler.length);
-							s.flush();
-						} catch (IOException e) {
-							e.printStackTrace();
-						} finally {
-							try {
-								s.close();
-							} catch (IOException e) {
-								e.printStackTrace();
-							}
-						}
-					} else {
-						try{
-							synchronized(this.data){
-								s.write(data, startIndex, length);
-							}
-							s.flush();
-						} catch(IOException e){
-							e.printStackTrace();
-						} finally{
-							try{
-								s.close();
-							} catch(IOException e){
-								e.printStackTrace();
-							}
-						}
-					}
-				} catch (FileNotFoundException e) {
-					e.printStackTrace();
-				}
-			} finally{
-				fileLock.unlock();
-			}
-		} catch (InterruptedException e1) {
-			e1.printStackTrace();
-		}*/
+		
 	}
 	
 	public void loadFromFile(){
@@ -433,6 +369,10 @@ public class WaterChunk {
 		try {
 			f = new RandomAccessFile(getFile(), "r");
 			if(f.length() < 8192) return;
+			if(f.length() % sectorLength != 0) {
+				LivelyWorld.getInstance().getLogger().warning("Unexpected file size (" + f.length() + "). Chunk won't be loaded.");
+				return;
+			}
 			int locationIndex = (Math.floorMod(getX(),32) * 32 * 4) + (Math.floorMod(getZ(),32) * 4);
 			int sizeIndex = ((4096) + (Math.floorMod(getX(),32) * 32 * 4) + (Math.floorMod(getZ(),32) * 4));
 			

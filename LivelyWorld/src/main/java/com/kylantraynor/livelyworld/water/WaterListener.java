@@ -1,9 +1,11 @@
 package com.kylantraynor.livelyworld.water;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockFromToEvent;
@@ -15,8 +17,23 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import com.kylantraynor.livelyworld.LivelyWorld;
 import com.kylantraynor.livelyworld.Utils;
+import com.kylantraynor.livelyworld.events.BlockWaterLevelChangeEvent;
 
 public class WaterListener implements Listener{
+	
+	
+	@EventHandler(ignoreCancelled = true)
+	public void onBlockWaterLevelChange(BlockWaterLevelChangeEvent event){
+		for(Player p : Bukkit.getOnlinePlayers()){
+			if(p.getLocation().distanceSquared(event.getBlock().getLocation()) < (100*100)){
+				if(event.getNewLevel() > 0){
+					p.sendBlockChange(event.getBlock().getLocation(), Material.WATER, (byte)(7 - event.getNewLevel()));
+				} else {
+					p.sendBlockChange(event.getBlock().getLocation(), Material.AIR, (byte) 0);
+				}
+			}
+		}
+	}
 	
 	@EventHandler(ignoreCancelled = true)
 	public void onBlockFromTo(BlockFromToEvent event){
@@ -58,8 +75,16 @@ public class WaterListener implements Listener{
 		case OCEAN:
 			if(b.getY() > LivelyWorld.getInstance().getOceanY()) return;
 		case RIVER:
-			event.getItemStack().setType(Material.WATER_BUCKET);
-			event.setCancelled(true);
+			final Material m = event.getBlockClicked().getType();
+			final byte data = event.getBlockClicked().getData();
+			BukkitRunnable bk = new BukkitRunnable(){
+				@Override
+				public void run() {
+					event.getBlockClicked().setType(m);
+					event.getBlockClicked().setData(data);
+				}
+			};
+			bk.runTaskLater(LivelyWorld.getInstance(), 1);
 			return;
 		default:
 		}

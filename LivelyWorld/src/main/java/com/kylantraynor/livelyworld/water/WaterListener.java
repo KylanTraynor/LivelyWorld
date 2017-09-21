@@ -27,9 +27,19 @@ public class WaterListener implements Listener{
 		for(Player p : Bukkit.getOnlinePlayers()){
 			if(p.getLocation().distanceSquared(event.getBlock().getLocation()) < (100*100)){
 				if(event.getNewLevel() > 0){
-					p.sendBlockChange(event.getBlock().getLocation(), Material.WATER, (byte)(7 - event.getNewLevel()));
+					BukkitRunnable br = new BukkitRunnable(){
+						public void run(){
+							p.sendBlockChange(event.getBlock().getLocation(), Material.WATER, (byte)(7 - event.getNewLevel()));
+						}
+					};
+					br.runTaskLater(LivelyWorld.getInstance(), 1);
 				} else {
-					p.sendBlockChange(event.getBlock().getLocation(), Material.AIR, (byte) 0);
+					BukkitRunnable br = new BukkitRunnable(){
+						public void run(){
+							p.sendBlockChange(event.getBlock().getLocation(), Material.AIR, (byte)(0));
+						}
+					};
+					br.runTaskLater(LivelyWorld.getInstance(), 1);
 				}
 			}
 		}

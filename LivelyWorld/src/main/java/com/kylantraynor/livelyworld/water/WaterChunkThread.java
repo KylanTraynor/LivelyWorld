@@ -21,10 +21,10 @@ public class WaterChunkThread extends Thread {
 		try{
 			long lastUpdate = 0;
 			while (!isInterrupted()) {
-				updateListOfLoadedChunks();
 				unloadChunks();
 				loadChunks();
 				if(System.currentTimeMillis() >= lastUpdate + 50){
+					updateListOfLoadedChunks();
 					updateChunks();
 					lastUpdate = System.currentTimeMillis();
 				}
@@ -52,9 +52,9 @@ public class WaterChunkThread extends Thread {
 		
 		};
 		br.runTask(LivelyWorld.getInstance());
-		if(chunksFetcher.get() != null){
-			loadedChunks.put("world", chunksFetcher.get());
+		while(chunksFetcher.get() == null){
 		}
+		loadedChunks.put("world", chunksFetcher.get());
 	}
 	
 	public static boolean isChunkLoaded(World w, int chunkX, int chunkZ){

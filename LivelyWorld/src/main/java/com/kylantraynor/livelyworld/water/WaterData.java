@@ -235,7 +235,13 @@ public class WaterData {
 	public BlockState getBlockState(){
 		if(!chunk.isLoaded()) return null;
 		if(!chunk.getWorld().isChunkLoaded(chunk.getX(), chunk.getZ())) return null;
-		return chunk.getWorld().getChunkAt(chunk.getX(), chunk.getZ()).getBlock(getChunkX(), y, getChunkZ()).getState();
+		try{
+			return chunk.getWorld().getChunkAt(chunk.getX(), chunk.getZ()).getBlock(getChunkX(), y, getChunkZ()).getState();
+		} catch (Exception e){
+			LivelyWorld.getInstance().getLogger().warning("Error while getting blockstate at [" + getChunkX() + "," + y + "," + getChunkZ() + "] in chunk " + chunk.getX() + "," + chunk.getZ());
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
 	public static int getWaterLevelAt(World world, int x, int y, int z){

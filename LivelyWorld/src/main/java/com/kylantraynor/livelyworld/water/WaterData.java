@@ -3,6 +3,7 @@ package com.kylantraynor.livelyworld.water;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -230,7 +231,7 @@ public class WaterData {
 	public BlockState getBlockState(){
 		if(!chunk.isLoaded()) return null;
 		if(!chunk.getWorld().isChunkLoaded(chunk.getX(), chunk.getZ())) return null;
-		return chunk.getWorld().getChunkAt(chunk.getX(), chunk.getZ()).getBlock(x, y, z).getState();
+		return chunk.getWorld().getChunkAt(chunk.getX(), chunk.getZ()).getBlock(getChunkX(), y, getChunkZ()).getState();
 	}
 	
 	public static int getWaterLevelAt(World world, int x, int y, int z){
@@ -248,7 +249,7 @@ public class WaterData {
 			@Override
 			public void run() {
 				Block b = getBlockState().getBlock();
-				if(getPermeability() >= 1){
+				if(getPermeability() >= 1 && getRelative(BlockFace.DOWN).getBlockState().getType() != Material.AIR){
 					Utils.setWaterHeight(b, getLevel(), false);
 				}
 				BlockWaterChangedEvent e = new BlockWaterChangedEvent(b, getData());

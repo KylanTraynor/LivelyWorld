@@ -54,6 +54,7 @@ public class WaterChunkThread extends Thread {
 	public static boolean isChunkLoaded(World w, int chunkX, int chunkZ){
 		Chunk[] chunks = null;
 		chunks = loadedChunks.get(w);
+		if(chunks == null) return false;
 		for(Chunk c : chunks){
 			if(c.getX() == chunkX && c.getZ() == chunkZ) continue;
 			return true;

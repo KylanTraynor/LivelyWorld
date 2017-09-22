@@ -120,7 +120,7 @@ public class WaterData {
 		int newData = (getData() & (~(7 << moistureCode))) + (Utils.constrainTo(value, 0, 7) << moistureCode);
 		if(newData != getData()){
 			setData(newData);
-			sendChangedEvent();
+			if(Math.random() < 0.1) sendChangedEvent();
 		}
 	}
 	

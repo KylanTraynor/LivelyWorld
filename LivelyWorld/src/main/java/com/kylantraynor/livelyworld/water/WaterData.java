@@ -190,6 +190,7 @@ public class WaterData {
 				return;
 			}
 		}
+		if(level <= 1) return;
 		double rdm = Math.random() * 4;
 		BlockFace[] order = new BlockFace[0];
 		if(rdm > 3){
@@ -254,7 +255,9 @@ public class WaterData {
 				if(s == null) return;
 				Block b = getBlockState().getBlock();
 				if(getPermeability() >= 1 && getRelative(BlockFace.DOWN).getBlockState().getType() != Material.AIR){
-					Utils.setWaterHeight(b, getLevel(), false);
+					if(Utils.getWaterHeight(b) != getLevel()){
+						Utils.setWaterHeight(b, getLevel(), false);
+					}
 				}
 				BlockWaterChangedEvent e = new BlockWaterChangedEvent(b, getData());
 				Bukkit.getPluginManager().callEvent(e);

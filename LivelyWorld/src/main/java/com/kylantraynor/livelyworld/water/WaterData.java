@@ -250,6 +250,8 @@ public class WaterData {
 		BukkitRunnable br = new BukkitRunnable(){
 			@Override
 			public void run() {
+				BlockState s = getBlockState();
+				if(s == null) return;
 				Block b = getBlockState().getBlock();
 				if(getPermeability() >= 1 && getRelative(BlockFace.DOWN).getBlockState().getType() != Material.AIR){
 					Utils.setWaterHeight(b, getLevel(), false);

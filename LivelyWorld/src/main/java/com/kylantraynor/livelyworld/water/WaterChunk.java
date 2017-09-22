@@ -287,7 +287,7 @@ public class WaterChunk {
 		try {
 			f = new RandomAccessFile(getFile(), "rw");
 			if(f.length() % sectorLength != 0){
-				LivelyWorld.getInstance().getLogger().warning("Unexpected file size (" + f.length() + "). Wiping data before rewrite.");
+				LivelyWorld.getInstance().getLogger().warning(getFile().getName()+": Unexpected file size (" + f.length() + "). Wiping data before rewrite.");
 				f.setLength(0);
 			}
 			if(f.length() < 8192){
@@ -333,7 +333,7 @@ public class WaterChunk {
 					f.seek(nextChunkIndex);
 					f.readFully(nextChunks);
 					f.seek(location * sectorLength);
-					LivelyWorld.getInstance().getLogger().info("Rewriting at location: " + location + " (" + location*sectorLength + ") with a size of " + baos.size() + " with padding: " + finalPadding + " and " + newSectors + " sectors" + ". Moving " + nextChunks.length + " bytes.");
+					LivelyWorld.getInstance().getLogger().info(getFile().getName()+": Rewriting at location: " + location + " (" + location*sectorLength + ") with a size of " + baos.size() + " with padding: " + finalPadding + " and " + newSectors + " sectors" + ". Moving " + nextChunks.length + " bytes.");
 					// Write Chunk Data
 					f.setLength(location * sectorLength);
 					f.write(baos.toByteArray());
@@ -378,7 +378,7 @@ public class WaterChunk {
 			f = new RandomAccessFile(getFile(), "r");
 			if(f.length() < 8192) return;
 			if(f.length() % sectorLength != 0) {
-				LivelyWorld.getInstance().getLogger().warning("Unexpected file size (" + f.length() + "). Chunk won't be loaded.");
+				LivelyWorld.getInstance().getLogger().warning(getFile().getName()+": Unexpected file size (" + f.length() + "). Chunk won't be loaded.");
 				return;
 			}
 			int locationIndex = (Math.floorMod(getX(),32) * 32 * 4) + (Math.floorMod(getZ(),32) * 4);

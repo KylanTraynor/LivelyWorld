@@ -49,7 +49,8 @@ public class WaterListener implements Listener{
 	public void onBlockFromTo(BlockFromToEvent event){
 		if(!Utils.isWater(event.getBlock())) return;
 		if(!event.getBlock().getWorld().getName().equals("world")) return;
-		Biome fromBiome = event.getBlock().getBiome();
+		event.setCancelled(true);
+		/*Biome fromBiome = event.getBlock().getBiome();
 		switch(fromBiome){
 		case OCEAN:
 			if(event.getBlock().getY() <= LivelyWorld.getInstance().getOceanY()){
@@ -58,7 +59,7 @@ public class WaterListener implements Listener{
 				return;
 			}
 		default:
-		}
+		}*/
 	}
 	
 	@EventHandler(ignoreCancelled = true)

@@ -24,7 +24,7 @@ public class WaterListener implements Listener{
 	
 	@EventHandler(ignoreCancelled = true)
 	public void onBlockWaterLevelChange(BlockWaterLevelChangeEvent event){
-		for(Player p : Bukkit.getOnlinePlayers()){
+		/*for(Player p : Bukkit.getOnlinePlayers()){
 			if(p.getLocation().distanceSquared(event.getBlock().getLocation()) < (100*100)){
 				if(event.getNewLevel() > 0){
 					BukkitRunnable br = new BukkitRunnable(){
@@ -42,7 +42,7 @@ public class WaterListener implements Listener{
 					br.runTaskLater(LivelyWorld.getInstance(), 1);
 				}
 			}
-		}
+		}*/
 	}
 	
 	@EventHandler(ignoreCancelled = true)

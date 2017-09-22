@@ -35,7 +35,7 @@ public class WaterChunkThread extends Thread {
 	}
 
 	private void updateListOfLoadedChunks() {
-		BukkitRunnable br = new BukkitRunnable(){
+		/*BukkitRunnable br = new BukkitRunnable(){
 			@Override
 			public void run() {
 				for(World w : Bukkit.getWorlds()){
@@ -48,7 +48,7 @@ public class WaterChunkThread extends Thread {
 			}
 		
 		};
-		br.runTask(LivelyWorld.getInstance());
+		br.runTask(LivelyWorld.getInstance());*/
 	}
 	
 	public static boolean isChunkLoaded(World w, int chunkX, int chunkZ){

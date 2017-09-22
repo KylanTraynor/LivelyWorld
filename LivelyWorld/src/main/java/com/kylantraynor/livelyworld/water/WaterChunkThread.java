@@ -1,8 +1,7 @@
 package com.kylantraynor.livelyworld.water;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.Future;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -14,7 +13,7 @@ import com.kylantraynor.livelyworld.LivelyWorld;
 public class WaterChunkThread extends Thread {
 	
 	private String name = "WaterChunk Thread";
-	final private static Map<World, Chunk[]> loadedChunks = new HashMap<World, Chunk[]>();
+	final private static ConcurrentMap<World, Chunk[]> loadedChunks = new ConcurrentHashMap<World, Chunk[]>();
 	
 	public void run(){
 		try{
@@ -41,9 +40,7 @@ public class WaterChunkThread extends Thread {
 			public void run() {
 				for(World w : Bukkit.getWorlds()){
 					if(w.getName().equals("world")){
-						synchronized(loadedChunks){
-							loadedChunks.put(w, w.getLoadedChunks());
-						}
+						loadedChunks.put(w, w.getLoadedChunks());
 					}
 				}
 			}

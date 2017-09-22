@@ -70,7 +70,7 @@ public class WaterData {
 			return null;
 		}
 		if(this.x + x < 0 || this.x + x > 15 || this.z + z < 0 || this.z + z > 15){
-			return new WaterData(chunk.getWorld(), chunk.getX() << 4 + this.x + x, this.y + y, chunk.getZ() << 4 + this.z + z);
+			return new WaterData(chunk.getWorld(), this.getX() + x, this.getY() + y, this.getZ() + z);
 		}
 		return new WaterData(chunk, this.x + x, this.y + y, this.z + z);
 	}
@@ -183,10 +183,12 @@ public class WaterData {
 				return;
 		}
 		WaterData down = getRelative(BlockFace.DOWN);
-		if(down.getLevel() < 7 && Math.random() <= down.getPermeability()){
-			down.setLevel(down.getLevel() + 1);
-			this.setLevel(level - 1);
-			return;
+		if(down != null){
+			if(down.getLevel() < 7 && Math.random() <= down.getPermeability()){
+				down.setLevel(down.getLevel() + 1);
+				this.setLevel(level - 1);
+				return;
+			}
 		}
 		double rdm = Math.random() * 4;
 		BlockFace[] order = new BlockFace[0];

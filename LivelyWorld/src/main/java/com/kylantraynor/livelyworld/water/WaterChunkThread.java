@@ -93,7 +93,7 @@ public class WaterChunkThread extends Thread {
 			}
 			i++;
 		}
-		i = 0;
+		/*i = 0;
 		try{
 			Chunk[] loadedChunks = Bukkit.getServer().getWorld("world").getLoadedChunks();
 			while(i < loadedChunks.length && count > 0){
@@ -107,7 +107,7 @@ public class WaterChunkThread extends Thread {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
+		}*/
 	}
 	
 }

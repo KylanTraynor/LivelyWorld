@@ -248,7 +248,9 @@ public class WaterData {
 			@Override
 			public void run() {
 				Block b = getBlockState().getBlock();
-				Utils.setWaterHeight(b, getLevel(), false);
+				if(getPermeability() >= 1){
+					Utils.setWaterHeight(b, getLevel(), false);
+				}
 				BlockWaterChangedEvent e = new BlockWaterChangedEvent(b, getData());
 				Bukkit.getPluginManager().callEvent(e);
 			}

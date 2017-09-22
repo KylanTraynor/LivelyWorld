@@ -1,18 +1,26 @@
 package com.kylantraynor.livelyworld.water;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.Future;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
+import org.bukkit.World;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import com.kylantraynor.livelyworld.LivelyWorld;
 
 public class WaterChunkThread extends Thread {
 	
 	private String name = "WaterChunk Thread";
+	final private static Map<World, Chunk[]> loadedChunks = new HashMap<World, Chunk[]>();
 	
 	public void run(){
 		try{
 			long lastUpdate = 0;
 			while (!isInterrupted()) {
+				updateListOfLoadedChunks();
 				unloadChunks();
 				loadChunks();
 				if(System.currentTimeMillis() >= lastUpdate + 50){
@@ -27,6 +35,35 @@ public class WaterChunkThread extends Thread {
 		}
 	}
 
+	private void updateListOfLoadedChunks() {
+		BukkitRunnable br = new BukkitRunnable(){
+			@Override
+			public void run() {
+				for(World w : Bukkit.getWorlds()){
+					if(w.getName().equals("world")){
+						synchronized(loadedChunks){
+							loadedChunks.put(w, w.getLoadedChunks());
+						}
+					}
+				}
+			}
+		
+		};
+		br.runTask(LivelyWorld.getInstance());
+	}
+	
+	public static boolean isChunkLoaded(World w, int chunkX, int chunkZ){
+		Chunk[] chunks = null;
+		synchronized(loadedChunks){
+			chunks = loadedChunks.get(w);
+		}
+		for(Chunk c : chunks){
+			if(c.getX() == chunkX && c.getZ() == chunkZ) continue;
+			return true;
+		}
+		return false;
+	}
+
 	private void cleanList() {
 		int i = 0;
 		while(i < WaterChunk.chunks.size()){
@@ -34,7 +71,7 @@ public class WaterChunkThread extends Thread {
 			if(c == null){
 				i++; continue;
 			}
-			if(!c.isLoaded() && !c.getWorld().isChunkLoaded(c.getX(), c.getZ())){
+			if(!c.isLoaded() && !isChunkLoaded(c.getWorld(), c.getX(), c.getZ())){
 				WaterChunk.chunks.remove(i);
 				continue;
 			}
@@ -49,7 +86,7 @@ public class WaterChunkThread extends Thread {
 			if(c == null){
 				i++; continue;
 			}
-			if(c.isLoaded() && c.getWorld().isChunkLoaded(c.getX(), c.getZ())){
+			if(c.isLoaded() && isChunkLoaded(c.getWorld(), c.getX(), c.getZ())){
 				try{
 					c.tickAll();
 				} catch (Exception e){
@@ -69,7 +106,7 @@ public class WaterChunkThread extends Thread {
 			if(c == null){
 				i++; continue;
 			}
-			if(c.isLoaded() && !c.getWorld().isChunkLoaded(c.getX(), c.getZ())){
+			if(c.isLoaded() && !isChunkLoaded(c.getWorld(), c.getX(), c.getZ())){
 				c.unload();
 				//LivelyWorld.getInstance().getLogger().info("Unloading Chunk at " + c.getX() + ", " + c.getZ() + ", Total: " + WaterChunk.chunks.size());
 				WaterChunk.chunks.remove(i);
@@ -87,7 +124,7 @@ public class WaterChunkThread extends Thread {
 			if(c == null){
 				i++; continue;
 			}
-			if(!c.isLoaded() && c.getWorld().isChunkLoaded(c.getX(), c.getZ())){
+			if(!c.isLoaded() && isChunkLoaded(c.getWorld(), c.getX(), c.getZ())){
 				c.load();
 				count--;
 			}

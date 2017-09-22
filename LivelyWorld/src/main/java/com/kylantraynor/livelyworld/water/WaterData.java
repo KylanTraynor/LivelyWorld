@@ -13,7 +13,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import com.kylantraynor.livelyworld.LivelyWorld;
 import com.kylantraynor.livelyworld.Utils;
-import com.kylantraynor.livelyworld.events.BlockWaterChangedEvent;
 
 public class WaterData {
 	
@@ -234,7 +233,7 @@ public class WaterData {
 	
 	public BlockState getBlockState(){
 		if(!chunk.isLoaded()) return null;
-		if(!chunk.getWorld().isChunkLoaded(chunk.getX(), chunk.getZ())) return null;
+		if(!WaterChunkThread.isChunkLoaded(chunk.getWorld(), chunk.getX(), chunk.getZ())) return null;
 		try{
 			return chunk.getWorld().getChunkAt(chunk.getX(), chunk.getZ()).getBlock(getChunkX(), y, getChunkZ()).getState();
 		} catch (Exception e){

@@ -259,11 +259,11 @@ public class WaterData {
 					if(Utils.getWaterHeight(b) != getLevel()){
 						Utils.setWaterHeight(b, getLevel(), false);
 					}
-				} else {
+				} else if(getLevel() > 0) {
 					chunk.getWorld().spawnParticle(Particle.DRIP_WATER, b.getX() + Math.random(), b.getY(), b.getZ() + Math.random(), 1);
 				}
-				BlockWaterChangedEvent e = new BlockWaterChangedEvent(b, getData());
-				Bukkit.getPluginManager().callEvent(e);
+				//BlockWaterChangedEvent e = new BlockWaterChangedEvent(b, getData());
+				//Bukkit.getPluginManager().callEvent(e);
 			}
 		};
 		br.runTask(LivelyWorld.getInstance());

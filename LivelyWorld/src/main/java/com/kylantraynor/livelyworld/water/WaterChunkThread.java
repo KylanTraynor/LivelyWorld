@@ -40,7 +40,9 @@ public class WaterChunkThread extends Thread {
 			public void run() {
 				for(World w : Bukkit.getWorlds()){
 					if(w.getName().equals("world")){
+						LivelyWorld.getInstance().getLogger().info("Test1");
 						loadedChunks.put(w, w.getLoadedChunks());
+						LivelyWorld.getInstance().getLogger().info("Test2");
 					}
 				}
 			}

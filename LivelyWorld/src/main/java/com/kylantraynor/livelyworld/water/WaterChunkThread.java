@@ -54,9 +54,7 @@ public class WaterChunkThread extends Thread {
 	
 	public static boolean isChunkLoaded(World w, int chunkX, int chunkZ){
 		Chunk[] chunks = null;
-		synchronized(loadedChunks){
-			chunks = loadedChunks.get(w);
-		}
+		chunks = loadedChunks.get(w);
 		for(Chunk c : chunks){
 			if(c.getX() == chunkX && c.getZ() == chunkZ) continue;
 			return true;

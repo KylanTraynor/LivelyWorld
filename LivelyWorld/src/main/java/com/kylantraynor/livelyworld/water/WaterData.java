@@ -260,7 +260,7 @@ public class WaterData {
 						Utils.setWaterHeight(b, getLevel(), false);
 					}
 				} else {
-					chunk.getWorld().spawnParticle(Particle.DRIP_WATER, b.getX() + 0.5, b.getY(), b.getZ() + 0.5, 1);
+					chunk.getWorld().spawnParticle(Particle.DRIP_WATER, b.getX() + Math.random(), b.getY(), b.getZ() + Math.random(), 1);
 				}
 				BlockWaterChangedEvent e = new BlockWaterChangedEvent(b, getData());
 				Bukkit.getPluginManager().callEvent(e);

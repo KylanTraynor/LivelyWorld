@@ -12,6 +12,18 @@ public class Utils {
 	private static double sqrt2PI = Math.sqrt(2 * Math.PI);
 	
 	
+	public static class Enclosed<T>{
+		private T value = null;
+		
+		public T get(){
+			return value;
+		}
+		
+		public void set(T value){
+			this.value = value;
+		}
+	}
+	
 	public static class Lock {
 		boolean isLocked = false;
 		Thread  lockedBy = null;

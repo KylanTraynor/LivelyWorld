@@ -1,7 +1,7 @@
 package com.kylantraynor.livelyworld.water;
 
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -9,11 +9,12 @@ import org.bukkit.World;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import com.kylantraynor.livelyworld.LivelyWorld;
+import com.kylantraynor.livelyworld.Utils.Enclosed;
 
 public class WaterChunkThread extends Thread {
 	
 	private String name = "WaterChunk Thread";
-	final private static ConcurrentMap<World, Chunk[]> loadedChunks = new ConcurrentHashMap<World, Chunk[]>();
+	final private static Map<String, Chunk[]> loadedChunks = new HashMap<String, Chunk[]>();
 	
 	public void run(){
 		try{
@@ -35,25 +36,30 @@ public class WaterChunkThread extends Thread {
 	}
 
 	private void updateListOfLoadedChunks() {
-		/*BukkitRunnable br = new BukkitRunnable(){
+		final Enclosed<Chunk[]> chunks = new Enclosed<Chunk[]>();
+		BukkitRunnable br = new BukkitRunnable(){
 			@Override
 			public void run() {
 				for(World w : Bukkit.getWorlds()){
 					if(w.getName().equals("world")){
 						LivelyWorld.getInstance().getLogger().info("Test1");
-						loadedChunks.put(w, w.getLoadedChunks());
+						chunks.set(w.getLoadedChunks());
 						LivelyWorld.getInstance().getLogger().info("Test2");
 					}
 				}
 			}
 		
 		};
-		br.runTask(LivelyWorld.getInstance());*/
+		br.runTask(LivelyWorld.getInstance());
+		while(chunks.get() == null){
+			
+		}
+		loadedChunks.put("world", chunks.get());
 	}
 	
 	public static boolean isChunkLoaded(World w, int chunkX, int chunkZ){
 		Chunk[] chunks = null;
-		chunks = loadedChunks.get(w);
+		chunks = loadedChunks.get(w.getName());
 		if(chunks == null) return false;
 		for(Chunk c : chunks){
 			if(c.getX() == chunkX && c.getZ() == chunkZ) continue;

@@ -286,6 +286,10 @@ public class WaterChunk {
 		int sizeIndex = ((4096) + (Math.floorMod(getX(),32) * 32 * 4) + (Math.floorMod(getZ(),32) * 4));
 		try {
 			f = new RandomAccessFile(getFile(), "rw");
+			if(f.length() % sectorLength != 0){
+				LivelyWorld.getInstance().getLogger().warning("Unexpected file size (" + f.length() + "). Wiping data before rewrite.");
+				f.setLength(0);
+			}
 			if(f.length() < 8192){
 				f.seek(locationIndex);
 				f.writeInt(16);

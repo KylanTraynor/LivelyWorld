@@ -338,7 +338,7 @@ public class WaterChunk {
 					// Write Chunk Data
 					f.setLength(location * sectorLength);
 					f.write(baos.toByteArray());
-					f.write(finalPadding);
+					f.write(new byte[finalPadding]);
 					// Write moved chunks
 					f.write(nextChunks);
 					LivelyWorld.getInstance().getLogger().info(getFile().getName()+": Rewriting. Final file size: " + f.length());

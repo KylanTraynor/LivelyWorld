@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -258,6 +259,8 @@ public class WaterData {
 					if(Utils.getWaterHeight(b) != getLevel()){
 						Utils.setWaterHeight(b, getLevel(), false);
 					}
+				} else {
+					chunk.getWorld().spawnParticle(Particle.DRIP_WATER, b.getX() + 0.5, b.getY(), b.getZ() + 0.5, 1);
 				}
 				BlockWaterChangedEvent e = new BlockWaterChangedEvent(b, getData());
 				Bukkit.getPluginManager().callEvent(e);

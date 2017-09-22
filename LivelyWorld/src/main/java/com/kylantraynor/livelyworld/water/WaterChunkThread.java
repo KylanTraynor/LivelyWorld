@@ -11,10 +11,14 @@ public class WaterChunkThread extends Thread {
 	
 	public void run(){
 		try{
+			long lastUpdate = 0;
 			while (!isInterrupted()) {
 				unloadChunks();
-			    loadChunks();
-			    updateChunks();
+				loadChunks();
+				if(System.currentTimeMillis() >= lastUpdate + 50){
+					updateChunks();
+					lastUpdate = System.currentTimeMillis();
+				}
 			    cleanList();
 			}
 		} catch (Exception e){
@@ -47,7 +51,7 @@ public class WaterChunkThread extends Thread {
 			}
 			if(c.isLoaded() && c.getWorld().isChunkLoaded(c.getX(), c.getZ())){
 				try{
-					c.randomTick();
+					c.tickAll();
 				} catch (Exception e){
 					LivelyWorld.getInstance().getLogger().severe("Exception while ticking water chunk at " + c.getX() + "," + c.getZ()+ ".");
 					e.printStackTrace();

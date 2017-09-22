@@ -1,10 +1,17 @@
 package com.kylantraynor.livelyworld.water;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
+import org.bukkit.scheduler.BukkitRunnable;
 
+import com.kylantraynor.livelyworld.LivelyWorld;
 import com.kylantraynor.livelyworld.Utils;
+import com.kylantraynor.livelyworld.events.BlockWaterChangedEvent;
 
 public class WaterData {
 	
@@ -13,7 +20,7 @@ public class WaterData {
 	private int y = 0;
 	private int z = 0;
 	
-	private static int moistureCode = 0;
+	public static int moistureCode = 0;
 	private static int inCurrentCode = 3;
 	private static int outCurrentCode = 9;
 	private static int inStrengthCode = 6;
@@ -57,6 +64,45 @@ public class WaterData {
 	
 	public int getZ(){ return (chunk.getZ() << 4) + z; }
 	
+	public WaterData getRelative(int x, int y, int z){
+		if(this.y + y < 0 || this.y + y > 255){
+			return null;
+		}
+		if(this.x + x < 0 || this.x + x > 15 || this.z + z < 0 || this.z + z > 15){
+			return new WaterData(chunk.getWorld(), chunk.getX() << 4 + this.x + x, this.y + y, chunk.getZ() << 4 + this.z + z);
+		}
+		return new WaterData(chunk, this.x + x, this.y + y, this.z + z);
+	}
+	
+	public WaterData getRelative(BlockFace bf){
+		switch(bf){
+		case DOWN:
+			return getRelative(0,-1,0);
+		case EAST:
+			return getRelative(1,0,0);
+		case NORTH:
+			return getRelative(0,0,-1);
+		case NORTH_EAST:
+			return getRelative(1,0,-1);
+		case NORTH_WEST:
+			return getRelative(-1,0,-1);
+		case SELF:
+			return this;
+		case SOUTH:
+			return getRelative(0,0,1);
+		case SOUTH_EAST:
+			return getRelative(1,0,1);
+		case SOUTH_WEST:
+			return getRelative(-1,0,1);
+		case UP:
+			return getRelative(0,1,0);
+		case WEST:
+			return getRelative(-1,0,0);
+		default:
+			return null;
+		}
+	}
+	
 	public int getData(){
 		return chunk.getData(x, y, z);
 	}
@@ -70,7 +116,11 @@ public class WaterData {
 	}
 	
 	public void setLevel(int value){
-		setData((getData() & (~(7 << moistureCode))) + (Utils.constrainTo(value, 0, 7) << moistureCode));
+		int newData = (getData() & (~(7 << moistureCode))) + (Utils.constrainTo(value, 0, 7) << moistureCode);
+		if(newData != getData()){
+			setData(newData);
+			sendChangedEvent();
+		}
 	}
 	
 	public int getInCurrentDirection(){
@@ -115,5 +165,94 @@ public class WaterData {
 	
 	public boolean isSalted(){
 		return getSalt() > 0;
+	}
+
+	public void tick(boolean loadChunks) {
+		if(!chunk.isLoaded()) return;
+		int level = this.getLevel();
+		if(level == 0) return;
+		if(!loadChunks){
+			if(x == 0 && !chunk.getRelative(-1, 0).isLoaded())
+				return;
+			if(x == 15 && !chunk.getRelative(1, 0).isLoaded())
+				return;
+			if(z == 0 && !chunk.getRelative(0, -1).isLoaded())
+				return;
+			if(z == 15 && !chunk.getRelative(0, 1).isLoaded())
+				return;
+		}
+		WaterData down = getRelative(BlockFace.DOWN);
+		if(down.getLevel() < 7 && Math.random() <= down.getPermeability()){
+			down.setLevel(down.getLevel() + 1);
+			this.setLevel(level - 1);
+			return;
+		}
+		double rdm = Math.random() * 4;
+		BlockFace[] order = new BlockFace[0];
+		if(rdm > 3){
+			order = new BlockFace[] {BlockFace.SOUTH, BlockFace.EAST, BlockFace.NORTH, BlockFace.WEST};
+		} else if(rdm > 2){
+			order = new BlockFace[] {BlockFace.EAST, BlockFace.NORTH, BlockFace.WEST, BlockFace.SOUTH};
+		} else if(rdm > 1){
+			order = new BlockFace[] {BlockFace.NORTH, BlockFace.WEST, BlockFace.SOUTH, BlockFace.EAST};
+		} else {
+			order = new BlockFace[] {BlockFace.WEST, BlockFace.SOUTH, BlockFace.EAST, BlockFace.NORTH};
+		}
+		for(BlockFace bf : order){
+			WaterData target = getRelative(bf);
+			if(target.getLevel() < level && Math.random() <= target.getPermeability()){
+				target.setLevel(down.getLevel() + 1);
+				this.setLevel(level - 1);
+				return;
+			}
+		}
+	}
+	
+	public double getPermeability(){
+		BlockState bs = getBlockState();
+		if(bs == null) return 0;
+		switch (bs.getType()){
+		case WATER: case STATIONARY_WATER: case AIR:
+			return 1;
+		case FENCE: case SPRUCE_FENCE: case DARK_OAK_FENCE: case JUNGLE_FENCE: case BIRCH_FENCE:
+			return 0.9;
+		case SAND:
+			return 0.4;
+		case DIRT: case GRASS_PATH:
+			return 0.2;
+		case COBBLESTONE:
+			return 0.1;
+		default:
+			return 0;
+		}
+	}
+	
+	public BlockState getBlockState(){
+		if(!chunk.isLoaded()) return null;
+		if(!chunk.getWorld().isChunkLoaded(chunk.getX(), chunk.getZ())) return null;
+		return chunk.getWorld().getChunkAt(chunk.getX(), chunk.getZ()).getBlock(x, y, z).getState();
+	}
+	
+	public static int getWaterLevelAt(World world, int x, int y, int z){
+		WaterChunk wc = WaterChunk.get(world, x >> 4, z >> 4);
+		return getWaterLevelAt(wc, Math.floorMod(x, 16), y, Math.floorMod(z, 16));
+	}
+	
+	public static int getWaterLevelAt(WaterChunk chunk, int x, int y, int z){
+		int d = chunk.getData(x, y, z);
+		return (d & (7 << moistureCode)) >> moistureCode;
+	}
+	
+	public void sendChangedEvent(){
+		BukkitRunnable br = new BukkitRunnable(){
+			@Override
+			public void run() {
+				Block b = getBlockState().getBlock();
+				Utils.setWaterHeight(b, getLevel(), false);
+				BlockWaterChangedEvent e = new BlockWaterChangedEvent(b, getData());
+				Bukkit.getPluginManager().callEvent(e);
+			}
+		};
+		br.runTask(LivelyWorld.getInstance());
 	}
 }

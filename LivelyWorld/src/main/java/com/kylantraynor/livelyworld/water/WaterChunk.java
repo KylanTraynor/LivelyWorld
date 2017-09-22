@@ -124,6 +124,10 @@ public class WaterChunk {
 	
 	public int getZ(){ return z; }
 	
+	public WaterChunk getRelative(int x, int z){
+		return WaterChunk.get(world, this.x + x, this.z + z);
+	}
+	
 	public WaterData getAt(int x, int y, int z){
 		if(!isLoaded) load();
 		return new WaterData(this, x, y, z);
@@ -546,6 +550,18 @@ public class WaterChunk {
 	private void setLoaded(boolean b){
 		//LivelyWorld.getInstance().getLogger().info("Setting chunk " + getX() + "_" + getZ() + " to loaded = " + b + " Previous = " + isLoaded);
 		this.isLoaded = b;
+	}
+	
+	public void tickAll(){
+		if(!isLoaded()) return;
+		for(int y = 0; y < 256; y++){
+			for(int x = 0; x < 16; x++){
+				for(int z = 0; z < 16; z++){
+					WaterData d = getAt(x, y, z);
+					d.tick(false);
+				}
+			}
+		}
 	}
 	
 	public void randomTick(){

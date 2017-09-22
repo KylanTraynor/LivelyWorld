@@ -325,6 +325,7 @@ public class WaterChunk {
 				int finalPadding = sectorLength - Math.floorMod(baos.size(), sectorLength);
 				int newSectors = (baos.size() + finalPadding - (size + remainingPadding)) / sectorLength;
 				if(newSectors != 0){
+					LivelyWorld.getInstance().getLogger().info(getFile().getName()+": Rewriting. Initial file size: " + f.length() + ". Expected final size: " + (f.length() + newSectors*sectorLength));
 					int nextChunkIndex = location*sectorLength + size + remainingPadding;
 					byte[] nextChunks = new byte[0];
 					if(f.length() - nextChunkIndex > 0){
@@ -340,6 +341,7 @@ public class WaterChunk {
 					f.write(finalPadding);
 					// Write moved chunks
 					f.write(nextChunks);
+					LivelyWorld.getInstance().getLogger().info(getFile().getName()+": Rewriting. Final file size: " + f.length());
 					// Update chunk locations
 					f.seek(0);
 					while(f.getFilePointer() < 4096){

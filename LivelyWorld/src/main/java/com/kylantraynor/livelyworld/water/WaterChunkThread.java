@@ -15,6 +15,7 @@ public class WaterChunkThread extends Thread {
 	
 	private String name = "WaterChunk Thread";
 	final private static Map<String, Chunk[]> loadedChunks = new HashMap<String, Chunk[]>();
+	final Enclosed<Chunk[]> chunksFetcher = new Enclosed<Chunk[]>();
 	
 	public void run(){
 		try{
@@ -36,14 +37,14 @@ public class WaterChunkThread extends Thread {
 	}
 
 	private void updateListOfLoadedChunks() {
-		final Enclosed<Chunk[]> chunks = new Enclosed<Chunk[]>();
+		chunksFetcher.set(null);
 		BukkitRunnable br = new BukkitRunnable(){
 			@Override
 			public void run() {
 				for(World w : Bukkit.getWorlds()){
 					if(w.getName().equals("world")){
 						LivelyWorld.getInstance().getLogger().info("Test1");
-						chunks.set(w.getLoadedChunks());
+						chunksFetcher.set(w.getLoadedChunks());
 						LivelyWorld.getInstance().getLogger().info("Test2");
 					}
 				}
@@ -51,10 +52,9 @@ public class WaterChunkThread extends Thread {
 		
 		};
 		br.runTask(LivelyWorld.getInstance());
-		while(chunks.get() == null){
-			
+		if(chunksFetcher.get() != null){
+			loadedChunks.put("world", chunksFetcher.get());
 		}
-		loadedChunks.put("world", chunks.get());
 	}
 	
 	public static boolean isChunkLoaded(World w, int chunkX, int chunkZ){

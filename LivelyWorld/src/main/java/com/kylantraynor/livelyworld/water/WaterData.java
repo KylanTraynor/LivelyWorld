@@ -19,12 +19,11 @@ public class WaterData {
 	private int y = 0;
 	private int z = 0;
 	
-	public static int moistureCode = 0;
-	private static int inCurrentCode = 3;
-	private static int outCurrentCode = 9;
-	private static int inStrengthCode = 6;
+	public static int maxLevel = 255;
+	public static int moistureCode = 0; // 255 (1 byte) 0000 0000 0000 0000 0000 1111 1111
+	/*private static int outCurrentCode = 9;
 	private static int outStrengthCode = 12;
-	private static int saltCode = 15;
+	private static int saltCode = 15; // 15 (4 bits) 1111 0000 0000 0000 0000 0000 0000 0000*/ 
 	
 	public WaterData(WaterChunk chunk, int x, int y, int z){
 		this.x = x;
@@ -111,50 +110,52 @@ public class WaterData {
 	}
 	
 	public int getLevel(){
-		return (getData() & (7 << moistureCode)) >> moistureCode;
+		return (getData() & (maxLevel << moistureCode)) >> moistureCode;
 	}
 	
 	public void setLevel(int value){
-		int newData = (getData() & (~(7 << moistureCode))) + (Utils.constrainTo(value, 0, 7) << moistureCode);
-		if(newData != getData()){
+		int newData = (getData() & (~(maxLevel << moistureCode))) + (Utils.constrainTo(value, 0, maxLevel) << moistureCode);
+		if(toWaterLevel(value) != toWaterLevel(getLevel())){
 			setData(newData);
-			//sendChangedEvent();
+			sendChangedEvent();
+		} else {
+			setData(newData);
 		}
 	}
-	
+	/*
 	public int getInCurrentDirection(){
 		return (getData() & (7 << inCurrentCode)) >> inCurrentCode;
 	}
 	
 	public void setInCurrentDirection(int value){
 		setData((getData() & (~(7 << inCurrentCode))) + (Utils.constrainTo(value, 0, 7) << inCurrentCode));
-	}
-	
+	}*/
+	/*
 	public int getOutCurrentDirection(){
-		return (getData() & (7 << outCurrentCode)) >> outCurrentCode;
+		return (getData() & (15 << outCurrentCode)) >> outCurrentCode;
 	}
 	
 	public void setOutCurrentDirection(int value){
-		setData((getData() & (~(7 << outCurrentCode))) + (Utils.constrainTo(value, 0, 7) << outCurrentCode));
-	}
-	
+		setData((getData() & (~(15 << outCurrentCode))) + (Utils.constrainTo(value, 0, 15) << outCurrentCode));
+	}*/
+	/*
 	public int getInCurrentStrength(){
 		return (getData() & (7 << inStrengthCode)) >> inStrengthCode;
 	}
 	
 	public void setInCurrentStrength(int value){
 		setData((getData() & (~(7 << inStrengthCode))) + (Utils.constrainTo(value, 0, 7) << inStrengthCode));
-	}
-	
+	}*/
+	/*
 	public int getOutCurrentStrength(){
-		return (getData() & (7 << outStrengthCode)) >> outStrengthCode;
+		return (getData() & (15 << outStrengthCode)) >> outStrengthCode;
 	}
 	
 	public void setOutCurrentStrength(int value){
-		setData((getData() & (~(7 << outStrengthCode))) + (Utils.constrainTo(value, 0, 7) << outStrengthCode));
+		setData((getData() & (~(15 << outStrengthCode))) + (Utils.constrainTo(value, 0, 15) << outStrengthCode));
 	}
-	
-	public int getSalt(){
+	*/
+	/*public int getSalt(){
 		return (getData() & (7 << saltCode)) >> saltCode;
 	}
 	
@@ -164,7 +165,7 @@ public class WaterData {
 	
 	public boolean isSalted(){
 		return getSalt() > 0;
-	}
+	}*/
 
 	public void tick(boolean loadChunks) {
 		if(!chunk.isLoaded()) return;
@@ -182,9 +183,11 @@ public class WaterData {
 		}
 		WaterData down = getRelative(BlockFace.DOWN);
 		if(down != null){
-			if(down.getLevel() < 7 && Math.random() <= down.getPermeability()){
-				down.setLevel(down.getLevel() + 1);
-				this.setLevel(level - 1);
+			if(down.getLevel() < maxLevel && Math.random() <= down.getPermeability()){
+				int transfer = maxLevel - down.getLevel();
+				transfer = Math.min(transfer, getLevel());
+				down.setLevel(down.getLevel() + transfer);
+				this.setLevel(level - transfer);
 				return;
 			}
 		}
@@ -237,7 +240,7 @@ public class WaterData {
 	
 	public static int getWaterLevelAt(WaterChunk chunk, int x, int y, int z){
 		int d = chunk.getData(x, y, z);
-		return (d & (7 << moistureCode)) >> moistureCode;
+		return (d & (maxLevel << moistureCode)) >> moistureCode;
 	}
 	
 	/**
@@ -249,6 +252,10 @@ public class WaterData {
 		return chunk.getWorld().getBlockAt(getX(), getY(), getZ());
 	}
 	
+	public static int toWaterLevel(int level){
+		return (int) (level * (8.0 / maxLevel));
+	}
+	
 	public void sendChangedEvent(){
 		BukkitRunnable br = new BukkitRunnable(){
 			@Override
@@ -257,9 +264,9 @@ public class WaterData {
 					return;
 				Block b = chunk.getWorld().getBlockAt(getX(), getY(), getZ());
 				if(getPermeability() >= 1 && b.getRelative(BlockFace.DOWN).getType() != Material.AIR){
-					/*if(Utils.getWaterHeight(b) != getLevel()){
-						Utils.setClientWaterHeight(b, getLevel());
-					}*/
+					if(Utils.getWaterHeight(b) != toWaterLevel(getLevel())){
+						Utils.setClientWaterHeight(b, toWaterLevel(getLevel()));
+					}
 				} else if(b.getRelative(BlockFace.DOWN).getType() == Material.AIR && getLevel() > 0) {
 					chunk.getWorld().spawnParticle(Particle.DRIP_WATER, b.getX() + Math.random(), b.getY() - 0.01, b.getZ() + Math.random(), 1);
 				}

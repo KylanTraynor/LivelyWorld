@@ -116,7 +116,7 @@ public class WaterData {
 	public void setLevel(int value){
 		// 0000 1111
 		// 1111 1111
-		int newData = (getData() & (~(maxLevel << moistureCode))) + (Utils.constrainTo(value, 0, maxLevel) << moistureCode);
+		int newData = (getData() & (~(maxLevel << moistureCode))) | (Utils.constrainTo(value, 0, maxLevel) << moistureCode);
 		/*if(toWaterLevel(value) != toWaterLevel(getLevel())){
 			setData(newData);
 			sendChangedEvent();
@@ -163,7 +163,7 @@ public class WaterData {
 	}
 	
 	public void setSalt(int value){
-		setData((getData() & (~(15 << saltCode))) + (Utils.constrainTo(value, 0, 15) << saltCode));
+		setData((getData() & (~(15 << saltCode))) | (Utils.constrainTo(value, 0, 15) << saltCode));
 	}
 	
 	public boolean isSalted(){

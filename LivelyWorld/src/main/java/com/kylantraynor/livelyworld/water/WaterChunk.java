@@ -307,7 +307,7 @@ public class WaterChunk {
 			int location = f.readInt();
 			int size = 0;
 			if(location < 2){
-				location = Math.floorDiv((Math.max((int)f.length(), 1024 * 8)), sectorLength);
+				location = Math.floorDiv((Math.max((int)f.length(), 8192)), sectorLength);
 				f.seek(locationIndex);
 				f.writeInt(location);
 			} else {
@@ -404,7 +404,7 @@ public class WaterChunk {
 				baos = new ByteArrayOutputStream();
 				ios = new InflaterOutputStream(baos);
 				
-				byte[] buf = new byte[5];
+				byte[] buf = new byte[4096];
 				int rlen = -1;
 				while((rlen = f.read(buf)) >= 0){
 					ios.write(buf, 0, rlen);
@@ -581,7 +581,7 @@ public class WaterChunk {
 			WaterData target = null;
 			if(!world.getChunkAt(this.x, this.z).getBlock(x, y-1, z).getType().isSolid()){
 				WaterData below = getAt(x, y-1, z);
-				int leveldiff = 7 - below.getLevel();
+				int leveldiff = WaterData.maxLevel - below.getLevel();
 				if(leveldiff > 0){
 					target = below;
 					int transfer = Math.min(leveldiff, l);

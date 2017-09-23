@@ -115,12 +115,12 @@ public class WaterData {
 	
 	public void setLevel(int value){
 		int newData = (getData() & (~(maxLevel << moistureCode))) + (Utils.constrainTo(value, 0, maxLevel) << moistureCode);
-		if(toWaterLevel(value) != toWaterLevel(getLevel())){
+		/*if(toWaterLevel(value) != toWaterLevel(getLevel())){
 			setData(newData);
 			sendChangedEvent();
-		} else {
+		} else {*/
 			setData(newData);
-		}
+		//}
 	}
 	/*
 	public int getInCurrentDirection(){

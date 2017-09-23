@@ -211,7 +211,7 @@ public class WaterData {
 	}
 	
 	public double getPermeability(){
-		if(!chunk.isLoaded() || WaterChunkThread.isChunkLoaded(chunk.getWorld(), chunk.getX(), chunk.getZ()))
+		if(!chunk.isLoaded() || !WaterChunkThread.isChunkLoaded(chunk.getWorld(), chunk.getX(), chunk.getZ()))
 			return 0;
 		int id = chunk.getWorld().getBlockTypeIdAt(getX(), getY(), getZ());
 		switch (Material.getMaterial(id)){

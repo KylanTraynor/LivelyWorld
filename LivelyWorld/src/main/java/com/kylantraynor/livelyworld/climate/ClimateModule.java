@@ -138,6 +138,9 @@ public class ClimateModule {
 								SnowFallTask task = new SnowFallTask(getPlugin().getClimateModule(), cell, b.getX(), b.getY() + 1, b.getZ());
 								task.runTaskLater(getPlugin(), 1);
 							} if (Math.random() < 0.5 * (-tdiff1 / 2)){
+								while(b.getRelative(BlockFace.DOWN).getType() == Material.WATER || b.getRelative(BlockFace.DOWN).getType() == Material.STATIONARY_WATER){
+									b = b.getRelative(BlockFace.DOWN);
+								}
 								final Block fb = b;
 								BukkitRunnable br = new BukkitRunnable(){
 									@Override
@@ -158,6 +161,9 @@ public class ClimateModule {
 								SnowFallTask task = new SnowFallTask(getPlugin().getClimateModule(), cell, b.getX(), b.getY() + 1, b.getZ());
 								task.runTaskLater(getPlugin(), 1);
 							} if (Math.random() < 1.0 * (-tdiff2 / 2)){
+								while(b.getRelative(BlockFace.DOWN).getType() == Material.WATER || b.getRelative(BlockFace.DOWN).getType() == Material.STATIONARY_WATER){
+									b = b.getRelative(BlockFace.DOWN);
+								}
 								final Block fb = b;
 								BukkitRunnable br = new BukkitRunnable(){
 									@Override

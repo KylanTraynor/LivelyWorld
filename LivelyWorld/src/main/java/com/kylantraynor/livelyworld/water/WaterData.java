@@ -252,7 +252,7 @@ public class WaterData {
 	}
 	
 	public static int toWaterLevel(int level){
-		return (int) (level * (8.0 / maxLevel));
+		return (int) (8.0 * (((double)level)/ maxLevel));
 	}
 	
 	public void sendChangedEvent(){

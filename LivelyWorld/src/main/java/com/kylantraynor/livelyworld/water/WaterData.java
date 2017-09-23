@@ -202,7 +202,7 @@ public class WaterData {
 		}
 		for(BlockFace bf : order){
 			WaterData target = getRelative(bf);
-			if(target.getLevel() < level && Math.random() <= target.getPermeability()){
+			if(target.getLevel() < (level - 1) && Math.random() <= target.getPermeability()){
 				target.setLevel(down.getLevel() + 1);
 				this.setLevel(level - 1);
 				return;
@@ -215,7 +215,7 @@ public class WaterData {
 			return 0;
 		int id = chunk.getWorld().getBlockTypeIdAt(getX(), getY(), getZ());
 		switch (Material.getMaterial(id)){
-		case WATER: case STATIONARY_WATER: case AIR:
+		case WATER: case STATIONARY_WATER: case LONG_GRASS: case AIR:
 			return 1;
 		case FENCE: case SPRUCE_FENCE: case DARK_OAK_FENCE: case JUNGLE_FENCE: case BIRCH_FENCE:
 			return 0.9;

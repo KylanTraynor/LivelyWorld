@@ -1,6 +1,5 @@
 package com.kylantraynor.livelyworld.water;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -8,7 +7,6 @@ import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.BlockState;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import com.kylantraynor.livelyworld.LivelyWorld;
@@ -120,7 +118,7 @@ public class WaterData {
 		int newData = (getData() & (~(7 << moistureCode))) + (Utils.constrainTo(value, 0, 7) << moistureCode);
 		if(newData != getData()){
 			setData(newData);
-			//if(Math.random() < 0.1) sendChangedEvent();
+			sendChangedEvent();
 		}
 	}
 	
@@ -213,34 +211,23 @@ public class WaterData {
 	}
 	
 	public double getPermeability(){
-		BlockState bs = getBlockState();
-		if(bs == null) return 0;
-		switch (bs.getType()){
+		if(!chunk.isLoaded() || WaterChunkThread.isChunkLoaded(chunk.getWorld(), chunk.getX(), chunk.getZ()))
+			return 0;
+		int id = chunk.getWorld().getBlockTypeIdAt(getX(), getY(), getZ());
+		switch (Material.getMaterial(id)){
 		case WATER: case STATIONARY_WATER: case AIR:
 			return 1;
 		case FENCE: case SPRUCE_FENCE: case DARK_OAK_FENCE: case JUNGLE_FENCE: case BIRCH_FENCE:
 			return 0.9;
 		case SAND:
 			return 0.4;
-		case DIRT: case GRASS_PATH:
+		case DIRT: case GRASS_PATH: case GRASS:
 			return 0.2;
 		case COBBLESTONE:
 			return 0.1;
 		default:
 			return 0;
 		}
-	}
-	
-	public BlockState getBlockState(){
-		if(!chunk.isLoaded()) return null;
-		if(!WaterChunkThread.isChunkLoaded(chunk.getWorld(), chunk.getX(), chunk.getZ())) return null;
-		try{
-			return chunk.getWorld().getChunkAt(chunk.getX(), chunk.getZ()).getBlock(getChunkX(), y, getChunkZ()).getState();
-		} catch (Exception e){
-			LivelyWorld.getInstance().getLogger().warning("Error while getting blockstate at [" + getChunkX() + "," + y + "," + getChunkZ() + "] in chunk " + chunk.getX() + "," + chunk.getZ());
-			e.printStackTrace();
-		}
-		return null;
 	}
 	
 	public static int getWaterLevelAt(World world, int x, int y, int z){
@@ -253,19 +240,28 @@ public class WaterData {
 		return (d & (7 << moistureCode)) >> moistureCode;
 	}
 	
+	/**
+	 * Gets the block corresponding to this water data.
+	 * This function is NOT thread-safe, and should only be called from the main thread.
+	 * @return Block
+	 */
+	public Block getBlock(){
+		return chunk.getWorld().getBlockAt(getX(), getY(), getZ());
+	}
+	
 	public void sendChangedEvent(){
 		BukkitRunnable br = new BukkitRunnable(){
 			@Override
 			public void run() {
-				BlockState s = getBlockState();
-				if(s == null) return;
-				Block b = getBlockState().getBlock();
-				if(getPermeability() >= 1 && getRelative(BlockFace.DOWN).getBlockState().getType() != Material.AIR){
-					if(Utils.getWaterHeight(b) != getLevel()){
+				if(!chunk.isLoaded() || WaterChunkThread.isChunkLoaded(chunk.getWorld(), chunk.getX(), chunk.getZ()))
+					return;
+				Block b = chunk.getWorld().getBlockAt(getX(), getY(), getZ());
+				if(getPermeability() >= 1 && getRelative(BlockFace.DOWN).getBlock().getType().isSolid()){
+					/*if(Utils.getWaterHeight(b) != getLevel()){
 						Utils.setWaterHeight(b, getLevel(), false);
-					}
-				} else if(getLevel() > 0) {
-					chunk.getWorld().spawnParticle(Particle.DRIP_WATER, b.getX() + Math.random(), b.getY(), b.getZ() + Math.random(), 1);
+					}*/
+				} else if(getRelative(BlockFace.DOWN).getPermeability() >= 1 && getLevel() > 0) {
+					chunk.getWorld().spawnParticle(Particle.DRIP_WATER, b.getX() + Math.random(), b.getY() - 0.01, b.getZ() + Math.random(), 1);
 				}
 				//BlockWaterChangedEvent e = new BlockWaterChangedEvent(b, getData());
 				//Bukkit.getPluginManager().callEvent(e);

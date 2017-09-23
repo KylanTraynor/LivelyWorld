@@ -6,6 +6,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 
 public class Utils {
 	
@@ -148,6 +149,29 @@ public class Utils {
 		int result = 8 - b.getData();
 		if(result <= 0) result = 8;
 		return result;
+	}
+	
+	public static void setClientWaterHeight(Block b, int height){
+		Material m = b.getType();
+		byte data = b.getData();
+		if(height == 0){
+			m = Material.AIR;
+			data = 0;
+		} else if(height == 8){
+			m = Material.WATER;
+			data = 0;
+		} else {
+			m = Material.WATER;
+			data = (byte) (8 - height);
+		}
+		
+		for(Player p : Bukkit.getOnlinePlayers()){
+			if(p.getWorld() == b.getWorld()){
+				if(p.getLocation().distanceSquared(b.getLocation()) < 10000){
+					p.sendBlockChange(b.getLocation(), m, data);
+				}
+			}
+		}
 	}
 	
 	public static void setWaterHeight(Block b, int height, boolean canSource){

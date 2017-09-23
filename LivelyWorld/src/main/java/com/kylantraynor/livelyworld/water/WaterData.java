@@ -258,7 +258,7 @@ public class WaterData {
 				Block b = chunk.getWorld().getBlockAt(getX(), getY(), getZ());
 				if(getPermeability() >= 1 && b.getRelative(BlockFace.DOWN).getType() != Material.AIR){
 					if(Utils.getWaterHeight(b) != getLevel()){
-						Utils.setWaterHeight(b, getLevel(), false);
+						Utils.setClientWaterHeight(b, getLevel());
 					}
 				} else if(b.getRelative(BlockFace.DOWN).getType() == Material.AIR && getLevel() > 0) {
 					chunk.getWorld().spawnParticle(Particle.DRIP_WATER, b.getX() + Math.random(), b.getY() - 0.01, b.getZ() + Math.random(), 1);

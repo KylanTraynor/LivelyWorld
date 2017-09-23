@@ -219,7 +219,7 @@ public class WaterData {
 			return 1;
 		case FENCE: case SPRUCE_FENCE: case DARK_OAK_FENCE: case JUNGLE_FENCE: case BIRCH_FENCE:
 			return 0.9;
-		case SAND:
+		case SAND: case GRAVEL: case LEAVES: case LEAVES_2:
 			return 0.4;
 		case DIRT: case GRASS_PATH: case GRASS:
 			return 0.2;
@@ -257,9 +257,9 @@ public class WaterData {
 					return;
 				Block b = chunk.getWorld().getBlockAt(getX(), getY(), getZ());
 				if(getPermeability() >= 1 && b.getRelative(BlockFace.DOWN).getType().isSolid()){
-					/*if(Utils.getWaterHeight(b) != getLevel()){
+					if(Utils.getWaterHeight(b) != getLevel()){
 						Utils.setWaterHeight(b, getLevel(), false);
-					}*/
+					}
 				} else if(b.getRelative(BlockFace.DOWN).getType() == Material.AIR && getLevel() > 0) {
 					chunk.getWorld().spawnParticle(Particle.DRIP_WATER, b.getX() + Math.random(), b.getY() - 0.01, b.getZ() + Math.random(), 1);
 				}

@@ -253,7 +253,7 @@ public class WaterData {
 		BukkitRunnable br = new BukkitRunnable(){
 			@Override
 			public void run() {
-				if(!chunk.isLoaded() || chunk.getWorld().isChunkLoaded(chunk.getX(), chunk.getZ()))
+				if(!chunk.isLoaded() || !chunk.getWorld().isChunkLoaded(chunk.getX(), chunk.getZ()))
 					return;
 				Block b = chunk.getWorld().getBlockAt(getX(), getY(), getZ());
 				if(getPermeability() >= 1 && b.getRelative(BlockFace.DOWN).getType().isSolid()){

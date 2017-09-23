@@ -33,7 +33,7 @@ import com.kylantraynor.livelyworld.events.BlockWaterLevelChangeEvent;
 
 public class WaterChunk {
 	final static CopyOnWriteArrayList<WaterChunk> chunks = new CopyOnWriteArrayList<WaterChunk>(); 
-	final static int sectorLength = 512;
+	final static int sectorLength = 4096;
 	static boolean disabled = false;
 	
 	final byte[] data = new byte[16 * 16 * 256 * 4];
@@ -292,7 +292,7 @@ public class WaterChunk {
 			}
 			if(f.length() < 8192){
 				f.seek(locationIndex);
-				f.writeInt(16);
+				f.writeInt(2);
 				f.seek(locationIndex);
 				f.seek(sizeIndex);
 				f.writeInt(baos.size());
@@ -306,7 +306,7 @@ public class WaterChunk {
 			f.seek(locationIndex);
 			int location = f.readInt();
 			int size = 0;
-			if(location < 16){
+			if(location < 2){
 				location = Math.floorDiv((Math.max((int)f.length(), 1024 * 8)), sectorLength);
 				f.seek(locationIndex);
 				f.writeInt(location);

@@ -253,14 +253,14 @@ public class WaterData {
 		BukkitRunnable br = new BukkitRunnable(){
 			@Override
 			public void run() {
-				if(!chunk.isLoaded() || WaterChunkThread.isChunkLoaded(chunk.getWorld(), chunk.getX(), chunk.getZ()))
+				if(!chunk.isLoaded() || chunk.getWorld().isChunkLoaded(chunk.getX(), chunk.getZ()))
 					return;
 				Block b = chunk.getWorld().getBlockAt(getX(), getY(), getZ());
-				if(getPermeability() >= 1 && getRelative(BlockFace.DOWN).getBlock().getType().isSolid()){
+				if(getPermeability() >= 1 && b.getRelative(BlockFace.DOWN).getType().isSolid()){
 					/*if(Utils.getWaterHeight(b) != getLevel()){
 						Utils.setWaterHeight(b, getLevel(), false);
 					}*/
-				} else if(getRelative(BlockFace.DOWN).getPermeability() >= 1 && getLevel() > 0) {
+				} else if(b.getRelative(BlockFace.DOWN).getType() == Material.AIR && getLevel() > 0) {
 					chunk.getWorld().spawnParticle(Particle.DRIP_WATER, b.getX() + Math.random(), b.getY() - 0.01, b.getZ() + Math.random(), 1);
 				}
 				//BlockWaterChangedEvent e = new BlockWaterChangedEvent(b, getData());

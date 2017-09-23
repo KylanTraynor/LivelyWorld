@@ -15,7 +15,7 @@ public class WaterChunkThread extends Thread {
 	
 	private String name = "WaterChunk Thread";
 	final private static Map<String, Chunk[]> loadedChunks = new HashMap<String, Chunk[]>();
-	final Enclosed<Chunk[]> chunksFetcher = new Enclosed<Chunk[]>();
+	final static Enclosed<Chunk[]> chunksFetcher = new Enclosed<Chunk[]>();
 	
 	public void run(){
 		try{
@@ -24,7 +24,7 @@ public class WaterChunkThread extends Thread {
 				unloadChunks();
 				loadChunks();
 				if(System.currentTimeMillis() >= lastUpdate + 50){
-					updateListOfLoadedChunks();
+					//updateListOfLoadedChunks();
 					updateChunks();
 					lastUpdate = System.currentTimeMillis();
 				}
@@ -36,8 +36,7 @@ public class WaterChunkThread extends Thread {
 		}
 	}
 
-	private void updateListOfLoadedChunks() {
-		chunksFetcher.set(null);
+	/*private void updateListOfLoadedChunks() {
 		BukkitRunnable br = new BukkitRunnable(){
 			@Override
 			public void run() {
@@ -53,19 +52,31 @@ public class WaterChunkThread extends Thread {
 		};
 		br.runTask(LivelyWorld.getInstance());
 		while(chunksFetcher.get() == null){
+			try {
+				Thread.sleep(1);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 		loadedChunks.put("world", chunksFetcher.get());
-	}
+		chunksFetcher.set(null);
+	}*/
 	
 	public static boolean isChunkLoaded(World w, int chunkX, int chunkZ){
-		Chunk[] chunks = null;
+		try{
+			return w.isChunkLoaded(chunkX, chunkZ);
+		} catch (Exception e){
+			LivelyWorld.getInstance().getLogger().warning("Couldn't check if chunk " + chunkX + "," + chunkZ + " is loaded.");
+		}
+		return false;
+		/*Chunk[] chunks = null;
 		chunks = loadedChunks.get(w.getName());
 		if(chunks == null) return false;
 		for(Chunk c : chunks){
 			if(c.getX() == chunkX && c.getZ() == chunkZ) continue;
 			return true;
 		}
-		return false;
+		return false;*/
 	}
 
 	private void cleanList() {

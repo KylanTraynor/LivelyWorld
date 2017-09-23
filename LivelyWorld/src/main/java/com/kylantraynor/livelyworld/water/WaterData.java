@@ -22,8 +22,8 @@ public class WaterData {
 	public static int maxLevel = 255;
 	public static int moistureCode = 0; // 255 (1 byte) 0000 0000 0000 0000 0000 1111 1111
 	/*private static int outCurrentCode = 9;
-	private static int outStrengthCode = 12;
-	private static int saltCode = 15; // 15 (4 bits) 1111 0000 0000 0000 0000 0000 0000 0000*/ 
+	private static int outStrengthCode = 12;*/
+	private static int saltCode = 28; // 15 (4 bits) 1111 0000 0000 0000 0000 0000 0000 0000*/ 
 	
 	public WaterData(WaterChunk chunk, int x, int y, int z){
 		this.x = x;
@@ -155,17 +155,17 @@ public class WaterData {
 		setData((getData() & (~(15 << outStrengthCode))) + (Utils.constrainTo(value, 0, 15) << outStrengthCode));
 	}
 	*/
-	/*public int getSalt(){
-		return (getData() & (7 << saltCode)) >> saltCode;
+	public int getSalt(){
+		return (getData() & (15 << saltCode)) >> saltCode;
 	}
 	
 	public void setSalt(int value){
-		setData((getData() & (~(7 << saltCode))) + (Utils.constrainTo(value, 0, 7) << saltCode));
+		setData((getData() & (~(15 << saltCode))) + (Utils.constrainTo(value, 0, 15) << saltCode));
 	}
 	
 	public boolean isSalted(){
 		return getSalt() > 0;
-	}*/
+	}
 
 	public void tick(boolean loadChunks) {
 		if(!chunk.isLoaded()) return;

@@ -110,10 +110,12 @@ public class WaterData {
 	}
 	
 	public int getLevel(){
-		return (getData() & (maxLevel << moistureCode)) >> moistureCode;
+		return (getData() & (maxLevel << moistureCode)) >>> moistureCode;
 	}
 	
 	public void setLevel(int value){
+		// 0000 1111
+		// 1111 1111
 		int newData = (getData() & (~(maxLevel << moistureCode))) + (Utils.constrainTo(value, 0, maxLevel) << moistureCode);
 		/*if(toWaterLevel(value) != toWaterLevel(getLevel())){
 			setData(newData);
@@ -156,7 +158,8 @@ public class WaterData {
 	}
 	*/
 	public int getSalt(){
-		return (getData() & (15 << saltCode)) >> saltCode;
+		int salt = (getData() & (15 << saltCode)) >>> saltCode;
+		return salt;
 	}
 	
 	public void setSalt(int value){

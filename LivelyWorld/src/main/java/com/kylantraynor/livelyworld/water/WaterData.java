@@ -169,8 +169,7 @@ public class WaterData {
 
 	public void tick(boolean loadChunks) {
 		if(!chunk.isLoaded()) return;
-		int level = this.getLevel();
-		if(level == 0) return;
+		if(getLevel() == 0) return;
 		if(!loadChunks){
 			if(x == 0 && !chunk.getRelative(-1, 0).isLoaded())
 				return;
@@ -187,10 +186,10 @@ public class WaterData {
 				int transfer = maxLevel - down.getLevel();
 				transfer = Math.min(transfer, (int) Math.floor(getLevel() * down.getPermeability()));
 				down.setLevel(down.getLevel() + transfer);
-				this.setLevel(level - transfer);
+				this.setLevel(getLevel() - transfer);
 			}
 		}
-		if(level <= 1) return;
+		if(getLevel() <= 1) return;
 		double rdm = Math.random() * 4;
 		BlockFace[] order = new BlockFace[0];
 		if(rdm > 3){
@@ -204,10 +203,11 @@ public class WaterData {
 		}
 		for(BlockFace bf : order){
 			WaterData target = getRelative(bf);
-			if(target.getLevel() < (level - 1) && Math.random() <= target.getPermeability()){
-				target.setLevel(down.getLevel() + 1);
-				this.setLevel(level - 1);
-				return;
+			if(target.getLevel() < getLevel() - 1){
+				int transfer = (getLevel() - 1) - target.getLevel();
+				transfer = (int) Math.floor(transfer * target.getPermeability());
+				target.setLevel(down.getLevel() + transfer);
+				this.setLevel(getLevel() - transfer);
 			}
 		}
 	}

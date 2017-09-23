@@ -256,7 +256,7 @@ public class WaterData {
 				if(!chunk.isLoaded() || !chunk.getWorld().isChunkLoaded(chunk.getX(), chunk.getZ()))
 					return;
 				Block b = chunk.getWorld().getBlockAt(getX(), getY(), getZ());
-				if(getPermeability() >= 1 && b.getRelative(BlockFace.DOWN).getType().isSolid()){
+				if(getPermeability() >= 1 && b.getRelative(BlockFace.DOWN).getType() != Material.AIR){
 					if(Utils.getWaterHeight(b) != getLevel()){
 						Utils.setWaterHeight(b, getLevel(), false);
 					}

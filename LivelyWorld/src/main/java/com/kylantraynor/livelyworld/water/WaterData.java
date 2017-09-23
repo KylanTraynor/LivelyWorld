@@ -20,7 +20,7 @@ public class WaterData {
 	private int z = 0;
 	
 	public static int maxLevel = 255;
-	public static int moistureCode = 0; // 255 (1 byte) 0000 0000 0000 0000 0000 1111 1111
+	public static int moistureCode = 0; // 255 (1 byte) 0000 0000 0000 0000 0000 0000 1111 1111
 	/*private static int outCurrentCode = 9;
 	private static int outStrengthCode = 12;*/
 	private static int saltCode = 28; // 15 (4 bits) 1111 0000 0000 0000 0000 0000 0000 0000*/ 
@@ -183,12 +183,11 @@ public class WaterData {
 		}
 		WaterData down = getRelative(BlockFace.DOWN);
 		if(down != null){
-			if(down.getLevel() < maxLevel && Math.random() <= down.getPermeability()){
+			if(down.getLevel() < maxLevel){
 				int transfer = maxLevel - down.getLevel();
-				transfer = Math.min(transfer, getLevel());
+				transfer = Math.min(transfer, (int) Math.floor(getLevel() * down.getPermeability()));
 				down.setLevel(down.getLevel() + transfer);
 				this.setLevel(level - transfer);
-				return;
 			}
 		}
 		if(level <= 1) return;

@@ -115,11 +115,11 @@ public class WaterData {
 	}
 	
 	public void setLevel(int value){
-		LivelyWorld.getInstance().getLogger().info("DEBUG:");
-		LivelyWorld.getInstance().getLogger().info("Start:" + Integer.toBinaryString(getData()));
-		LivelyWorld.getInstance().getLogger().info(Integer.toBinaryString((getData() & (~(maxLevel << moistureCode)))) + " | " + Integer.toBinaryString((Utils.constrainTo(value, 0, maxLevel) << moistureCode)));
+		//LivelyWorld.getInstance().getLogger().info("DEBUG:");
+		//LivelyWorld.getInstance().getLogger().info("Start:" + Integer.toBinaryString(getData()));
+		//LivelyWorld.getInstance().getLogger().info(Integer.toBinaryString((getData() & (~(maxLevel << moistureCode)))) + " | " + Integer.toBinaryString((Utils.constrainTo(value, 0, maxLevel) << moistureCode)));
 		int newData = (getData() & (~(maxLevel << moistureCode))) | (Utils.constrainTo(value, 0, maxLevel) << moistureCode);
-		LivelyWorld.getInstance().getLogger().info("Finish:" + Integer.toBinaryString(newData));
+		//LivelyWorld.getInstance().getLogger().info("Finish:" + Integer.toBinaryString(newData));
 		/*if(toWaterLevel(value) != toWaterLevel(getLevel())){
 			setData(newData);
 			sendChangedEvent();

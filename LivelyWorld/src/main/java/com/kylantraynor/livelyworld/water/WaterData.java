@@ -107,18 +107,25 @@ public class WaterData {
 	}
 	
 	public void setData(long value){
-		chunk.setData((int) value, x, y, z);
+		chunk.setData((int) (value & 0xFFFFFFFFL), x, y, z);
 	}
 	
 	public int getLevel(){
-		return (int) (getData() & (maxLevel << moistureCode)) >>> moistureCode;
+		return (int) (getData() & maxLevel);
 	}
 	
 	public void setLevel(int value){
+		if(value > maxLevel){
+			LivelyWorld.getInstance().getLogger().info("DEBUG: Level was too high! (" + value + ">" + maxLevel + ")");
+			value = (int) maxLevel;
+		} else if(value < 0){
+			LivelyWorld.getInstance().getLogger().info("DEBUG: Level was too low! (" + value + "<0)");
+			value = 0;
+		}
 		//LivelyWorld.getInstance().getLogger().info("DEBUG:");
 		//LivelyWorld.getInstance().getLogger().info("Start:" + Integer.toBinaryString(getData()));
 		//LivelyWorld.getInstance().getLogger().info(Integer.toBinaryString((getData() & (~(maxLevel << moistureCode)))) + " | " + Integer.toBinaryString((Utils.constrainTo(value, 0, maxLevel) << moistureCode)));
-		long newData = (getData() & (~(maxLevel << moistureCode))) | ((long) Utils.constrainTo(value, 0, (int) maxLevel) << moistureCode);
+		long newData = (getData() & (~maxLevel)) | ((long) value);
 		//LivelyWorld.getInstance().getLogger().info("Finish:" + Integer.toBinaryString(newData));
 		/*if(toWaterLevel(value) != toWaterLevel(getLevel())){
 			setData(newData);
@@ -165,6 +172,9 @@ public class WaterData {
 	}
 	
 	public void setSalt(int value){
+		if(value < 0){
+			
+		}
 		setData((getData() & (~(maxSalt << saltCode))) | ((long) Utils.constrainTo(value, 0, (int) maxSalt) << saltCode));
 	}
 	
@@ -189,7 +199,7 @@ public class WaterData {
 		if(down != null){
 			if(down.getLevel() < maxLevel){
 				int transfer = (int) maxLevel - down.getLevel();
-				transfer = Math.min(transfer, (int) Math.floor(getLevel() * down.getPermeability()));
+				transfer = Math.min((int)Math.floor(transfer * down.getPermeability()), getLevel());
 				down.setLevel(down.getLevel() + transfer);
 				this.setLevel(getLevel() - transfer);
 			}

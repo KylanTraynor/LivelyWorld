@@ -581,7 +581,7 @@ public class WaterChunk {
 			WaterData target = null;
 			if(!world.getChunkAt(this.x, this.z).getBlock(x, y-1, z).getType().isSolid()){
 				WaterData below = getAt(x, y-1, z);
-				int leveldiff = WaterData.maxLevel - below.getLevel();
+				int leveldiff = (int) WaterData.maxLevel - below.getLevel();
 				if(leveldiff > 0){
 					target = below;
 					int transfer = Math.min(leveldiff, l);
@@ -663,7 +663,7 @@ public class WaterChunk {
 			int i = 0;
 			while(amount > 0 && (y + i) < 256){
 				d = getAt(x, y + i, z);
-				int added = Math.min(WaterData.maxLevel - d.getLevel(), amount);
+				int added = Math.min((int) WaterData.maxLevel - d.getLevel(), amount);
 				d.setLevel(d.getLevel() + added);
 				amount -= added;
 				i++;

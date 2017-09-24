@@ -12,11 +12,11 @@ public class BlockWaterChangedEvent extends BlockEvent{
 	private boolean cancelled = false;
 	private DeteriorationCause cause = null;
 	private MaterialData target = null;
-	private int data;
+	private long data;
 	private Block block;
 	private static final HandlerList handlers = new HandlerList();
 	
-	public BlockWaterChangedEvent(Block theBlock, int data) {
+	public BlockWaterChangedEvent(Block theBlock, long data) {
 		super(theBlock);
 		this.data = data;
 	}
@@ -31,6 +31,6 @@ public class BlockWaterChangedEvent extends BlockEvent{
 	}
 	
 	public int getNewLevel() {
-		return (data & (WaterData.maxLevel << WaterData.moistureCode)) >> WaterData.moistureCode;
+		return (int) (data & (WaterData.maxLevel << WaterData.moistureCode)) >>> WaterData.moistureCode;
 	}
 }

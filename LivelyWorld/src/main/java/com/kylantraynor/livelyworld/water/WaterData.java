@@ -224,7 +224,7 @@ public class WaterData {
 		switch (Material.getMaterial(id)){
 		case WATER: case STATIONARY_WATER: case LONG_GRASS: case AIR:
 			return 1;
-		case FENCE: case SPRUCE_FENCE: case DARK_OAK_FENCE: case JUNGLE_FENCE: case BIRCH_FENCE:
+		case FENCE: case SPRUCE_FENCE: case DARK_OAK_FENCE: case JUNGLE_FENCE: case BIRCH_FENCE: case IRON_FENCE:
 			return 0.9;
 		case SAND: case GRAVEL: case LEAVES: case LEAVES_2:
 			return 0.4;

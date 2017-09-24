@@ -19,10 +19,11 @@ public class WaterData {
 	private int y = 0;
 	private int z = 0;
 	
-	public static int maxLevel = 255;
+	public static int maxLevel = 0b1111_1111;
 	public static int moistureCode = 0; // 255 (1 byte) 0000 0000 0000 0000 0000 0000 1111 1111
 	/*private static int outCurrentCode = 9;
 	private static int outStrengthCode = 12;*/
+	private static int maxSalt = 0b1111;
 	private static int saltCode = 28; // 15 (4 bits) 1111 0000 0000 0000 0000 0000 0000 0000*/ 
 	
 	public WaterData(WaterChunk chunk, int x, int y, int z){
@@ -114,9 +115,11 @@ public class WaterData {
 	}
 	
 	public void setLevel(int value){
-		// 0000 1111
-		// 1111 1111
+		LivelyWorld.getInstance().getLogger().info("DEBUG:");
+		LivelyWorld.getInstance().getLogger().info("Start:" + Integer.toBinaryString(getData()));
+		LivelyWorld.getInstance().getLogger().info(Integer.toBinaryString((getData() & (~(maxLevel << moistureCode)))) + " | " + Integer.toBinaryString((Utils.constrainTo(value, 0, maxLevel) << moistureCode)));
 		int newData = (getData() & (~(maxLevel << moistureCode))) | (Utils.constrainTo(value, 0, maxLevel) << moistureCode);
+		LivelyWorld.getInstance().getLogger().info("Finish:" + Integer.toBinaryString(newData));
 		/*if(toWaterLevel(value) != toWaterLevel(getLevel())){
 			setData(newData);
 			sendChangedEvent();
@@ -158,12 +161,11 @@ public class WaterData {
 	}
 	*/
 	public int getSalt(){
-		int salt = (getData() & (15 << saltCode)) >>> saltCode;
-		return salt;
+		return (getData() & (maxSalt << saltCode)) >>> saltCode;
 	}
 	
 	public void setSalt(int value){
-		setData((getData() & (~(15 << saltCode))) | (Utils.constrainTo(value, 0, 15) << saltCode));
+		setData((getData() & (~(maxSalt << saltCode))) | (Utils.constrainTo(value, 0, maxSalt) << saltCode));
 	}
 	
 	public boolean isSalted(){

@@ -192,10 +192,13 @@ public class WaterData {
 	}
 	
 	public void setSalt(int value){
-		if(value < 0){
-			
+		if(value > maxSalt){
+			value = (int) maxSalt;
 		}
-		setData((getData() & (~(maxSalt << saltCode))) | ((long) Utils.constrainTo(value, 0, (int) maxSalt) << saltCode));
+		if(value < 0){
+			value = 0;
+		}
+		setData((getData() & (~(maxSalt << saltCode))) | ((long) value) << saltCode);
 	}
 	
 	public boolean isSalted(){
@@ -222,7 +225,7 @@ public class WaterData {
 				if(down.getLevel() >= maxLevel || getLevel() == 0){
 					break;
 				}
-				if(Math.random() < down.getPermeability()){
+				if(Math.random() <= down.getPermeability()){
 					down.setLevel(down.getLevel() + 1);
 					setLevel(getLevel() - 1);
 				}
@@ -249,7 +252,7 @@ public class WaterData {
 		int level = getLevel();
 		for(int i = 0; i < level; i++){
 			WaterData target = getRelative(order[i % 4]);
-			if(target.getLevel() < getLevel() - 1 && Math.random() < target.getPermeability()){
+			if(target.getLevel() < getLevel() - 1 && Math.random() <= target.getPermeability()){
 				target.setLevel(target.getLevel() + 1);
 				this.setLevel(getLevel() - 1);
 			}
@@ -332,9 +335,9 @@ public class WaterData {
 					return;
 				Block b = chunk.getWorld().getBlockAt(getX(), getY(), getZ());
 				if(getPermeability() >= 1 && b.getRelative(BlockFace.DOWN).getType() != Material.AIR){
-					if(Utils.getWaterHeight(b) != toWaterLevel(getLevel())){
+					//if(Utils.getWaterHeight(b) != toWaterLevel(getLevel())){
 						Utils.setClientWaterHeight(b, toWaterLevel(getLevel()));
-					}
+					//}
 				} else if(b.getRelative(BlockFace.DOWN).getType() == Material.AIR && getLevel() > 0) {
 					chunk.getWorld().spawnParticle(Particle.DRIP_WATER, b.getX() + Math.random(), b.getY() - 0.01, b.getZ() + Math.random(), 1);
 				}

@@ -158,10 +158,10 @@ public class Utils {
 			m = Material.AIR;
 			data = 0;
 		} else if(height == 8){
-			m = Material.WATER;
+			m = Material.STATIONARY_WATER;
 			data = 0;
 		} else {
-			m = Material.WATER;
+			m = Material.STATIONARY_WATER;
 			data = (byte) (8 - height);
 		}
 		
@@ -179,14 +179,14 @@ public class Utils {
 			b.setType(Material.AIR);
 			b.setData((byte)0);
 		} else if(height == 8){
-			b.setType(Material.WATER);
+			b.setType(Material.STATIONARY_WATER);
 			if(canSource){
 				b.setData((byte)0);
 			} else {
 				b.setData((byte) 8);
 			}
 		} else {
-			b.setType(Material.WATER);
+			b.setType(Material.STATIONARY_WATER);
 			b.setData((byte) (8 - height));
 		}
 	}

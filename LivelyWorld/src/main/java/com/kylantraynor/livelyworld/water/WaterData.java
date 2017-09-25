@@ -21,7 +21,7 @@ public class WaterData {
 	
 	public static long maxLevel = 0xffL;
 	public static int moistureCode = 0; // 255 (1 byte) 0000 0000 0000 0000 0000 0000 1111 1111
-	public static long maxResistance = 0xffL;
+	public static long maxResistance = 0xfL;
 	public static int resistanceCode = 8;
 	/*private static int outCurrentCode = 9;
 	private static int outStrengthCode = 12;*/
@@ -274,7 +274,7 @@ public class WaterData {
 			resistance = getResistanceFor(Material.getMaterial(id));
 			setResistance(resistance);
 		}
-		if(resistance == 255) return 0;
+		if(resistance == 15) return 0;
 		return 1.0 / resistance;
 	}
 	
@@ -297,7 +297,7 @@ public class WaterData {
 		case COBBLESTONE:
 			return 10;
 		default:
-			return 255;
+			return 15;
 		}
 	}
 	

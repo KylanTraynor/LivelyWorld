@@ -77,7 +77,7 @@ public class Utils {
 	}
 	
 	public static byte[] toByteArray(int value){
-		return new byte[]{(byte) (value), (byte)(value >> 8), (byte)(value >> 16), (byte)(value >> 24)};
+		return new byte[]{(byte) (value), (byte)(value >>> 8), (byte)(value >>> 16), (byte)(value >>> 24)};
 	}
 	public static int toInt(byte b0, byte b1, byte b2, byte b3){
 		return 0 + ((int)(b0)) + (((int)b1) << 8) + (((int)b2) << 16) + (((int)b3) << 24);

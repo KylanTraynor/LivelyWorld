@@ -80,10 +80,10 @@ public class Utils {
 		return new byte[]{(byte) (value), (byte)(value >>> 8), (byte)(value >>> 16), (byte)(value >>> 24)};
 	}
 	public static int toInt(byte b0, byte b1, byte b2, byte b3){
-		return 0 + ((int)(b0)) + (((int)b1) << 8) + (((int)b2) << 16) + (((int)b3) << 24);
+		return 0 + (Byte.toUnsignedInt(b0)) + (Byte.toUnsignedInt(b1) << 8) + (Byte.toUnsignedInt(b2) << 16) + (Byte.toUnsignedInt(b3) << 24);
 	}
 	public static int toInt(byte[] b){
-		return 0 + ((int)(b[0])) + (((int)b[1]) << 8) + (((int)b[2]) << 16) + (((int)b[3]) << 24);
+		return 0 + (Byte.toUnsignedInt(b[0])) + (Byte.toUnsignedInt(b[1]) << 8) + (Byte.toUnsignedInt(b[2]) << 16) + (Byte.toUnsignedInt(b[3]) << 24);
 	}
 	
 	public int addSnow(Block snowBlock, int amount){

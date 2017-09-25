@@ -21,6 +21,8 @@ public class WaterData {
 	
 	public static long maxLevel = 0xffL;
 	public static int moistureCode = 0; // 255 (1 byte) 0000 0000 0000 0000 0000 0000 1111 1111
+	public static long maxResistance = 0xffL;
+	public static int resistanceCode = 8;
 	/*private static int outCurrentCode = 9;
 	private static int outStrengthCode = 12;*/
 	private static long maxSalt = 0xfL;
@@ -134,6 +136,24 @@ public class WaterData {
 			setData(newData);
 		}
 	}
+	public int getResistance(){
+		return (int) ((getData() >>> resistanceCode) & maxResistance);
+	}
+	
+	public void setResistance(int value){
+		if(value > maxResistance){
+			LivelyWorld.getInstance().getLogger().info("DEBUG: Resistance was too high! (" + value + ">" + maxResistance + ")");
+			value = (int) maxResistance;
+		} else if(value < 0){
+			LivelyWorld.getInstance().getLogger().info("DEBUG: Resistance was too low! (" + value + "<0)");
+			value = 0;
+		}
+		//LivelyWorld.getInstance().getLogger().info("DEBUG:");
+		//LivelyWorld.getInstance().getLogger().info("Start:" + Integer.toBinaryString(getData()));
+		//LivelyWorld.getInstance().getLogger().info(Integer.toBinaryString((getData() & (~(maxLevel << moistureCode)))) + " | " + Integer.toBinaryString((Utils.constrainTo(value, 0, maxLevel) << moistureCode)));
+		long newData = (getData() & (~(maxResistance << resistanceCode))) | (((long) value) << resistanceCode);
+		//LivelyWorld.getInstance().getLogger().info("Finish:" + Integer.toBinaryString(newData));
+	}
 	/*
 	public int getInCurrentDirection(){
 		return (getData() & (7 << inCurrentCode)) >> inCurrentCode;
@@ -197,12 +217,22 @@ public class WaterData {
 		}
 		WaterData down = getRelative(BlockFace.DOWN);
 		if(down != null){
-			if(down.getLevel() < maxLevel){
+			int level = getLevel();
+			for(int i = 1; i <= level; i++){
+				if(down.getLevel() >= maxLevel || getLevel() == 0){
+					break;
+				}
+				if(Math.random() < down.getPermeability()){
+					down.setLevel(down.getLevel() + 1);
+					setLevel(getLevel() - 1);
+				}
+			}
+			/*if(down.getLevel() < maxLevel){
 				int transfer = (int) maxLevel - down.getLevel();
 				transfer = Math.min((int)Math.floor(transfer * down.getPermeability()), getLevel());
 				down.setLevel(down.getLevel() + transfer);
 				this.setLevel(getLevel() - transfer);
-			}
+			}*/
 		}
 		if(getLevel() <= 1) return;
 		double rdm = Math.random() * 4;
@@ -216,7 +246,15 @@ public class WaterData {
 		} else {
 			order = new BlockFace[] {BlockFace.WEST, BlockFace.SOUTH, BlockFace.EAST, BlockFace.NORTH};
 		}
-		for(BlockFace bf : order){
+		int level = getLevel();
+		for(int i = 0; i < level; i++){
+			WaterData target = getRelative(order[i % 4]);
+			if(target.getLevel() < getLevel() - 1 && Math.random() < target.getPermeability()){
+				target.setLevel(target.getLevel() + 1);
+				this.setLevel(getLevel() - 1);
+			}
+		}
+		/*for(BlockFace bf : order){
 			WaterData target = getRelative(bf);
 			if(target.getLevel() < getLevel() - 1){
 				int transfer = (getLevel() - 1) - target.getLevel();
@@ -224,26 +262,42 @@ public class WaterData {
 				target.setLevel(target.getLevel() + transfer);
 				this.setLevel(getLevel() - transfer);
 			}
-		}
+		}*/
 	}
 	
 	public double getPermeability(){
-		if(!chunk.isLoaded() || !WaterChunkThread.isChunkLoaded(chunk.getWorld(), chunk.getX(), chunk.getZ()))
-			return 0;
-		int id = chunk.getWorld().getBlockTypeIdAt(getX(), getY(), getZ());
-		switch (Material.getMaterial(id)){
+		int resistance = getResistance();
+		if(resistance == 0) {
+			if(!chunk.isLoaded() || !WaterChunkThread.isChunkLoaded(chunk.getWorld(), chunk.getX(), chunk.getZ()))
+				return 0;
+			int id = chunk.getWorld().getBlockTypeIdAt(getX(), getY(), getZ());
+			resistance = getResistanceFor(Material.getMaterial(id));
+			setResistance(resistance);
+		}
+		if(resistance == 255) return 0;
+		return 1.0 / resistance;
+	}
+	
+	public static int getResistanceFor(Material material){
+		/*if(material == null){
+			if(!chunk.isLoaded() || !WaterChunkThread.isChunkLoaded(chunk.getWorld(), chunk.getX(), chunk.getZ()))
+				return 0;
+			int id = chunk.getWorld().getBlockTypeIdAt(getX(), getY(), getZ());
+			material = Material.getMaterial(id);
+		}*/
+		switch (material){
 		case WATER: case STATIONARY_WATER: case LONG_GRASS: case AIR:
 			return 1;
 		case FENCE: case SPRUCE_FENCE: case DARK_OAK_FENCE: case JUNGLE_FENCE: case BIRCH_FENCE: case IRON_FENCE:
-			return 0.9;
+			return 2;
 		case SAND: case GRAVEL: case LEAVES: case LEAVES_2:
-			return 0.4;
+			return 3;
 		case DIRT: case GRASS_PATH: case GRASS:
-			return 0.2;
+			return 5;
 		case COBBLESTONE:
-			return 0.1;
+			return 10;
 		default:
-			return 0;
+			return 255;
 		}
 	}
 	

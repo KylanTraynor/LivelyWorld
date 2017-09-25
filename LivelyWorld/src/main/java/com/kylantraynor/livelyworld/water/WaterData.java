@@ -221,7 +221,7 @@ public class WaterData {
 			if(target.getLevel() < getLevel() - 1){
 				int transfer = (getLevel() - 1) - target.getLevel();
 				transfer = (int) Math.floor(transfer * target.getPermeability());
-				target.setLevel(down.getLevel() + transfer);
+				target.setLevel(target.getLevel() + transfer);
 				this.setLevel(getLevel() - transfer);
 			}
 		}

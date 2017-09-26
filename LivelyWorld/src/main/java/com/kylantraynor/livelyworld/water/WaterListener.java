@@ -70,7 +70,7 @@ public class WaterListener implements Listener{
 			@Override
 			public void run() {
 				WaterChunk wc = WaterChunk.get(c.getWorld(), c.getX(), c.getZ());
-				wc.addWaterAt(Math.floorMod(b.getX(), 16), b.getY(), Math.floorMod(b.getZ(), 16), 7);
+				wc.addWaterAt(Math.floorMod(b.getX(), 16), b.getY(), Math.floorMod(b.getZ(), 16), (int) WaterData.maxLevel);
 			}
 		};
 		br.runTaskAsynchronously(LivelyWorld.getInstance());

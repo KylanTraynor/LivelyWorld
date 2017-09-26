@@ -131,7 +131,7 @@ public class WaterData {
 		//LivelyWorld.getInstance().getLogger().info("Finish:" + Integer.toBinaryString(newData));
 		if(toWaterLevel(value) != toWaterLevel(getLevel())){
 			setData(newData);
-			sendChangedEvent();
+			//sendChangedEvent();
 		} else {
 			setData(newData);
 		}

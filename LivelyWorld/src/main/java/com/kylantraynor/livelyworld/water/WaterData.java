@@ -21,7 +21,7 @@ public class WaterData {
 	
 	public static long maxLevel = 0xffL;
 	public static int moistureCode = 0; // 255 (1 byte) 0000 0000 0000 0000 0000 0000 1111 1111
-	public static long maxResistance = 0xfL;
+	public static long maxResistance = 0xffL;
 	public static int resistanceCode = 8;
 	/*private static int outCurrentCode = 9;
 	private static int outStrengthCode = 12;*/
@@ -205,6 +205,8 @@ public class WaterData {
 		return getSalt() > 0;
 	}
 
+	private static BlockFace[] order = new BlockFace[] {BlockFace.SOUTH, BlockFace.EAST, BlockFace.NORTH, BlockFace.WEST};
+	
 	public void tick(boolean loadChunks) {
 		if(!chunk.isLoaded()) return;
 		if(getLevel() == 0) return;
@@ -225,7 +227,8 @@ public class WaterData {
 				if(down.getLevel() >= maxLevel || getLevel() == 0){
 					break;
 				}
-				if(Math.random() <= down.getPermeability()){
+				if(down.getLevel() < down.getMaxQuantity()){
+				//if(Math.random() < down.getPermeability()){
 					down.setLevel(down.getLevel() + 1);
 					setLevel(getLevel() - 1);
 				}
@@ -239,20 +242,11 @@ public class WaterData {
 		}
 		if(getLevel() <= 1) return;
 		double rdm = Math.random() * 4;
-		BlockFace[] order = new BlockFace[0];
-		if(rdm > 3){
-			order = new BlockFace[] {BlockFace.SOUTH, BlockFace.EAST, BlockFace.NORTH, BlockFace.WEST};
-		} else if(rdm > 2){
-			order = new BlockFace[] {BlockFace.EAST, BlockFace.NORTH, BlockFace.WEST, BlockFace.SOUTH};
-		} else if(rdm > 1){
-			order = new BlockFace[] {BlockFace.NORTH, BlockFace.WEST, BlockFace.SOUTH, BlockFace.EAST};
-		} else {
-			order = new BlockFace[] {BlockFace.WEST, BlockFace.SOUTH, BlockFace.EAST, BlockFace.NORTH};
-		}
 		int level = getLevel();
 		for(int i = 0; i < level; i++){
-			WaterData target = getRelative(order[i % 4]);
-			if(target.getLevel() < getLevel() - 1 && Math.random() <= target.getPermeability()){
+			WaterData target = getRelative(order[(i + (int) rdm) % 4]);
+			//if(target.getLevel() < getLevel() - 1 && Math.random() < target.getPermeability()){
+			if(target.getLevel() < getLevel() - 1 && target.getLevel() < target.getMaxQuantity()) {
 				target.setLevel(target.getLevel() + 1);
 				this.setLevel(getLevel() - 1);
 			}
@@ -268,11 +262,23 @@ public class WaterData {
 		}*/
 	}
 	
+	public int getMaxQuantity(){
+		int resistance = getResistance();
+		if(Math.random() < 0.01) {
+			if(!chunk.isLoaded() || !WaterChunkThread.isChunkLoaded(chunk.getWorld(), chunk.getX(), chunk.getZ()))
+				return (int) maxLevel - resistance;
+			int id = chunk.getWorld().getBlockTypeIdAt(getX(), getY(), getZ());
+			resistance = getResistanceFor(Material.getMaterial(id));
+			setResistance(resistance);
+		}
+		return (int) (maxLevel - resistance);
+	}
+	
 	public double getPermeability(){
 		int resistance = getResistance();
-		if(resistance == 0) {
+		if(resistance == 0 || Math.random() < 0.01) {
 			if(!chunk.isLoaded() || !WaterChunkThread.isChunkLoaded(chunk.getWorld(), chunk.getX(), chunk.getZ()))
-				return 0;
+				return resistance == 0 || resistance == maxResistance ? 0 : 1.0 / resistance;
 			int id = chunk.getWorld().getBlockTypeIdAt(getX(), getY(), getZ());
 			resistance = getResistanceFor(Material.getMaterial(id));
 			setResistance(resistance);
@@ -290,17 +296,19 @@ public class WaterData {
 		}*/
 		switch (material){
 		case WATER: case STATIONARY_WATER: case LONG_GRASS: case AIR:
-			return 1;
+			return 0;
 		case FENCE: case SPRUCE_FENCE: case DARK_OAK_FENCE: case JUNGLE_FENCE: case BIRCH_FENCE: case IRON_FENCE:
-			return 2;
-		case SAND: case GRAVEL: case LEAVES: case LEAVES_2:
-			return 3;
+			return 20;
+		case LEAVES: case LEAVES_2:
+			return 30;
+		case SAND: case GRAVEL:
+			return 100;
 		case DIRT: case GRASS_PATH: case GRASS:
-			return 5;
+			return 150;
 		case COBBLESTONE:
-			return 10;
+			return 200;
 		default:
-			return 15;
+			return 255;
 		}
 	}
 	
@@ -324,7 +332,7 @@ public class WaterData {
 	}
 	
 	public static int toWaterLevel(int level){
-		return (int) (8.0 * (((double)level)/ (int) maxLevel));
+		return (int) (8.0 * (((double)level)/ (double) maxLevel));
 	}
 	
 	public void sendChangedEvent(){
@@ -334,7 +342,7 @@ public class WaterData {
 				if(!chunk.isLoaded() || !chunk.getWorld().isChunkLoaded(chunk.getX(), chunk.getZ()))
 					return;
 				Block b = chunk.getWorld().getBlockAt(getX(), getY(), getZ());
-				if(getPermeability() >= 1 && b.getRelative(BlockFace.DOWN).getType() != Material.AIR){
+				if(getMaxQuantity() >= maxLevel && b.getRelative(BlockFace.DOWN).getType() != Material.AIR){
 					if(Utils.getWaterHeight(b) != toWaterLevel(getLevel())){
 						Utils.setWaterHeight(b, toWaterLevel(getLevel()), false);
 					}

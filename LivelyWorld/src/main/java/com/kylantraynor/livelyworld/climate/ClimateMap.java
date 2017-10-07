@@ -185,7 +185,7 @@ public class ClimateMap {
 	private Temperature lowestHighTemperature = Temperature.fromCelsius(0);
 	
 	public void randomCellUpdate() {
-		lastCellUpdateId = lastCellUpdateId >= getCells().length - 1 ? 0 : lastCellUpdateId + 1;
+		lastCellUpdateId = (int) Math.floor(Math.random() * getCells().length);// = lastCellUpdateId >= getCells().length - 1 ? 0 : lastCellUpdateId + 1;
 		/*if(lastCellUpdateId == 0){
 			this.highestHumidity = 0;
 		}*/

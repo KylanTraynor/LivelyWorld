@@ -181,6 +181,7 @@ public class ClimateCell extends VCell {
 
 	public void updateMap() {
 		if (HookManager.hasDynmap()) {
+			HookManager.getDynmap().updateClimateCellArea(this);
 			HookManager.getDynmap().updateClimateCell(this);
 		}
 	};

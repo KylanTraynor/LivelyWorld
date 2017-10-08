@@ -140,12 +140,12 @@ public class ClimateUtils {
 			if(getSnowLayers(b) > d){
 				setSnowLayers(b, getSnowLayers(b) - d);
 			} else {
-				setWaterHeight(b, getSnowLayers(b), false);
+				Utils.setWaterHeight(b, getSnowLayers(b), false);
 			}
 		} else if(b.getType() == Material.FROSTED_ICE){
 			//setWaterHeight(b, 8, true);
 		} else if(b.getType() == Material.ICE){
-			setWaterHeight(b, 8, false);
+			Utils.setWaterHeight(b, 8, false);
 		} else if(b.getType() == Material.PACKED_ICE){
 			b.setType(Material.ICE);
 		}

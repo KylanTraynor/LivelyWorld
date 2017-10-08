@@ -30,7 +30,7 @@ public class ClimateModule {
 	private LivelyWorld plugin;
 	private Planet defaultPlanet;
 	
-	private final int cellUpdates = 6;
+	private final int cellUpdates = 1;
 	private final int weatherEffectBlocks = 100;
 	
 	private String mapType = "TEMP";

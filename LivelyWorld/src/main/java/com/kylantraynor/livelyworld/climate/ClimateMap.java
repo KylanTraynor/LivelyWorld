@@ -198,6 +198,13 @@ public class ClimateMap {
 				}
 			}
 			c.update();
+			for(ClimateCell cell : c.getNeighbours()){
+				if(cell != null){
+					cell.updateHumidity();
+					cell.updateWeather();
+					cell.updateMap();
+				}
+			}
 			if(c.getTemperature().getValue() < lowestTemperature.getValue()){
 				lowestTemperature = c.getTemperature();
 			}

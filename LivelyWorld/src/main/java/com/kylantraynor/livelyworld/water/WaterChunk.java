@@ -561,11 +561,13 @@ public class WaterChunk {
 	public void tickAll(){
 		if(!isLoaded()) return;
 		for(int y = 0; y < 256; y++){
-			for(int x = 0; x < 16; x++){
-				for(int z = 0; z < 16; z++){
-					WaterData d = getAt(x, y, z);
-					if(d.getLevel() > 0){
-						d.moveWaterDown();
+			if(y > 0){
+				for(int x = 0; x < 16; x++){
+					for(int z = 0; z < 16; z++){
+						WaterData d = getAt(x, y, z);
+						if(d.getLevel() > 0){
+							d.moveWaterDown();
+						}
 					}
 				}
 			}

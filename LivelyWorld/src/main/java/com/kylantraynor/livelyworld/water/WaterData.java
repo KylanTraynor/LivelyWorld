@@ -355,4 +355,42 @@ public class WaterData {
 		};
 		br.runTask(LivelyWorld.getInstance());
 	}
+
+	public void moveWaterDown() {
+		WaterData down = getRelative(BlockFace.DOWN);
+		if(down != null){
+			int level = getLevel();
+			for(int i = 1; i <= level; i++){
+				if(down.getLevel() < down.getMaxQuantity() && getLevel() > 0){
+					down.setLevel(down.getLevel() + 1);
+					setLevel(getLevel() - 1);
+				} else {
+					break;
+				}
+			}
+		}
+	}
+
+	public void moveWaterHorizontally(boolean loadChunks) {
+		if(!loadChunks){
+			if(x == 0 && !chunk.getRelative(-1, 0).isLoaded())
+				return;
+			if(x == 15 && !chunk.getRelative(1, 0).isLoaded())
+				return;
+			if(z == 0 && !chunk.getRelative(0, -1).isLoaded())
+				return;
+			if(z == 15 && !chunk.getRelative(0, 1).isLoaded())
+				return;
+		}
+		double rdm = Math.random() * 4;
+		int level = getLevel();
+		for(int i = 0; i < level; i++){
+			WaterData target = getRelative(order[(i + (int) rdm) % 4]);
+			//if(target.getLevel() < getLevel() - 1 && Math.random() < target.getPermeability()){
+			if(target.getLevel() < getLevel() - 1 && target.getLevel() < target.getMaxQuantity()) {
+				target.setLevel(target.getLevel() + 1);
+				this.setLevel(getLevel() - 1);
+			}
+		}
+	}
 }

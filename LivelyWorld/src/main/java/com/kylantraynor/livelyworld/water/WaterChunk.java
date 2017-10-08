@@ -564,7 +564,17 @@ public class WaterChunk {
 			for(int x = 0; x < 16; x++){
 				for(int z = 0; z < 16; z++){
 					WaterData d = getAt(x, y, z);
-					d.tick(false);
+					if(d.getLevel() > 0){
+						d.moveWaterDown();
+					}
+				}
+			}
+			for(int x = 0; x < 16; x++){
+				for(int z = 0; z < 16; z++){
+					WaterData d = getAt(x, y, z);
+					if(d.getLevel() > 1){
+						d.moveWaterHorizontally(false);
+					}
 				}
 			}
 		}

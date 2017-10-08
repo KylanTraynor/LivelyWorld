@@ -192,6 +192,11 @@ public class ClimateMap {
 		ClimateCell c = getCells()[lastCellUpdateId];
 		if (c != null)
 		{
+			for(ClimateCell cell : c.getNeighbours()){
+				if(cell != null){
+					cell.updateIrradiance();
+				}
+			}
 			c.update();
 			if(c.getTemperature().getValue() < lowestTemperature.getValue()){
 				lowestTemperature = c.getTemperature();

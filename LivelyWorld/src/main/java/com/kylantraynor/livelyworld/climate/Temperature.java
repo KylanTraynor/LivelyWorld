@@ -25,10 +25,9 @@ public class Temperature {
 	}
 
 	public Temperature bringTo(Temperature t, double inertia) {
-		if(inertia < 0) inertia = 0;
+		if(inertia < 0) return new Temperature(t.getValue());
 		double oldt = this.value;
 		double targett = t.value;
-		if(inertia + 1 == 0) return new Temperature(t.getValue());
 		double newt = (oldt * inertia + targett) * (1.0 / (inertia + 1));
 		return new Temperature(newt);
 	}

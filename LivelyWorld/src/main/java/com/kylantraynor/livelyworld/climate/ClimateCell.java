@@ -613,8 +613,8 @@ public class ClimateCell extends VCell {
 		to.humidity += humidityTransfer;
 		from.humidity -= humidityTransfer;
 		Temperature toTemp = to.getTemperature();
-		to.bringTemperatureTo(from.getTemperature(), (to.getAmountOnBlock() / transfer) * 0.0001);
-		from.bringTemperatureTo(toTemp, (from.getAmountOnBlock() / transfer) * 0.0001);
+		to.bringTemperatureTo(from.getTemperature(), (to.getAmountOnBlock() / transfer));
+		from.bringTemperatureTo(toTemp, (from.getAmountOnBlock() / transfer));
 		to.addAmount(transfer);
 		from.addAmount(-transfer);
 		from.lowWind = new WindVector(to.getX() - from.getX(), to.getY() - from.getY(), to.getZ() - from.getZ(), transfer).normalize();

@@ -613,8 +613,8 @@ public class ClimateCell extends VCell {
 		to.humidity += humidityTransfer;
 		from.humidity -= humidityTransfer;
 		Temperature toTemp = to.getTemperature();
-		to.bringTemperatureTo(from.getTemperature(), (to.getAmountOnBlock() / transfer) * 0.001);
-		from.bringTemperatureTo(toTemp, (from.getAmountOnBlock() / transfer) * 0.001);
+		to.bringTemperatureTo(from.getTemperature(), (to.getAmountOnBlock() / transfer) * 0.0001);
+		from.bringTemperatureTo(toTemp, (from.getAmountOnBlock() / transfer) * 0.0001);
 		to.addAmount(transfer);
 		from.addAmount(-transfer);
 		from.lowWind = new WindVector(to.getX() - from.getX(), to.getY() - from.getY(), to.getZ() - from.getZ(), transfer).normalize();
@@ -628,8 +628,8 @@ public class ClimateCell extends VCell {
 		double toLack = Math.abs(ClimateUtils.getGasAmount(meanP, to.getHighVolume(), to.getHighTemperature()) - to.getAmountHigh());
 		double transfer = Math.min(fromExcess, toLack);
 		Temperature toTemp = to.getHighTemperature();
-		to.bringHighTemperatureTo(from.getHighTemperature(), (to.getAmountHigh() / transfer) * 0.001);
-		from.bringHighTemperatureTo(toTemp, (from.getAmountHigh() / transfer) * 0.001);
+		to.bringHighTemperatureTo(from.getHighTemperature(), (to.getAmountHigh() / transfer) * 0.0001);
+		from.bringHighTemperatureTo(toTemp, (from.getAmountHigh() / transfer) * 0.0001);
 		to.addHighAmount(transfer);
 		from.addHighAmount(-transfer);
 		from.highWind = new WindVector(to.getX() - from.getX(), to.getY() - from.getY(), to.getZ() - from.getZ(), transfer).normalize();

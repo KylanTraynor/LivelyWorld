@@ -264,7 +264,7 @@ public class WaterData {
 	
 	public int getMaxQuantity(){
 		int resistance = getResistance();
-		if(Math.random() < 0.01) {
+		if(resistance == 0 || Math.random() < 0.01) {
 			if(!chunk.isLoaded() || !WaterChunkThread.isChunkLoaded(chunk.getWorld(), chunk.getX(), chunk.getZ()))
 				return (int) maxLevel - resistance;
 			int id = chunk.getWorld().getBlockTypeIdAt(getX(), getY(), getZ());
@@ -296,7 +296,7 @@ public class WaterData {
 		}*/
 		switch (material){
 		case WATER: case STATIONARY_WATER: case LONG_GRASS: case AIR:
-			return 0;
+			return 1;
 		case FENCE: case SPRUCE_FENCE: case DARK_OAK_FENCE: case JUNGLE_FENCE: case BIRCH_FENCE: case IRON_FENCE:
 			return 20;
 		case LEAVES: case LEAVES_2:

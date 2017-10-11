@@ -131,7 +131,7 @@ public class WaterData {
 		//LivelyWorld.getInstance().getLogger().info("Finish:" + Integer.toBinaryString(newData));
 		if(toWaterLevel(value) != toWaterLevel(getLevel())){
 			setData(newData);
-			//sendChangedEvent();
+			sendChangedEvent();
 		} else {
 			setData(newData);
 		}
@@ -350,7 +350,7 @@ public class WaterData {
 				if(!chunk.isLoaded() || !chunk.getWorld().isChunkLoaded(chunk.getX(), chunk.getZ()))
 					return;
 				Block b = chunk.getWorld().getBlockAt(getX(), getY(), getZ());
-				if(getMaxQuantity() >= maxLevel && b.getRelative(BlockFace.DOWN).getType() != Material.AIR){
+				if(getResistance() <= 1 && b.getRelative(BlockFace.DOWN).getType() != Material.AIR && b.getY() > 48){
 					if(Utils.getWaterHeight(b) != toWaterLevel(getLevel())){
 						Utils.setWaterHeight(b, toWaterLevel(getLevel()), false);
 					}

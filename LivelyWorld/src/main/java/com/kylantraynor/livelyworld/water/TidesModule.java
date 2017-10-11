@@ -64,6 +64,7 @@ public class TidesModule {
 	private Map<Material, MaterialData> changingBlock = new HashMap<Material, MaterialData>();
 
 	public List<String> ignoreTimeOuts = new ArrayList<String>();
+	private boolean realisticSimulation = false;
 
 	public TidesModule(LivelyWorld p) {
 		this.plugin = p;
@@ -497,6 +498,10 @@ public class TidesModule {
 			case "TOGGLE":
 				if (args.length >= 3) {
 					switch (args[2].toUpperCase()) {
+					case "SIMULATION":
+						realisticSimulation = !realisticSimulation;
+						sender.sendMessage("Realistic water simulation is set to: " + realisticSimulation);
+						break;
 					case "WAVES":
 						if (ignoredPlayers.contains((Player) sender)) {
 							ignoredPlayers.remove((Player) sender);
@@ -530,6 +535,10 @@ public class TidesModule {
 				}
 			}
 		}
+	}
+	
+	public boolean isRealisticSimulation(){
+		return realisticSimulation;
 	}
 
 	public void onChunkLoad(ChunkLoadEvent event) {

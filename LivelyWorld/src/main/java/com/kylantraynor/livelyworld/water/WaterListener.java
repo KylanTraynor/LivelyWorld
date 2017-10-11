@@ -50,6 +50,7 @@ public class WaterListener implements Listener{
 	public void onBlockFromTo(BlockFromToEvent event){
 		if(!Utils.isWater(event.getBlock())) return;
 		if(!event.getBlock().getWorld().getName().equals("world")) return;
+		if(!LivelyWorld.getInstance().getWaterModule().isRealisticSimulation()) return;
 		event.getBlock().setTypeIdAndData(Material.STATIONARY_WATER.getId(), event.getBlock().getData(), false);
 		event.setCancelled(true);
 		/*Biome fromBiome = event.getBlock().getBiome();
@@ -105,6 +106,8 @@ public class WaterListener implements Listener{
 	
 	@EventHandler(ignoreCancelled = true)
 	public void onBlockBreak(BlockBreakEvent event){
+		if(!event.getBlock().getWorld().getName().equals("world")) return;
+		if(!LivelyWorld.getInstance().getWaterModule().isRealisticSimulation()) return;
 		BukkitRunnable bk = new BukkitRunnable(){
 			@Override
 			public void run() {
@@ -124,6 +127,8 @@ public class WaterListener implements Listener{
 	
 	@EventHandler(ignoreCancelled = true)
 	public void onBlockPlace(BlockPlaceEvent event){
+		if(!event.getBlock().getWorld().getName().equals("world")) return;
+		if(!LivelyWorld.getInstance().getWaterModule().isRealisticSimulation()) return;
 		BukkitRunnable bk = new BukkitRunnable(){
 			@Override
 			public void run() {

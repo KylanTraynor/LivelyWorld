@@ -348,6 +348,7 @@ public class WaterData {
 	}
 	
 	public void sendChangedEvent(){
+		if(!LivelyWorld.getInstance().getWaterModule().isRealisticSimulation()) return;
 		BukkitRunnable br = new BukkitRunnable(){
 			@Override
 			public void run() {

@@ -1,5 +1,8 @@
 package com.kylantraynor.livelyworld.water;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -65,6 +68,7 @@ public class WaterData {
 	
 	public int getZ(){ return (chunk.getZ() << 4) + z; }
 	
+	@Nullable
 	public WaterData getRelative(int x, int y, int z){
 		if(this.y + y < 0 || this.y + y > 255){
 			return null;
@@ -75,7 +79,7 @@ public class WaterData {
 		return new WaterData(chunk, this.x + x, this.y + y, this.z + z);
 	}
 	
-	public WaterData getRelative(BlockFace bf){
+	public WaterData getRelative(@Nonnull BlockFace bf){
 		switch(bf){
 		case DOWN:
 			return getRelative(0,-1,0);
@@ -294,7 +298,7 @@ public class WaterData {
 		return 1.0 / resistance;
 	}
 	
-	public static int getResistanceFor(Material material){
+	public static int getResistanceFor(@Nonnull Material material){
 		/*if(material == null){
 			if(!chunk.isLoaded() || !WaterChunkThread.isChunkLoaded(chunk.getWorld(), chunk.getX(), chunk.getZ()))
 				return 0;

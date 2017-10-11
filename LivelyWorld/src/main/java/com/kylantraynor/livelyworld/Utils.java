@@ -176,18 +176,18 @@ public class Utils {
 	
 	public static void setWaterHeight(Block b, int height, boolean canSource){
 		if(height == 0){
-			b.setType(Material.AIR);
-			b.setData((byte)0);
+			b.setType(Material.AIR, false);
+			b.setData((byte)0, false);
 		} else if(height == 8){
-			b.setType(Material.STATIONARY_WATER);
+			b.setType(Material.STATIONARY_WATER, false);
 			if(canSource){
-				b.setData((byte)0);
+				b.setData((byte)0, false);
 			} else {
-				b.setData((byte) 8);
+				b.setData((byte) 8, false);
 			}
 		} else {
-			b.setType(Material.STATIONARY_WATER);
-			b.setData((byte) (8 - height));
+			b.setType(Material.STATIONARY_WATER, false);
+			b.setData((byte) (8 - height), false);
 		}
 	}
 }

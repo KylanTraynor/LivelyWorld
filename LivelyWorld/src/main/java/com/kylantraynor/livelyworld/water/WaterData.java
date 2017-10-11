@@ -265,14 +265,18 @@ public class WaterData {
 		}*/
 	}
 	
+	public void updateResistance(){
+		if(!chunk.isLoaded() || !WaterChunkThread.isChunkLoaded(chunk.getWorld(), chunk.getX(), chunk.getZ()))
+			return;
+		int id = chunk.getWorld().getBlockTypeIdAt(getX(), getY(), getZ());
+		setResistance(getResistanceFor(Material.getMaterial(id)));
+	}
+	
 	public int getMaxQuantity(){
 		int resistance = getResistance();
 		if(resistance == 0 || Math.random() < 0.01) {
-			if(!chunk.isLoaded() || !WaterChunkThread.isChunkLoaded(chunk.getWorld(), chunk.getX(), chunk.getZ()))
-				return (int) maxLevel - resistance;
-			int id = chunk.getWorld().getBlockTypeIdAt(getX(), getY(), getZ());
-			resistance = getResistanceFor(Material.getMaterial(id));
-			setResistance(resistance);
+			updateResistance();
+			resistance = getResistance();
 		}
 		return (int) (maxLevel - resistance);
 	}
@@ -297,6 +301,7 @@ public class WaterData {
 			int id = chunk.getWorld().getBlockTypeIdAt(getX(), getY(), getZ());
 			material = Material.getMaterial(id);
 		}*/
+		if(material == null) return 0;
 		switch (material){
 		case WATER: case STATIONARY_WATER: case LONG_GRASS: case AIR:
 			return 1;

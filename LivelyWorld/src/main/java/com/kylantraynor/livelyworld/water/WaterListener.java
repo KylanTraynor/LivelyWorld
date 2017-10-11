@@ -6,7 +6,9 @@ import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockFromToEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
@@ -97,6 +99,32 @@ public class WaterListener implements Listener{
 			return;
 		default:
 		}
+	}
+	
+	@EventHandler(ignoreCancelled = true)
+	public void onBlockBreak(BlockBreakEvent event){
+		BukkitRunnable bk = new BukkitRunnable(){
+			@Override
+			public void run() {
+				Block b = event.getBlock();
+				WaterData wd = new WaterData(b.getWorld(), b.getX(), b.getY(), b.getZ());
+				wd.updateResistance();
+			}
+		};
+		bk.runTaskLaterAsynchronously(LivelyWorld.getInstance(), 1);
+	}
+	
+	@EventHandler(ignoreCancelled = true)
+	public void onBlockPlace(BlockPlaceEvent event){
+		BukkitRunnable bk = new BukkitRunnable(){
+			@Override
+			public void run() {
+				Block b = event.getBlock();
+				WaterData wd = new WaterData(b.getWorld(), b.getX(), b.getY(), b.getZ());
+				wd.updateResistance();
+			}
+		};
+		bk.runTaskLaterAsynchronously(LivelyWorld.getInstance(), 1);
 	}
 	
 	@EventHandler

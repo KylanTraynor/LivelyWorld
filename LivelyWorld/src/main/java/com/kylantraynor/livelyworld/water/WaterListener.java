@@ -4,6 +4,7 @@ import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -110,6 +111,12 @@ public class WaterListener implements Listener{
 				Block b = event.getBlock();
 				WaterData wd = new WaterData(b.getWorld(), b.getX(), b.getY(), b.getZ());
 				wd.updateResistance();
+				wd.getRelative(BlockFace.DOWN).sendChangedEvent();
+				wd.getRelative(BlockFace.UP).sendChangedEvent();
+				wd.getRelative(BlockFace.NORTH).sendChangedEvent();
+				wd.getRelative(BlockFace.SOUTH).sendChangedEvent();
+				wd.getRelative(BlockFace.EAST).sendChangedEvent();
+				wd.getRelative(BlockFace.WEST).sendChangedEvent();
 			}
 		};
 		bk.runTaskLaterAsynchronously(LivelyWorld.getInstance(), 1);
@@ -123,6 +130,12 @@ public class WaterListener implements Listener{
 				Block b = event.getBlock();
 				WaterData wd = new WaterData(b.getWorld(), b.getX(), b.getY(), b.getZ());
 				wd.updateResistance();
+				wd.getRelative(BlockFace.DOWN).sendChangedEvent();
+				wd.getRelative(BlockFace.UP).sendChangedEvent();
+				wd.getRelative(BlockFace.NORTH).sendChangedEvent();
+				wd.getRelative(BlockFace.SOUTH).sendChangedEvent();
+				wd.getRelative(BlockFace.EAST).sendChangedEvent();
+				wd.getRelative(BlockFace.WEST).sendChangedEvent();
 			}
 		};
 		bk.runTaskLaterAsynchronously(LivelyWorld.getInstance(), 1);

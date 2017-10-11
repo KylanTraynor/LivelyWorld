@@ -353,7 +353,7 @@ public class WaterData {
 			public void run() {
 				if(!chunk.isLoaded() || !chunk.getWorld().isChunkLoaded(chunk.getX(), chunk.getZ()))
 					return;
-				Block b = chunk.getWorld().getBlockAt(getX(), getY(), getZ());
+				Block b = getBlock();
 				if(getResistance() <= 1 && b.getRelative(BlockFace.DOWN).getType() != Material.AIR && b.getY() > 48){
 					if(Utils.getWaterHeight(b) != toWaterLevel(getLevel())){
 						Utils.setWaterHeight(b, toWaterLevel(getLevel()), false);

@@ -468,7 +468,7 @@ public class TidesModule {
 							@Override
 							public void run() {
 								WaterChunk c = WaterChunk.get(p.getWorld(), p.getLocation().getBlockX() >> 4, p.getLocation().getBlockZ() >> 4);
-								WaterData wd = c.getAt(Math.floorMod(p.getLocation().getBlockX(),16), p.getLocation().getBlockY()-1, Math.floorMod(p.getLocation().getBlockZ(),16));
+								WaterData wd = c.getAt(Math.floorMod(p.getLocation().getBlockX(),16), p.getLocation().getBlockY(), Math.floorMod(p.getLocation().getBlockZ(),16));
 								p.sendMessage("DEBUG : GetData: " + Integer.toBinaryString((int) wd.getData()));
 								p.sendMessage("DEBUG : Data Level: " + wd.getLevel() + ", " + Integer.toBinaryString(wd.getLevel()) + ", Data Resistance: " + wd.getResistance() + ", " + Integer.toBinaryString(wd.getResistance()) + ", Data Salt: " + wd.getSalt() + ", " + Integer.toBinaryString(wd.getSalt()));
 							}
@@ -480,7 +480,7 @@ public class TidesModule {
 							@Override
 							public void run() {
 								WaterChunk c = WaterChunk.get(p.getWorld(), p.getLocation().getBlockX() >> 4, p.getLocation().getBlockZ() >> 4);
-								WaterData wd = c.getAt(Math.floorMod(p.getLocation().getBlockX(),16), p.getLocation().getBlockY()-1, Math.floorMod(p.getLocation().getBlockZ(),16));
+								WaterData wd = c.getAt(Math.floorMod(p.getLocation().getBlockX(),16), p.getLocation().getBlockY(), Math.floorMod(p.getLocation().getBlockZ(),16));
 								while(wd.getLevel() < 1 && wd.getY() > 0){
 									wd = wd.getRelative(BlockFace.DOWN);
 								}

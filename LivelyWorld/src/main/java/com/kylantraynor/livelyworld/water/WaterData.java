@@ -153,6 +153,9 @@ public class WaterData {
 		//LivelyWorld.getInstance().getLogger().info(Integer.toBinaryString((getData() & (~(maxLevel << moistureCode)))) + " | " + Integer.toBinaryString((Utils.constrainTo(value, 0, maxLevel) << moistureCode)));
 		long newData = (getData() & (~(maxResistance << resistanceCode))) | (((long) value) << resistanceCode);
 		//LivelyWorld.getInstance().getLogger().info("Finish:" + Integer.toBinaryString(newData));
+		if(getData() != newData){
+			setData(newData);
+		}
 	}
 	/*
 	public int getInCurrentDirection(){

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
@@ -189,5 +190,12 @@ public class Utils {
 			b.setType(Material.STATIONARY_WATER, false);
 			b.setData((byte) (8 - height), false);
 		}
+	}
+	
+	public static boolean isOcean(Biome biome) {
+		if(biome == Biome.OCEAN) return true;
+		if(biome == Biome.DEEP_OCEAN) return true;
+		if(biome == Biome.FROZEN_OCEAN) return true;
+		return false;
 	}
 }

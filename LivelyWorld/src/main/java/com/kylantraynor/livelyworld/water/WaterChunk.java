@@ -561,11 +561,18 @@ public class WaterChunk {
 	public void tickAll(){
 		if(!isLoaded()) return;
 		WaterData current = null;
+		Biome biome = null;
 		for(int y = 0; y < 256; y++){
 			if(y > 0){
 				for(int x = 0; x < 16; x++){
 					for(int z = 0; z < 16; z++){
 						current = getAt(x, y, z);
+						biome = getWorld().getBiome(getX() * 16 + x, getZ() * 16 + z);
+						if((Utils.isOcean(biome) || biome == Biome.RIVER) && y <= 48){
+							if(Utils.isWater(current.getBlock())){
+								current.setLevel((int) WaterData.maxLevel);
+							}
+						}
 						if(current.getLevel() > 0){
 							current.moveWaterDown();
 						}
@@ -581,7 +588,7 @@ public class WaterChunk {
 				}
 			}
 		}
-		if(Math.random() < 0.01){
+		if(Math.random() < 0.01 && LivelyWorld.getInstance().getWaterModule().isRealisticSimulation()){
 			BukkitRunnable br = new BukkitRunnable(){
 
 				@Override

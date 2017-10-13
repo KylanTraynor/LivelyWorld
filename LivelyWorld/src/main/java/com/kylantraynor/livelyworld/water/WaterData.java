@@ -355,9 +355,9 @@ public class WaterData {
 				if(!chunk.isLoaded() || !chunk.getWorld().isChunkLoaded(chunk.getX(), chunk.getZ()))
 					return;
 				Block b = getBlock();
-				if(getResistance() == 1 && b.getRelative(BlockFace.DOWN).getType() != Material.AIR && b.getY() > 48){
+				if(getResistance() == 1 && b.getRelative(BlockFace.DOWN).getType() != Material.AIR && (b.getY() > 48 && !Utils.isOcean(chunk.getWorld().getBiome(getX(), getZ())))){
 					if(Utils.getWaterHeight(b) != toWaterLevel(getLevel())){
-						Utils.setWaterHeight(b, toWaterLevel(getLevel()), false);
+						Utils.setWaterHeight(b, toWaterLevel(getLevel()), true);
 					}
 				} else if(b.getRelative(BlockFace.DOWN).getType() == Material.AIR && getLevel() > 0) {
 					chunk.getWorld().spawnParticle(Particle.DRIP_WATER, b.getX() + Math.random(), b.getY() - 0.01, b.getZ() + Math.random(), 1);

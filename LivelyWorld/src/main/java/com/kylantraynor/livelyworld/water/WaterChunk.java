@@ -560,25 +560,53 @@ public class WaterChunk {
 	
 	public void tickAll(){
 		if(!isLoaded()) return;
+		WaterData current = null;
 		for(int y = 0; y < 256; y++){
 			if(y > 0){
 				for(int x = 0; x < 16; x++){
 					for(int z = 0; z < 16; z++){
-						WaterData d = getAt(x, y, z);
-						if(d.getLevel() > 0){
-							d.moveWaterDown();
+						current = getAt(x, y, z);
+						if(current.getLevel() > 0){
+							current.moveWaterDown();
 						}
 					}
 				}
 			}
 			for(int x = 0; x < 16; x++){
 				for(int z = 0; z < 16; z++){
-					WaterData d = getAt(x, y, z);
-					if(d.getLevel() > 1){
-						d.moveWaterHorizontally(false);
+					current = getAt(x, y, z);
+					if(current.getLevel() > 1){
+						current.moveWaterHorizontally(false);
 					}
 				}
 			}
+		}
+		if(Math.random() < 0.01){
+			BukkitRunnable br = new BukkitRunnable(){
+
+				@Override
+				public void run() {
+					WaterData current = null;
+					Block currentBlock = null;
+					for(int y = 0; y < 256; y++){
+						if(y > 0){
+							for(int x = 0; x < 16; x++){
+								for(int z = 0; z < 16; z++){
+									current = getAt(x, y, z);
+									currentBlock = current.getBlock();
+									if(Utils.isWater(currentBlock) || currentBlock.getType() == Material.AIR){
+										if(WaterData.toWaterLevel(current.getLevel()) != Utils.getWaterHeight(currentBlock)){
+											Utils.setWaterHeight(currentBlock, WaterData.toWaterLevel(current.getLevel()), true);
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+				
+			};
+			br.runTask(LivelyWorld.getInstance());
 		}
 	}
 	

@@ -137,7 +137,7 @@ public class ClimateModule {
 							if(Math.random() < 0.5 * (tdiff1 / 2)){
 								SnowFallTask task = new SnowFallTask(getPlugin().getClimateModule(), cell, b.getX(), b.getY() + 1, b.getZ());
 								task.runTaskLater(getPlugin(), 1);
-							} if (Math.random() < 0.5 * (-tdiff1 / 2)){
+							} if (Math.random() < 1.0 * (-tdiff1 / 2)){
 								/*while(b.getRelative(BlockFace.DOWN).getType() == Material.WATER || b.getRelative(BlockFace.DOWN).getType() == Material.STATIONARY_WATER){
 									b = b.getRelative(BlockFace.DOWN);
 								}*/
@@ -147,7 +147,7 @@ public class ClimateModule {
 									public void run() {
 										WaterChunk wc = WaterChunk.get(fb.getWorld(), chunkX, chunkZ);
 										if(wc.isLoaded()){
-											wc.addWaterAt(Math.floorMod(fb.getX(), 16), fb.getY(), Math.floorMod(fb.getZ(), 16), 1);
+											wc.addWaterAt(Math.floorMod(fb.getX(), 16), fb.getY(), Math.floorMod(fb.getZ(), 16), 2);
 										}
 									}
 								};
@@ -170,7 +170,7 @@ public class ClimateModule {
 									public void run() {
 										WaterChunk wc = WaterChunk.get(fb.getWorld(), chunkX, chunkZ);
 										if(wc.isLoaded()){
-											wc.addWaterAt(Math.floorMod(fb.getX(), 16), fb.getY(), Math.floorMod(fb.getZ(), 16), 1);
+											wc.addWaterAt(Math.floorMod(fb.getX(), 16), fb.getY(), Math.floorMod(fb.getZ(), 16), 4);
 										}
 									}
 								};

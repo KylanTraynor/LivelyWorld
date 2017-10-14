@@ -593,6 +593,7 @@ public class WaterChunk {
 
 				@Override
 				public void run() {
+					boolean fullUpdate = Math.random() < 0.01;
 					WaterData current = null;
 					Block currentBlock = null;
 					for(int y = 0; y < 256; y++){
@@ -600,7 +601,7 @@ public class WaterChunk {
 							for(int x = 0; x < 16; x++){
 								for(int z = 0; z < 16; z++){
 									current = getAt(x, y, z);
-									if(current.needsVisualUpdate()){
+									if(current.needsVisualUpdate() || fullUpdate){
 										current.setNeedsVisualUpdate(false);
 										currentBlock = current.getBlock();
 										if(Utils.isWater(currentBlock) || currentBlock.getType() == Material.AIR){

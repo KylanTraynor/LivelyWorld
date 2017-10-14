@@ -345,6 +345,7 @@ public class WaterData {
 	}
 	
 	public static int toWaterLevel(int level){
+		if(level >= maxLevel * 0.9) return 8;
 		return (int) (8.0 * (((double)level)/ (double) maxLevel));
 	}
 	

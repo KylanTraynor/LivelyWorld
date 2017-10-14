@@ -588,7 +588,7 @@ public class WaterChunk {
 				}
 			}
 		}
-		if(Math.random() < 0.01 && LivelyWorld.getInstance().getWaterModule().isRealisticSimulation()){
+		if(LivelyWorld.getInstance().getWaterModule().isRealisticSimulation()){
 			BukkitRunnable br = new BukkitRunnable(){
 
 				@Override
@@ -600,10 +600,13 @@ public class WaterChunk {
 							for(int x = 0; x < 16; x++){
 								for(int z = 0; z < 16; z++){
 									current = getAt(x, y, z);
-									currentBlock = current.getBlock();
-									if(Utils.isWater(currentBlock) || currentBlock.getType() == Material.AIR){
-										if(WaterData.toWaterLevel(current.getLevel()) != Utils.getWaterHeight(currentBlock)){
-											Utils.setWaterHeight(currentBlock, WaterData.toWaterLevel(current.getLevel()), true);
+									if(current.needsVisualUpdate()){
+										current.setNeedsVisualUpdate(false);
+										currentBlock = current.getBlock();
+										if(Utils.isWater(currentBlock) || currentBlock.getType() == Material.AIR){
+											if(WaterData.toWaterLevel(current.getLevel()) != Utils.getWaterHeight(currentBlock)){
+												Utils.setWaterHeight(currentBlock, WaterData.toWaterLevel(current.getLevel()), true);
+											}
 										}
 									}
 								}

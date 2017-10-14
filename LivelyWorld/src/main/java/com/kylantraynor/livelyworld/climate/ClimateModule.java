@@ -23,6 +23,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import com.kylantraynor.livelyworld.LivelyWorld;
 import com.kylantraynor.livelyworld.hooks.HookManager;
 import com.kylantraynor.livelyworld.water.WaterChunk;
+import com.kylantraynor.livelyworld.water.WaterData;
 import com.kylantraynor.voronoi.VectorXZ;
 
 public class ClimateModule {
@@ -126,7 +127,21 @@ public class ClimateModule {
 									b = b.getRelative(BlockFace.DOWN);
 								}
 								b = getHighestSnowBlockAround(b, 3);
-								ClimateUtils.melt(b, (int) Math.ceil(tdiff/6));
+								final int meltAmount = (int) Math.ceil(tdiff/6);
+								if(meltAmount > 0){
+									ClimateUtils.melt(b, meltAmount);
+									final Block fb = b;
+									BukkitRunnable br = new BukkitRunnable(){
+										@Override
+										public void run() {
+											WaterChunk wc = WaterChunk.get(fb.getWorld(), chunkX, chunkZ);
+											if(wc.isLoaded()){
+												wc.addWaterAt(Math.floorMod(fb.getX(), 16), fb.getY(), Math.floorMod(fb.getZ(), 16), (int) (meltAmount * (WaterData.maxLevel / 8)));
+											}
+										}
+									};
+									br.runTaskAsynchronously(getPlugin());
+								}
 							}
 							break;
 						case OVERCAST:

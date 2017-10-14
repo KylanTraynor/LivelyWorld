@@ -127,16 +127,17 @@ public class ClimateModule {
 									b = b.getRelative(BlockFace.DOWN);
 								}
 								b = getHighestSnowBlockAround(b, 3);
-								final int meltAmount = (int) Math.ceil(tdiff/6);
+								int meltAmount = (int) Math.ceil(tdiff/6);
 								if(meltAmount > 0){
-									ClimateUtils.melt(b, meltAmount);
+									meltAmount = ClimateUtils.melt(b, meltAmount);
 									final Block fb = b;
+									final int amount = meltAmount;
 									BukkitRunnable br = new BukkitRunnable(){
 										@Override
 										public void run() {
 											WaterChunk wc = WaterChunk.get(fb.getWorld(), chunkX, chunkZ);
 											if(wc.isLoaded()){
-												wc.addWaterAt(Math.floorMod(fb.getX(), 16), fb.getY(), Math.floorMod(fb.getZ(), 16), (int) (meltAmount * (WaterData.maxLevel / 8)));
+												wc.addWaterAt(Math.floorMod(fb.getX(), 16), fb.getY(), Math.floorMod(fb.getZ(), 16), (int) (amount * (WaterData.maxLevel / 8)));
 											}
 										}
 									};

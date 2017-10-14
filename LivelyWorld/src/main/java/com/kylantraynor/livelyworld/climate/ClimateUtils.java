@@ -134,21 +134,28 @@ public class ClimateUtils {
 		return Utils.isWater(block);
 	}
 
-	public static void melt(Block b, int d) {
-		if(d <= 0) return;
+	public static int melt(Block b, int d) {
+		if(d <= 0) return 0;
 		if(isSnow(b)){
 			if(getSnowLayers(b) > d){
 				setSnowLayers(b, getSnowLayers(b) - d);
+				return d;
 			} else {
-				Utils.setWaterHeight(b, getSnowLayers(b), false);
+				int melted = getSnowLayers(b);
+				Utils.setWaterHeight(b, melted, false);
+				return melted;
 			}
 		} else if(b.getType() == Material.FROSTED_ICE){
 			//setWaterHeight(b, 8, true);
+			return 0;
 		} else if(b.getType() == Material.ICE){
 			Utils.setWaterHeight(b, 8, false);
+			return 8;
 		} else if(b.getType() == Material.PACKED_ICE){
 			b.setType(Material.ICE);
+			return 0;
 		}
+		return 0;
 	}
 	
 	@Deprecated

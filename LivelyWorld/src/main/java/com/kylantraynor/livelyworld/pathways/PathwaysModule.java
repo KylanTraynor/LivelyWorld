@@ -189,16 +189,16 @@ public class PathwaysModule {
 			// appear
 			if (Math.random() <= probabilityDirt * multiplier) {
 				// Change the grass to dirt
-				b.setType(Material.DIRT);
+				b.setType(Material.DIRT, false);
 			}
 		} else if (b.getType() == Material.DIRT && b.getData() == 0) {
 			// Same for coarse (coarse = dirt with data value of 1)
 			if (Math.random() <= probabilityCoarse * multiplier) {
 				if (b.getBiome() == Biome.FOREST
 						|| b.getBiome() == Biome.JUNGLE) {
-					b.setData((byte) 2);
+					b.setData((byte) 2, false);
 				} else {
-					b.setData((byte) 1);
+					b.setData((byte) 1, false);
 				}
 			}
 		} else if (b.getType() == Material.DIRT
@@ -207,13 +207,13 @@ public class PathwaysModule {
 				return;
 			// Same for grassPath
 			if (Math.random() <= probabilityPath * multiplier) {
-				b.setType(Material.GRASS_PATH);
+				b.setType(Material.GRASS_PATH, false);
 			}
 		} else if (b.getType() == Material.GRAVEL) {
 			// Same for Cobblestone
-			if (Math.random() <= probabilityCobble * multiplier) {
+			/*if (Math.random() <= probabilityCobble * multiplier) {
 				b.setType(Material.COBBLESTONE);
-			}
+			}*/
 		} else if (b.getType() == Material.COBBLESTONE) {
 			if (b.getRelative(BlockFace.UP).getType() == Material.RAILS)
 				return;
@@ -240,7 +240,7 @@ public class PathwaysModule {
 		Bukkit.getPluginManager().callEvent(event);
 		
 		if(!event.isCancelled()){
-			b.setType(Material.COBBLESTONE_STAIRS);
+			b.setType(Material.COBBLESTONE_STAIRS, false);
 			// Get the current state of the block
 			BlockState state = b.getState();
 			// Since the state has to be stairs, just get a stairs object
@@ -279,7 +279,7 @@ public class PathwaysModule {
 		Bukkit.getPluginManager().callEvent(event);
 		
 		if(!event.isCancelled()){
-			b.setType(Material.STEP);
+			b.setType(Material.STEP, false);
 			// Get the state of the block
 			BlockState state = b.getState();
 			// Update the data of the state

@@ -570,7 +570,7 @@ public class WaterChunk {
 						biome = getWorld().getBiome(getX() * 16 + x, getZ() * 16 + z);
 						if((Utils.isOcean(biome) || biome == Biome.RIVER) && y <= 48){
 							if(Utils.isWater(current.getBlock())){
-								current.setLevel((int) WaterData.maxLevel);
+								current.setLevel((int) WaterData.maxLevel - 1);
 							}
 						}
 						if(current.getLevel() > 0){
@@ -602,17 +602,15 @@ public class WaterChunk {
 				WaterData current = null;
 				Block currentBlock = null;
 				for(int y = 0; y < 256; y++){
-					if(y > 0){
-						for(int x = 0; x < 16; x++){
-							for(int z = 0; z < 16; z++){
-								current = getAt(x, y, z);
-								if(current.needsVisualUpdate() || fullUpdate){
-									current.setNeedsVisualUpdate(false);
-									currentBlock = current.getBlock();
-									if(Utils.isWater(currentBlock) || currentBlock.getType() == Material.AIR){
-										if(WaterData.toWaterLevel(current.getLevel()) != Utils.getWaterHeight(currentBlock)){
-											Utils.setWaterHeight(currentBlock, WaterData.toWaterLevel(current.getLevel()), true);
-										}
+					for(int x = 0; x < 16; x++){
+						for(int z = 0; z < 16; z++){
+							current = getAt(x, y, z);
+							if(current.needsVisualUpdate() || fullUpdate){
+								current.setNeedsVisualUpdate(false);
+								currentBlock = current.getBlock();
+								if(Utils.isWater(currentBlock) || currentBlock.getType() == Material.AIR){
+									if(WaterData.toWaterLevel(current.getLevel()) != Utils.getWaterHeight(currentBlock)){
+										Utils.setWaterHeight(currentBlock, WaterData.toWaterLevel(current.getLevel()), true);
 									}
 								}
 							}

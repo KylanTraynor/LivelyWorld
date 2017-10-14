@@ -589,25 +589,29 @@ public class WaterChunk {
 			}
 		}
 		if(LivelyWorld.getInstance().getWaterModule().isRealisticSimulation()){
-			BukkitRunnable br = new BukkitRunnable(){
+			updateVisually(Math.random() < 0.01);
+		}
+	}
+	
+	public void updateVisually(final boolean fullUpdate){
+		if(!isLoaded()) load();
+		BukkitRunnable br = new BukkitRunnable(){
 
-				@Override
-				public void run() {
-					boolean fullUpdate = Math.random() < 0.01;
-					WaterData current = null;
-					Block currentBlock = null;
-					for(int y = 0; y < 256; y++){
-						if(y > 0){
-							for(int x = 0; x < 16; x++){
-								for(int z = 0; z < 16; z++){
-									current = getAt(x, y, z);
-									if(current.needsVisualUpdate() || fullUpdate){
-										current.setNeedsVisualUpdate(false);
-										currentBlock = current.getBlock();
-										if(Utils.isWater(currentBlock) || currentBlock.getType() == Material.AIR){
-											if(WaterData.toWaterLevel(current.getLevel()) != Utils.getWaterHeight(currentBlock)){
-												Utils.setWaterHeight(currentBlock, WaterData.toWaterLevel(current.getLevel()), true);
-											}
+			@Override
+			public void run() {
+				WaterData current = null;
+				Block currentBlock = null;
+				for(int y = 0; y < 256; y++){
+					if(y > 0){
+						for(int x = 0; x < 16; x++){
+							for(int z = 0; z < 16; z++){
+								current = getAt(x, y, z);
+								if(current.needsVisualUpdate() || fullUpdate){
+									current.setNeedsVisualUpdate(false);
+									currentBlock = current.getBlock();
+									if(Utils.isWater(currentBlock) || currentBlock.getType() == Material.AIR){
+										if(WaterData.toWaterLevel(current.getLevel()) != Utils.getWaterHeight(currentBlock)){
+											Utils.setWaterHeight(currentBlock, WaterData.toWaterLevel(current.getLevel()), true);
 										}
 									}
 								}
@@ -615,10 +619,10 @@ public class WaterChunk {
 						}
 					}
 				}
-				
-			};
-			br.runTask(LivelyWorld.getInstance());
-		}
+			}
+			
+		};
+		br.runTask(LivelyWorld.getInstance());
 	}
 	
 	public void randomTick(){

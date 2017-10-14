@@ -359,7 +359,7 @@ public class WaterData {
 					if(Utils.getWaterHeight(b) != toWaterLevel(getLevel())){
 						Utils.setWaterHeight(b, toWaterLevel(getLevel()), true);
 					}
-				} else if(b.getRelative(BlockFace.DOWN).getType() == Material.AIR && getLevel() > 0) {
+				} else if(b.getRelative(BlockFace.DOWN).getType() == Material.AIR && b.getType() != Material.AIR && getLevel() > 0) {
 					chunk.getWorld().spawnParticle(Particle.DRIP_WATER, b.getX() + Math.random(), b.getY() - 0.01, b.getZ() + Math.random(), 1);
 				}
 				//BlockWaterChangedEvent e = new BlockWaterChangedEvent(b, getData());

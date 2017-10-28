@@ -589,7 +589,7 @@ public class WaterChunk {
 			}
 		}
 		if(LivelyWorld.getInstance().getWaterModule().isRealisticSimulation()){
-			updateVisually(Math.random() < 0.01);
+			updateVisually(Math.random() < 0.1);
 		}
 	}
 	

@@ -463,7 +463,15 @@ public class TidesModule {
 				sender.sendMessage("Saturating Chunk.");
 				Player player = (Player) sender;
 				Chunk c = player.getLocation().getChunk();
-				WaterChunk.get(c.getWorld(), c.getX(), c.getZ()).saturate();
+				if(c != null) {
+					BukkitRunnable br = new BukkitRunnable(){
+						@Override
+						public void run() {
+							WaterChunk.get(c.getWorld(), c.getX(), c.getZ()).saturate();
+						}
+					};
+					br.runTaskAsynchronously(plugin);
+				}
 				break;
 			case "UPDATECHUNK":
 				sender.sendMessage("Updating chunk.");

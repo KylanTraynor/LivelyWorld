@@ -3,6 +3,7 @@ package com.kylantraynor.livelyworld;
 import java.util.ArrayList;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Biome;
@@ -13,6 +14,40 @@ public class Utils {
 	
 	private static double sqrt2PI = Math.sqrt(2 * Math.PI);
 	
+	public static class SmallChunkData{
+		private String worldName = "world";
+		private int x = 0;
+		private int z = 0;
+		
+		private Biome[][] biomes = new Biome[16][16];
+		
+		public SmallChunkData(Chunk c){
+			x = c.getX();
+			z = c.getZ();
+			worldName = c.getWorld().getName();
+			for(int x = 0; x < 16; x ++){
+				for(int z = 0; z < 16; z ++){
+					biomes[x][z] = c.getBlock(x, 0, z).getBiome();
+				}
+			}
+		}
+		
+		public int getX(){
+			return x;
+		}
+		
+		public int getZ(){
+			return z;
+		}
+		
+		public String getWorldName(){
+			return worldName;
+		}
+		
+		public Biome getBiome(int x, int z){
+			return biomes[x][z];
+		}
+	}
 	
 	public static class Enclosed<T>{
 		private T value = null;

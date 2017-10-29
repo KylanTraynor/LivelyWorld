@@ -15,11 +15,12 @@ import org.bukkit.scheduler.BukkitRunnable;
 import com.kylantraynor.livelyworld.LivelyWorld;
 import com.kylantraynor.livelyworld.Utils.Enclosed;
 import com.kylantraynor.livelyworld.Utils.PrioritizedLock;
+import com.kylantraynor.livelyworld.Utils.SmallChunkData;
 
 public class WaterChunkThread extends Thread {
 	
 	private String name = "WaterChunk Thread";
-	final public static Map<String, List<ChunkSnapshot>> loadedChunks = new HashMap<String, List<ChunkSnapshot>>();
+	final public static Map<String, List<SmallChunkData>> loadedChunks = new HashMap<String, List<SmallChunkData>>();
 	final static Enclosed<Chunk[]> chunksFetcher = new Enclosed<Chunk[]>();
 	final static PrioritizedLock mainLocker = new PrioritizedLock(LivelyWorld.getInstance().getMainThreadId());
 	
@@ -73,9 +74,9 @@ public class WaterChunkThread extends Thread {
 	public static Biome getBiomeAt(WaterChunk wc, int x, int z){
 		try {
 			mainLocker.lock();
-			List<ChunkSnapshot> chunks = loadedChunks.get(wc.getWorld().getName());
+			List<SmallChunkData> chunks = loadedChunks.get(wc.getWorld().getName());
 			for(int i = 0; i < chunks.size(); i++){
-				ChunkSnapshot s = chunks.get(i);
+				SmallChunkData s = chunks.get(i);
 				if(s.getX() == wc.getX() && s.getZ() == wc.getZ()){
 					return s.getBiome(x, z);
 				}
@@ -98,9 +99,9 @@ public class WaterChunkThread extends Thread {
 		return false;*/
 		try {
 			mainLocker.lock();
-			List<ChunkSnapshot> chunks = loadedChunks.get(w.getName());
+			List<SmallChunkData> chunks = loadedChunks.get(w.getName());
 			for(int i = 0; i < chunks.size(); i++){
-				ChunkSnapshot s = chunks.get(i);
+				SmallChunkData s = chunks.get(i);
 				if(s.getX() == chunkX && s.getZ() == chunkZ){
 					return true;
 				}
@@ -207,13 +208,13 @@ public class WaterChunkThread extends Thread {
 	public void addLoadedChunk(Chunk c) {
 		try {
 			mainLocker.lock();
-			List<ChunkSnapshot> cs = loadedChunks.get(c.getWorld().getName());
+			List<SmallChunkData> cs = loadedChunks.get(c.getWorld().getName());
 			if(cs == null){
-				cs = new ArrayList<ChunkSnapshot>();
-				cs.add(c.getChunkSnapshot(false, true, false));
+				cs = new ArrayList<SmallChunkData>();
+				cs.add(new SmallChunkData(c));
 				loadedChunks.put(c.getWorld().getName(), cs);
 			} else {
-				cs.add(c.getChunkSnapshot());
+				cs.add(new SmallChunkData(c));
 			}
 		} catch (InterruptedException e) {
 			e.printStackTrace();
@@ -226,12 +227,12 @@ public class WaterChunkThread extends Thread {
 	public void removeLoadedChunk(Chunk c) {
 		try {
 			mainLocker.lock();
-			List<ChunkSnapshot> cs = loadedChunks.get(c.getWorld().getName());
+			List<SmallChunkData> cs = loadedChunks.get(c.getWorld().getName());
 			if(cs == null){
 				return;
 			} else {
 				for(int i = 0; i < cs.size(); i++){
-					ChunkSnapshot s = cs.get(i);
+					SmallChunkData s = cs.get(i);
 					if(s.getX() == c.getX() && s.getZ() == c.getZ()){
 						cs.remove(i);
 						break;

@@ -77,6 +77,7 @@ public class WaterChunkThread extends Thread {
 			List<SmallChunkData> chunks = loadedChunks.get(wc.getWorld().getName());
 			for(int i = 0; i < chunks.size(); i++){
 				SmallChunkData s = chunks.get(i);
+				if(s == null) continue;
 				if(s.getX() == wc.getX() && s.getZ() == wc.getZ()){
 					return s.getBiome(x, z);
 				}
@@ -102,6 +103,7 @@ public class WaterChunkThread extends Thread {
 			List<SmallChunkData> chunks = loadedChunks.get(w.getName());
 			for(int i = 0; i < chunks.size(); i++){
 				SmallChunkData s = chunks.get(i);
+				if(s == null) continue;
 				if(s.getX() == chunkX && s.getZ() == chunkZ){
 					return true;
 				}

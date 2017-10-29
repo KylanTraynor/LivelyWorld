@@ -231,16 +231,37 @@ public class WaterData {
 		WaterData down = getRelative(BlockFace.DOWN);
 		if(down != null){
 			int level = getLevel();
-			for(int i = 1; i <= level; i++){
+			if(down.getMaxQuantity() >= 200){
+				if(down.getLevel() < down.getMaxQuantity()){
+					//if(Math.random() < down.getPermeability()){
+					int transfer = down.getMaxQuantity() - down.getLevel();
+					transfer = (transfer < level ? transfer : level); 
+					down.setLevel(down.getLevel() + transfer);
+					setLevel(getLevel() - transfer);
+				}
+			} else {
+				int max = (int) (down.getMaxQuantity() * Math.random());
+				if(down.getLevel() < max){
+					int transfer = max - down.getLevel();
+					if(transfer < 0) transfer = 0;
+					transfer = (transfer < level ? transfer : level); 
+					down.setLevel(down.getLevel() + transfer);
+					setLevel(getLevel() - transfer);
+				}
+			}
+			/*for(int i = 1; i <= level; i++){
 				if(down.getLevel() >= maxLevel || getLevel() == 0){
 					break;
+				}
+				if(down.getMaxQuantity() >= 254){
+					
 				}
 				if(down.getLevel() < down.getMaxQuantity()){
 				//if(Math.random() < down.getPermeability()){
 					down.setLevel(down.getLevel() + 1);
 					setLevel(getLevel() - 1);
 				}
-			}
+			}*/
 			/*if(down.getLevel() < maxLevel){
 				int transfer = (int) maxLevel - down.getLevel();
 				transfer = Math.min((int)Math.floor(transfer * down.getPermeability()), getLevel());

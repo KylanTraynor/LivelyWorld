@@ -1,19 +1,27 @@
 package com.kylantraynor.livelyworld.water;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
+import org.bukkit.ChunkSnapshot;
 import org.bukkit.World;
+import org.bukkit.block.Biome;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import com.kylantraynor.livelyworld.LivelyWorld;
 import com.kylantraynor.livelyworld.Utils.Enclosed;
+import com.kylantraynor.livelyworld.Utils.PrioritizedLock;
 
 public class WaterChunkThread extends Thread {
 	
 	private String name = "WaterChunk Thread";
-	final private static Map<String, Chunk[]> loadedChunks = new HashMap<String, Chunk[]>();
+	final public static Map<String, List<ChunkSnapshot>> loadedChunks = new HashMap<String, List<ChunkSnapshot>>();
 	final static Enclosed<Chunk[]> chunksFetcher = new Enclosed<Chunk[]>();
+	final static PrioritizedLock mainLocker = new PrioritizedLock(LivelyWorld.getInstance().getMainThreadId());
 	
 	public void run(){
 		try{
@@ -62,11 +70,45 @@ public class WaterChunkThread extends Thread {
 		chunksFetcher.set(null);
 	}*/
 	
+	public static Biome getBiomeAt(WaterChunk wc, int x, int z){
+		try {
+			mainLocker.lock();
+			List<ChunkSnapshot> chunks = loadedChunks.get(wc.getWorld().getName());
+			for(int i = 0; i < chunks.size(); i++){
+				ChunkSnapshot s = chunks.get(i);
+				if(s.getX() == wc.getX() && s.getZ() == wc.getZ()){
+					return s.getBiome(x, z);
+				}
+			}
+		} catch (InterruptedException e) {
+			LivelyWorld.getInstance().getLogger().warning("Couldn't check Biome of chunk " + wc.getX()+ "," + wc.getZ() + ".");
+		} finally {
+			mainLocker.unlock();
+		}
+		return null;
+		
+	}
+	
 	public static boolean isChunkLoaded(World w, int chunkX, int chunkZ){
-		try{
+		/*try{
 			return w.isChunkLoaded(chunkX, chunkZ);
 		} catch (Exception e){
 			LivelyWorld.getInstance().getLogger().warning("Couldn't check if chunk " + chunkX + "," + chunkZ + " is loaded.");
+		}
+		return false;*/
+		try {
+			mainLocker.lock();
+			List<ChunkSnapshot> chunks = loadedChunks.get(w.getName());
+			for(int i = 0; i < chunks.size(); i++){
+				ChunkSnapshot s = chunks.get(i);
+				if(s.getX() == chunkX && s.getZ() == chunkZ){
+					return true;
+				}
+			}
+		} catch (InterruptedException e) {
+			LivelyWorld.getInstance().getLogger().warning("Couldn't check if chunk " + chunkX + "," + chunkZ + " is loaded.");
+		} finally {
+			mainLocker.unlock();
 		}
 		return false;
 		/*Chunk[] chunks = null;
@@ -160,6 +202,48 @@ public class WaterChunkThread extends Thread {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}*/
+	}
+
+	public void addLoadedChunk(Chunk c) {
+		try {
+			mainLocker.lock();
+			List<ChunkSnapshot> cs = loadedChunks.get(c.getWorld().getName());
+			if(cs == null){
+				cs = new ArrayList<ChunkSnapshot>();
+				cs.add(c.getChunkSnapshot());
+				loadedChunks.put(c.getWorld().getName(), cs);
+			} else {
+				cs.add(c.getChunkSnapshot());
+			}
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} finally {
+			mainLocker.unlock();
+		}
+		
+	}
+	
+	public void removeLoadedChunk(Chunk c) {
+		try {
+			mainLocker.lock();
+			List<ChunkSnapshot> cs = loadedChunks.get(c.getWorld().getName());
+			if(cs == null){
+				return;
+			} else {
+				for(int i = 0; i < cs.size(); i++){
+					ChunkSnapshot s = cs.get(i);
+					if(s.getX() == c.getX() && s.getZ() == c.getZ()){
+						cs.remove(i);
+						break;
+					}
+				}
+			}
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} finally {
+			mainLocker.unlock();
+		}
+		
 	}
 	
 }

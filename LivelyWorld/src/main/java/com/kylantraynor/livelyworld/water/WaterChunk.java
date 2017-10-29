@@ -568,10 +568,12 @@ public class WaterChunk {
 				for(int x = 0; x < 16; x++){
 					for(int z = 0; z < 16; z++){
 						current = getAt(x, y, z);
-						biome = getWorld().getBiome(getX() * 16 + x, getZ() * 16 + z);
-						if((Utils.isOcean(biome) || biome == Biome.RIVER) && y <= 48){
-							if(Utils.isWater(current.getBlock())){
-								current.setLevel((int) WaterData.maxLevel - 1);
+						biome = WaterChunkThread.getBiomeAt(this, x, z);
+						if(biome != null){
+							if((Utils.isOcean(biome) || biome == Biome.RIVER) && y <= 48){
+								if(Utils.isWater(current.getBlock())){
+									current.setLevel((int) WaterData.maxLevel - 1);
+								}
 							}
 						}
 						if(current.getLevel() > 0){

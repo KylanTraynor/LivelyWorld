@@ -54,17 +54,17 @@ public class Utils {
 	}
 	
 	public static class PrioritizedLock extends Lock{
-		Thread priority = null;
+		long priority = 0;
 		boolean priorityWaiting = false;
-		public PrioritizedLock(Thread priority){
-			this.priority = priority;
+		public PrioritizedLock(long l){
+			this.priority = l;
 		}
 		
 		public synchronized void lock()
 			throws InterruptedException{
 			Thread callingThread = Thread.currentThread();
-		    while((isLocked && lockedBy != callingThread) && (priorityWaiting && callingThread != priority)){
-		    	if(callingThread == priority){
+		    while((isLocked && lockedBy != callingThread) && (priorityWaiting && callingThread.getId() != priority)){
+		    	if(callingThread.getId() == priority){
 		    		priorityWaiting = true;
 		    	}
 		    	wait();

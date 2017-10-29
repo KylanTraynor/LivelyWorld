@@ -116,6 +116,8 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 	private Location worldCenter;
 	private int worldBorder = 4800;
 
+	private long mainThreadId = Thread.currentThread().getId();
+
 	public void log(Level level, String message) {
 		getLogger().log(level, "[" + PLUGIN_NAME + "] " + message);
 	}
@@ -885,5 +887,9 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 
 	public TidesModule getWaterModule() {
 		return tides;
+	}
+
+	public long getMainThreadId() {
+		return mainThreadId ;
 	}
 }

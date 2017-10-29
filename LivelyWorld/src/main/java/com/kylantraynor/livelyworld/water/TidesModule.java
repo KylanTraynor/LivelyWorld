@@ -614,4 +614,8 @@ public class TidesModule {
 	public void setBaseOceanLevel(double baseOceanLevel) {
 		this.baseOceanLevel = baseOceanLevel;
 	}
+	
+	public WaterChunkThread getWaterThread(){
+		return waterThread;
+	}
 }

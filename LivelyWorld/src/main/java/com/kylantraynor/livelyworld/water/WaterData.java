@@ -420,9 +420,17 @@ public class WaterData {
 				return;
 		}
 		double rdm = Math.random() * 4;
+		WaterData[] relatives = new WaterData[4];
+		for(int i = 0; i < 4; i++){
+			relatives[i] = getRelative(order[(i + (int) Math.floor(rdm)) % 4]);
+		}
 		int level = getLevel();
-		for(int i = 0; i < level; i++){
-			WaterData target = getRelative(order[(i + (int) rdm) % 4]);
+		int lowestLevel = level;
+		for(int i = 0; i < 4; i++){
+			if(relatives[i].getLevel() < lowestLevel) lowestLevel = relatives[i].getLevel();
+		}
+		for(int i = 0; i < level - lowestLevel; i++){
+			WaterData target = relatives[i % 4];
 			//if(target.getLevel() < getLevel() - 1 && Math.random() < target.getPermeability()){
 			if(target.getLevel() < getLevel() - 1 && target.getLevel() < target.getMaxQuantity()) {
 				target.setLevel(target.getLevel() + 1);

@@ -21,7 +21,7 @@ public class WaterData {
 	private int x = 0;
 	private int y = 0;
 	private int z = 0;
-	private boolean needsVisualUpdate = false;
+	//private boolean needsVisualUpdate = false;
 	
 	public static long maxLevel = 0xffL;
 	public static int moistureCode = 0; // 255 (1 byte) 0000 0000 0000 0000 0000 0000 1111 1111
@@ -136,7 +136,7 @@ public class WaterData {
 		//LivelyWorld.getInstance().getLogger().info("Finish:" + Integer.toBinaryString(newData));
 		if(value != getLevel()){
 			setData(newData);
-			needsVisualUpdate = true;
+			chunk.setNeedsUpsate(true);
 		} else {
 			setData(newData);
 		}
@@ -350,7 +350,7 @@ public class WaterData {
 	}
 	
 	public void sendChangedEvent(){
-		needsVisualUpdate = false;
+		//needsVisualUpdate = false;
 		if(!LivelyWorld.getInstance().getWaterModule().isRealisticSimulation()) return;
 		BukkitRunnable br = new BukkitRunnable(){
 			@Override
@@ -410,11 +410,11 @@ public class WaterData {
 		}
 	}
 	
-	public boolean needsVisualUpdate(){
+	/*public boolean needsVisualUpdate(){
 		return needsVisualUpdate;
 	}
 
 	public void setNeedsVisualUpdate(boolean b) {
 		needsVisualUpdate = b;
-	}
+	}*/
 }

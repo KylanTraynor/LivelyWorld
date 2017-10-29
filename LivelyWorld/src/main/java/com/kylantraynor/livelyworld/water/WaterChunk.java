@@ -41,6 +41,7 @@ public class WaterChunk {
 	private final int x;
 	private final int z;
 	private final World world;
+	private boolean needsUpdate = false;
 	private static Utils.Lock fileLock = new Utils.Lock();
 	
 	public WaterChunk(World w, int x, int z){
@@ -589,12 +590,13 @@ public class WaterChunk {
 			}
 		}
 		if(LivelyWorld.getInstance().getWaterModule().isRealisticSimulation()){
-			updateVisually(Math.random() < 0.1);
+			if(needsUpdate() || Math.random() < 0.01) updateVisually(true);
 		}
 	}
 	
 	public void updateVisually(final boolean fullUpdate){
 		if(!isLoaded()) load();
+		needsUpdate = false;
 		BukkitRunnable br = new BukkitRunnable(){
 
 			@Override
@@ -605,15 +607,15 @@ public class WaterChunk {
 					for(int x = 0; x < 16; x++){
 						for(int z = 0; z < 16; z++){
 							current = getAt(x, y, z);
-							if(current.needsVisualUpdate() || fullUpdate){
-								current.setNeedsVisualUpdate(false);
+							/*if(current.needsVisualUpdate() || fullUpdate){
+								current.setNeedsVisualUpdate(false);*/
 								currentBlock = current.getBlock();
 								if(Utils.isWater(currentBlock) || currentBlock.getType() == Material.AIR){
 									if(WaterData.toWaterLevel(current.getLevel()) != Utils.getWaterHeight(currentBlock)){
 										Utils.setWaterHeight(currentBlock, WaterData.toWaterLevel(current.getLevel()), true);
 									}
 								}
-							}
+							//}
 						}
 					}
 				}
@@ -722,5 +724,13 @@ public class WaterChunk {
 				i++;
 			}
 		}
+	}
+	
+	public void setNeedsUpsate(boolean value){
+		needsUpdate = value;
+	}
+	
+	public boolean needsUpdate(){
+		return needsUpdate;
 	}
 }

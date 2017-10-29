@@ -210,7 +210,7 @@ public class WaterChunkThread extends Thread {
 			List<ChunkSnapshot> cs = loadedChunks.get(c.getWorld().getName());
 			if(cs == null){
 				cs = new ArrayList<ChunkSnapshot>();
-				cs.add(c.getChunkSnapshot());
+				cs.add(c.getChunkSnapshot(false, true, false));
 				loadedChunks.put(c.getWorld().getName(), cs);
 			} else {
 				cs.add(c.getChunkSnapshot());

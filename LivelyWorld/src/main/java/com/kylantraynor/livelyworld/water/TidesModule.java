@@ -459,11 +459,17 @@ public class TidesModule {
 				sender.sendMessage("Stopping water thread.");
 				stopWaterChunksThread();
 				break;
-			case "UPDATECHUNK":
-				sender.sendMessage("Updating chunk.");
+			case "SATURATECHUNK":
+				sender.sendMessage("Saturating Chunk.");
 				Player player = (Player) sender;
 				Chunk c = player.getLocation().getChunk();
-				WaterChunk.get(c.getWorld(), c.getX(), c.getZ()).updateVisually(true);
+				WaterChunk.get(c.getWorld(), c.getX(), c.getZ()).saturate();
+				break;
+			case "UPDATECHUNK":
+				sender.sendMessage("Updating chunk.");
+				Player player1 = (Player) sender;
+				Chunk c1 = player1.getLocation().getChunk();
+				WaterChunk.get(c1.getWorld(), c1.getX(), c1.getZ()).updateVisually(true);
 				break;
 			case "GET":
 				if(args.length >= 3){

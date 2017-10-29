@@ -735,4 +735,17 @@ public class WaterChunk {
 	public boolean needsUpdate(){
 		return needsUpdate;
 	}
+
+	public void saturate() {
+		for(int y = 0; y < 256; y ++){
+			for(int x = 0; x < 16; x++){
+				for(int z = 0; z < 16; z++){
+					WaterData data = this.getAt(x, y, z);
+					if(data.getMaxQuantity() > 1 && data.getMaxQuantity() < 254){
+						data.setLevel(data.getMaxQuantity());
+					}
+				}
+			}
+		}
+	}
 }

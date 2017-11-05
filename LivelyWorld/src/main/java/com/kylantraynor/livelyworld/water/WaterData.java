@@ -419,14 +419,70 @@ public class WaterData {
 			if(z == 15 && !chunk.getRelative(0, 1).isLoaded())
 				return;
 		}
-		double rdm = Math.random() * 4;
 		WaterData[] relatives = new WaterData[4];
+		int level = 0;
+		// Gets a random offset number for the order in which surrounding blocks will be checked.
+		double rdm = Math.random() * 4;
+		// Populates the surrounding blocks.
 		for(int i = 0; i < 4; i++){
 			relatives[i] = getRelative(order[(i + (int) Math.floor(rdm)) % 4]);
 		}
-		int level = getLevel();
-		int lowestLevel = level;
+		// Do the calculations for each potential block.
 		for(int i = 0; i < 4; i++){
+			// Updates the level
+			level = getLevel();
+			int[] diff = new int[4];
+			int minDiff = -1;
+			int columnsToFill = 0;
+			
+			// Populates the differences array and checks which one is the smallest one.
+			for(int m = 0; m < 4; m++){
+				if(relatives[m] == null) continue;
+				// Calculates the difference, and caps it to the difference between the target's max level and its current level.
+				diff[m] = Math.min(level - relatives[m].getLevel(), relatives[m].getMaxQuantity() - relatives[m].getLevel());
+				// If there is a positive difference.
+				if(diff[m] > 1){
+					// Adds one to the number of columns to transfer water to.
+					columnsToFill ++;
+					// Updates the minDifference if needed.
+					minDiff = (minDiff == -1 ? m : (diff[m] < diff[minDiff] ? m : minDiff));
+				}
+			}
+			
+			// Fills up all columns if possible.
+			if(columnsToFill > 0){
+				// Calculates the amount of water to move to each column for equilibrium.
+				int transfer = Math.floorDiv(diff[minDiff], columnsToFill + 1);
+				// If there's at least 1 level to transfer to each column.
+				if(transfer > 0){
+					// Go through each column.
+					for(int i2 = 0; i2 < 4; i2++){
+						if(relatives[i2] == null) continue;
+						// If the column can be filled.
+						if(diff[i2] > 1){
+							// Moves water level down in source.
+							this.setLevel(getLevel() - transfer);
+							// Moves water level up in target column.
+							relatives[i2].setLevel(relatives[i2].getLevel() + transfer);
+						}
+					}
+				} else {
+					// Moves one unit of water to the column with the minimum difference.
+					if(diff[minDiff] > 1){
+						// Moves water level down in source.
+						this.setLevel(getLevel() - 1);
+						// Moves water level up in target column.
+						relatives[minDiff].setLevel(relatives[minDiff].getLevel() + 1);
+					}
+				}
+				// Removes the column with the minimum difference from the next calculations.
+				relatives[minDiff] = null;
+			} else {
+				// There was no column to fill, process can stop.
+				break;
+			}
+		}
+		/*for(int i = 0; i < 4; i++){
 			if(relatives[i].getLevel() < lowestLevel) lowestLevel = relatives[i].getLevel();
 		}
 		for(int i = 0; i < level - lowestLevel; i++){
@@ -436,7 +492,7 @@ public class WaterData {
 				target.setLevel(target.getLevel() + 1);
 				this.setLevel(getLevel() - 1);
 			}
-		}
+		}*/
 	}
 	
 	/*public boolean needsVisualUpdate(){

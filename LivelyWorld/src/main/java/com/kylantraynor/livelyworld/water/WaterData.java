@@ -30,7 +30,8 @@ public class WaterData {
 	/*private static int outCurrentCode = 9;
 	private static int outStrengthCode = 12;*/
 	private static long maxSalt = 0xfL;
-	private static int saltCode = 28; // 15 (4 bits) 1111 0000 0000 0000 0000 0000 0000 0000*/ 
+	private static int saltCode = 24; // 15 (4 bits) 0000 1111 0000 0000 0000 0000 0000 0000*/ 
+	private static int stableCode = 31; // 1 (1 bit) 1000 0000 0000 0000 0000 0000 0000 0000*/ 
 	
 	public WaterData(WaterChunk chunk, int x, int y, int z){
 		this.x = x;
@@ -207,6 +208,15 @@ public class WaterData {
 			value = 0;
 		}
 		setData((getData() & (~(maxSalt << saltCode))) | ((long) value) << saltCode);
+	}
+	
+	public boolean isStable(){
+		return (getData() & (1 << stableCode)) >>> stableCode == 1;
+	}
+	
+	
+	public void setStable(boolean value){
+		setData((getData() & (~(1L << stableCode))) | ((value ? 1L : 0L) << stableCode));
 	}
 	
 	public boolean isSalted(){
@@ -456,7 +466,10 @@ public class WaterData {
 			// Fills up all columns if possible.
 			if(columnsToFill > 0){
 				// Calculates the amount of water to move to each column for equilibrium.
-				int transfer = Math.floorDiv(diff[minDiff], columnsToFill + 1);
+				int transfer = 0;
+				if(columnsToFill == 3) transfer = diff[minDiff] >> 2;
+				else if(columnsToFill == 1) transfer = diff[minDiff] >> 1;
+				else transfer = Math.floorDiv(diff[minDiff], columnsToFill + 1);
 				// If there's at least 1 level to transfer to each column.
 				if(transfer > 0){
 					// Go through each column.

@@ -33,9 +33,9 @@ public class WaterChunkThread extends Thread {
 				if(System.currentTimeMillis() >= lastUpdate + 50){
 					//updateListOfLoadedChunks();
 					//LivelyWorld.getInstance().getLogger().info("Updating water chunks...");
-					//lastUpdate = System.currentTimeMillis();
+					lastUpdate = System.currentTimeMillis();
 					updateChunks();
-					//LivelyWorld.getInstance().getLogger().info("Done updating "+ WaterChunk.chunks.size() +" water chunks in " + (System.currentTimeMillis() - lastUpdate) + "ms");
+					LivelyWorld.getInstance().getLogger().info("Done updating "+ WaterChunk.chunks.size() +" water chunks in " + (System.currentTimeMillis() - lastUpdate) + "ms");
 					lastUpdate = System.currentTimeMillis();
 				}
 			    cleanList();

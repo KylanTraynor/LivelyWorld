@@ -427,6 +427,13 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 					.getBlock().getY(), event.getBlock().getZ());
 
 			snowFallTask.runTaskLater(this, 1);
+		} else if(event.getNewState().getType() == Material.ICE){
+			if(usingClimate){
+				climate.updateBiome(event.getBlock());
+				if(ClimateUtils.getAltitudeWeightedTriangleTemperature(null, event.getBlock().getLocation()).isCelsiusAbove(0)){
+					event.setCancelled(true);
+				}
+			}
 		}
 	}
 
@@ -472,6 +479,7 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 		return new Location(world, startX, startY, startZ);
 	}
 
+	
 	@EventHandler
 	public void onPlayerMove(PlayerMoveEvent event) {
 		if (event.getTo().getBlock() != event.getFrom().getBlock()) {

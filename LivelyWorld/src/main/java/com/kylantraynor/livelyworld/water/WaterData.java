@@ -397,14 +397,17 @@ public class WaterData {
 		WaterData down = getRelative(BlockFace.DOWN);
 		if(down != null){
 			int level = getLevel();
-			for(int i = 1; i <= level; i++){
+			int transfer = Math.min(down.getMaxQuantity() - down.getLevel(), level);
+			setLevel(level - transfer);
+			down.setLevel(down.getLevel() + transfer);
+			/*for(int i = 1; i <= level; i++){
 				if(down.getLevel() < down.getMaxQuantity() && getLevel() > 0){
 					down.setLevel(down.getLevel() + 1);
 					setLevel(getLevel() - 1);
 				} else {
 					break;
 				}
-			}
+			}*/
 		}
 	}
 

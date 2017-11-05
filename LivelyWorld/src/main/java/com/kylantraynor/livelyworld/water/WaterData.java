@@ -339,10 +339,14 @@ public class WaterData {
 		}*/
 		if(material == null) return 0;
 		switch (material){
-		case WATER: case STATIONARY_WATER: case LONG_GRASS: case AIR:
+		case WATER: case STATIONARY_WATER: case AIR:
 			return 1;
+		case WOODEN_DOOR: case WOOD_DOOR:
+		case SPRUCE_DOOR: case DARK_OAK_DOOR: case JUNGLE_DOOR: case BIRCH_DOOR:
+		case FENCE_GATE: case  SPRUCE_FENCE_GATE: case DARK_OAK_FENCE_GATE: case JUNGLE_FENCE_GATE: case BIRCH_FENCE_GATE:
 		case FENCE: case SPRUCE_FENCE: case DARK_OAK_FENCE: case JUNGLE_FENCE: case BIRCH_FENCE: case IRON_FENCE:
 			return 20;
+		case LONG_GRASS: case DOUBLE_PLANT: case RED_ROSE: case YELLOW_FLOWER:
 		case LEAVES: case LEAVES_2:
 			return 30;
 		case SAND: case GRAVEL:

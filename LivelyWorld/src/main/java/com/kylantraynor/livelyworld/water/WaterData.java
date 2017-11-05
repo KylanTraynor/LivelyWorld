@@ -398,6 +398,7 @@ public class WaterData {
 		if(down != null){
 			int level = getLevel();
 			int transfer = Math.min(down.getMaxQuantity() - down.getLevel(), level);
+			if (transfer < 0) transfer = 0;
 			setLevel(level - transfer);
 			down.setLevel(down.getLevel() + transfer);
 			/*for(int i = 1; i <= level; i++){

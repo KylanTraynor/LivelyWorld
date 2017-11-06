@@ -584,9 +584,8 @@ public class WaterChunk {
 			}
 			for(int x = 0; x < 16; x++){
 				for(int z = 0; z < 16; z++){
-					current = getAt(x, y, z);
-					if(current.getLevel() > 1){
-						current.moveWaterHorizontally(false);
+					if(WaterData.getWaterLevelAt(this, x, y, z) > 1){
+						getAt(x,y,z).moveWaterHorizontally(false);
 					}
 				}
 			}

@@ -368,8 +368,16 @@ public class WaterData {
 	}
 	
 	public static int getWaterLevelAt(WaterChunk chunk, int x, int y, int z){
-		long d = (long) chunk.getData(x, y, z) & 0xFFFFFFFFL;
-		return (int) (d & (maxLevel << moistureCode)) >> moistureCode;
+		return (int) (chunk.getData(x, y, z) & maxLevel);
+	}
+	
+	public static int getWaterResistanceAt(World world, int x, int y, int z){
+		WaterChunk wc = WaterChunk.get(world, x >> 4, z >> 4);
+		return getWaterResistanceAt(wc, Math.floorMod(x, 16), y, Math.floorMod(z, 16));
+	}
+	
+	public static int getWaterResistanceAt(WaterChunk chunk, int x, int y, int z){
+		return (int) ((chunk.getData(x, y, z) >>> resistanceCode) & maxResistance);
 	}
 	
 	/**

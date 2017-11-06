@@ -599,31 +599,7 @@ public class WaterChunk {
 	public void updateVisually(final boolean fullUpdate){
 		if(!isLoaded()) load();
 		needsUpdate = false;
-		BukkitRunnable br = new BukkitRunnable(){
-
-			@Override
-			public void run() {
-				WaterData current = null;
-				Block currentBlock = null;
-				for(int y = 0; y < 256; y++){
-					for(int x = 0; x < 16; x++){
-						for(int z = 0; z < 16; z++){
-							current = getAt(x, y, z);
-							/*if(current.needsVisualUpdate() || fullUpdate){
-								current.setNeedsVisualUpdate(false);*/
-								currentBlock = current.getBlock();
-								if(Utils.isWater(currentBlock) || currentBlock.getType() == Material.AIR){
-									if(WaterData.toWaterLevel(current.getLevel()) != Utils.getWaterHeight(currentBlock)){
-										Utils.setWaterHeight(currentBlock, WaterData.toWaterLevel(current.getLevel()), true);
-									}
-								}
-							//}
-						}
-					}
-				}
-			}
-			
-		};
+		BukkitRunnable br = new WaterChunkUpdateRunnable(this);
 		br.runTask(LivelyWorld.getInstance());
 	}
 	

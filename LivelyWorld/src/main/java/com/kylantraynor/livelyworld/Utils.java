@@ -211,11 +211,25 @@ public class Utils {
 	}
 
 	public static boolean isWater(Block block) {
-		return block.getType() == Material.WATER || block.getType() == Material.STATIONARY_WATER;
+		return isWater(block.getType());
+	}
+	
+	public static boolean isWater(Material mat){
+		return mat == Material.WATER || mat == Material.STATIONARY_WATER;
 	}
 	
 	public static int getWaterHeight(Block b) {
-		int result = 8 - b.getData();
+		if(!isWater(b)) return 0; 
+		return getWaterHeight(b.getData());
+	}
+	
+	public static int getWaterHeight(Material type, byte data){
+		if(!isWater(type)) return 0;
+		return getWaterHeight(data);
+	}
+	
+	public static int getWaterHeight(byte data){
+		int result = 8 - data;
 		if(result <= 0) result = 8;
 		return result;
 	}

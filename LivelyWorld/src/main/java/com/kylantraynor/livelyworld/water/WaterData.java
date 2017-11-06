@@ -456,12 +456,14 @@ public class WaterData {
 			relatives[i] = getRelative(order[(i + (int) Math.floor(rdm)) % 4]);
 		}
 		// Do the calculations for each potential block.
+		level = getLevel();
+		int[] diff;
+		int minDiff;
+		int columnsToFill;
 		for(int i = 0; i < 4; i++){
-			// Updates the level
-			level = getLevel();
-			int[] diff = new int[4];
-			int minDiff = -1;
-			int columnsToFill = 0;
+			diff = new int[4];
+			minDiff = -1;
+			columnsToFill = 0;
 			
 			// Populates the differences array and checks which one is the smallest one.
 			for(int m = 0; m < 4; m++){
@@ -492,7 +494,7 @@ public class WaterData {
 						// If the column can be filled.
 						if(diff[i2] > 1){
 							// Moves water level down in source.
-							this.setLevel(getLevel() - transfer);
+							level -= transfer;
 							// Moves water level up in target column.
 							relatives[i2].setLevel(relatives[i2].getLevel() + transfer);
 						}
@@ -501,7 +503,7 @@ public class WaterData {
 					// Moves one unit of water to the column with the minimum difference.
 					if(diff[minDiff] > 1){
 						// Moves water level down in source.
-						this.setLevel(getLevel() - 1);
+						level -= 1;
 						// Moves water level up in target column.
 						relatives[minDiff].setLevel(relatives[minDiff].getLevel() + 1);
 					}
@@ -513,6 +515,7 @@ public class WaterData {
 				break;
 			}
 		}
+		this.setLevel(level);
 		/*for(int i = 0; i < 4; i++){
 			if(relatives[i].getLevel() < lowestLevel) lowestLevel = relatives[i].getLevel();
 		}

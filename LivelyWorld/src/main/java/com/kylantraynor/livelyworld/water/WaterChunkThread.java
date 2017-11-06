@@ -160,7 +160,7 @@ public class WaterChunkThread extends Thread {
 	}
 
 	private void unloadChunks() {
-		int count = 5;
+		int count = 30;
 		int i = 0;
 		while(i < WaterChunk.chunks.size() && count > 0){
 			WaterChunk c = WaterChunk.chunks.get(i);
@@ -178,7 +178,7 @@ public class WaterChunkThread extends Thread {
 	}
 
 	private void loadChunks() {
-		int count = 5;
+		int count = 30;
 		int i = 0;
 		while(i < WaterChunk.chunks.size() && count > 0){
 			WaterChunk c = WaterChunk.chunks.get(i);

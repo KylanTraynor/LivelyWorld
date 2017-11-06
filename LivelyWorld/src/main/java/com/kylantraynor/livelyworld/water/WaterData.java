@@ -516,17 +516,6 @@ public class WaterData {
 			}
 		}
 		this.setLevel(level);
-		/*for(int i = 0; i < 4; i++){
-			if(relatives[i].getLevel() < lowestLevel) lowestLevel = relatives[i].getLevel();
-		}
-		for(int i = 0; i < level - lowestLevel; i++){
-			WaterData target = relatives[i % 4];
-			//if(target.getLevel() < getLevel() - 1 && Math.random() < target.getPermeability()){
-			if(target.getLevel() < getLevel() - 1 && target.getLevel() < target.getMaxQuantity()) {
-				target.setLevel(target.getLevel() + 1);
-				this.setLevel(getLevel() - 1);
-			}
-		}*/
 	}
 	
 	/*public boolean needsVisualUpdate(){

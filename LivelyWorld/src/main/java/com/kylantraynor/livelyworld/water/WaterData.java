@@ -341,7 +341,7 @@ public class WaterData {
 		switch (material){
 		case WATER: case STATIONARY_WATER: case AIR:
 			return 1;
-		case LADDER:
+		case LADDER: case RAILS:
 			return 2;
 		case WOODEN_DOOR: case WOOD_DOOR:
 		case SPRUCE_DOOR: case DARK_OAK_DOOR: case JUNGLE_DOOR: case BIRCH_DOOR:
@@ -353,7 +353,7 @@ public class WaterData {
 			return 30;
 		case SAND: case GRAVEL:
 			return 100;
-		case DIRT: case GRASS_PATH: case GRASS:
+		case DIRT: case GRASS_PATH: case GRASS: case SOIL:
 			return 150;
 		case COBBLESTONE:
 			return 200;

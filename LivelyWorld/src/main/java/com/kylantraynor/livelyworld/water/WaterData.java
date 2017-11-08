@@ -304,13 +304,14 @@ public class WaterData {
 	public void updateResistance(){
 		if(!chunk.isLoaded() || !WaterChunkThread.isChunkLoaded(chunk.getWorld(), chunk.getX(), chunk.getZ()))
 			return;
+		
 		int id = chunk.getWorld().getBlockTypeIdAt(getX(), getY(), getZ());
 		setResistance(getResistanceFor(Material.getMaterial(id)));
 	}
 	
 	public int getMaxQuantity(){
 		int resistance = getResistance();
-		if(resistance == 0 || Math.random() < 0.01) {
+		if(resistance == 0 || Utils.randomDouble() < 0.01) {
 			updateResistance();
 			resistance = getResistance();
 		}
@@ -352,9 +353,9 @@ public class WaterData {
 		case LEAVES: case LEAVES_2:
 			return 30;
 		case SAND: case GRAVEL:
-			return 150;
-		case DIRT: case GRASS_PATH: case GRASS: case SOIL: case CLAY:
 			return 200;
+		case DIRT: case GRASS_PATH: case GRASS: case SOIL: case CLAY:
+			return 215;
 		case COBBLESTONE:
 			return 225;
 		default:
@@ -450,10 +451,10 @@ public class WaterData {
 		WaterData[] relatives = new WaterData[4];
 		int level = 0;
 		// Gets a random offset number for the order in which surrounding blocks will be checked.
-		double rdm = Math.random() * 4;
+		int rdm = Utils.randomInt();
 		// Populates the surrounding blocks.
 		for(int i = 0; i < 4; i++){
-			relatives[i] = getRelative(order[(i + (int) Math.floor(rdm)) % 4]);
+			relatives[i] = getRelative(order[(i + rdm) % 4]);
 		}
 		// Do the calculations for each potential block.
 		level = getLevel();

@@ -13,6 +13,9 @@ import org.bukkit.entity.Player;
 public class Utils {
 	
 	private static double sqrt2PI = Math.sqrt(2 * Math.PI);
+	private static long rand = System.currentTimeMillis();
+	private static int[] xor128 = {123456789,362436069,521288629,88675123};
+	private static int t;
 	
 	public static class SmallChunkData{
 		private String worldName = "world";
@@ -279,5 +282,26 @@ public class Utils {
 		if(biome == Biome.DEEP_OCEAN) return true;
 		if(biome == Biome.FROZEN_OCEAN) return true;
 		return false;
+	}
+	
+	public static long randomLong(){
+		rand ^= (rand << 21);
+		rand ^= (rand >>> 35);
+		rand ^= (rand << 4);
+		return rand;
+	}
+	
+	public static int randomInt(){
+		t = xor128[0] ^ (xor128[0] << 11);
+	    xor128[0] = xor128[1]; xor128[1] = xor128[2]; xor128[2] = xor128[3];
+	    return xor128[3] = xor128[3] ^ (xor128[3] >>> 19) ^ t ^ (t >>> 8);
+	}
+	
+	/**
+	 * Returns a double between [0 and 1]
+	 * @return
+	 */
+	public static double randomDouble(){
+		return ((double)randomInt() - ((double)Integer.MIN_VALUE)) / (Integer.MAX_VALUE * 2.0);
 	}
 }

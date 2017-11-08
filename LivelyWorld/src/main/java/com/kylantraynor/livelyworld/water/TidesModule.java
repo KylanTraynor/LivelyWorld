@@ -357,6 +357,11 @@ public class TidesModule {
 			return true;
 		}
 		if (l.getBlock().getBiome() == Biome.RIVER) {
+			/*if (isNextToBiome(Biome.OCEAN, l) && oceanDepth > 1) {
+				if (l.getBlock().getBiome() != Biome.OCEAN) {
+					l.getBlock().setBiome(Biome.OCEAN);
+				}
+			}*/
 			return true;
 		}
 
@@ -374,6 +379,15 @@ public class TidesModule {
 		return false;
 	}
 
+	private boolean isNextToBiome(Biome biome, Location l){
+		if (l.getBlock().getRelative(BlockFace.EAST).getBiome() == biome
+				|| l.getBlock().getRelative(BlockFace.WEST).getBiome() == biome
+				|| l.getBlock().getRelative(BlockFace.NORTH).getBiome() == biome
+				|| l.getBlock().getRelative(BlockFace.SOUTH).getBiome() == biome)
+			return true;
+		return false;
+	}
+	
 	private boolean isSurrounded(Biome biome, Location l) {
 		if (l.getBlock().getRelative(BlockFace.EAST).getBiome() == biome
 				&& l.getBlock().getRelative(BlockFace.WEST).getBiome() == biome)

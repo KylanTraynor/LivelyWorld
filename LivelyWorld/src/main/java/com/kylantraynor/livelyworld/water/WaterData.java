@@ -352,11 +352,11 @@ public class WaterData {
 		case LEAVES: case LEAVES_2:
 			return 30;
 		case SAND: case GRAVEL:
-			return 100;
-		case DIRT: case GRASS_PATH: case GRASS: case SOIL:
 			return 150;
-		case COBBLESTONE:
+		case DIRT: case GRASS_PATH: case GRASS: case SOIL: case CLAY:
 			return 200;
+		case COBBLESTONE:
+			return 225;
 		default:
 			return 255;
 		}

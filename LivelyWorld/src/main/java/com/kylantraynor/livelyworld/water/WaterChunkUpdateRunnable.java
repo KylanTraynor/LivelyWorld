@@ -28,14 +28,25 @@ public class WaterChunkUpdateRunnable extends BukkitRunnable {
 			for(int x = 0; x < 16; x++){
 				for(int z = 0; z < 16; z++){
 					level = WaterData.getWaterLevelAt(chunk, x, y, z);
-					if(WaterData.getWaterResistanceAt(chunk, x, y, z) <= 1){
-						currentBlock = chunk.getWorld().getChunkAt(chunk.getX(), chunk.getZ()).getBlock(x, y, z);
+					currentBlock = chunk.getWorld().getChunkAt(chunk.getX(), chunk.getZ()).getBlock(x, y, z);
+					if(canReplace(currentBlock.getType())){
 						if(WaterData.toWaterLevel(level) != Utils.getWaterHeight(currentBlock)){
+							if(level > 0){
+								currentBlock.breakNaturally();
+							}
 							Utils.setWaterHeight(currentBlock, WaterData.toWaterLevel(level), true);
 						}
 					}
 				}
 			}
 		}
+	}
+	
+	public boolean canReplace(Material mat){
+		if(mat == Material.WATER) return true;
+		if(mat == Material.STATIONARY_WATER) return true;
+		if(mat == Material.AIR) return true;
+		if(mat == Material.TORCH) return true;
+		return false;
 	}
 }

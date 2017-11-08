@@ -311,7 +311,7 @@ public class WaterData {
 	
 	public int getMaxQuantity(){
 		int resistance = getResistance();
-		if(resistance == 0 || Utils.randomDouble() < 0.01) {
+		if(resistance == 0 || Utils.fastRandomDouble() < 0.01) {
 			updateResistance();
 			resistance = getResistance();
 		}
@@ -451,10 +451,33 @@ public class WaterData {
 		WaterData[] relatives = new WaterData[4];
 		int level = 0;
 		// Gets a random offset number for the order in which surrounding blocks will be checked.
-		int rdm = Utils.randomInt();
+		int rdm = Utils.fastRandomInt(4);
 		// Populates the surrounding blocks.
-		for(int i = 0; i < 4; i++){
-			relatives[i] = getRelative(order[(i + rdm) % 4]);
+		switch(rdm){
+		case 0:
+			relatives[0] = getRelative(order[0]);
+			relatives[1] = getRelative(order[1]);
+			relatives[2] = getRelative(order[2]);
+			relatives[3] = getRelative(order[3]);
+			break;
+		case 1:
+			relatives[0] = getRelative(order[1]);
+			relatives[1] = getRelative(order[2]);
+			relatives[2] = getRelative(order[3]);
+			relatives[3] = getRelative(order[0]);
+			break;
+		case 2:
+			relatives[0] = getRelative(order[2]);
+			relatives[1] = getRelative(order[3]);
+			relatives[2] = getRelative(order[0]);
+			relatives[3] = getRelative(order[1]);
+			break;
+		case 3:
+			relatives[0] = getRelative(order[3]);
+			relatives[1] = getRelative(order[0]);
+			relatives[2] = getRelative(order[1]);
+			relatives[3] = getRelative(order[2]);
+			break;
 		}
 		// Do the calculations for each potential block.
 		level = getLevel();

@@ -291,17 +291,21 @@ public class Utils {
 		return rand;
 	}
 	
-	public static int randomInt(){
+	public static int fastRandomInt(){
 		t = xor128[0] ^ (xor128[0] << 11);
 	    xor128[0] = xor128[1]; xor128[1] = xor128[2]; xor128[2] = xor128[3];
 	    return xor128[3] = xor128[3] ^ (xor128[3] >>> 19) ^ t ^ (t >>> 8);
+	}
+	
+	public static int fastRandomInt(int max){
+		return Math.floorMod(fastRandomInt(), max);
 	}
 	
 	/**
 	 * Returns a double between [0 and 1]
 	 * @return
 	 */
-	public static double randomDouble(){
-		return ((double)randomInt() - ((double)Integer.MIN_VALUE)) / (Integer.MAX_VALUE * 2.0);
+	public static double fastRandomDouble(){
+		return ((double)(fastRandomInt()) - ((double)Integer.MIN_VALUE)) / (-(Integer.MIN_VALUE * 2.0));
 	}
 }

@@ -29,6 +29,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import com.kylantraynor.livelyworld.LivelyWorld;
 import com.kylantraynor.livelyworld.Utils;
+import com.kylantraynor.livelyworld.Utils.SmallChunkData;
 import com.kylantraynor.livelyworld.events.BlockWaterLevelChangeEvent;
 
 public class WaterChunk {
@@ -562,16 +563,19 @@ public class WaterChunk {
 	public void tickAll(){
 		if(!isLoaded()) return;
 		Biome biome = null;
-		for(int x = 0; x < 16; x++){
-			for(int z = 0; z < 16; z++){
-				biome = WaterChunkThread.getBiomeAt(this, x, z);
-				if(biome != null){
-					if((Utils.isOcean(biome) || biome == Biome.RIVER)){
-						int y = 48;
-						WaterData current = getAt(x,y,z);
-						while(y > 0 && Utils.isWater(current.getBlock())){
-							current.setLevel((int) WaterData.maxLevel - 1);
-							current = getAt(x,--y,z);
+		SmallChunkData scd = WaterChunkThread.getChunkData(this);
+		if(scd != null){
+			for(int x = 0; x < 16; x++){
+				for(int z = 0; z < 16; z++){
+					biome = scd.getBiome(x, z);
+					if(biome != null){
+						if((Utils.isOcean(biome) || biome == Biome.RIVER)){
+							int y = 48;
+							WaterData current = getAt(x,y,z);
+							while(y > 0 && Utils.isWater(current.getBlock())){
+								current.setLevel((int) WaterData.maxLevel - 1);
+								current = getAt(x,--y,z);
+							}
 						}
 					}
 				}

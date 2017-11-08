@@ -72,6 +72,25 @@ public class WaterChunkThread extends Thread {
 		chunksFetcher.set(null);
 	}*/
 	
+	public static SmallChunkData getChunkData(WaterChunk wc){
+		try {
+			mainLocker.lock();
+			List<SmallChunkData> chunks = loadedChunks.get(wc.getWorld().getName());
+			for(int i = 0; i < chunks.size(); i++){
+				SmallChunkData s = chunks.get(i);
+				if(s == null) continue;
+				if(s.getX() == wc.getX() && s.getZ() == wc.getZ()){
+					return s;
+				}
+			}
+		} catch (InterruptedException e) {
+			LivelyWorld.getInstance().getLogger().warning("Couldn't check Biome of chunk " + wc.getX()+ "," + wc.getZ() + ".");
+		} finally {
+			mainLocker.unlock();
+		}
+		return null;
+	}
+	
 	public static Biome getBiomeAt(WaterChunk wc, int x, int z){
 		try {
 			mainLocker.lock();

@@ -561,21 +561,26 @@ public class WaterChunk {
 	
 	public void tickAll(){
 		if(!isLoaded()) return;
-		WaterData current = null;
 		Biome biome = null;
+		for(int x = 0; x < 16; x++){
+			for(int z = 0; z < 16; z++){
+				biome = WaterChunkThread.getBiomeAt(this, x, z);
+				if(biome != null){
+					if((Utils.isOcean(biome) || biome == Biome.RIVER)){
+						int y = 48;
+						WaterData current = getAt(x,y,z);
+						while(y > 0 && Utils.isWater(current.getBlock())){
+							current.setLevel((int) WaterData.maxLevel - 1);
+							current = getAt(x,--y,z);
+						}
+					}
+				}
+			}
+		}
 		for(int y = 0; y < 256; y++){
 			if(y > 0){
 				for(int x = 0; x < 16; x++){
 					for(int z = 0; z < 16; z++){
-						biome = WaterChunkThread.getBiomeAt(this, x, z);
-						if(biome != null){
-							if((Utils.isOcean(biome) || biome == Biome.RIVER) && y <= 48){
-								current = getAt(x, y, z);
-								if(Utils.isWater(current.getBlock())){
-									current.setLevel((int) WaterData.maxLevel - 1);
-								}
-							}
-						}
 						if(WaterData.getWaterLevelAt(this,x,y,z) > 0){
 							getAt(x, y, z).moveWaterDown();
 						}

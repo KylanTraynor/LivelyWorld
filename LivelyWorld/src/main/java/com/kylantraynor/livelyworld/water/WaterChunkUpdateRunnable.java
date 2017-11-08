@@ -25,7 +25,8 @@ public class WaterChunkUpdateRunnable extends BukkitRunnable {
 		int level = 0;
 		Block currentBlock = null;
 		if(!chunk.getWorld().isChunkLoaded(chunk.getX(), chunk.getZ())) return;
-		if(!chunk.getWorld().isChunkInUse(chunk.getX(), chunk.getZ()) && Utils.fastRandomDouble() < 0.01) return;
+		if(!Utils.hasPlayerWithinChunk(chunk.getX(), chunk.getZ(), 10)) return;
+		if(!Utils.hasPlayerWithinChunk(chunk.getX(), chunk.getZ(), 1) && Utils.fastRandomDouble() > 0.01) return;
 		for(int y = 0; y < 256; y++){
 			for(int x = 0; x < 16; x++){
 				for(int z = 0; z < 16; z++){

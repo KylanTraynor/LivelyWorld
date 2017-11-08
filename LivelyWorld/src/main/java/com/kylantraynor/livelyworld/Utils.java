@@ -308,4 +308,18 @@ public class Utils {
 	public static double fastRandomDouble(){
 		return ((double)(fastRandomInt()) - ((double)Integer.MIN_VALUE)) / (-(Integer.MIN_VALUE * 2.0));
 	}
+	public static boolean hasPlayerWithinChunk(int x, int z, int range) {
+		int px = 0;
+		int pz = 0;
+		for(Player p : Bukkit.getOnlinePlayers()){
+			px = p.getLocation().getChunk().getX();
+			pz = p.getLocation().getChunk().getZ();
+			if(px <= x + range && px >= x - range){
+				if(pz <= z + range && pz >= z - range){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 }

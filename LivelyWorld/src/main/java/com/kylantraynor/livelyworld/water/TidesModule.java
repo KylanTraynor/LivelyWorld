@@ -473,15 +473,29 @@ public class TidesModule {
 				sender.sendMessage("Stopping water thread.");
 				stopWaterChunksThread();
 				break;
-			case "SATURATECHUNK":
-				sender.sendMessage("Saturating Chunk.");
+			case "DRAINCHUNK":
+				sender.sendMessage("Draining Chunk.");
 				Player player = (Player) sender;
 				Chunk c = player.getLocation().getChunk();
 				if(c != null) {
 					BukkitRunnable br = new BukkitRunnable(){
 						@Override
 						public void run() {
-							WaterChunk.get(c.getWorld(), c.getX(), c.getZ()).saturate();
+							WaterChunk.get(c.getWorld(), c.getX(), c.getZ()).drain();
+						}
+					};
+					br.runTaskAsynchronously(plugin);
+				}
+				break;
+			case "SATURATECHUNK":
+				sender.sendMessage("Saturating Chunk.");
+				Player player0 = (Player) sender;
+				Chunk c0 = player0.getLocation().getChunk();
+				if(c0 != null) {
+					BukkitRunnable br = new BukkitRunnable(){
+						@Override
+						public void run() {
+							WaterChunk.get(c0.getWorld(), c0.getX(), c0.getZ()).saturate();
 						}
 					};
 					br.runTaskAsynchronously(plugin);

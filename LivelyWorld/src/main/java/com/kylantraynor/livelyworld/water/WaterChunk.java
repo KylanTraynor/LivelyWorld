@@ -740,7 +740,7 @@ public class WaterChunk {
 			for(int x = 0; x < 16; x++){
 				for(int z = 0; z < 16; z++){
 					WaterData data = this.getAt(x, y, z);
-					if(data.getMaxQuantity() <= 1){
+					if(data.getMaxQuantity() >= 254){
 						data.setLevel(0);
 					}
 				}

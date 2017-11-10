@@ -273,7 +273,7 @@ public class ClimateCell extends VCell {
 			for(int m = 0; m < getNeighbours().length; m++){
 				if(getNeighbours()[m] == null) continue;
 				// Calculates the difference, and caps it to the difference between the target's max level and its current level.
-				diff[m] = getLowAltitudePressure() - getNeighbours()[m].getLowAltitudePressure();
+				diff[m] = pressure - getNeighbours()[m].getLowAltitudePressure();
 				// If there is a positive difference.
 				if(diff[m] > 0){
 					// Adds one to the number of columns to transfer water to.
@@ -294,21 +294,17 @@ public class ClimateCell extends VCell {
 						if(getNeighbours()[i2] == null) continue;
 						// If the column can be filled.
 						if(diff[i2] > 0){
-							pressure -= transfer;
-							transfers[i2] += transfer;
+							ClimateCell target = getNeighbours()[i2];
+							double fromExcess = Math.abs(ClimateUtils.getGasAmount(this.getLowAltitudePressure() - transfer, getAirVolumeOnBlock(), getTemperature()) - getAmountOnBlock());
+							double toLack = Math.abs(ClimateUtils.getGasAmount(target.getLowAltitudePressure() + transfer, target.getAirVolumeOnBlock(), target.getTemperature()) - target.getAmountOnBlock());
+							double amount = Math.min(fromExcess, toLack);
+							ClimateCell.processLowTransfer(this, getNeighbours()[i], amount);
 						}
 					}
 				}
 			} else {
 				// There was no column to fill, process can stop.
 				break;
-			}
-		}
-		
-		for(int i = 0; i < getNeighbours().length; i++){
-			if(getNeighbours()[i] == null) continue;
-			if(transfers[i] > 0){
-				ClimateCell.processLowTransfer(this, getNeighbours()[i], ClimateUtils.getGasAmount(transfers[i], getAirVolumeOnBlock(), getTemperature()));
 			}
 		}
 		

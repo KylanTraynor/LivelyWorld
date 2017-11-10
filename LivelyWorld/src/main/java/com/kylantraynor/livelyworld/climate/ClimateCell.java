@@ -246,9 +246,9 @@ public class ClimateCell extends VCell {
 		Temperature toTemp = target.getTemperature();
 		target.bringTemperatureTo(source.getTemperature(), (target.getAmountOnBlock() / transfer));
 		source.bringTemperatureTo(toTemp, (source.getAmountOnBlock() / transfer));
-		target.lowWind = new WindVector(target.getX() - source.getX(), target.getAltitude() - source.getAltitude(), target.getZ() - source.getZ(), transfer).normalize();
 		target.addAmount(transfer);
 		source.addAmount(-transfer);
+		target.lowWind = new WindVector(target.getX() - source.getX(), target.getAltitude() - source.getAltitude(), target.getZ() - source.getZ(), transfer).normalize();
 	}
 	
 	private void moveLowAir(){

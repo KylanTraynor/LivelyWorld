@@ -199,6 +199,7 @@ public class ClimateCell extends VCell {
 	}
 	
 	public double getDownInertia(){
+		LivelyWorld.getInstance().getLogger().info("Amount: " + getAmountOnBlock() + " Water: " + getWaterVolumeOnBlock() + " Humidity: " + getHumidity());
 		return (getAmountOnBlock() * 0.00004) + (getWaterVolumeOnBlock()*10) + (getHumidity() * 5);
 	}
 	

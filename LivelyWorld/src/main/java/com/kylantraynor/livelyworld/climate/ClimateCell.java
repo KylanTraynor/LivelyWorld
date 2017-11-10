@@ -235,6 +235,21 @@ public class ClimateCell extends VCell {
 		}
 	}
 	
+	private static void processLowTransfer(ClimateCell source, ClimateCell target, double transfer){
+		double humidityRatio = source.getHumidity() / source.getAmountOnBlock();
+		double humidityTransfer = transfer * humidityRatio;
+		humidityTransfer *= 1/(target.getAltitude() - source.getAltitude());
+		humidityTransfer = Math.min(humidityTransfer, source.getHumidity());
+		target.addHumidity(humidityTransfer);
+		source.addHumidity(-humidityTransfer);
+		Temperature temp = source.getTemperature();
+		source.bringTemperatureTo(target.getTemperature(), (source.getAmountOnBlock() / (double) transfer) * 0.25);
+		target.bringTemperatureTo(temp, (target.getAmountOnBlock() / (double) transfer) * 0.25);
+		target.lowWind = new WindVector(target.getX() - source.getX(), target.getAltitude() - source.getAltitude(), target.getZ() - source.getZ(), transfer);//.normalize();
+		target.addAmount(transfer);
+		source.addAmount(-transfer);
+	}
+	
 	private void moveLowAir(){
 		ClimateCell highestPressure = this;
 		for(ClimateCell c : getNeighbours()){
@@ -243,31 +258,70 @@ public class ClimateCell extends VCell {
 				highestPressure = c;
 			}
 		}
-		double dp = highestPressure.getLowAltitudePressure() - this.getLowAltitudePressure();
+		
+		double[] diff;
+		double[] transfers = new double[getNeighbours().length];
+		double pressure = this.getLowAltitudePressure();
+		int minDiff;
+		int cellsToFill;
+		for(int i = 0; i < getNeighbours().length; i++){
+			diff = new double[getNeighbours().length];
+			minDiff = -1;
+			cellsToFill = 0;
+			
+			// Populates the differences array and checks which one is the smallest one.
+			for(int m = 0; m < getNeighbours().length; m++){
+				if(getNeighbours()[m] == null) continue;
+				// Calculates the difference, and caps it to the difference between the target's max level and its current level.
+				diff[m] = getLowAltitudePressure() - getNeighbours()[m].getLowAltitudePressure();
+				// If there is a positive difference.
+				if(diff[m] > 0){
+					// Adds one to the number of columns to transfer water to.
+					cellsToFill ++;
+					// Updates the minDifference if needed.
+					minDiff = (minDiff == -1 ? m : (diff[m] < diff[minDiff] ? m : minDiff));
+				}
+			}
+			
+			// Fills up all columns if possible.
+			if(cellsToFill > 0){
+				// Calculates the amount of water to move to each column for equilibrium.
+				double transfer = diff[minDiff] / (cellsToFill + 1);
+				// If there's at least 1 level to transfer to each column.
+				if(transfer > 0){
+					// Go through each column.
+					for(int i2 = 0; i2 < getNeighbours().length; i2++){
+						if(getNeighbours()[i2] == null) continue;
+						// If the column can be filled.
+						if(diff[i2] > 0){
+							pressure -= transfer;
+							transfers[i2] += transfer;
+						}
+					}
+				}
+			} else {
+				// There was no column to fill, process can stop.
+				break;
+			}
+		}
+		
+		for(int i = 0; i < getNeighbours().length; i++){
+			if(getNeighbours()[i] == null) continue;
+			if(transfers[i] > 0){
+				ClimateCell.processLowTransfer(this, getNeighbours()[i], ClimateUtils.getGasAmount(transfers[i], getAirVolumeOnBlock(), getTemperature()));
+			}
+		}
+		
+		
+		/*double dp = highestPressure.getLowAltitudePressure() - this.getLowAltitudePressure();
 		//LivelyWorld.getInstance().getLogger().info("Highest Pressure : " + highestPressure.getLowAltitudePressure() + ", this : " + this.getLowAltitudePressure());
 		if(dp > 0){
-			double humidityRatio = highestPressure.getHumidity() / highestPressure.getAmountOnBlock();
 			double transfer = ClimateUtils.getGasAmount(Math.abs(dp), getAirVolumeOnBlock(), getTemperature());
 			transfer = Math.min(transfer, highestPressure.getAmountOnBlock());
-			double humidityTransfer = Math.min(transfer * humidityRatio, highestPressure.getHumidity());
-			if(highestPressure.getAltitude() > 175 && highestPressure.getAltitude() > getAltitude()){
-				humidityTransfer = 0;
-			}
-			if(getRelativeHumidity() <= 99){
-				addHumidity(humidityTransfer);
-				
-				highestPressure.addHumidity(-humidityTransfer);
-			}
-			addAmount(transfer);
-			highestPressure.addAmount(-transfer);
-			Temperature temp = highestPressure.getTemperature();
-			highestPressure.bringTemperatureTo(this.getTemperature(), (highestPressure.getAmountOnBlock() / (double) transfer) * 0.25);
-			this.bringTemperatureTo(temp, (getAmountOnBlock() / (double) transfer) * 0.25);
-			this.lowWind = new WindVector(this.getX() - highestPressure.getX(), this.getAltitude() - highestPressure.getAltitude(), this.getZ() - highestPressure.getZ(), transfer);//.normalize();
-			//LivelyWorld.getInstance().getLogger().info("Wind set to " + lowWind.toString());
+			ClimateCell.processLowTransfer(highestPressure, this, transfer);
 		} else {
 			this.lowWind = WindVector.ZERO;
-		}
+		}*/
 	}
 	
 	private void bringTemperatureTo(Temperature temp, double inertia){

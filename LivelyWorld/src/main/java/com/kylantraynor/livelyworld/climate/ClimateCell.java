@@ -260,8 +260,6 @@ public class ClimateCell extends VCell {
 		}
 		
 		double[] diff;
-		double[] transfers = new double[getNeighbours().length];
-		double pressure = this.getLowAltitudePressure();
 		int minDiff;
 		int cellsToFill;
 		for(int i = 0; i < getNeighbours().length; i++){
@@ -273,7 +271,7 @@ public class ClimateCell extends VCell {
 			for(int m = 0; m < getNeighbours().length; m++){
 				if(getNeighbours()[m] == null) continue;
 				// Calculates the difference, and caps it to the difference between the target's max level and its current level.
-				diff[m] = pressure - getNeighbours()[m].getLowAltitudePressure();
+				diff[m] = getLowAltitudePressure() - getNeighbours()[m].getLowAltitudePressure();
 				// If there is a positive difference.
 				if(diff[m] > 0){
 					// Adds one to the number of columns to transfer water to.

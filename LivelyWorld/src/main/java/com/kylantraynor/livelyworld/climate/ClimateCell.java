@@ -251,14 +251,14 @@ public class ClimateCell extends VCell {
 	}
 	
 	private void moveLowAir(){
-		ClimateCell highestPressure = this;
+		/*ClimateCell highestPressure = this;
 		for(ClimateCell c : getNeighbours()){
 			if(c == null) continue;
 			if(c.getLowAltitudePressure() > highestPressure.getLowAltitudePressure()){
 				highestPressure = c;
 			}
 		}
-		
+		*/
 		double[] diff;
 		int minDiff;
 		int cellsToFill;
@@ -293,10 +293,12 @@ public class ClimateCell extends VCell {
 						// If the column can be filled.
 						if(diff[i2] > 0){
 							ClimateCell target = getNeighbours()[i2];
-							double fromExcess = Math.abs(ClimateUtils.getGasAmount(this.getLowAltitudePressure() - transfer, getAirVolumeOnBlock(), getTemperature()) - getAmountOnBlock());
-							double toLack = Math.abs(ClimateUtils.getGasAmount(target.getLowAltitudePressure() + transfer, target.getAirVolumeOnBlock(), target.getTemperature()) - target.getAmountOnBlock());
+							double fromExcess = getAmountOnBlock() - ClimateUtils.getGasAmount(this.getLowAltitudePressure() - transfer, getAirVolumeOnBlock(), getTemperature());
+							double toLack = ClimateUtils.getGasAmount(target.getLowAltitudePressure() + transfer, target.getAirVolumeOnBlock(), target.getTemperature()) - target.getAmountOnBlock();
 							double amount = Math.min(fromExcess, toLack);
-							ClimateCell.processLowTransfer(this, target, amount);
+							if(amount > 0){
+								ClimateCell.processLowTransfer(this, target, amount);
+							}
 						}
 					}
 				}

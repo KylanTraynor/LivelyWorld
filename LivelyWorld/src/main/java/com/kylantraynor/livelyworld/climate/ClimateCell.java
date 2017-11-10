@@ -243,9 +243,13 @@ public class ClimateCell extends VCell {
 		humidityTransfer = Math.min(humidityTransfer, source.getHumidity());
 		target.addHumidity(humidityTransfer);
 		source.addHumidity(-humidityTransfer);
-		Temperature toTemp = target.getTemperature();
-		target.bringTemperatureTo(source.getTemperature(), (target.getAmountOnBlock() / transfer));
-		source.bringTemperatureTo(toTemp, (source.getAmountOnBlock() / transfer));
+		if(transfer >= 1){
+			Temperature toTemp = target.getTemperature();
+			double toTargetInertia = target.getAmountOnBlock() / transfer;
+			double toSourceInertia = source.getAmountOnBlock() / transfer;
+			target.bringTemperatureTo(source.getTemperature(), toTargetInertia);
+			source.bringTemperatureTo(toTemp, toSourceInertia);
+		}
 		target.addAmount(transfer);
 		source.addAmount(-transfer);
 		target.lowWind = new WindVector(target.getX() - source.getX(), target.getAltitude() - source.getAltitude(), target.getZ() - source.getZ(), transfer).normalize();
@@ -298,7 +302,6 @@ public class ClimateCell extends VCell {
 							double toLack = ClimateUtils.getGasAmount(target.getLowAltitudePressure() + transfer, target.getAirVolumeOnBlock(), target.getTemperature()) - target.getAmountOnBlock();
 							double amount = Math.min(fromExcess, toLack);
 							if(amount > 0){
-								LivelyWorld.getInstance().getLogger().info("amount: " + amount + " fromExcess: " + fromExcess + " toLack: " + toLack);
 								ClimateCell.processLowTransfer(this, target, amount);
 							}
 						}

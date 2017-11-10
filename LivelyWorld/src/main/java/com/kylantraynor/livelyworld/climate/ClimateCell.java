@@ -242,10 +242,10 @@ public class ClimateCell extends VCell {
 		humidityTransfer = Math.min(humidityTransfer, source.getHumidity());
 		target.addHumidity(humidityTransfer);
 		source.addHumidity(-humidityTransfer);
-		Temperature temp = source.getTemperature();
-		source.bringTemperatureTo(target.getTemperature(), (source.getAmountOnBlock() / (double) transfer) * 0.25);
-		target.bringTemperatureTo(temp, (target.getAmountOnBlock() / (double) transfer) * 0.25);
-		target.lowWind = new WindVector(target.getX() - source.getX(), target.getAltitude() - source.getAltitude(), target.getZ() - source.getZ(), transfer);//.normalize();
+		Temperature toTemp = target.getTemperature();
+		target.bringTemperatureTo(source.getTemperature(), (target.getAmountOnBlock() / transfer));
+		source.bringTemperatureTo(toTemp, (source.getAmountOnBlock() / transfer));
+		target.lowWind = new WindVector(target.getX() - source.getX(), target.getAltitude() - source.getAltitude(), target.getZ() - source.getZ(), transfer).normalize();
 		target.addAmount(transfer);
 		source.addAmount(-transfer);
 	}
@@ -383,10 +383,10 @@ public class ClimateCell extends VCell {
 
 	public void update() {
 		updateIrradiance();
-		/*moveLowAir();
-		moveVertically();
+		moveLowAir();
+		/*moveVertically();
 		moveHighAir();*/
-		updateWinds();
+		//updateWinds();
 		//updateTemperature();
 		updateHumidity();
 		updateWeather();

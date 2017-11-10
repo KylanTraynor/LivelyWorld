@@ -298,6 +298,7 @@ public class ClimateCell extends VCell {
 							double toLack = ClimateUtils.getGasAmount(target.getLowAltitudePressure() + transfer, target.getAirVolumeOnBlock(), target.getTemperature()) - target.getAmountOnBlock();
 							double amount = Math.min(fromExcess, toLack);
 							if(amount > 0){
+								LivelyWorld.getInstance().getLogger().info("amount: " + amount + " fromExcess: " + fromExcess + " toLack: " + toLack);
 								ClimateCell.processLowTransfer(this, target, amount);
 							}
 						}

@@ -298,7 +298,7 @@ public class ClimateCell extends VCell {
 							double fromExcess = Math.abs(ClimateUtils.getGasAmount(this.getLowAltitudePressure() - transfer, getAirVolumeOnBlock(), getTemperature()) - getAmountOnBlock());
 							double toLack = Math.abs(ClimateUtils.getGasAmount(target.getLowAltitudePressure() + transfer, target.getAirVolumeOnBlock(), target.getTemperature()) - target.getAmountOnBlock());
 							double amount = Math.min(fromExcess, toLack);
-							ClimateCell.processLowTransfer(this, getNeighbours()[i], amount);
+							ClimateCell.processLowTransfer(this, target, amount);
 						}
 					}
 				}

@@ -209,8 +209,10 @@ public class ClimateCell extends VCell {
 	public void updateIrradiance() {
 		Temperature target = getSurfaceTemperature();
 		if(target.getValue() > temperature.getValue()){
+			LivelyWorld.getInstance().getLogger().info("Up Inertia: " + getUpInertia());
 			bringTemperatureTo(target, getUpInertia());
 		} else {
+			LivelyWorld.getInstance().getLogger().info("Down Inertia: " + getDownInertia());
 			bringTemperatureTo(target, getDownInertia());
 		}
 		//bringHighTemperatureTo(getTropopauseTemperature(), 100);
@@ -243,14 +245,12 @@ public class ClimateCell extends VCell {
 		humidityTransfer = Math.min(humidityTransfer, source.getHumidity());
 		target.addHumidity(humidityTransfer);
 		source.addHumidity(-humidityTransfer);
-		if(transfer >= 1){
-			Temperature toTemp = target.getTemperature();
-			double toTargetInertia = target.getAmountOnBlock() / transfer;
-			double toSourceInertia = source.getAmountOnBlock() / transfer;
-			LivelyWorld.getInstance().getLogger().info("target: " + toTargetInertia + " source: " + toSourceInertia + " transfer: " + transfer);
-			target.bringTemperatureTo(source.getTemperature(), toTargetInertia);
-			source.bringTemperatureTo(toTemp, toSourceInertia);
-		}
+		Temperature toTemp = target.getTemperature();
+		double toTargetInertia = target.getAmountOnBlock() / transfer;
+		double toSourceInertia = source.getAmountOnBlock() / transfer;
+		LivelyWorld.getInstance().getLogger().info("target: " + toTargetInertia + " source: " + toSourceInertia + " transfer: " + transfer);
+		target.bringTemperatureTo(source.getTemperature(), toTargetInertia);
+		source.bringTemperatureTo(toTemp, toSourceInertia);
 		target.addAmount(transfer);
 		source.addAmount(-transfer);
 		target.lowWind = new WindVector(target.getX() - source.getX(), target.getAltitude() - source.getAltitude(), target.getZ() - source.getZ(), transfer).normalize();

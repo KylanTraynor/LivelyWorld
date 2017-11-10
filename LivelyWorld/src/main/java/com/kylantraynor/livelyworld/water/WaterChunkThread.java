@@ -20,7 +20,7 @@ import com.kylantraynor.livelyworld.Utils.SmallChunkData;
 public class WaterChunkThread extends Thread {
 	
 	private String name = "WaterChunk Thread";
-	final public static Map<String, List<SmallChunkData>> loadedChunks = new HashMap<String, List<SmallChunkData>>();
+	final public static Map<String, Map<String,SmallChunkData>> loadedChunks = new HashMap<String, Map<String, SmallChunkData>>();
 	final static Enclosed<Chunk[]> chunksFetcher = new Enclosed<Chunk[]>();
 	final static PrioritizedLock mainLocker = new PrioritizedLock(LivelyWorld.getInstance().getMainThreadId());
 	
@@ -75,14 +75,15 @@ public class WaterChunkThread extends Thread {
 	public static SmallChunkData getChunkData(WaterChunk wc){
 		try {
 			mainLocker.lock();
-			List<SmallChunkData> chunks = loadedChunks.get(wc.getWorld().getName());
-			for(int i = 0; i < chunks.size(); i++){
+			Map<String, SmallChunkData> chunks = loadedChunks.get(wc.getWorld().getName());
+			return chunks.get("" + wc.getX() + "_" + wc.getZ());
+			/*for(int i = 0; i < chunks.size(); i++){
 				SmallChunkData s = chunks.get(i);
 				if(s == null) continue;
 				if(s.getX() == wc.getX() && s.getZ() == wc.getZ()){
 					return s;
 				}
-			}
+			}*/
 		} catch (InterruptedException e) {
 			LivelyWorld.getInstance().getLogger().warning("Couldn't check Biome of chunk " + wc.getX()+ "," + wc.getZ() + ".");
 		} finally {
@@ -94,14 +95,10 @@ public class WaterChunkThread extends Thread {
 	public static Biome getBiomeAt(WaterChunk wc, int x, int z){
 		try {
 			mainLocker.lock();
-			List<SmallChunkData> chunks = loadedChunks.get(wc.getWorld().getName());
-			for(int i = 0; i < chunks.size(); i++){
-				SmallChunkData s = chunks.get(i);
-				if(s == null) continue;
-				if(s.getX() == wc.getX() && s.getZ() == wc.getZ()){
-					return s.getBiome(x, z);
-				}
-			}
+			Map<String, SmallChunkData> chunks = loadedChunks.get(wc.getWorld().getName());
+			SmallChunkData d = chunks.get("" + wc.getX() + "_" + wc.getZ());
+			if(d == null) return null;
+			return d.getBiome(x, z);
 		} catch (InterruptedException e) {
 			LivelyWorld.getInstance().getLogger().warning("Couldn't check Biome of chunk " + wc.getX()+ "," + wc.getZ() + ".");
 		} finally {
@@ -120,14 +117,8 @@ public class WaterChunkThread extends Thread {
 		return false;*/
 		try {
 			mainLocker.lock();
-			List<SmallChunkData> chunks = loadedChunks.get(w.getName());
-			for(int i = 0; i < chunks.size(); i++){
-				SmallChunkData s = chunks.get(i);
-				if(s == null) continue;
-				if(s.getX() == chunkX && s.getZ() == chunkZ){
-					return true;
-				}
-			}
+			Map<String, SmallChunkData> chunks = loadedChunks.get(w.getName());
+			return chunks.get("" + chunkX + "_" + chunkZ) != null;
 		} catch (InterruptedException e) {
 			LivelyWorld.getInstance().getLogger().warning("Couldn't check if chunk " + chunkX + "," + chunkZ + " is loaded.");
 		} finally {
@@ -230,13 +221,13 @@ public class WaterChunkThread extends Thread {
 	public void addLoadedChunk(Chunk c) {
 		try {
 			mainLocker.lock();
-			List<SmallChunkData> cs = loadedChunks.get(c.getWorld().getName());
+			Map<String, SmallChunkData> cs = loadedChunks.get(c.getWorld().getName());
 			if(cs == null){
-				cs = new ArrayList<SmallChunkData>();
-				cs.add(new SmallChunkData(c));
+				cs = new HashMap<String, SmallChunkData>();
+				cs.put("" + c.getX() + "_" + c.getZ(), new SmallChunkData(c));
 				loadedChunks.put(c.getWorld().getName(), cs);
 			} else {
-				cs.add(new SmallChunkData(c));
+				cs.put("" + c.getX() + "_" + c.getZ(), new SmallChunkData(c));
 			}
 		} catch (InterruptedException e) {
 			e.printStackTrace();
@@ -249,17 +240,11 @@ public class WaterChunkThread extends Thread {
 	public void removeLoadedChunk(Chunk c) {
 		try {
 			mainLocker.lock();
-			List<SmallChunkData> cs = loadedChunks.get(c.getWorld().getName());
+			Map<String, SmallChunkData> cs = loadedChunks.get(c.getWorld().getName());
 			if(cs == null){
 				return;
 			} else {
-				for(int i = 0; i < cs.size(); i++){
-					SmallChunkData s = cs.get(i);
-					if(s.getX() == c.getX() && s.getZ() == c.getZ()){
-						cs.remove(i);
-						break;
-					}
-				}
+				cs.remove("" + c.getX() + "_" +c.getZ());
 			}
 		} catch (InterruptedException e) {
 			e.printStackTrace();

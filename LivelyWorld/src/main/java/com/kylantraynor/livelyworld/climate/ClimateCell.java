@@ -236,6 +236,7 @@ public class ClimateCell extends VCell {
 	}
 	
 	private static void processLowTransfer(ClimateCell source, ClimateCell target, double transfer){
+		if(transfer <= 0) return;
 		double humidityRatio = source.getHumidity() / source.getAmountOnBlock();
 		double humidityTransfer = transfer * humidityRatio;
 		humidityTransfer *= 1/(target.getAltitude() - source.getAltitude());

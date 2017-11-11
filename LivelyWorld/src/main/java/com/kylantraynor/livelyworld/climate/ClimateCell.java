@@ -252,7 +252,6 @@ public class ClimateCell extends VCell {
 		Temperature toTemp = target.getTemperature();
 		double toTargetInertia = target.getAmountOnBlock() / transfer;
 		double toSourceInertia = source.getAmountOnBlock() / transfer;
-		LivelyWorld.getInstance().getLogger().info("target: " + toTargetInertia + " source: " + toSourceInertia + " transfer: " + transfer);
 		target.bringTemperatureTo(source.getTemperature(), toTargetInertia);
 		source.bringTemperatureTo(toTemp, toSourceInertia);
 		target.addAmount(transfer);

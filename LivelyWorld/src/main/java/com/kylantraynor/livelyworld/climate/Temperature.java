@@ -31,7 +31,6 @@ public class Temperature {
 		double oldt = this.value;
 		double targett = t.value;
 		double newt = (oldt * inertia + targett) * (1.0 / (inertia + 1));
-		LivelyWorld.getInstance().getLogger().info("newt: " + newt);
 		return new Temperature(newt);
 	}
 

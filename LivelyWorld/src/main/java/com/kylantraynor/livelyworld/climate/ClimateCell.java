@@ -199,7 +199,6 @@ public class ClimateCell extends VCell {
 	}
 	
 	public double getDownInertia(){
-		LivelyWorld.getInstance().getLogger().info("Amount: " + getAmountOnBlock() + " Water: " + getWaterVolumeOnBlock() + " Humidity: " + getHumidity());
 		return (getAmountOnBlock() * 0.00004) + (getWaterVolumeOnBlock()*10) + (getHumidity() * 5);
 	}
 	
@@ -210,10 +209,8 @@ public class ClimateCell extends VCell {
 	public void updateIrradiance() {
 		Temperature target = getSurfaceTemperature();
 		if(target.getValue() > temperature.getValue()){
-			LivelyWorld.getInstance().getLogger().info("Up Inertia: " + getUpInertia());
 			bringTemperatureTo(target, getUpInertia());
 		} else {
-			LivelyWorld.getInstance().getLogger().info("Down Inertia: " + getDownInertia());
 			bringTemperatureTo(target, getDownInertia());
 		}
 		//bringHighTemperatureTo(getTropopauseTemperature(), 100);
@@ -242,8 +239,14 @@ public class ClimateCell extends VCell {
 		if(transfer <= 0) return;
 		double humidityRatio = source.getHumidity() / source.getAmountOnBlock();
 		double humidityTransfer = transfer * humidityRatio;
-		humidityTransfer *= 1/(target.getAltitude() - source.getAltitude());
-		humidityTransfer = Math.min(humidityTransfer, source.getHumidity());
+		if(target.getAltitude() != source.getAltitude()){
+			humidityTransfer *= 1/(target.getAltitude() - source.getAltitude());
+		}
+		if(humidityTransfer > 0){
+			humidityTransfer = Math.min(humidityTransfer, source.getHumidity());
+		} else {
+			humidityTransfer = Math.min(humidityTransfer, target.getHumidity());
+		}
 		target.addHumidity(humidityTransfer);
 		source.addHumidity(-humidityTransfer);
 		Temperature toTemp = target.getTemperature();

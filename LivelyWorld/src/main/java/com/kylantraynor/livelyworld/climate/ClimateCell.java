@@ -239,14 +239,10 @@ public class ClimateCell extends VCell {
 		if(transfer <= 0) return;
 		double humidityRatio = source.getHumidity() / source.getAmountOnBlock();
 		double humidityTransfer = transfer * humidityRatio;
-		if(target.getAltitude() != source.getAltitude()){
-			humidityTransfer *= 1/(target.getAltitude() - source.getAltitude());
+		if(target.getAltitude() != 0){
+			humidityTransfer *= source.getAltitude()/target.getAltitude();
 		}
-		if(humidityTransfer > 0){
-			humidityTransfer = Math.min(humidityTransfer, source.getHumidity());
-		} else {
-			humidityTransfer = Math.min(humidityTransfer, target.getHumidity());
-		}
+		humidityTransfer = Math.min(humidityTransfer, source.getHumidity());
 		target.addHumidity(humidityTransfer);
 		source.addHumidity(-humidityTransfer);
 		Temperature toTemp = target.getTemperature();

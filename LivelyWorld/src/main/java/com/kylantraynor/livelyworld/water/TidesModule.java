@@ -64,7 +64,7 @@ public class TidesModule {
 	private Map<Material, MaterialData> changingBlock = new HashMap<Material, MaterialData>();
 
 	public List<String> ignoreTimeOuts = new ArrayList<String>();
-	private boolean realisticSimulation = false;
+	private boolean realisticSimulation = true;
 
 	public TidesModule(LivelyWorld p) {
 		this.plugin = p;

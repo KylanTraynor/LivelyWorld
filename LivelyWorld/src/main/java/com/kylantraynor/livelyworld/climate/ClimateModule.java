@@ -137,7 +137,7 @@ public class ClimateModule {
 										public void run() {
 											WaterChunk wc = WaterChunk.get(fb.getWorld(), chunkX, chunkZ);
 											if(wc.isLoaded()){
-												wc.addWaterAt(Math.floorMod(fb.getX(), 16), fb.getY(), Math.floorMod(fb.getZ(), 16), (int) (amount * (WaterData.maxLevel / 8)));
+												wc.addWaterAt(Math.floorMod(fb.getX(), 16), fb.getY(), Math.floorMod(fb.getZ(), 16), (int) (amount * WaterData.maxLevel) / 8);
 											}
 										}
 									};

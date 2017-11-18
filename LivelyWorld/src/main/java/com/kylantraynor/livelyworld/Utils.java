@@ -1,14 +1,18 @@
 package com.kylantraynor.livelyworld;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+
+import com.kylantraynor.livelyworld.creatures.AnimalsHelper;
 
 public class Utils {
 	
@@ -16,6 +20,79 @@ public class Utils {
 	private static long rand = System.currentTimeMillis();
 	private static int[] xor128 = {123456789,362436069,521288629,88675123};
 	private static int t;
+	
+	
+	public static interface PacketMapChunk {
+	   
+		/**
+	     * Sends this packet to a player.
+	     * <br>You still need to refresh it manually with <code>world.refreshChunk(...)</code>.
+	     *
+	     * @param player The player.
+	     */
+		
+		public void send(final Player player);
+		
+	    /**
+	     * Refresh a chunk.
+	     *
+	     * @param chunk The chunk.
+	     */
+	   
+	    public static void refreshChunk(final Chunk chunk) {
+	        refreshChunk(chunk.getWorld(), chunk.getX(), chunk.getZ());
+	    }
+	   
+	    /**
+	     * Wrapper for <code>world.refreshChunk(...)</code>
+	     *
+	     * @param world The world.
+	     * @param x The chunk's X.
+	     * @param z The chunk's Z.
+	     */
+	   
+	    public static void refreshChunk(final World world, final int x, final int z) {
+	        final Collection<? extends Player> players = Bukkit.getOnlinePlayers();
+	        refreshChunk(world, x, z, players.toArray(new Player[players.size()]));
+	    }
+	   
+	    /**
+	     * Refresh a chunk for the selected players.
+	     *
+	     * @param world The chunk's world.
+	     * @param x The chunk's X.
+	     * @param z The chunk's Z.
+	     * @param players The players.
+	     */
+	   
+	    public static void refreshChunk(final World world, final int x, final int z, final Player... players) {
+	    	String packageName = LivelyWorld.getInstance().getServer().getClass().getPackage().getName();
+	        String version = packageName.substring(packageName.lastIndexOf('.') + 1);
+	        PacketMapChunk packet = null;
+	        try {
+	            final Class<?> clazz = Class.forName("com.kylantraynor.livelyworld." + version + ".PacketMapChunkHandler");
+	            // Check if we have a WildAnimalHandler class at that location.
+	            if (PacketMapChunk.class.isAssignableFrom(clazz)) { // Make sure it actually implements WildAnimal
+	                packet = (PacketMapChunk) clazz.getConstructor().newInstance(); // Set our handler
+	            }
+	        } catch (final Exception e) {
+	            e.printStackTrace();
+	            LivelyWorld.getInstance().getLogger().warning("This CraftBukkit version ("+version+") is not supported. Auto-Breed will not work.");
+	        }
+	        if(packet == null) return;
+	        packet.setChunk(world.getChunkAt(x, z));
+	        for(final Player player : players) {
+	            packet.send(player);
+	        }
+	        world.refreshChunk(x, z);
+	    }
+
+	    /**
+	     * Sets the chunk of this packet.
+	     * @param chunk
+	     */
+		public void setChunk(Chunk chunk);
+	}
 	
 	public static class SmallChunkData{
 		private String worldName = "world";

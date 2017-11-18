@@ -7,6 +7,7 @@ import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -21,6 +22,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import com.kylantraynor.livelyworld.LivelyWorld;
+import com.kylantraynor.livelyworld.Utils;
 import com.kylantraynor.livelyworld.hooks.HookManager;
 import com.kylantraynor.livelyworld.water.WaterChunk;
 import com.kylantraynor.livelyworld.water.WaterData;
@@ -32,7 +34,7 @@ public class ClimateModule {
 	private Planet defaultPlanet;
 	
 	private final int cellUpdates = 1;
-	private final int weatherEffectBlocks = 100;
+	private final int weatherEffectBlocks = 200;
 	
 	private String mapType = "TEMP";
 
@@ -97,7 +99,7 @@ public class ClimateModule {
 					ClimateCell c = getClimateCellFor(p);
 					if(c == null) return;
 					int mostDist = (int) 300;
-					int doubleMostDist = 2 * mostDist;
+					int doubleMostDist = mostDist << 1;
 					
 					for(int i = 0; i < weatherEffectBlocks; i++){
 						int random_x = (int) ((Math.random() * doubleMostDist) - mostDist);
@@ -416,6 +418,14 @@ public class ClimateModule {
 					+ "/livelyworld climate get <property>");
 		} else if (args.length >= 2) {
 			switch (args[1].toUpperCase()) {
+			case "REFRESHCHUNK":
+				if(sender instanceof Player){
+					Player p = (Player) sender;
+					Chunk c = p.getLocation().getChunk();
+					Utils.PacketMapChunk.refreshChunk(c);
+					sender.sendMessage("Refreshed Chunk.");
+				}
+				break;
 			case "CLEARMAPDATA":
 				for(Planet p : Planet.planets){
 					p.getClimateMap().clearMinMaxValues();

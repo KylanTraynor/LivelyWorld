@@ -269,6 +269,8 @@ public class WaterChunk {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		DeflaterOutputStream dos = new DeflaterOutputStream(baos);
 		try {
+			dos.write(Utils.toByteArray(1));
+			dos.write(Utils.toByteArray(getChunkStateCode()));
 			synchronized(this.data){
 				dos.write(data);
 			}
@@ -374,6 +376,12 @@ public class WaterChunk {
 		
 	}
 	
+	private int getChunkStateCode() {
+		int result = 0;
+		result = needsUpdate? (result | (1)) : result;
+		return result;
+	}
+
 	public void loadFromFile(){
 		int compressedSize = 0;
 		byte[] compressedData = null;
@@ -416,9 +424,20 @@ public class WaterChunk {
 				
 				if(baos.size() == data.length){
 					byte[] array = baos.toByteArray();
-					synchronized(data){
-						for(int i = 0; i < data.length; i++){
-							data[i] = array[i];
+					int version = Utils.toInt(array[0], array[1], array[2], array[3]);
+					if(version == 1){
+						int chunkData = Utils.toInt(array[4], array[5], array[6], array[7]);
+						synchronized(data){
+							for(int i = 8; i < data.length + 8; i++){
+								data[i - 8] = array[i];
+							}
+						}
+						needsUpdate = ((chunkData & 1) == 1);
+					} else {
+						synchronized(data){
+							for(int i = 0; i < data.length; i++){
+								data[i] = array[i];
+							}
 						}
 					}
 				}

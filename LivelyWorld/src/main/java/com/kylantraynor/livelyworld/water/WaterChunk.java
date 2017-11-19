@@ -35,6 +35,7 @@ import com.kylantraynor.livelyworld.events.BlockWaterLevelChangeEvent;
 public class WaterChunk {
 	final static CopyOnWriteArrayList<WaterChunk> chunks = new CopyOnWriteArrayList<WaterChunk>(); 
 	final static int sectorLength = 4096;
+	final static int currentVersion = 1;
 	static boolean disabled = false;
 	
 	final byte[] data = new byte[16 * 16 * 256 * 4];
@@ -269,7 +270,7 @@ public class WaterChunk {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		DeflaterOutputStream dos = new DeflaterOutputStream(baos);
 		try {
-			dos.write(Utils.toByteArray(1));
+			dos.write(Utils.toByteArray(currentVersion));
 			dos.write(Utils.toByteArray(getChunkStateCode()));
 			synchronized(this.data){
 				dos.write(data);
@@ -425,7 +426,7 @@ public class WaterChunk {
 				if(baos.size() == data.length){
 					byte[] array = baos.toByteArray();
 					int version = Utils.toInt(array[0], array[1], array[2], array[3]);
-					if(version == 1){
+					if(version == currentVersion){
 						int chunkData = Utils.toInt(array[4], array[5], array[6], array[7]);
 						synchronized(data){
 							for(int i = 8; i < data.length + 8; i++){

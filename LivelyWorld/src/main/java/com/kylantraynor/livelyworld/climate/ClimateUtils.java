@@ -173,6 +173,7 @@ public class ClimateUtils {
 	
 	public static Temperature getAltitudeWeightedTriangleTemperature(ClimateCell ref, Location l){
 		ClimateTriangle t = getClimateTriangle(l, ref);
+		if(t == null) return Temperature.NaN;
 		double temp = t.getTemperatureAt(l.getX(), l.getZ()).getValue();
 		
 		double result = temp - ((l.getY() - 48) * 0.08);
@@ -232,6 +233,7 @@ public class ClimateUtils {
 	}
 	
 	public static boolean isAcceptableTemperature(Temperature current, Temperature ideal, Temperature min, Temperature max){
+		if(current.isNaN()) return false;
 		if(current.isBelow(min)) return false;
 		if(current.isAbove(max)) return false;
 		double cValue = current.getValue();

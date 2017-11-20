@@ -1,7 +1,5 @@
 package com.kylantraynor.livelyworld.vegetation;
 
-import java.util.logging.Level;
-
 import org.bukkit.Bukkit;
 import org.bukkit.CropState;
 import org.bukkit.Location;
@@ -18,17 +16,15 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Crops;
 import org.bukkit.material.MaterialData;
 import org.bukkit.material.Sapling;
-import org.bukkit.material.Tree;
 
 import com.kylantraynor.livelyworld.LivelyWorld;
 import com.kylantraynor.livelyworld.Utils;
 import com.kylantraynor.livelyworld.climate.ClimateCell;
 import com.kylantraynor.livelyworld.climate.ClimateChunk;
-import com.kylantraynor.livelyworld.climate.ClimateMap;
-import com.kylantraynor.livelyworld.climate.ClimateTriangle;
 import com.kylantraynor.livelyworld.climate.ClimateUtils;
 import com.kylantraynor.livelyworld.climate.Planet;
 import com.kylantraynor.livelyworld.climate.Temperature;
+import com.kylantraynor.livelyworld.water.WaterData;
 
 public class VegetationModule implements Listener {
 
@@ -81,7 +77,7 @@ public class VegetationModule implements Listener {
 			updateTree(b);
 			break;
 		case GRASS:
-			double rdm = Math.random();
+			double rdm = Utils.fastRandomDouble();
 			if (rdm <= 0.75) {
 				if(rdm <= 0.5)
 					updateGrass(b);
@@ -115,6 +111,8 @@ public class VegetationModule implements Listener {
 		case 2:
 			tryPlantOxeyeDaisy(above);
 			break;
+		case 3:
+			tryPlantBlueOrchid(above);
 		default:
 
 		}
@@ -122,15 +120,43 @@ public class VegetationModule implements Listener {
 		return;
 	}
 
+	private void tryPlantBlueOrchid(Block b) {
+		if (debug)
+			Bukkit.getServer().getLogger().info("Trying to plant Blue Orchid");
+		boolean isClimateOk = false;
+		if (Planet.getPlanet(b.getWorld()) != null) {
+			Temperature averageTemp = ClimateUtils.getAltitudeWeightedTriangleTemperature(null, b.getLocation());
+			isClimateOk = ClimateUtils.isAcceptableTemperature(averageTemp, 
+					Temperature.fromCelsius(21), 
+					Temperature.fromCelsius(15), 
+					Temperature.fromCelsius(35));
+		}
+		if (isClimateOk) {
+			if (debug)
+				Bukkit.getServer().getLogger().info("Climate is Ok");
+			if (isWaterLevelBelow(b.getLocation(), (int) WaterData.maxLevel / 8, 10)) {
+				if (debug)
+					Bukkit.getServer().getLogger()
+							.info("Found enough water underground.");
+				b.setType(Material.RED_ROSE);
+				b.setData((byte)1);
+			}
+		} else {
+			if (debug)
+				Bukkit.getServer().getLogger().info("Climate isn't Ok");
+		}
+	}
+
 	private void tryPlantDandelion(Block b) {
 		if (debug)
 			Bukkit.getServer().getLogger().info("Trying to plant Dandelion");
 		boolean isClimateOk = false;
 		if (Planet.getPlanet(b.getWorld()) != null) {
-			ClimateChunk c = ClimateChunk.getAt(b.getLocation());
-			Temperature averageTemp = c.getAverageTemperature();
-			isClimateOk = (averageTemp.getValue() > 15.0 + 273.15 && averageTemp
-					.getValue() < 25.0 + 273.15);
+			Temperature averageTemp = ClimateUtils.getAltitudeWeightedTriangleTemperature(null, b.getLocation());
+			isClimateOk = ClimateUtils.isAcceptableTemperature(averageTemp, 
+					Temperature.fromCelsius(20), 
+					Temperature.fromCelsius(15), 
+					Temperature.fromCelsius(25));
 		}
 		if (isClimateOk) {
 			if (debug)
@@ -152,10 +178,11 @@ public class VegetationModule implements Listener {
 			Bukkit.getServer().getLogger().info("Trying to plant Poppy");
 		boolean isClimateOk = false;
 		if (Planet.getPlanet(b.getWorld()) != null) {
-			ClimateChunk c = ClimateChunk.getAt(b.getLocation());
-			Temperature averageTemp = c.getAverageTemperature();
-			isClimateOk = (averageTemp.getValue() > 10.0 + 273.15 && averageTemp
-					.getValue() < 15.0 + 273.15);
+			Temperature averageTemp = ClimateUtils.getAltitudeWeightedTriangleTemperature(null, b.getLocation());
+			isClimateOk = ClimateUtils.isAcceptableTemperature(averageTemp, 
+					Temperature.fromCelsius(12), 
+					Temperature.fromCelsius(10), 
+					Temperature.fromCelsius(15));
 		}
 		if (isClimateOk) {
 			if (debug)
@@ -214,8 +241,32 @@ public class VegetationModule implements Listener {
 		}
 		return false;
 	}
+	
+	private boolean isWaterLevelBelow(Location l, int level, int depth) {
+		int i = 1;
+		Location currentLocation = l.clone();
+
+		while (i < depth && currentLocation.getBlockY() > 0) {
+			currentLocation.add(0, -1, 0);
+			if(WaterData.getWaterLevelAt(l.getWorld(), l.getBlockX(), l.getBlockY(), l.getBlockZ()) >= level){
+				return true;
+			}
+			i++;
+		}
+		return false;
+	}
 
 	private void updateGrass(Block b) {
+		ClimateCell cell = ClimateUtils.getClimateCellAt(b.getLocation());
+		if(cell != null){
+			Temperature temp = ClimateUtils.getAltitudeWeightedTriangleTemperature(cell, b.getLocation());
+			boolean isClimateOk = ClimateUtils.isAcceptableTemperature(temp,
+					Temperature.fromCelsius(25),
+					Temperature.fromCelsius(10),
+					Temperature.fromCelsius(35));
+			if(!isClimateOk) return;
+			if(cell.getRelativeHumidity() < Utils.fastRandomDouble()) return;
+		}
 		Block above = b.getRelative(BlockFace.UP);
 		if (above.getType() == Material.AIR && above.getLightLevel() > 5) {
 			above.setType(Material.LONG_GRASS);
@@ -242,9 +293,11 @@ public class VegetationModule implements Listener {
 	private void tryPlantFern(Block b){
 		if(b.getType() != Material.AIR) return;
 		if(b.getLightFromSky() < 5) return;
-		boolean isClimateOk = ClimateUtils.getTemperatureAt(b.getLocation()).isCelsiusBetween(
-				10, 
-				25);
+		Temperature temp = ClimateUtils.getAltitudeWeightedTriangleTemperature(null, b.getLocation());
+		boolean isClimateOk = ClimateUtils.isAcceptableTemperature(temp,
+				Temperature.fromCelsius(20),
+				Temperature.fromCelsius(10),
+				Temperature.fromCelsius(25));
 		if(isClimateOk){
 			b.setType(Material.LONG_GRASS);
 			b.setData((byte) 2);

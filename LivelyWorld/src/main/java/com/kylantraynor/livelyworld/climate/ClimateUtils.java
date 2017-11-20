@@ -238,7 +238,7 @@ public class ClimateUtils {
 		double iValue = ideal.getValue();
 		double minValue = min.getValue();
 		double maxValue = max.getValue();
-		double rdm = Math.random();
+		double rdm = Utils.fastRandomDouble();
 		double probability = 1;
 		if(cValue > iValue){
 			probability = Utils.simpleDistributionDensity(cValue, iValue, (maxValue - iValue) / 3);

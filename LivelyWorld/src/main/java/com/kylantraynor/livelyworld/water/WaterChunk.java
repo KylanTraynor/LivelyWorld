@@ -422,11 +422,10 @@ public class WaterChunk {
 				}
 				
 				ios.flush();
-				
-				if(baos.size() == data.length){
+				if(baos.size() > 8){
 					byte[] array = baos.toByteArray();
 					int version = Utils.toInt(array[0], array[1], array[2], array[3]);
-					if(version == currentVersion){
+					if(version == currentVersion && baos.size() == data.length + 8){
 						int chunkData = Utils.toInt(array[4], array[5], array[6], array[7]);
 						synchronized(data){
 							for(int i = 8; i < data.length + 8; i++){
@@ -434,7 +433,7 @@ public class WaterChunk {
 							}
 						}
 						needsUpdate = ((chunkData & 1) == 1);
-					} else {
+					} else if(baos.size() == data.length) {
 						synchronized(data){
 							for(int i = 0; i < data.length; i++){
 								data[i] = array[i];

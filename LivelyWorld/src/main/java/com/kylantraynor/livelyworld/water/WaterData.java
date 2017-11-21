@@ -432,6 +432,8 @@ public class WaterData {
 						if(diff[m] < diff[minDiff]){
 							minDiff = m;
 						}
+					} else {
+						minDiff = m;
 					}
 					//minDiff = (minDiff == -1 ? m : (diff[m] < diff[minDiff] ? m : minDiff));
 				}

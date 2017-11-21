@@ -225,82 +225,6 @@ public class WaterData {
 
 	private static BlockFace[] order = new BlockFace[] {BlockFace.SOUTH, BlockFace.EAST, BlockFace.NORTH, BlockFace.WEST};
 	
-	public void tick(boolean loadChunks) {
-		if(!chunk.isLoaded()) return;
-		if(getLevel() == 0) return;
-		if(!loadChunks){
-			if(x == 0 && !chunk.getRelative(-1, 0).isLoaded())
-				return;
-			if(x == 15 && !chunk.getRelative(1, 0).isLoaded())
-				return;
-			if(z == 0 && !chunk.getRelative(0, -1).isLoaded())
-				return;
-			if(z == 15 && !chunk.getRelative(0, 1).isLoaded())
-				return;
-		}
-		WaterData down = getRelative(BlockFace.DOWN);
-		if(down != null){
-			int level = getLevel();
-			if(down.getMaxQuantity() >= 200){
-				if(down.getLevel() < down.getMaxQuantity()){
-					//if(Math.random() < down.getPermeability()){
-					int transfer = down.getMaxQuantity() - down.getLevel();
-					transfer = (transfer < level ? transfer : level); 
-					down.setLevel(down.getLevel() + transfer);
-					setLevel(getLevel() - transfer);
-				}
-			} else {
-				int max = (int) (down.getMaxQuantity() * Math.random());
-				if(down.getLevel() < max){
-					int transfer = max - down.getLevel();
-					if(transfer < 0) transfer = 0;
-					transfer = (transfer < level ? transfer : level); 
-					down.setLevel(down.getLevel() + transfer);
-					setLevel(getLevel() - transfer);
-				}
-			}
-			/*for(int i = 1; i <= level; i++){
-				if(down.getLevel() >= maxLevel || getLevel() == 0){
-					break;
-				}
-				if(down.getMaxQuantity() >= 254){
-					
-				}
-				if(down.getLevel() < down.getMaxQuantity()){
-				//if(Math.random() < down.getPermeability()){
-					down.setLevel(down.getLevel() + 1);
-					setLevel(getLevel() - 1);
-				}
-			}*/
-			/*if(down.getLevel() < maxLevel){
-				int transfer = (int) maxLevel - down.getLevel();
-				transfer = Math.min((int)Math.floor(transfer * down.getPermeability()), getLevel());
-				down.setLevel(down.getLevel() + transfer);
-				this.setLevel(getLevel() - transfer);
-			}*/
-		}
-		if(getLevel() <= 1) return;
-		double rdm = Math.random() * 4;
-		int level = getLevel();
-		for(int i = 0; i < level; i++){
-			WaterData target = getRelative(order[(i + (int) rdm) % 4]);
-			//if(target.getLevel() < getLevel() - 1 && Math.random() < target.getPermeability()){
-			if(target.getLevel() < getLevel() - 1 && target.getLevel() < target.getMaxQuantity()) {
-				target.setLevel(target.getLevel() + 1);
-				this.setLevel(getLevel() - 1);
-			}
-		}
-		/*for(BlockFace bf : order){
-			WaterData target = getRelative(bf);
-			if(target.getLevel() < getLevel() - 1){
-				int transfer = (getLevel() - 1) - target.getLevel();
-				transfer = (int) Math.floor(transfer * target.getPermeability());
-				target.setLevel(target.getLevel() + transfer);
-				this.setLevel(getLevel() - transfer);
-			}
-		}*/
-	}
-	
 	public void updateResistance(){
 		if(!chunk.isLoaded() || !WaterChunkThread.isChunkLoaded(chunk.getWorld(), chunk.getX(), chunk.getZ()))
 			return;
@@ -320,7 +244,7 @@ public class WaterData {
 	
 	public double getPermeability(){
 		int resistance = getResistance();
-		if(resistance == 0 || Math.random() < 0.01) {
+		if(resistance == 0 || Utils.fastRandomDouble() < 0.01) {
 			if(!chunk.isLoaded() || !WaterChunkThread.isChunkLoaded(chunk.getWorld(), chunk.getX(), chunk.getZ()))
 				return resistance == 0 || resistance == maxResistance ? 0 : 1.0 / resistance;
 			int id = chunk.getWorld().getBlockTypeIdAt(getX(), getY(), getZ());
@@ -482,6 +406,10 @@ public class WaterData {
 		}
 		// Do the calculations for each potential block.
 		level = getLevel();
+		int[] levels = new int[4];
+		for(int i = 0; i < 4; i++){
+			levels[i] = relatives[i].getLevel();
+		}
 		int[] diff;
 		int minDiff;
 		int columnsToFill;
@@ -492,15 +420,20 @@ public class WaterData {
 			
 			// Populates the differences array and checks which one is the smallest one.
 			for(int m = 0; m < 4; m++){
-				if(relatives[m] == null) continue;
+				//if(levels[m] == -1) continue;
 				// Calculates the difference, and caps it to the difference between the target's max level and its current level.
-				diff[m] = Math.min(level - relatives[m].getLevel(), relatives[m].getMaxQuantity() - relatives[m].getLevel());
+				diff[m] = Math.min(level - levels[m], relatives[m].getMaxQuantity() - levels[m]);
 				// If there is a positive difference.
 				if(diff[m] > 1){
 					// Adds one to the number of columns to transfer water to.
 					columnsToFill ++;
 					// Updates the minDifference if needed.
-					minDiff = (minDiff == -1 ? m : (diff[m] < diff[minDiff] ? m : minDiff));
+					if(minDiff != -1){
+						if(diff[m] < diff[minDiff]){
+							minDiff = m;
+						}
+					}
+					//minDiff = (minDiff == -1 ? m : (diff[m] < diff[minDiff] ? m : minDiff));
 				}
 			}
 			
@@ -512,35 +445,36 @@ public class WaterData {
 				else if(columnsToFill == 1) transfer = diff[minDiff] >> 1;
 				else transfer = Math.floorDiv(diff[minDiff], columnsToFill + 1);
 				// If there's at least 1 level to transfer to each column.
-				if(transfer > 0){
+				if(transfer >= 1){
 					// Go through each column.
 					for(int i2 = 0; i2 < 4; i2++){
-						if(relatives[i2] == null) continue;
+						//if(levels[i2] == -1) continue;
 						// If the column can be filled.
 						if(diff[i2] > 1){
 							// Moves water level down in source.
 							level -= transfer;
 							// Moves water level up in target column.
-							relatives[i2].setLevel(relatives[i2].getLevel() + transfer);
+							levels[i2] = (levels[i2] + transfer);
 						}
 					}
 				} else {
 					// Moves one unit of water to the column with the minimum difference.
-					if(diff[minDiff] > 1){
-						// Moves water level down in source.
-						level -= 1;
-						// Moves water level up in target column.
-						relatives[minDiff].setLevel(relatives[minDiff].getLevel() + 1);
-					}
+					// Moves water level down in source.
+					level -= 1;
+					// Moves water level up in target column.
+					levels[minDiff] = levels[minDiff] + 1;
 				}
 				// Removes the column with the minimum difference from the next calculations.
-				relatives[minDiff] = null;
+				//relatives[minDiff].setLevel(levels[minDiff]);
 			} else {
 				// There was no column to fill, process can stop.
 				break;
 			}
 		}
 		this.setLevel(level);
+		for(int i = 0; i < 4; i++){
+			relatives[i].setLevel(levels[i]);
+		}
 	}
 	
 	/*public boolean needsVisualUpdate(){

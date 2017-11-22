@@ -297,6 +297,27 @@ public class WaterData {
 		return (int) (chunk.getData(x, y, z) & maxLevel);
 	}
 	
+	public static void setLevel(WaterChunk chunk, int x, int y, int z, int value){
+		if(value > maxLevel){
+			LivelyWorld.getInstance().getLogger().info("DEBUG: Level was too high! (" + value + ">" + maxLevel + ")");
+			value = (int) maxLevel;
+		} else if(value < 0){
+			LivelyWorld.getInstance().getLogger().info("DEBUG: Level was too low! (" + value + "<0)");
+			value = 0;
+		}
+		//LivelyWorld.getInstance().getLogger().info("DEBUG:");
+		//LivelyWorld.getInstance().getLogger().info("Start:" + Integer.toBinaryString(getData()));
+		//LivelyWorld.getInstance().getLogger().info(Integer.toBinaryString((getData() & (~(maxLevel << moistureCode)))) + " | " + Integer.toBinaryString((Utils.constrainTo(value, 0, maxLevel) << moistureCode)));
+		long newData = ((((long) chunk.getData(x, y, z)) & 0xFFFFFFFFL) & (~maxLevel)) | ((long) value);
+		//LivelyWorld.getInstance().getLogger().info("Finish:" + Integer.toBinaryString(newData));
+		if(toWaterLevel(value) != toWaterLevel(getWaterLevelAt(chunk, x, y, z))){
+			chunk.setData((int) (value & 0xFFFFFFFFL), x,y,z);
+			chunk.setNeedsUpsate(true);
+		} else {
+			chunk.setData((int) (value & 0xFFFFFFFFL), x,y,z);
+		}
+	}
+	
 	public static int getWaterResistanceAt(World world, int x, int y, int z){
 		WaterChunk wc = WaterChunk.get(world, x >> 4, z >> 4);
 		return getWaterResistanceAt(wc, Math.floorMod(x, 16), y, Math.floorMod(z, 16));
@@ -373,18 +394,18 @@ public class WaterData {
 			if(z == 15 && !chunk.getRelative(0, 1).isLoaded())
 				return;
 		}
-		WaterData[] relatives = new WaterData[4];
+		//WaterData[] relatives = new WaterData[4];
 		int level = 0;
 		// Gets a random offset number for the order in which surrounding blocks will be checked.
 		//int rdm = Utils.fastRandomInt(4);
 		// Populates the surrounding blocks.
 		/*switch(rdm){
-		case 0:*/
+		case 0:
 			relatives[0] = getRelative(order[0]);
 			relatives[1] = getRelative(order[1]);
 			relatives[2] = getRelative(order[2]);
 			relatives[3] = getRelative(order[3]);
-			/*break;
+			break;
 		case 1:
 			relatives[0] = getRelative(order[1]);
 			relatives[1] = getRelative(order[2]);
@@ -407,9 +428,15 @@ public class WaterData {
 		// Do the calculations for each potential block.
 		level = getLevel();
 		int[] levels = new int[4];
-		for(int i = 0; i < 4; i++){
-			levels[i] = relatives[i].getLevel();
-		}
+		levels[0] = WaterData.getWaterLevelAt(chunk, x - 1, y, z);
+		levels[1] = WaterData.getWaterLevelAt(chunk, x + 1, y, z);
+		levels[2] = WaterData.getWaterLevelAt(chunk, x, y, z - 1);
+		levels[3] = WaterData.getWaterLevelAt(chunk, x, y, z + 1);
+		int[] max = new int[4];
+		max[0] = (int) WaterData.maxLevel - WaterData.getWaterResistanceAt(chunk, x - 1, y, z);
+		max[1] = (int) WaterData.maxLevel - WaterData.getWaterResistanceAt(chunk, x + 1, y, z);
+		max[2] = (int) WaterData.maxLevel - WaterData.getWaterResistanceAt(chunk, x, y, z - 1);
+		max[3] = (int) WaterData.maxLevel - WaterData.getWaterResistanceAt(chunk, x, y, z + 1);
 		int[] diff;
 		int minDiff;
 		int columnsToFill;
@@ -422,7 +449,7 @@ public class WaterData {
 			for(int m = 0; m < 4; m++){
 				//if(levels[m] == -1) continue;
 				// Calculates the difference, and caps it to the difference between the target's max level and its current level.
-				diff[m] = Math.min(level - levels[m], relatives[m].getMaxQuantity() - levels[m]);
+				diff[m] = Math.min(level - levels[m], max[m] - levels[m]);
 				// If there is a positive difference.
 				if(diff[m] > 1){
 					// Adds one to the number of columns to transfer water to.
@@ -474,9 +501,10 @@ public class WaterData {
 			}
 		}
 		this.setLevel(level);
-		for(int i = 0; i < 4; i++){
-			relatives[i].setLevel(levels[i]);
-		}
+		WaterData.setLevel(chunk, x - 1, y, z, levels[0]);
+		WaterData.setLevel(chunk, x + 1, y, z, levels[1]);
+		WaterData.setLevel(chunk, x, y, z - 1, levels[2]);
+		WaterData.setLevel(chunk, x, y, z + 1, levels[3]);
 	}
 	
 	/*public boolean needsVisualUpdate(){

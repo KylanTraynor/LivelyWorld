@@ -376,15 +376,15 @@ public class WaterData {
 		WaterData[] relatives = new WaterData[4];
 		int level = 0;
 		// Gets a random offset number for the order in which surrounding blocks will be checked.
-		int rdm = Utils.fastRandomInt(4);
+		//int rdm = Utils.fastRandomInt(4);
 		// Populates the surrounding blocks.
-		switch(rdm){
-		case 0:
+		/*switch(rdm){
+		case 0:*/
 			relatives[0] = getRelative(order[0]);
 			relatives[1] = getRelative(order[1]);
 			relatives[2] = getRelative(order[2]);
 			relatives[3] = getRelative(order[3]);
-			break;
+			/*break;
 		case 1:
 			relatives[0] = getRelative(order[1]);
 			relatives[1] = getRelative(order[2]);
@@ -403,7 +403,7 @@ public class WaterData {
 			relatives[2] = getRelative(order[1]);
 			relatives[3] = getRelative(order[2]);
 			break;
-		}
+		}*/
 		// Do the calculations for each potential block.
 		level = getLevel();
 		int[] levels = new int[4];

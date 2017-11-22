@@ -226,11 +226,15 @@ public class WaterData {
 	private static BlockFace[] order = new BlockFace[] {BlockFace.SOUTH, BlockFace.EAST, BlockFace.NORTH, BlockFace.WEST};
 	
 	public void updateResistance(){
-		if(!chunk.isLoaded() || !WaterChunkThread.isChunkLoaded(chunk.getWorld(), chunk.getX(), chunk.getZ()))
-			return;
-		
-		int id = chunk.getWorld().getBlockTypeIdAt(getX(), getY(), getZ());
-		setResistance(getResistanceFor(Material.getMaterial(id)));
+		if(LivelyWorld.getInstance().getMainThreadId() == Thread.currentThread().getId()){
+			if(chunk.getWorld().isChunkLoaded(chunk.getX(), chunk.getZ()))
+				return;
+		} else {
+			if(!chunk.isLoaded() || !WaterChunkThread.isChunkLoaded(chunk.getWorld(), chunk.getX(), chunk.getZ()))
+				return;
+		}
+		Material mat = chunk.getWorld().getBlockAt(getX(), getY(), getZ()).getType();
+		setResistance(getResistanceFor(mat));
 	}
 	
 	public int getMaxQuantity(){

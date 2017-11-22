@@ -399,18 +399,18 @@ public class WaterData {
 			if(z == 15 && !chunk.getRelative(0, 1).isLoaded())
 				return;
 		}
-		//WaterData[] relatives = new WaterData[4];
+		WaterData[] relatives = new WaterData[4];
 		int level = 0;
 		// Gets a random offset number for the order in which surrounding blocks will be checked.
 		//int rdm = Utils.fastRandomInt(4);
 		// Populates the surrounding blocks.
 		/*switch(rdm){
-		case 0:
+		case 0:*/
 			relatives[0] = getRelative(order[0]);
 			relatives[1] = getRelative(order[1]);
 			relatives[2] = getRelative(order[2]);
 			relatives[3] = getRelative(order[3]);
-			break;
+			/*break;
 		case 1:
 			relatives[0] = getRelative(order[1]);
 			relatives[1] = getRelative(order[2]);
@@ -435,15 +435,11 @@ public class WaterData {
 		int cx = getChunkX();
 		int cz = getChunkZ();
 		int[] levels = new int[4];
-		levels[0] = WaterData.getWaterLevelAt(getWorld(), x - 1, y, z);
-		levels[1] = WaterData.getWaterLevelAt(getWorld(), x + 1, y, z);
-		levels[2] = WaterData.getWaterLevelAt(getWorld(), x, y, z - 1);
-		levels[3] = WaterData.getWaterLevelAt(getWorld(), x, y, z + 1);
 		int[] max = new int[4];
-		max[0] = (int) WaterData.maxLevel - WaterData.getWaterResistanceAt(getWorld(), x - 1, y, z);
-		max[1] = (int) WaterData.maxLevel - WaterData.getWaterResistanceAt(getWorld(), x + 1, y, z);
-		max[2] = (int) WaterData.maxLevel - WaterData.getWaterResistanceAt(getWorld(), x, y, z - 1);
-		max[3] = (int) WaterData.maxLevel - WaterData.getWaterResistanceAt(getWorld(), x, y, z + 1);
+		for(int i = 0; i < 4; i++){
+			levels[i] = relatives[i].getLevel();
+			max[i] = relatives[i].getMaxQuantity();
+		}
 		int[] diff;
 		int minDiff;
 		int columnsToFill;
@@ -508,10 +504,9 @@ public class WaterData {
 			}
 		}
 		this.setLevel(level);
-		WaterData.setLevelAt(getWorld(), x - 1, y, z, levels[0]);
-		WaterData.setLevelAt(getWorld(), x + 1, y, z, levels[1]);
-		WaterData.setLevelAt(getWorld(), x, y, z - 1, levels[2]);
-		WaterData.setLevelAt(getWorld(), x, y, z + 1, levels[3]);
+		for(int i = 0; i < 4; i++){
+			relatives[i].setLevel(levels[i]);
+		}
 	}
 	
 	/*public boolean needsVisualUpdate(){

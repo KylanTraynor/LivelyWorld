@@ -427,16 +427,18 @@ public class WaterData {
 		}*/
 		// Do the calculations for each potential block.
 		level = getLevel();
+		int cx = getChunkX();
+		int cz = getChunkZ();
 		int[] levels = new int[4];
-		levels[0] = WaterData.getWaterLevelAt(chunk, x - 1, y, z);
-		levels[1] = WaterData.getWaterLevelAt(chunk, x + 1, y, z);
-		levels[2] = WaterData.getWaterLevelAt(chunk, x, y, z - 1);
-		levels[3] = WaterData.getWaterLevelAt(chunk, x, y, z + 1);
+		levels[0] = WaterData.getWaterLevelAt(chunk, cx - 1, y, cz);
+		levels[1] = WaterData.getWaterLevelAt(chunk, cx + 1, y, cz);
+		levels[2] = WaterData.getWaterLevelAt(chunk, cx, y, cz - 1);
+		levels[3] = WaterData.getWaterLevelAt(chunk, cx, y, cz + 1);
 		int[] max = new int[4];
-		max[0] = (int) WaterData.maxLevel - WaterData.getWaterResistanceAt(chunk, x - 1, y, z);
-		max[1] = (int) WaterData.maxLevel - WaterData.getWaterResistanceAt(chunk, x + 1, y, z);
-		max[2] = (int) WaterData.maxLevel - WaterData.getWaterResistanceAt(chunk, x, y, z - 1);
-		max[3] = (int) WaterData.maxLevel - WaterData.getWaterResistanceAt(chunk, x, y, z + 1);
+		max[0] = (int) WaterData.maxLevel - WaterData.getWaterResistanceAt(chunk, cx - 1, y, cz);
+		max[1] = (int) WaterData.maxLevel - WaterData.getWaterResistanceAt(chunk, cx + 1, y, cz);
+		max[2] = (int) WaterData.maxLevel - WaterData.getWaterResistanceAt(chunk, cx, y, cz - 1);
+		max[3] = (int) WaterData.maxLevel - WaterData.getWaterResistanceAt(chunk, cx, y, cz + 1);
 		int[] diff;
 		int minDiff;
 		int columnsToFill;
@@ -501,10 +503,10 @@ public class WaterData {
 			}
 		}
 		this.setLevel(level);
-		WaterData.setLevel(chunk, x - 1, y, z, levels[0]);
-		WaterData.setLevel(chunk, x + 1, y, z, levels[1]);
-		WaterData.setLevel(chunk, x, y, z - 1, levels[2]);
-		WaterData.setLevel(chunk, x, y, z + 1, levels[3]);
+		WaterData.setLevel(chunk, cx - 1, y, cz, levels[0]);
+		WaterData.setLevel(chunk, cx + 1, y, cz, levels[1]);
+		WaterData.setLevel(chunk, cx, y, cz - 1, levels[2]);
+		WaterData.setLevel(chunk, cx, y, cz + 1, levels[3]);
 	}
 	
 	/*public boolean needsVisualUpdate(){

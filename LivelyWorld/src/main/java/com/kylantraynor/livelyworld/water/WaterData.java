@@ -432,8 +432,6 @@ public class WaterData {
 		}*/
 		// Do the calculations for each potential block.
 		level = getLevel();
-		int cx = getChunkX();
-		int cz = getChunkZ();
 		int[] levels = new int[4];
 		int[] max = new int[4];
 		for(int i = 0; i < 4; i++){

@@ -31,6 +31,7 @@ import com.kylantraynor.livelyworld.LivelyWorld;
 import com.kylantraynor.livelyworld.Utils;
 import com.kylantraynor.livelyworld.Utils.SmallChunkData;
 import com.kylantraynor.livelyworld.events.BlockWaterLevelChangeEvent;
+import com.kylantraynor.livelyworld.water.WaterChunkUpdateRunnable.UpdateType;
 
 public class WaterChunk {
 	final static CopyOnWriteArrayList<WaterChunk> chunks = new CopyOnWriteArrayList<WaterChunk>(); 
@@ -608,13 +609,18 @@ public class WaterChunk {
 		if(LivelyWorld.getInstance().getWaterModule().isRealisticSimulation()){
 			if(needsUpdate() || Utils.fastRandomDouble() < 0.01) updateVisually(true);
 		}
+		if(Utils.fastRandomDouble() < 0.01){
+			if(!isLoaded()) return;
+			BukkitRunnable br = new WaterChunkUpdateRunnable(this, UpdateType.RESISTANCE);
+			br.runTask(LivelyWorld.getInstance());
+		}
 	}
 	
 	public void updateVisually(final boolean fullUpdate){
 		if(!LivelyWorld.getInstance().isEnabled()) return;
-		if(!isLoaded()) load();
+		if(!isLoaded()) return;
 		needsUpdate = false;
-		BukkitRunnable br = new WaterChunkUpdateRunnable(this);
+		BukkitRunnable br = new WaterChunkUpdateRunnable(this, UpdateType.LEVEL);
 		br.runTask(LivelyWorld.getInstance());
 	}
 	

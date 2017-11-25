@@ -14,32 +14,51 @@ import com.kylantraynor.livelyworld.Utils;
  */
 public class WaterChunkUpdateRunnable extends BukkitRunnable {
 
-	private final WaterChunk chunk;
+	public enum UpdateType{
+		LEVEL,
+		RESISTANCE;
+	}
 	
-	public WaterChunkUpdateRunnable(WaterChunk chunk){
+	private final WaterChunk chunk;
+	private final UpdateType updateType;
+	
+	public WaterChunkUpdateRunnable(WaterChunk chunk, UpdateType type){
 		this.chunk = chunk;
+		this.updateType = type;
 	}
 	
 	@Override
 	public void run() {
 		int level = 0;
 		Block currentBlock = null;
-		if(!chunk.getWorld().isChunkLoaded(chunk.getX(), chunk.getZ())) return;
-		if(!Utils.hasPlayerWithinChunk(chunk.getX(), chunk.getZ(), 10)) return;
-		if(!Utils.hasPlayerWithinChunk(chunk.getX(), chunk.getZ(), 1) && Utils.fastRandomDouble() > 0.01) return;
-		for(int y = 0; y < 256; y++){
-			for(int x = 0; x < 16; x++){
-				for(int z = 0; z < 16; z++){
-					level = WaterData.getWaterLevelAt(chunk, x, y, z);
-					currentBlock = chunk.getWorld().getChunkAt(chunk.getX(), chunk.getZ()).getBlock(x, y, z);
-					if(canReplace(currentBlock.getType())){
-						if(WaterData.toWaterLevel(level) != Utils.getWaterHeight(currentBlock)){
-							if(level > 0 && isDropable(currentBlock.getType())){
-								ItemStack is = new ItemStack(currentBlock.getType());
-								currentBlock.getWorld().dropItemNaturally(currentBlock.getLocation(), is);
+		if(updateType == UpdateType.LEVEL){
+			if(!chunk.getWorld().isChunkLoaded(chunk.getX(), chunk.getZ())) return;
+			if(!Utils.hasPlayerWithinChunk(chunk.getX(), chunk.getZ(), 10)) return;
+			if(!Utils.hasPlayerWithinChunk(chunk.getX(), chunk.getZ(), 1) && Utils.fastRandomDouble() > 0.01) return;
+			for(int y = 0; y < 256; y++){
+				for(int x = 0; x < 16; x++){
+					for(int z = 0; z < 16; z++){
+						level = WaterData.getWaterLevelAt(chunk, x, y, z);
+						currentBlock = chunk.getWorld().getChunkAt(chunk.getX(), chunk.getZ()).getBlock(x, y, z);
+						if(canReplace(currentBlock.getType())){
+							if(WaterData.toWaterLevel(level) != Utils.getWaterHeight(currentBlock)){
+								if(level > 0 && isDropable(currentBlock.getType())){
+									ItemStack is = new ItemStack(currentBlock.getType());
+									currentBlock.getWorld().dropItemNaturally(currentBlock.getLocation(), is);
+								}
+								Utils.setWaterHeight(currentBlock, WaterData.toWaterLevel(level), true);
 							}
-							Utils.setWaterHeight(currentBlock, WaterData.toWaterLevel(level), true);
 						}
+					}
+				}
+			}
+		} else if(updateType == UpdateType.RESISTANCE){
+			if(!chunk.getWorld().isChunkLoaded(chunk.getX(), chunk.getZ())) return;
+			for(int y = 0; y < 256; y++){
+				for(int x = 0; x < 16; x++){
+					for(int z = 0; z < 16; z++){
+						currentBlock = chunk.getWorld().getChunkAt(chunk.getX(), chunk.getZ()).getBlock(x, y, z);
+						WaterData.setResistanceAt(chunk, x, y, z, WaterData.getResistanceFor(currentBlock.getType()));
 					}
 				}
 			}
@@ -50,12 +69,14 @@ public class WaterChunkUpdateRunnable extends BukkitRunnable {
 		if(mat == Material.WATER) return true;
 		if(mat == Material.STATIONARY_WATER) return true;
 		if(mat == Material.AIR) return true;
+		if(mat == Material.LONG_GRASS) return true;
 		if(mat == Material.TORCH) return true;
 		return false;
 	}
 	
 	public boolean isDropable(Material mat){
 		if(mat == Material.TORCH) return true;
+		if(mat == Material.LONG_GRASS) return true;
 		return false;
 	}
 }

@@ -239,7 +239,7 @@ public class WaterData {
 	
 	public int getMaxQuantity(){
 		int resistance = getResistance();
-		if(resistance == 0 || Utils.fastRandomDouble() < 0.01) {
+		if(resistance == 0) {
 			updateResistance();
 			resistance = getResistance();
 		}
@@ -307,6 +307,28 @@ public class WaterData {
 	}
 	
 	public static void setLevelAt(WaterChunk chunk, int x, int y, int z, int value){
+		if(value > maxResistance){
+			LivelyWorld.getInstance().getLogger().info("DEBUG: Resistance was too high! (" + value + ">" + maxResistance + ")");
+			value = (int) maxResistance;
+		} else if(value < 0){
+			LivelyWorld.getInstance().getLogger().info("DEBUG: Resistance was too low! (" + value + "<0)");
+			value = 0;
+		}
+		//LivelyWorld.getInstance().getLogger().info("DEBUG:");
+		//LivelyWorld.getInstance().getLogger().info("Start:" + Integer.toBinaryString(getData()));
+		//LivelyWorld.getInstance().getLogger().info(Integer.toBinaryString((getData() & (~(maxLevel << moistureCode)))) + " | " + Integer.toBinaryString((Utils.constrainTo(value, 0, maxLevel) << moistureCode)));
+		long newData = ((((long) chunk.getData(x, y, z)) & 0xFFFFFFFFL) & (~maxLevel)) | ((long) value);
+		//LivelyWorld.getInstance().getLogger().info("Finish:" + Integer.toBinaryString(newData));
+		int nd = (int) (newData & 0xFFFFFFFFL);
+		if(toWaterLevel(nd) != toWaterLevel(getWaterLevelAt(chunk, x, y, z))){
+			chunk.setData(nd, x,y,z);
+			chunk.setNeedsUpsate(true);
+		} else {
+			chunk.setData(nd, x,y,z);
+		}
+	}
+	
+	public static void setResistanceAt(WaterChunk chunk, int x, int y, int z, int value){
 		if(value > maxLevel){
 			LivelyWorld.getInstance().getLogger().info("DEBUG: Level was too high! (" + value + ">" + maxLevel + ")");
 			value = (int) maxLevel;
@@ -317,13 +339,11 @@ public class WaterData {
 		//LivelyWorld.getInstance().getLogger().info("DEBUG:");
 		//LivelyWorld.getInstance().getLogger().info("Start:" + Integer.toBinaryString(getData()));
 		//LivelyWorld.getInstance().getLogger().info(Integer.toBinaryString((getData() & (~(maxLevel << moistureCode)))) + " | " + Integer.toBinaryString((Utils.constrainTo(value, 0, maxLevel) << moistureCode)));
-		long newData = ((((long) chunk.getData(x, y, z)) & 0xFFFFFFFFL) & (~maxLevel)) | ((long) value);
+		long newData = ((chunk.getData(x,y,z) & 0xFFFFFFFFL) & (~(maxResistance << resistanceCode))) | (((long) value) << resistanceCode);
 		//LivelyWorld.getInstance().getLogger().info("Finish:" + Integer.toBinaryString(newData));
-		if(toWaterLevel(value) != toWaterLevel(getWaterLevelAt(chunk, x, y, z))){
-			chunk.setData((int) (value & 0xFFFFFFFFL), x,y,z);
-			chunk.setNeedsUpsate(true);
-		} else {
-			chunk.setData((int) (value & 0xFFFFFFFFL), x,y,z);
+		int nd = (int) (newData & 0xFFFFFFFFL);
+		if(chunk.getData(x,y,z) != nd){
+			chunk.setData(nd, x,y,z);
 		}
 	}
 	

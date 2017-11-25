@@ -168,20 +168,7 @@ public class WaterChunk {
 	int getData(int x, int y, int z) {
 		if(!isLoaded) load();
 		int index = getIndex(x, y, z);
-		synchronized(this.data){
-			return Utils.toInt(data[index], data[index + 1], data[index + 2], data[index + 3]);
-		}
-		/*try {
-			dataLock.lock();
-			try{
-				Utils.toInt(data[index], data[index + 1], data[index + 2], data[index + 3]);
-			} finally {
-				dataLock.unlock();
-			}
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}*/
-		//return -1;
+		return Utils.toInt(data[index], data[index + 1], data[index + 2], data[index + 3]);
 	}
 	
 	public World getWorld() {

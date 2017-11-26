@@ -45,6 +45,7 @@ public class WaterChunk {
 	private final int z;
 	private final World world;
 	private boolean needsUpdate = false;
+	private boolean wasGenerated = false;
 	private static Utils.Lock fileLock = new Utils.Lock();
 	
 	public WaterChunk(World w, int x, int z){
@@ -200,30 +201,6 @@ public class WaterChunk {
 		WaterChunk wc = new WaterChunk(world,x,z);
 		chunks.add(wc);
 		return wc;
-		/*
-		WaterChunk wc = null;
-		try {
-			fileLock.lock();
-			try{
-				for(WeakReference<WaterChunk> ref : chunks){
-					WaterChunk c = ref.get();
-					if(c == null){
-						continue;
-					}
-					if(c.getWorld() == world && c.getX() == x && c.getZ() == z){
-						wc = c;
-						break;
-					}
-				}
-				wc = new WaterChunk(world,x,z);
-				chunks.add(new WeakReference<WaterChunk>(wc));
-			} finally {
-				fileLock.unlock();
-			}
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		return wc;*/
 	}
 	
 	public static void unloadAll(){
@@ -235,11 +212,6 @@ public class WaterChunk {
 			chunks.remove(0);
 			LivelyWorld.getInstance().getLogger().info("" + chunks.size() + " remaining.");
 		}
-		/*for(WeakReference<WaterChunk> ref : chunks){
-			WaterChunk c = ref.get();
-			if(c == null) continue;
-			c.unload();
-		}*/
 	}
 	
 	public File getFile(){
@@ -378,6 +350,7 @@ public class WaterChunk {
 	private int getChunkStateCode() {
 		int result = 0;
 		result = needsUpdate? (result | (1)) : result;
+		result = wasGenerated? (result | (2)) : result;
 		return result;
 	}
 
@@ -431,6 +404,7 @@ public class WaterChunk {
 							}
 						}
 						needsUpdate = ((chunkData & 1) == 1);
+						wasGenerated = ((chunkData & 2) == 2);
 					} else if(baos.size() == data.length) {
 						synchronized(data){
 							for(int i = 0; i < data.length; i++){
@@ -577,8 +551,12 @@ public class WaterChunk {
 		this.isLoaded = b;
 	}
 	
-	public void tickAll(){
+	void tickAll(){
 		if(!isLoaded()) return;
+		if(!wasGenerated){
+			this.saturate();
+			wasGenerated = true;
+		}
 		Biome biome = null;
 		SmallChunkData scd = WaterChunkThread.getChunkData(this);
 		if(scd != null){
@@ -636,91 +614,6 @@ public class WaterChunk {
 		br.runTask(LivelyWorld.getInstance());
 	}
 	
-	public void randomTick(){
-		int x = (int) Math.floor(Math.random() * 16);
-		int y = (int) Math.floor(Math.random() * 256);
-		int z = (int) Math.floor(Math.random() * 16);
-		if(y > 0){
-			WaterData d = getAt(x, y, z);
-			
-			int l = d.getLevel();
-			WaterData target = null;
-			if(!world.getChunkAt(this.x, this.z).getBlock(x, y-1, z).getType().isSolid()){
-				WaterData below = getAt(x, y-1, z);
-				int leveldiff = (int) WaterData.maxLevel - below.getLevel();
-				if(leveldiff > 0){
-					target = below;
-					int transfer = Math.min(leveldiff, l);
-					d.setLevel(l - transfer);
-					target.setLevel(target.getLevel() + transfer);
-					return;
-				}
-			}
-			if(target == null){
-				if(d.getChunkX() == 0 || d.getChunkZ() == 0 || d.getChunkX() == 15 || d.getChunkZ() == 15){
-					
-				} else {
-					int tx = d.getChunkX() + (Math.random() >= 0.5 ? 1 : -1);
-					int tz = d.getChunkZ() + (Math.random() >= 0.5 ? 1 : -1);
-					target = getAt(tx, d.getY(), tz);
-					if(world.getChunkAt(this.x, this.z).getBlock(tx, y, tz).getType().isSolid()){
-						target = null;
-					}
-				}
-			}
-			if(target != null){
-				int levelDiff = l - target.getLevel();
-				if(levelDiff != 0){
-					d.setLevel(l - levelDiff);
-					target.setLevel(target.getLevel() + levelDiff);
-					if(world.isChunkLoaded(d.getChunkX(), d.getChunkZ()) && world.isChunkLoaded(target.getChunkX(), target.getChunkZ())){
-						final Block sourceBlock = world.getBlockAt(d.getX(), d.getY(), d.getZ());
-						final int sourceLevel = d.getLevel();
-						final Block targetBlock = world.getBlockAt(target.getX(), target.getY(), target.getZ());
-						final int level = target.getLevel();
-						BukkitRunnable br = new BukkitRunnable(){
-
-							@Override
-							public void run() {
-								
-								BlockWaterLevelChangeEvent se = new BlockWaterLevelChangeEvent(sourceBlock, sourceLevel);
-								Bukkit.getPluginManager().callEvent(se);
-								if(!se.isCancelled()){
-									if(se.getBlock().getType() == Material.AIR || Utils.isWater(se.getBlock())){
-										if(se.getBlock().getBiome() != Biome.RIVER &&
-												se.getBlock().getBiome() != Biome.FROZEN_RIVER &&
-												se.getBlock().getBiome() != Biome.OCEAN &&
-												se.getBlock().getBiome() != Biome.DEEP_OCEAN &&
-												se.getBlock().getBiome() != Biome.COLD_BEACH &&
-												se.getBlock().getBiome() != Biome.STONE_BEACH){
-											Utils.setWaterHeight(se.getBlock(), se.getNewLevel(), false);
-										}
-									}
-								}
-								BlockWaterLevelChangeEvent te = new BlockWaterLevelChangeEvent(targetBlock, level);
-								Bukkit.getPluginManager().callEvent(te);
-								if(!te.isCancelled()){
-									if(te.getBlock().getType() == Material.AIR || Utils.isWater(te.getBlock())){
-										if(te.getBlock().getBiome() != Biome.RIVER &&
-												te.getBlock().getBiome() != Biome.FROZEN_RIVER &&
-												te.getBlock().getBiome() != Biome.OCEAN &&
-												te.getBlock().getBiome() != Biome.DEEP_OCEAN &&
-												te.getBlock().getBiome() != Biome.COLD_BEACH &&
-												te.getBlock().getBiome() != Biome.STONE_BEACH){
-											Utils.setWaterHeight(te.getBlock(), te.getNewLevel(), false);
-										}
-									}
-								}
-							}
-							
-						};
-						br.runTask(LivelyWorld.getInstance());
-					}
-				}
-			}
-		}
-	}
-
 	public void addWaterAt(int x, int y, int z, int amount) {
 		WaterData d = getAt(x, y, z);
 		if(WaterData.maxLevel - d.getLevel() >= amount){
@@ -747,12 +640,14 @@ public class WaterChunk {
 
 	public void saturate() {
 		if(!isLoaded()) load();
-		for(int y = 0; y < 256; y ++){
-			for(int x = 0; x < 16; x++){
-				for(int z = 0; z < 16; z++){
-					WaterData data = this.getAt(x, y, z);
-					if(data.getMaxQuantity() > 1 && data.getMaxQuantity() < 254){
-						data.setLevel(data.getMaxQuantity());
+		synchronized(this.data){
+			for(int y = 0; y < 256; y ++){
+				for(int x = 0; x < 16; x++){
+					for(int z = 0; z < 16; z++){
+						WaterData data = this.getAt(x, y, z);
+						if(data.getMaxQuantity() > 1 && data.getMaxQuantity() < 254){
+							data.setLevelUnchecked(data.getMaxQuantity());
+						}
 					}
 				}
 			}
@@ -761,12 +656,14 @@ public class WaterChunk {
 
 	public void drain() {
 		if(!isLoaded()) load();
-		for(int y = 0; y < 256; y ++){
-			for(int x = 0; x < 16; x++){
-				for(int z = 0; z < 16; z++){
-					WaterData data = this.getAt(x, y, z);
-					if(data.getMaxQuantity() >= 254){
-						data.setLevel(0);
+		synchronized(this.data){
+			for(int y = 0; y < 256; y ++){
+				for(int x = 0; x < 16; x++){
+					for(int z = 0; z < 16; z++){
+						WaterData data = this.getAt(x, y, z);
+						if(data.getMaxQuantity() >= 254){
+							data.setLevelUnchecked(0);
+						}
 					}
 				}
 			}

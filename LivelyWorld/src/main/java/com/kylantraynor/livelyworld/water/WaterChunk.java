@@ -137,6 +137,16 @@ public class WaterChunk {
 		return new WaterData(this, x, y, z);
 	}
 	
+	void setDataUnchecked(int data, int x, int y, int z){
+		if(!isLoaded) load();
+		byte[] b = Utils.toByteArray(data);
+		int index = getIndex(x,y,z);
+		this.data[index    ] = b[0];
+		this.data[index + 1] = b[1];
+		this.data[index + 2] = b[2];
+		this.data[index + 3] = b[3];
+	}
+	
 	void setData(int data, int x, int y, int z){
 		if(!isLoaded) load();
 		byte[] b = Utils.toByteArray(data);
@@ -572,24 +582,26 @@ public class WaterChunk {
 		Biome biome = null;
 		SmallChunkData scd = WaterChunkThread.getChunkData(this);
 		if(scd != null){
-			for(int x = 0; x < 16; x++){
-				for(int z = 0; z < 16; z++){
-					biome = scd.getBiome(x, z);
-					if(biome != null){
-						if((Utils.isOcean(biome) || biome == Biome.RIVER)){
-							int y = 48;
-							WaterData current = getAt(x,y,z);
-							while(y > 0 && Utils.isWater(current.getBlock())){
-								current.setLevel((int) WaterData.maxLevel - 1);
-								current = getAt(x,--y,z);
+			synchronized(this.data){
+				for(int x = 0; x < 16; x++){
+					for(int z = 0; z < 16; z++){
+						biome = scd.getBiome(x, z);
+						if(biome != null){
+							if((Utils.isOcean(biome) || biome == Biome.RIVER)){
+								int y = 48;
+								WaterData current = getAt(x,y,z);
+								while(y > 0 && Utils.isWater(current.getBlock())){
+									current.setLevelUnchecked((int) WaterData.maxLevel - 1);
+									current = getAt(x,--y,z);
+								}
 							}
 						}
 					}
 				}
 			}
 		}
-		for(int y = 0; y < 256; y++){
-			if(y > 0){
+		synchronized(this.data){
+			for(int y = 1; y < 256; y++){
 				for(int x = 0; x < 16; x++){
 					for(int z = 0; z < 16; z++){
 						if(WaterData.getWaterLevelAt(this,x,y,z) > 0){
@@ -597,11 +609,11 @@ public class WaterChunk {
 						}
 					}
 				}
-			}
-			for(int x = 0; x < 16; x++){
-				for(int z = 0; z < 16; z++){
-					if(WaterData.getWaterLevelAt(this, x, y, z) > 1){
-						getAt(x,y,z).moveWaterHorizontally(false);
+				for(int x = 0; x < 16; x++){
+					for(int z = 0; z < 16; z++){
+						if(WaterData.getWaterLevelAt(this, x, y, z) > 1){
+							getAt(x,y,z).moveWaterHorizontally(false);
+						}
 					}
 				}
 			}

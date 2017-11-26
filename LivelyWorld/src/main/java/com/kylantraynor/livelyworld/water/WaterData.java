@@ -118,23 +118,16 @@ public class WaterData {
 		chunk.setData((int) (value & 0xFFFFFFFFL), x, y, z);
 	}
 	
+	void setDataUnchecked(long value){
+		chunk.setDataUnchecked((int) (value & 0xFFFFFFFFL), x, y, z);
+	}
+	
 	public int getLevel(){
 		return (int) (getData() & maxLevel);
 	}
 	
 	public void setLevel(int value){
-		if(value > maxLevel){
-			LivelyWorld.getInstance().getLogger().info("DEBUG: Level was too high! (" + value + ">" + maxLevel + ")");
-			value = (int) maxLevel;
-		} else if(value < 0){
-			LivelyWorld.getInstance().getLogger().info("DEBUG: Level was too low! (" + value + "<0)");
-			value = 0;
-		}
-		//LivelyWorld.getInstance().getLogger().info("DEBUG:");
-		//LivelyWorld.getInstance().getLogger().info("Start:" + Integer.toBinaryString(getData()));
-		//LivelyWorld.getInstance().getLogger().info(Integer.toBinaryString((getData() & (~(maxLevel << moistureCode)))) + " | " + Integer.toBinaryString((Utils.constrainTo(value, 0, maxLevel) << moistureCode)));
 		long newData = (getData() & (~maxLevel)) | ((long) value);
-		//LivelyWorld.getInstance().getLogger().info("Finish:" + Integer.toBinaryString(newData));
 		if(toWaterLevel(value) != toWaterLevel(getLevel())){
 			setData(newData);
 			chunk.setNeedsUpsate(true);
@@ -399,8 +392,8 @@ public class WaterData {
 			int level = getLevel();
 			int transfer = Math.min(down.getMaxQuantity() - down.getLevel(), level);
 			if (transfer < 0) transfer = 0;
-			setLevel(level - transfer);
-			down.setLevel(down.getLevel() + transfer);
+			setLevelUnchecked(level - transfer);
+			down.setLevelUnchecked(down.getLevel() + transfer);
 			/*for(int i = 1; i <= level; i++){
 				if(down.getLevel() < down.getMaxQuantity() && getLevel() > 0){
 					down.setLevel(down.getLevel() + 1);
@@ -525,9 +518,23 @@ public class WaterData {
 				break;
 			}
 		}
-		this.setLevel(level);
+		this.setLevelUnchecked(level);
 		for(int i = 0; i < 4; i++){
-			relatives[i].setLevel(levels[i]);
+			if(relatives[i].chunk == chunk){
+				relatives[i].setLevelUnchecked(levels[i]);
+			} else {
+				relatives[i].setLevel(levels[i]);
+			}
+		}
+	}
+
+	 void setLevelUnchecked(int value) {
+		 long newData = (getData() & (~maxLevel)) | ((long) value);
+		if(toWaterLevel(value) != toWaterLevel(getLevel())){
+			setDataUnchecked(newData);
+			chunk.setNeedsUpsate(true);
+		} else {
+			setDataUnchecked(newData);
 		}
 	}
 	

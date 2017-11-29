@@ -73,17 +73,14 @@ public class TidesModule {
 	public TidesModule(LivelyWorld p) {
 		this.plugin = p;
 		baseViewDistanceSquared = baseViewDistance * baseViewDistance;
-		String packageName = p.getServer().getClass().getPackage().getName();
-        String version = packageName.substring(packageName.lastIndexOf('.') + 1);
-
         try {
-            final Class<?> clazz = Class.forName("com.kylantraynor.livelyworld." + version + ".BoatHelperHandler");
+            final Class<?> clazz = Class.forName("com.kylantraynor.livelyworld." + LivelyWorld.getServerVersion() + ".BoatHelperHandler");
             if (BoatHelper.class.isAssignableFrom(clazz)) {
                 this.boatHelper = (BoatHelper) clazz.getConstructor().newInstance();
             }
         } catch (final Exception e) {
             e.printStackTrace();
-            p.getLogger().warning("This CraftBukkit version ("+version+") is not supported. Boat fixes won't work.");
+            p.getLogger().warning("This CraftBukkit version ("+LivelyWorld.getServerVersion()+") is not supported. Boat fixes won't work.");
             this.boatHelper = null;
         }
 	}
@@ -617,8 +614,6 @@ public class TidesModule {
 
 	public void onPlayerMove(PlayerMoveEvent event) {
 	}
-
-	private Map<Vehicle, Float> acceleration = new HashMap<Vehicle, Float>();
 
 	public boolean isEnabled() {
 		return enabled;

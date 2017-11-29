@@ -115,16 +115,25 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 	private long blockUpdatePeriod = 2L;
 	private Location worldCenter;
 	private int worldBorder = 4800;
+	
+	private String packageName;
+	private String version;
 
 	private long mainThreadId = Thread.currentThread().getId();
 
 	public void log(Level level, String message) {
 		getLogger().log(level, "[" + PLUGIN_NAME + "] " + message);
 	}
+	
+	public static String getServerVersion(){
+		return getInstance().version;
+	}
 
 	@Override
 	public void onEnable() {
 		currentInstance = this;
+		packageName = LivelyWorld.getInstance().getServer().getClass().getPackage().getName();
+	    version = packageName.substring(packageName.lastIndexOf('.') + 1);
 		saveDefaultConfig();
 		worldCenter = new Location(Bukkit.getWorld("world"), 1600, 100, 1600);
 		PluginManager pm = getServer().getPluginManager();

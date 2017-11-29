@@ -23,6 +23,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import com.kylantraynor.livelyworld.LivelyWorld;
 import com.kylantraynor.livelyworld.Utils;
+import com.kylantraynor.livelyworld.api.PacketMapChunk;
 import com.kylantraynor.livelyworld.hooks.HookManager;
 import com.kylantraynor.livelyworld.water.WaterChunk;
 import com.kylantraynor.livelyworld.water.WaterData;
@@ -422,7 +423,7 @@ public class ClimateModule {
 				if(sender instanceof Player){
 					Player p = (Player) sender;
 					Chunk c = p.getLocation().getChunk();
-					Utils.PacketMapChunk.refreshChunk(c);
+					PacketMapChunk.refreshChunk(c);
 					sender.sendMessage("Refreshed Chunk.");
 				}
 				break;

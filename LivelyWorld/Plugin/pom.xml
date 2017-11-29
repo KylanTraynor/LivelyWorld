@@ -10,7 +10,7 @@
 		<relativePath>..</relativePath>
 	</parent>
 	<groupId>com.kylantraynor</groupId>
-	<artifactId>LivelyWorld</artifactId>
+	<artifactId>LivelyWorld-Plugin</artifactId>
 	<version>0.0.3-SNAPSHOT</version>
 	<dependencies>
 		<dependency>

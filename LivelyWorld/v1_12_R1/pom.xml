@@ -7,6 +7,7 @@
 		<groupId>com.kylantraynor</groupId>
 		<artifactId>LivelyWorld-Project</artifactId>
 		<relativePath>..</relativePath>
+		<version>0.0.3-SNAPSHOT</version>
 	</parent>
 	<groupId>com.kylantraynor</groupId>
 	<artifactId>livelyworld-v1_12_R1</artifactId>
@@ -34,4 +35,5 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
+	<name>v1_12_R1</name>
 </project>

@@ -6,10 +6,10 @@
     <groupId>com.kylantraynor</groupId>
     <artifactId>LivelyWorld-Project</artifactId>
     <relativePath>..</relativePath>
+    <version>0.0.3-SNAPSHOT</version>
   </parent>
   <groupId>com.kylantraynor</groupId>
-  <artifactId>livelyworld-api</artifactId>
-  <version>0.0.3-SNAPSHOT</version>
+  <artifactId>LivelyWorld-API</artifactId>
   <name>API</name>
   <url>http://maven.apache.org</url>
   <properties>

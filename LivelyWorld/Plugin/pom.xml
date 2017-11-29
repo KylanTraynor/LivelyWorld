@@ -7,10 +7,40 @@
 		<groupId>com.kylantraynor</groupId>
 		<artifactId>LivelyWorld-Project</artifactId>
 		<relativePath>..</relativePath>
+		<version>0.0.3-SNAPSHOT</version>
 	</parent>
 	<groupId>com.kylantraynor</groupId>
 	<artifactId>LivelyWorld</artifactId>
-	<version>0.0.3-SNAPSHOT</version>
+	<build>
+    <sourceDirectory>src</sourceDirectory>
+    <directory>../target</directory>
+    <plugins>
+    	<plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>3.1.0</version>
+        <configuration>
+          <!-- put your configurations here -->
+        </configuration>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.3</version>
+        <configuration>
+          <source>1.8</source>
+          <target>1.8</target>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 	<dependencies>
 		<dependency>
 			<groupId>com.kylantraynor</groupId>
@@ -35,4 +65,5 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
+	<name>LivelyWorld</name>
 </project>

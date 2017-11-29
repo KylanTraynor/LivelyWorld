@@ -4,7 +4,6 @@
   <artifactId>LivelyWorld-Project</artifactId>
  <build>
     <sourceDirectory>src</sourceDirectory>
-    <directory>../target</directory>
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>

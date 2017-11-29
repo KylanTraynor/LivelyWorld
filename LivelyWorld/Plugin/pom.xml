@@ -12,4 +12,19 @@
 	<groupId>com.kylantraynor</groupId>
 	<artifactId>livelyworld-plugin</artifactId>
 	<version>0.0.3-SNAPSHOT</version>
+	<dependencies>
+		<dependency>
+			<groupId>com.kylantraynor</groupId>
+			<artifactId>livelyworld-api</artifactId>
+		</dependency>
+	</dependencies>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>com.kylantraynor</groupId>
+				<artifactId>livelyworld-api</artifactId>
+				<version>0.0.3-SNAPSHOT</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 </project>

@@ -423,7 +423,7 @@ public class ClimateModule {
 				if(sender instanceof Player){
 					Player p = (Player) sender;
 					Chunk c = p.getLocation().getChunk();
-					PacketMapChunk.refreshChunk(c);
+					PacketMapChunk.refreshChunk(LivelyWorld.getInstance().getServer(), c);
 					sender.sendMessage("Refreshed Chunk.");
 				}
 				break;

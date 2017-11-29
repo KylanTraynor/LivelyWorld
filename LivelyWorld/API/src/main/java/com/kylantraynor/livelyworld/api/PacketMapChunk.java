@@ -24,8 +24,8 @@ public interface PacketMapChunk {
      * @param chunk The chunk.
      */
    
-    public static void refreshChunk(final Chunk chunk) {
-        refreshChunk(chunk.getWorld(), chunk.getX(), chunk.getZ());
+    public static void refreshChunk(final Server server, final Chunk chunk) {
+        refreshChunk(server, chunk.getWorld(), chunk.getX(), chunk.getZ());
     }
    
     /**
@@ -36,9 +36,9 @@ public interface PacketMapChunk {
      * @param z The chunk's Z.
      */
    
-    public static void refreshChunk(final World world, final int x, final int z) {
+    public static void refreshChunk(final Server server, final World world, final int x, final int z) {
         final Collection<? extends Player> players = Bukkit.getOnlinePlayers();
-        refreshChunk(world, x, z, players.toArray(new Player[players.size()]));
+        refreshChunk(server, world, x, z, players.toArray(new Player[players.size()]));
     }
    
     /**
@@ -50,7 +50,7 @@ public interface PacketMapChunk {
      * @param players The players.
      */
    
-    public static void refreshChunk(Server server, final World world, final int x, final int z, final Player... players) {
+    public static void refreshChunk(final Server server, final World world, final int x, final int z, final Player... players) {
     	String packageName = server.getClass().getPackage().getName();
         String version = packageName.substring(packageName.lastIndexOf('.') + 1);
         PacketMapChunk packet = null;

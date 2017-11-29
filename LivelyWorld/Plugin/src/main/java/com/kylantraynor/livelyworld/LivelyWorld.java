@@ -528,9 +528,6 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 					gravity.onBlockUpdate(l.getBlock(), null);
 				}
 			}
-			if (usingTides) {
-				tides.onVehicleMove(event);
-			}
 		}
 	}
 

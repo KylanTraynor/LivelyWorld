@@ -127,9 +127,9 @@
 	</dependencyManagement>
 	<packaging>pom</packaging>
 	<modules>
+		<module>API</module>
 		<module>Plugin</module>
 		<module>v1_12_R1</module>
-		<module>API</module>
 		
 	</modules>
 </project>

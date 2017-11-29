@@ -5,13 +5,11 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>com.kylantraynor</groupId>
-		<artifactId>LivelyWorld</artifactId>
-		<version>0.0.3-SNAPSHOT</version>
+		<artifactId>LivelyWorld-Project</artifactId>
 		<relativePath>..</relativePath>
 	</parent>
 	<groupId>com.kylantraynor</groupId>
 	<artifactId>livelyworld-v1_12_R1</artifactId>
-	<version>v1_12_R1</version>
 	<dependencies>
 		<dependency>
 			<groupId>org.bukkit</groupId>

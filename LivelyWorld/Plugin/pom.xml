@@ -7,7 +7,7 @@
 		<groupId>com.kylantraynor</groupId>
 		<artifactId>LivelyWorld-Project</artifactId>
 		<relativePath>..</relativePath>
-		<version>0.0.3-SNAPSHOT</version>
+		<version>PARENT</version>
 	</parent>
 	<groupId>com.kylantraynor</groupId>
 	<artifactId>LivelyWorld</artifactId>
@@ -56,7 +56,7 @@
 			<dependency>
 				<groupId>com.kylantraynor</groupId>
 				<artifactId>livelyworld-api</artifactId>
-				<version>0.0.3-SNAPSHOT</version>
+				<version>API</version>
 			</dependency>
 			<dependency>
 				<groupId>com.kylantraynor</groupId>

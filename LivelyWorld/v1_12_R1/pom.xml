@@ -7,10 +7,11 @@
 		<groupId>com.kylantraynor</groupId>
 		<artifactId>LivelyWorld-Project</artifactId>
 		<relativePath>..</relativePath>
-		<version>0.0.3-SNAPSHOT</version>
+		<version>PARENT</version>
 	</parent>
 	<groupId>com.kylantraynor</groupId>
 	<artifactId>livelyworld-v1_12_R1</artifactId>
+	<version>v1_12_R1</version>
 	<dependencies>
 		<dependency>
 			<groupId>org.bukkit</groupId>
@@ -31,7 +32,7 @@
 			<dependency>
 				<groupId>com.kylantraynor</groupId>
 				<artifactId>livelyworld-api</artifactId>
-				<version>0.0.3-SNAPSHOT</version>
+				<version>API</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

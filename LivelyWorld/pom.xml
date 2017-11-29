@@ -105,8 +105,8 @@
 	<packaging>pom</packaging>
 	<modules>
 		<module>API</module>
-		<module>Plugin</module>
 		<module>v1_12_R1</module>
+		<module>Plugin</module>
 		
 	</modules>
 	<version>0.0.3-SNAPSHOT</version>

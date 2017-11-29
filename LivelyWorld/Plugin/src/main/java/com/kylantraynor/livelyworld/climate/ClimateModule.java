@@ -401,7 +401,7 @@ public class ClimateModule {
 		base.setY(1);
 		for (int x = -i; x < i; x++) {
 			for (int z = -i; z < i; z++) {
-				if (location.clone().add(x, 1, z).distanceSquared(location) <= i) {
+				if (location.clone().add(x, 1, z).distanceSquared(location) <= radiusSquared) {
 					if (location.clone().add(x, 1, z).getBlock().getBiome()
 							.equals(biome)) {
 						return true;

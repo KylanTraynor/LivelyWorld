@@ -9,4 +9,7 @@
 		<version>0.0.3-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
+	<groupId>com.kylantraynor</groupId>
+	<artifactId>livelyworld-plugin</artifactId>
+	<version>0.0.3-SNAPSHOT</version>
 </project>

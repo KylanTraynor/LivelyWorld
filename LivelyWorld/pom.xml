@@ -85,10 +85,6 @@
     		<artifactId>WorldBorder</artifactId>
     		<scope>provided</scope>
     	</dependency>
-    	<dependency>
-				<groupId>org.bukkit</groupId>
-				<artifactId>craftbukkit</artifactId>
-    	</dependency>
 	</dependencies>
 	<dependencyManagement>
 		<dependencies>
@@ -123,15 +119,17 @@
 				<version>1.12-R0.1-SNAPSHOT</version>
 			</dependency>
 			<dependency>
-				<groupId>org.bukkit</groupId>
-				<artifactId>craftbukkit</artifactId>
-				<version>1.12-R0.1-SNAPSHOT</version>
-			</dependency>
-			<dependency>
 				<groupId>com.kylantraynor</groupId>
 				<artifactId>DraggyData</artifactId>
 				<version>0.0.4-SNAPSHOT</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
+	<packaging>pom</packaging>
+	<modules>
+		<module>Plugin</module>
+		<module>v1_12_R1</module>
+		<module>API</module>
+		
+	</modules>
 </project>

@@ -10,12 +10,16 @@
 		<relativePath>..</relativePath>
 	</parent>
 	<groupId>com.kylantraynor</groupId>
-	<artifactId>livelyworld-plugin</artifactId>
+	<artifactId>LivelyWorld</artifactId>
 	<version>0.0.3-SNAPSHOT</version>
 	<dependencies>
 		<dependency>
 			<groupId>com.kylantraynor</groupId>
 			<artifactId>livelyworld-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.kylantraynor</groupId>
+			<artifactId>livelyworld-v1_12_R1</artifactId>
 		</dependency>
 	</dependencies>
 	<dependencyManagement>
@@ -24,6 +28,11 @@
 				<groupId>com.kylantraynor</groupId>
 				<artifactId>livelyworld-api</artifactId>
 				<version>0.0.3-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>com.kylantraynor</groupId>
+				<artifactId>livelyworld-v1_12_R1</artifactId>
+				<version>v1_12_R1</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

@@ -71,6 +71,11 @@
            <artifactId>spigot-api</artifactId>
            <scope>provided</scope>
     	</dependency>
+		<dependency>
+           <groupId>org.bukkit</groupId>
+            <artifactId>bukkit</artifactId>
+            <scope>provided</scope>
+		</dependency>
     	<!-- World Border -->
     	<dependency>
     		<groupId>com.wimbli</groupId>
@@ -104,6 +109,11 @@
 				<groupId>com.kylantraynor</groupId>
 				<artifactId>DraggyData</artifactId>
 				<version>0.0.4-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>org.bukkit</groupId>
+				<artifactId>bukkit</artifactId>
+				<version>1.12.2-R0.1-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>org.spigotmc</groupId>

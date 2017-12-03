@@ -390,9 +390,11 @@ public class ClimateModule {
 	}
 
 	private void spawnLightning(Block b) {
-		b.getLocation().getWorld().spigot().strikeLightning(b.getLocation(), true);
-		b.getWorld().playSound(b.getLocation(), Sound.ENTITY_LIGHTNING_IMPACT, 20, 1);
-		b.getWorld().playSound(b.getLocation().add(0, 255 - b.getLocation().getY(), 0), Sound.ENTITY_LIGHTNING_THUNDER, 300, 1);
+		Location loc = b.getLocation();
+		b.getLocation().getWorld().spigot().strikeLightning(loc, true);
+		b.getWorld().playSound(loc, Sound.ENTITY_LIGHTNING_IMPACT, 20, 1);
+		loc.setY(255);
+		b.getWorld().playSound(loc, Sound.ENTITY_LIGHTNING_THUNDER, 300, 1);
 	}
 
 	private boolean hasBiomeWithin(Location location, Biome biome, int i) {

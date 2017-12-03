@@ -89,36 +89,43 @@
 				<groupId>org.dynmap</groupId>
 				<artifactId>dynmap-api</artifactId>
 				<version>1.9</version>
+				<scope>provided</scope>
 			</dependency>
 			<dependency>
 				<groupId>io.puharesource.mc</groupId>
 				<artifactId>TitleManager</artifactId>
 				<version>1.5.11</version>
+				<scope>provided</scope>
 			</dependency>
 			<dependency>
 				<groupId>com.wimbli</groupId>
 				<artifactId>WorldBorder</artifactId>
 				<version>1.8.5</version>
+				<scope>provided</scope>
 			</dependency>
 			<dependency>
 				<groupId>com.comphenix.protocol</groupId>
 				<artifactId>ProtocolLib</artifactId>
 				<version>4.2.0-SNAPSHOT</version>
+				<scope>provided</scope>
 			</dependency>
 			<dependency>
 				<groupId>com.kylantraynor</groupId>
 				<artifactId>DraggyData</artifactId>
 				<version>0.0.4-SNAPSHOT</version>
+				<scope>provided</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.bukkit</groupId>
 				<artifactId>bukkit</artifactId>
 				<version>1.12.2-R0.1-SNAPSHOT</version>
+				<scope>provided</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.spigotmc</groupId>
 				<artifactId>spigot-api</artifactId>
 				<version>1.12.2-R0.1-SNAPSHOT</version>
+				<scope>provided</scope>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

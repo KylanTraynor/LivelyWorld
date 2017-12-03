@@ -72,6 +72,11 @@
     		<artifactId>WorldBorder</artifactId>
     		<scope>provided</scope>
     	</dependency>
+    	<dependency>
+    		<groupId>org.spigotmc</groupId>
+    		<artifactId>spigot-api</artifactId>
+    		<scope>provided</scope>
+    	</dependency>
 	</dependencies>
 	<dependencyManagement>
 		<dependencies>
@@ -104,6 +109,11 @@
 				<artifactId>DraggyData</artifactId>
 				<version>0.0.4-SNAPSHOT</version>
 				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.spigotmc</groupId>
+				<artifactId>spigot-api</artifactId>
+				<version>1.12.2-R0.1-SNAPSHOT</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

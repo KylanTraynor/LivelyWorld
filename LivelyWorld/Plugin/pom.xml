@@ -50,6 +50,11 @@
 			<groupId>com.kylantraynor</groupId>
 			<artifactId>livelyworld-v1_12_R1</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.spigotmc</groupId>
+			<artifactId>spigot-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
 	</dependencies>
 	<dependencyManagement>
 		<dependencies>

@@ -12,7 +12,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.WeatherType;
-import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -22,9 +21,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import com.kylantraynor.livelyworld.LivelyWorld;
-import com.kylantraynor.livelyworld.Utils;
 import com.kylantraynor.livelyworld.api.PacketMapChunk;
-import com.kylantraynor.livelyworld.hooks.HookManager;
 import com.kylantraynor.livelyworld.water.WaterChunk;
 import com.kylantraynor.livelyworld.water.WaterData;
 import com.kylantraynor.voronoi.VectorXZ;

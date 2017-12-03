@@ -81,7 +81,7 @@ public class ClimateMap {
 			for(double z = - zRange; z <= -zStep || z >= zStep; z = incrementGenerationZ(z, zStep)){
 				if(z == 0) break;
 				if(z < minZ || z > maxZ) continue;
-				LivelyWorld.getInstance().getLogger().info("Current Z = " + z);
+				//LivelyWorld.getInstance().getLogger().info("Current Z = " + z);
 				double zAdjustedXStep = zAdjustedXStep(z, xStep);
 				for(double x = maxX; x >= minX; x -= zAdjustedXStep){
 					VSite s = new VSite(

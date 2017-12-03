@@ -38,7 +38,8 @@ public class WaterListener implements Listener{
 				}*/
 				if(helper.isUnderwater(boat)){
 					Vector v = helper.getMotionVector(boat);
-					v.setY(v.getY() < 0 ? -v.getY() + 0.3 : 0.5);
+					boat.teleport(boat.getLocation().clone().add(0,1/6.0,0));
+					v.setY(v.getY() < 0 ? -v.getY() + 0.2 : 0.4);
 					helper.setMotionVector(boat, v);
 				}
 			} else {

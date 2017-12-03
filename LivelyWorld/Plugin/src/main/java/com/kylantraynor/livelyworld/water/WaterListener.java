@@ -33,12 +33,12 @@ public class WaterListener implements Listener{
 			Boat boat = (Boat) event.getVehicle();
 			BoatHelper helper = LivelyWorld.getInstance().getWaterModule().getBoatHelper();
 			if(helper != null){
-				if(boat.getPassengers().size() > 0){
+				/*if(boat.getPassengers().size() > 0){
 					boat.getPassengers().get(0).sendMessage("[DEBUG] Is Underwater? " + helper.isUnderwater(boat));
-				}
+				}*/
 				if(helper.isUnderwater(boat)){
 					Vector v = helper.getMotionVector(boat);
-					v.setY(v.getY() < 0 ? -v.getY() + 0.2 : 0.2);
+					v.setY(v.getY() < 0 ? -v.getY() + 0.3 : 0.5);
 					helper.setMotionVector(boat, v);
 				}
 			} else {

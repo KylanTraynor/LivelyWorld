@@ -10,7 +10,7 @@
 		<version>PARENT</version>
 	</parent>
 	<groupId>com.kylantraynor</groupId>
-	<artifactId>LivelyWord</artifactId>
+	<artifactId>LivelyWorld</artifactId>
 	<build>
     <sourceDirectory>src</sourceDirectory>
     <directory>../target</directory>

@@ -660,7 +660,7 @@ public class WaterChunk {
 		}
 	}
 
-	public boolean isRelativeLoaded(int i, int j) {
+	public boolean isRelativeLoaded(int x, int z) {
 		WaterChunk r = WaterChunk.chunks.get(new ChunkCoordinates(world, this.x + x, this.z + z));
 		if(r == null) return false;
 		return r.isLoaded();

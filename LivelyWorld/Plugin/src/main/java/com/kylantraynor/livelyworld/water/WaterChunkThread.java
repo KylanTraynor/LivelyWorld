@@ -206,7 +206,7 @@ public class WaterChunkThread extends Thread {
 			}
 			if(!c.isLoaded() && isChunkLoaded(c.getWorld(), c.getX(), c.getZ())){
 				c.load();
-				count--;
+				//count--;
 			}
 			i++;
 		}

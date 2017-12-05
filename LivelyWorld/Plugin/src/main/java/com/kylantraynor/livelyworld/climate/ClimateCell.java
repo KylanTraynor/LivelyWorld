@@ -68,6 +68,11 @@ public class ClimateCell extends VCell {
 		super();
 	}
 	
+	/**
+	 * Get the neighbouring climate cells.
+	 * Can be contain null objects if the cell is next to the map border.
+	 * @return ClimateCell[]
+	 */
 	@Override
 	public synchronized ClimateCell[] getNeighbours(){
 		ClimateCell[] result = new ClimateCell[super.getNeighbours().length];
@@ -77,18 +82,34 @@ public class ClimateCell extends VCell {
 		return result;
 	}
 
+	/**
+	 * Get high atmosphere volume.
+	 * @return
+	 */
 	public double getHighVolume(){
 		return 10;
 	}
 	
+	/**
+	 * Get the amount of humidity this cell can generate per update.
+	 * @return
+	 */
 	public double getHumidityGeneration(){
 		return humidityGeneration;
 	}
 	
+	/**
+	 * Get the tropopause temperature.
+	 * @return Temperature
+	 */
 	public Temperature getTropopauseTemperature(){
 		return tropopauseTemp;
 	}
 	
+	/**
+	 * Get this cell's center location.
+	 * @return Location
+	 */
 	public Location getLocation() {
 		return new Location(world, x, y, z);
 	}
@@ -97,39 +118,75 @@ public class ClimateCell extends VCell {
 		this.world = world;
 	}
 
+	/**
+	 * Get this cell's world.
+	 * @return World
+	 */
 	public World getWorld() {
 		return world;
 	}
 	
+	/**
+	 * Get this cell's center X.
+	 * @return int
+	 */
 	public int getX(){
 		return x;
 	}
 	
+	/**
+	 * Get this cell's center Y.
+	 * @return int
+	 */
 	public int getY(){
 		return y;
 	}
 	
+	/**
+	 * Get this cell's center Z.
+	 * @return int
+	 */
 	public int getZ(){
 		return z;
 	}
 
+	/**
+	 * Get the current weather in this cell.
+	 * @return Weather
+	 */
 	public Weather getWeather() {
 		return weather;
 	}
 
+	/**
+	 * Get the base temperature.
+	 * @return Temperature
+	 */
 	public Temperature getBaseTemperature() {
 		return Temperature.fromCelsius(15);
 	}
 
+	/**
+	 * Get the reference altitude of this cell.
+	 * @return double
+	 */
 	public double getAltitude() {
 		return y; // Could be improved by making an average of the y of the surface blocks around it.
 	}
 
+	/**
+	 * Get the current temperature of this cell.
+	 * @return Temperature
+	 */
 	public Temperature getTemperature() {
 		if(temperature.isNaN()) temperature = getBaseTemperature();
 		return temperature;
 	}
 	
+	/**
+	 * Get the total area covered by this cell.
+	 * @return double
+	 */
 	public double getArea(){
 		if(!Double.isNaN(cellArea)){
 			return cellArea;
@@ -146,6 +203,10 @@ public class ClimateCell extends VCell {
 		return cellArea;
 	}
 	
+	/**
+	 * Get the total volume covered by this cell.
+	 * @return double
+	 */
 	public double getVolume() {
 		if (!Double.isNaN(airVolume))
 			return airVolume;
@@ -153,6 +214,10 @@ public class ClimateCell extends VCell {
 		return airVolume;
 	}
 	
+	/**
+	 * Get the number of air blocks above this cell.
+	 * @return
+	 */
 	public double getAirVolumeOnBlock() {
 		return 256 - getAltitude();
 	}

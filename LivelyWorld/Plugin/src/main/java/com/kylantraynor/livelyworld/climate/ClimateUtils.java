@@ -13,23 +13,58 @@ import com.kylantraynor.voronoi.VectorXZ;
 
 public class ClimateUtils {
 
-	static double R = 0.08;
+	static double R = 8.314;
+	static double massAir = 0.028964;
 	static double invertedR = 1 / R;
+	static double RspecificAir = R / massAir;
+	
+	/**
+	 * Get the density of air from pressure (Pa) and temperature.
+	 * @param pressure in Pa
+	 * @param t
+	 * @return
+	 */
+	public static double getAirDensity(double pressure, Temperature t){
+		return pressure / (t.getValue() * RspecificAir);
+	}
 
+	/**
+	 * Get the temperature of the gas from pressure, volume and amount.
+	 * @param pressure in Pa
+	 * @param volume in m3
+	 * @param amount in moles
+	 * @return
+	 */
 	public static Temperature getGasTemperature(double pressure, double volume,
 			double amount) {
-		return new Temperature((pressure) * volume * (1.0 / amount)
-				* invertedR);
+		// T = pV/nR
+		return new Temperature((pressure * volume) / (amount * R));
 	}
 
+	/**
+	 * Get the pressure of the gas from the volume, amount and temperature.
+	 * @param volume in m3
+	 * @param amount in moles
+	 * @param temperature
+	 * @return
+	 */
 	public static double getGasPressure(double volume, double amount,
 			Temperature temperature) {
-		return (amount * temperature.getValue() * R * (1.0 / volume));
+		// p = nRT/V
+		return (amount * temperature.getValue() * R) / volume;
 	}
 
+	/**
+	 * Get the amount of gas from the pressure, volume and temperature
+	 * @param pressure in Pa
+	 * @param volume in m3
+	 * @param temperature
+	 * @return
+	 */
 	public static double getGasAmount(double pressure, double volume,
 			Temperature temperature) {
-		return ((pressure) * (volume) * (1 / (R * temperature.getValue())));
+		// n = pV/RT
+		return (pressure * volume) / (R * temperature.getValue());
 	}
 	
 	public static Temperature getTemperatureAt(Location location){

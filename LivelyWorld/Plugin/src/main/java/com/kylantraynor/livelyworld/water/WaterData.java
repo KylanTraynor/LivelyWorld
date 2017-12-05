@@ -403,13 +403,13 @@ public class WaterData {
 
 	public void moveWaterHorizontally(boolean loadChunks) {
 		if(!loadChunks){
-			if(x == 0 && !chunk.getRelative(-1, 0).isLoaded())
+			if(x == 0 && !chunk.isRelativeLoaded(-1, 0))
 				return;
-			if(x == 15 && !chunk.getRelative(1, 0).isLoaded())
+			if(x == 15 && !chunk.isRelativeLoaded(1, 0))
 				return;
-			if(z == 0 && !chunk.getRelative(0, -1).isLoaded())
+			if(z == 0 && !chunk.isRelativeLoaded(0, -1))
 				return;
-			if(z == 15 && !chunk.getRelative(0, 1).isLoaded())
+			if(z == 15 && !chunk.isRelativeLoaded(0, 1))
 				return;
 		}
 		WaterData[] relatives = new WaterData[4];

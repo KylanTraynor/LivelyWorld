@@ -21,6 +21,50 @@ public class Utils {
 	private static int[] xor128 = {123456789,362436069,521288629,88675123};
 	private static int t;
 	
+	public static class ChunkCoordinates{
+		final private String world;
+		final private int x;
+		final private int z;
+		
+		public ChunkCoordinates(World world, int x, int z){
+			this.world = world.getUID().toString();
+			this.x = x;
+			this.z = z;
+		}
+		
+		public int getX(){
+			return x;
+		}
+		
+		public int getZ(){
+			return z;
+		}
+		
+		@Override
+		public int hashCode(){
+			int hash = 11;
+			hash*= 17 * world.hashCode();
+			hash*= 13 * Integer.hashCode(x);
+			hash*= 7 * Integer.hashCode(z);
+			return hash;
+		}
+		
+		@Override
+		public boolean equals(Object o){
+			if(o instanceof ChunkCoordinates){
+				ChunkCoordinates cc = (ChunkCoordinates) o;
+				if(cc.getX() == this.getX() && cc.getZ() == this.getZ()){
+					return true;
+				}
+			}
+			return false;
+		}
+		
+		public static ChunkCoordinates fromBlockCoordinates(Block b){
+			return new ChunkCoordinates(b.getWorld(), b.getX() >> 4, b.getZ() >> 4);
+		}
+	}
+	
 	public static class SmallChunkData{
 		private String worldName = "world";
 		private int x = 0;

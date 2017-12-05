@@ -1,40 +1,27 @@
 package com.kylantraynor.livelyworld.water;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.RandomAccessFile;
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.zip.DataFormatException;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.zip.DeflaterOutputStream;
-import java.util.zip.Inflater;
-import java.util.zip.InflaterInputStream;
 import java.util.zip.InflaterOutputStream;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
-import org.bukkit.block.Block;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import com.kylantraynor.livelyworld.LivelyWorld;
 import com.kylantraynor.livelyworld.Utils;
+import com.kylantraynor.livelyworld.Utils.ChunkCoordinates;
 import com.kylantraynor.livelyworld.Utils.SmallChunkData;
-import com.kylantraynor.livelyworld.events.BlockWaterLevelChangeEvent;
 import com.kylantraynor.livelyworld.water.WaterChunkUpdateRunnable.UpdateType;
 
 public class WaterChunk {
-	final static CopyOnWriteArrayList<WaterChunk> chunks = new CopyOnWriteArrayList<WaterChunk>(); 
+	final static Map<ChunkCoordinates, WaterChunk> chunks = new ConcurrentHashMap<ChunkCoordinates, WaterChunk>(); 
 	final static int sectorLength = 4096;
 	final static int currentVersion = 1;
 	static boolean disabled = false;
@@ -189,17 +176,20 @@ public class WaterChunk {
 	
 	public static WaterChunk get(World world, int x, int z){
 		
-		int i = 0;
+		/*int i = 0;
 		while(i < chunks.size()){
 			WaterChunk c = chunks.get(i);
 			if(c.getWorld().equals(world) && c.getX() == x && c.getZ() == z){
 				return c;
 			}
 			i++;
+		}*/
+		WaterChunk wc = chunks.get(new ChunkCoordinates(world, x, z));
+		if(wc != null){
+			return wc;
 		}
-	
-		WaterChunk wc = new WaterChunk(world,x,z);
-		chunks.add(wc);
+		wc = new WaterChunk(world,x,z);
+		chunks.put(new ChunkCoordinates(world, x, z), wc);
 		return wc;
 	}
 	
@@ -668,5 +658,11 @@ public class WaterChunk {
 				}
 			}
 		}
+	}
+
+	public boolean isRelativeLoaded(int i, int j) {
+		WaterChunk r = WaterChunk.chunks.get(new ChunkCoordinates(world, this.x + x, this.z + z));
+		if(r == null) return false;
+		return r.isLoaded();
 	}
 }

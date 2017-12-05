@@ -13,6 +13,7 @@ import org.bukkit.block.Biome;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import com.kylantraynor.livelyworld.LivelyWorld;
+import com.kylantraynor.livelyworld.Utils.ChunkCoordinates;
 import com.kylantraynor.livelyworld.Utils.Enclosed;
 import com.kylantraynor.livelyworld.Utils.PrioritizedLock;
 import com.kylantraynor.livelyworld.Utils.SmallChunkData;
@@ -140,13 +141,14 @@ public class WaterChunkThread extends Thread {
 
 	private void cleanList() {
 		int i = 0;
-		while(i < WaterChunk.chunks.size()){
-			WaterChunk c = WaterChunk.chunks.get(i);
+		WaterChunk[] cs = (WaterChunk[]) WaterChunk.chunks.values().toArray();
+		while(i < cs.length){
+			WaterChunk c = cs[i];
 			if(c == null){
 				i++; continue;
 			}
 			if(!c.isLoaded() && !isChunkLoaded(c.getWorld(), c.getX(), c.getZ())){
-				WaterChunk.chunks.remove(i);
+				WaterChunk.chunks.remove(new ChunkCoordinates(c.getWorld(), c.getX(), c.getZ()));
 				continue;
 			}
 			i++;
@@ -155,8 +157,9 @@ public class WaterChunkThread extends Thread {
 
 	private void updateChunks() {
 		int i = 0;
-		while(i < WaterChunk.chunks.size()){
-			WaterChunk c = WaterChunk.chunks.get(i);
+		WaterChunk[] cs = (WaterChunk[]) WaterChunk.chunks.values().toArray();
+		while(i < cs.length){
+			WaterChunk c = cs[i];
 			if(c == null){
 				i++; continue;
 			}
@@ -175,15 +178,16 @@ public class WaterChunkThread extends Thread {
 	private void unloadChunks() {
 		int count = 30;
 		int i = 0;
-		while(i < WaterChunk.chunks.size() && count > 0){
-			WaterChunk c = WaterChunk.chunks.get(i);
+		WaterChunk[] cs = (WaterChunk[]) WaterChunk.chunks.values().toArray();
+		while(i < cs.length){
+			WaterChunk c = cs[i];
 			if(c == null){
 				i++; continue;
 			}
 			if(c.isLoaded() && !isChunkLoaded(c.getWorld(), c.getX(), c.getZ())){
 				c.unload();
 				//LivelyWorld.getInstance().getLogger().info("Unloading Chunk at " + c.getX() + ", " + c.getZ() + ", Total: " + WaterChunk.chunks.size());
-				WaterChunk.chunks.remove(i);
+				WaterChunk.chunks.remove(new ChunkCoordinates(c.getWorld(), c.getX(), c.getZ()));
 				count--;
 			}
 			i++;

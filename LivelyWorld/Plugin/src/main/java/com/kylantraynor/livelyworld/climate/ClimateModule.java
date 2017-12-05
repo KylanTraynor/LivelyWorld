@@ -138,7 +138,7 @@ public class ClimateModule {
 											}
 										};
 										br.runTaskAsynchronously(getPlugin());
-										b.getWorld().spawnParticle(Particle.CLOUD, b.getLocation().add(Utils.fastRandomDouble(),Utils.fastRandomDouble(),Utils.fastRandomDouble()), evaporation, 0, 0, 0, 0.5);
+										b.getWorld().spawnParticle(Particle.CLOUD, b.getLocation().add(0.5,0.5,0.5), evaporation, 0.5, 0.5, 0.5, 0.25);
 										//b.getWorld().spawnParticle(Particle.SMOKE_LARGE, b.getLocation().add(0.5, 0.5, 0.5), evaporation, 0.5, 0.5, 0.5);
 									} else {
 										while((b.getRelative(BlockFace.DOWN).getType() == Material.AIR ||

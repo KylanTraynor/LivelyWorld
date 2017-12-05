@@ -21,7 +21,7 @@ import com.kylantraynor.livelyworld.Utils.SmallChunkData;
 public class WaterChunkThread extends Thread {
 	
 	private String name = "WaterChunk Thread";
-	final public static Map<String, Map<String,SmallChunkData>> loadedChunks = new HashMap<String, Map<String, SmallChunkData>>();
+	final public static Map<String, Map<ChunkCoordinates,SmallChunkData>> loadedChunks = new HashMap<String, Map<ChunkCoordinates, SmallChunkData>>();
 	final static Enclosed<Chunk[]> chunksFetcher = new Enclosed<Chunk[]>();
 	final static PrioritizedLock mainLocker = new PrioritizedLock(LivelyWorld.getInstance().getMainThreadId());
 	
@@ -79,8 +79,8 @@ public class WaterChunkThread extends Thread {
 	public static SmallChunkData getChunkData(WaterChunk wc){
 		try {
 			mainLocker.lock();
-			Map<String, SmallChunkData> chunks = loadedChunks.get(wc.getWorld().getName());
-			return chunks.get("" + wc.getX() + "_" + wc.getZ());
+			Map<ChunkCoordinates, SmallChunkData> chunks = loadedChunks.get(wc.getWorld().getName());
+			return chunks.get(new ChunkCoordinates(wc.getWorld(), wc.getX(), wc.getZ()));
 			/*for(int i = 0; i < chunks.size(); i++){
 				SmallChunkData s = chunks.get(i);
 				if(s == null) continue;
@@ -99,8 +99,8 @@ public class WaterChunkThread extends Thread {
 	public static Biome getBiomeAt(WaterChunk wc, int x, int z){
 		try {
 			mainLocker.lock();
-			Map<String, SmallChunkData> chunks = loadedChunks.get(wc.getWorld().getName());
-			SmallChunkData d = chunks.get("" + wc.getX() + "_" + wc.getZ());
+			Map<ChunkCoordinates, SmallChunkData> chunks = loadedChunks.get(wc.getWorld().getName());
+			SmallChunkData d = chunks.get(new ChunkCoordinates(wc.getWorld(), wc.getX(), wc.getZ()));
 			if(d == null) return null;
 			return d.getBiome(x, z);
 		} catch (InterruptedException e) {
@@ -121,8 +121,8 @@ public class WaterChunkThread extends Thread {
 		return false;*/
 		try {
 			mainLocker.lock();
-			Map<String, SmallChunkData> chunks = loadedChunks.get(w.getName());
-			return chunks.get("" + chunkX + "_" + chunkZ) != null;
+			Map<ChunkCoordinates, SmallChunkData> chunks = loadedChunks.get(w.getName());
+			return chunks.get(new ChunkCoordinates(w, chunkX, chunkZ)) != null;
 		} catch (InterruptedException e) {
 			LivelyWorld.getInstance().getLogger().warning("Couldn't check if chunk " + chunkX + "," + chunkZ + " is loaded.");
 		} finally {
@@ -141,9 +141,9 @@ public class WaterChunkThread extends Thread {
 
 	private void cleanList() {
 		int i = 0;
-		WaterChunk[] cs = (WaterChunk[]) WaterChunk.chunks.values().toArray();
+		Object[] cs = WaterChunk.chunks.values().toArray();
 		while(i < cs.length){
-			WaterChunk c = cs[i];
+			WaterChunk c = (WaterChunk) cs[i];
 			if(c == null){
 				i++; continue;
 			}
@@ -157,9 +157,9 @@ public class WaterChunkThread extends Thread {
 
 	private void updateChunks() {
 		int i = 0;
-		WaterChunk[] cs = (WaterChunk[]) WaterChunk.chunks.values().toArray();
+		Object[] cs = WaterChunk.chunks.values().toArray();
 		while(i < cs.length){
-			WaterChunk c = cs[i];
+			WaterChunk c = (WaterChunk) cs[i];
 			if(c == null){
 				i++; continue;
 			}
@@ -178,9 +178,9 @@ public class WaterChunkThread extends Thread {
 	private void unloadChunks() {
 		int count = 30;
 		int i = 0;
-		WaterChunk[] cs = (WaterChunk[]) WaterChunk.chunks.values().toArray();
+		Object[] cs = WaterChunk.chunks.values().toArray();
 		while(i < cs.length){
-			WaterChunk c = cs[i];
+			WaterChunk c = (WaterChunk) cs[i];
 			if(c == null){
 				i++; continue;
 			}
@@ -197,8 +197,9 @@ public class WaterChunkThread extends Thread {
 	private void loadChunks() {
 		int count = 30;
 		int i = 0;
-		while(i < WaterChunk.chunks.size() && count > 0){
-			WaterChunk c = WaterChunk.chunks.get(i);
+		Object[] cs = WaterChunk.chunks.values().toArray();
+		while(i < cs.length){
+			WaterChunk c = (WaterChunk) cs[i];
 			if(c == null){
 				i++; continue;
 			}
@@ -228,13 +229,13 @@ public class WaterChunkThread extends Thread {
 	public void addLoadedChunk(Chunk c) {
 		try {
 			mainLocker.lock();
-			Map<String, SmallChunkData> cs = loadedChunks.get(c.getWorld().getName());
+			Map<ChunkCoordinates, SmallChunkData> cs = loadedChunks.get(c.getWorld().getName());
 			if(cs == null){
-				cs = new HashMap<String, SmallChunkData>();
-				cs.put("" + c.getX() + "_" + c.getZ(), new SmallChunkData(c));
+				cs = new HashMap<ChunkCoordinates, SmallChunkData>();
+				cs.put(new ChunkCoordinates(c.getWorld(), c.getX(), c.getZ()), new SmallChunkData(c));
 				loadedChunks.put(c.getWorld().getName(), cs);
 			} else {
-				cs.put("" + c.getX() + "_" + c.getZ(), new SmallChunkData(c));
+				cs.put(new ChunkCoordinates(c.getWorld(), c.getX(), c.getZ()), new SmallChunkData(c));
 			}
 		} catch (InterruptedException e) {
 			e.printStackTrace();
@@ -247,11 +248,11 @@ public class WaterChunkThread extends Thread {
 	public void removeLoadedChunk(Chunk c) {
 		try {
 			mainLocker.lock();
-			Map<String, SmallChunkData> cs = loadedChunks.get(c.getWorld().getName());
+			Map<ChunkCoordinates, SmallChunkData> cs = loadedChunks.get(c.getWorld().getName());
 			if(cs == null){
 				return;
 			} else {
-				cs.remove("" + c.getX() + "_" +c.getZ());
+				cs.remove(new ChunkCoordinates(c.getWorld(), c.getX(), c.getZ()));
 			}
 		} catch (InterruptedException e) {
 			e.printStackTrace();

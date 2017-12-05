@@ -149,6 +149,7 @@ public class WaterChunkThread extends Thread {
 			}
 			if(!c.isLoaded() && !isChunkLoaded(c.getWorld(), c.getX(), c.getZ())){
 				WaterChunk.chunks.remove(new ChunkCoordinates(c.getWorld(), c.getX(), c.getZ()));
+				i++;
 				continue;
 			}
 			i++;

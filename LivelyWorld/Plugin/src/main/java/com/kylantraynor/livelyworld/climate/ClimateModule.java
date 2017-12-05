@@ -10,6 +10,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.WeatherType;
 import org.bukkit.block.Biome;
@@ -137,6 +138,7 @@ public class ClimateModule {
 											}
 										};
 										br.runTaskAsynchronously(getPlugin());
+										b.getWorld().spawnParticle(Particle.CLOUD, b.getLocation().add(0.5, 0.5, 0.5), evaporation, 0.5, 0.5, 0.5);
 									} else {
 										while((b.getRelative(BlockFace.DOWN).getType() == Material.AIR ||
 												b.getRelative(BlockFace.DOWN).getType() == Material.LEAVES ||

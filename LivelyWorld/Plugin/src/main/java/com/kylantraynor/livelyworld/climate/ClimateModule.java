@@ -21,6 +21,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import com.kylantraynor.livelyworld.LivelyWorld;
+import com.kylantraynor.livelyworld.Utils;
 import com.kylantraynor.livelyworld.api.PacketMapChunk;
 import com.kylantraynor.livelyworld.water.WaterChunk;
 import com.kylantraynor.livelyworld.water.WaterData;
@@ -120,28 +121,43 @@ public class ClimateModule {
 						case CLEAR:
 							double tdiff = ClimateUtils.getAltitudeWeightedTriangleTemperature(cell, b.getLocation()).getValue() - Temperature.fromCelsius(5).getValue();
 							if(Math.random() < 0.1 * (tdiff / 2)){
-								while((b.getRelative(BlockFace.DOWN).getType() == Material.AIR ||
-										b.getRelative(BlockFace.DOWN).getType() == Material.LEAVES ||
-										b.getRelative(BlockFace.DOWN).getType() == Material.LEAVES_2) &&
-										b.getY() > 1){
-									b = b.getRelative(BlockFace.DOWN);
-								}
-								b = getHighestSnowBlockAround(b, 3);
-								int meltAmount = (int) Math.ceil(tdiff/6);
-								if(meltAmount > 0){
-									meltAmount = ClimateUtils.melt(b, meltAmount);
-									final Block fb = b;
-									final int amount = meltAmount;
-									BukkitRunnable br = new BukkitRunnable(){
-										@Override
-										public void run() {
-											WaterChunk wc = WaterChunk.get(fb.getWorld(), chunkX, chunkZ);
-											if(wc.isLoaded()){
-												wc.addWaterAt(Math.floorMod(fb.getX(), 16), fb.getY(), Math.floorMod(fb.getZ(), 16), (int) (amount * WaterData.maxLevel) / 8);
+								int effectAmount = (int) Math.floor(tdiff/6);
+								if(effectAmount > 0){
+									if(Utils.isWater(b)){
+										final Block fb = b;
+										final int evaporation = effectAmount;
+										BukkitRunnable br = new BukkitRunnable(){
+											@Override
+											public void run() {
+												WaterChunk wc = WaterChunk.get(fb.getWorld(), chunkX, chunkZ);
+												if(wc.isLoaded()){
+													WaterData wd = wc.getAt(Math.floorMod(fb.getX(), 16), fb.getY(), Math.floorMod(fb.getZ(), 16));
+													wd.setLevel(Math.max(wd.getLevel() - evaporation, 0));
+												}
 											}
+										};
+										br.runTaskAsynchronously(getPlugin());
+									} else {
+										while((b.getRelative(BlockFace.DOWN).getType() == Material.AIR ||
+												b.getRelative(BlockFace.DOWN).getType() == Material.LEAVES ||
+												b.getRelative(BlockFace.DOWN).getType() == Material.LEAVES_2) &&
+												b.getY() > 1){
+											b = b.getRelative(BlockFace.DOWN);
 										}
-									};
-									br.runTaskAsynchronously(getPlugin());
+										b = getHighestSnowBlockAround(b, 3);
+										final Block fb = b;
+										final int amount = ClimateUtils.melt(b, effectAmount);
+										BukkitRunnable br = new BukkitRunnable(){
+											@Override
+											public void run() {
+												WaterChunk wc = WaterChunk.get(fb.getWorld(), chunkX, chunkZ);
+												if(wc.isLoaded()){
+													wc.addWaterAt(Math.floorMod(fb.getX(), 16), fb.getY(), Math.floorMod(fb.getZ(), 16), (int) (amount * WaterData.maxLevel) / 8);
+												}
+											}
+										};
+										br.runTaskAsynchronously(getPlugin());
+									}
 								}
 							}
 							break;

@@ -1,5 +1,7 @@
 package com.kylantraynor.livelyworld.water;
 
+import java.util.Collection;
+
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
@@ -43,8 +45,10 @@ public class WaterChunkUpdateRunnable extends BukkitRunnable {
 						if(canReplace(currentBlock.getType())){
 							if(WaterData.toWaterLevel(level) != Utils.getWaterHeight(currentBlock)){
 								if(level > 0 && isDropable(currentBlock.getType())){
-									ItemStack is = new ItemStack(currentBlock.getType());
-									currentBlock.getWorld().dropItemNaturally(currentBlock.getLocation(), is);
+									Collection<ItemStack> drops = currentBlock.getDrops();
+									for(ItemStack is : drops){
+										currentBlock.getWorld().dropItemNaturally(currentBlock.getLocation(), is);
+									}
 								}
 								Utils.setWaterHeight(currentBlock, WaterData.toWaterLevel(level), true);
 							}
@@ -70,11 +74,13 @@ public class WaterChunkUpdateRunnable extends BukkitRunnable {
 		if(mat == Material.STATIONARY_WATER) return true;
 		if(mat == Material.AIR) return true;
 		if(mat == Material.LONG_GRASS) return true;
+		if(mat == Material.VINE) return true;
 		if(mat == Material.TORCH) return true;
 		return false;
 	}
 	
 	public boolean isDropable(Material mat){
+		if(mat == Material.VINE) return true;
 		if(mat == Material.TORCH) return true;
 		if(mat == Material.LONG_GRASS) return true;
 		return false;

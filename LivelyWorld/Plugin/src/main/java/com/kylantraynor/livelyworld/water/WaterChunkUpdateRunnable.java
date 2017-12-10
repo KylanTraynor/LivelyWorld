@@ -76,6 +76,8 @@ public class WaterChunkUpdateRunnable extends BukkitRunnable {
 		if(mat == Material.LONG_GRASS) return true;
 		if(mat == Material.VINE) return true;
 		if(mat == Material.TORCH) return true;
+		if(mat == Material.SNOW) return true;
+		if(mat == Material.SNOW_BLOCK) return true;
 		return false;
 	}
 	

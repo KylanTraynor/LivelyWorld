@@ -7,6 +7,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import com.kylantraynor.livelyworld.LivelyWorld;
+import com.kylantraynor.livelyworld.water.WaterChunk;
 
 public class SnowFallTask extends BukkitRunnable {
 
@@ -37,7 +38,11 @@ public class SnowFallTask extends BukkitRunnable {
 			module.updateBiome(b);
 			// Stop if temperature is above 1
 			ClimateCell cell = ClimateUtils.getClimateCellAt(b.getLocation(), this.cell);
-			if(ClimateUtils.getAltitudeWeightedTriangleTemperature(cell, b.getLocation()).isCelsiusAbove(3)) return;
+			if(ClimateUtils.getAltitudeWeightedTriangleTemperature(cell, b.getLocation()).isCelsiusAbove(3)){
+				WaterChunk wc = WaterChunk.get(b.getWorld(), b.getChunk().getX(), b.getChunk().getZ());
+				wc.addWaterAt(Math.floorMod(b.getX(), 16), b.getY(), Math.floorMod(b.getZ(), 16), 1);
+				return;
+			}
 			Block below = b.getRelative(BlockFace.DOWN);
 			if (below.getType() == Material.SNOW) {
 				Block snow = below;

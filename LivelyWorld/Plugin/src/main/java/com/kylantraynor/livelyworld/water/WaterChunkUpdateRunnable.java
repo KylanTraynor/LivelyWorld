@@ -45,10 +45,7 @@ public class WaterChunkUpdateRunnable extends BukkitRunnable {
 						if(canReplace(currentBlock.getType())){
 							if(WaterData.toWaterLevel(level) != Utils.getWaterHeight(currentBlock)){
 								if(level > 0 && isDropable(currentBlock.getType())){
-									Collection<ItemStack> drops = currentBlock.getDrops();
-									for(ItemStack is : drops){
-										currentBlock.getWorld().dropItemNaturally(currentBlock.getLocation(), is);
-									}
+									currentBlock.breakNaturally();
 								}
 								Utils.setWaterHeight(currentBlock, WaterData.toWaterLevel(level), true);
 							}

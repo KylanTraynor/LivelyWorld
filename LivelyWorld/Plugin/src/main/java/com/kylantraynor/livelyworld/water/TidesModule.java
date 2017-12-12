@@ -101,6 +101,7 @@ public class TidesModule {
 		tidesTask = new TideDispatcherTask(this, interval);
 
 		tidesTask.runTaskTimer(plugin, 20 * 10, interval);
+		waterThread.setDaemon(true);
 		waterThread.start();
 	}
 	

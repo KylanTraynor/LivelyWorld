@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -21,9 +22,9 @@ import com.kylantraynor.livelyworld.Utils.SmallChunkData;
 public class WaterChunkThread extends Thread {
 	
 	private String name = "WaterChunk Thread";
-	final public static Map<String, Map<ChunkCoordinates,SmallChunkData>> loadedChunks = new HashMap<String, Map<ChunkCoordinates, SmallChunkData>>();
+	final public static Map<String, Map<ChunkCoordinates,SmallChunkData>> loadedChunks = new ConcurrentHashMap<String, Map<ChunkCoordinates, SmallChunkData>>();
 	final static Enclosed<Chunk[]> chunksFetcher = new Enclosed<Chunk[]>();
-	final static PrioritizedLock mainLocker = new PrioritizedLock(LivelyWorld.getInstance().getMainThreadId());
+	//final static PrioritizedLock mainLocker = new PrioritizedLock(LivelyWorld.getInstance().getMainThreadId());
 	
 	public void run(){
 		try{
@@ -77,9 +78,10 @@ public class WaterChunkThread extends Thread {
 	}*/
 	
 	public static SmallChunkData getChunkData(WaterChunk wc){
-		try {
-			mainLocker.lock();
+		/*try {
+			mainLocker.lock();*/
 			Map<ChunkCoordinates, SmallChunkData> chunks = loadedChunks.get(wc.getWorld().getName());
+			if(chunks == null) return null; 
 			return chunks.get(new ChunkCoordinates(wc.getWorld(), wc.getX(), wc.getZ()));
 			/*for(int i = 0; i < chunks.size(); i++){
 				SmallChunkData s = chunks.get(i);
@@ -88,27 +90,28 @@ public class WaterChunkThread extends Thread {
 					return s;
 				}
 			}*/
-		} catch (InterruptedException e) {
+		/*} catch (InterruptedException e) {
 			LivelyWorld.getInstance().getLogger().warning("Couldn't check Biome of chunk " + wc.getX()+ "," + wc.getZ() + ".");
 		} finally {
 			mainLocker.unlock();
 		}
-		return null;
+		return null;*/
 	}
 	
 	public static Biome getBiomeAt(WaterChunk wc, int x, int z){
-		try {
-			mainLocker.lock();
+		/*try {
+			mainLocker.lock();*/
 			Map<ChunkCoordinates, SmallChunkData> chunks = loadedChunks.get(wc.getWorld().getName());
+			if(chunks == null) return null;
 			SmallChunkData d = chunks.get(new ChunkCoordinates(wc.getWorld(), wc.getX(), wc.getZ()));
 			if(d == null) return null;
 			return d.getBiome(x, z);
-		} catch (InterruptedException e) {
+		/*} catch (InterruptedException e) {
 			LivelyWorld.getInstance().getLogger().warning("Couldn't check Biome of chunk " + wc.getX()+ "," + wc.getZ() + ".");
 		} finally {
 			mainLocker.unlock();
 		}
-		return null;
+		return null;*/
 		
 	}
 	
@@ -119,16 +122,17 @@ public class WaterChunkThread extends Thread {
 			LivelyWorld.getInstance().getLogger().warning("Couldn't check if chunk " + chunkX + "," + chunkZ + " is loaded.");
 		}
 		return false;*/
-		try {
-			mainLocker.lock();
+		/*try {
+			mainLocker.lock();*/
 			Map<ChunkCoordinates, SmallChunkData> chunks = loadedChunks.get(w.getName());
+			if(chunks == null) return false;
 			return chunks.get(new ChunkCoordinates(w, chunkX, chunkZ)) != null;
-		} catch (InterruptedException e) {
+		/*} catch (InterruptedException e) {
 			LivelyWorld.getInstance().getLogger().warning("Couldn't check if chunk " + chunkX + "," + chunkZ + " is loaded.");
 		} finally {
 			mainLocker.unlock();
 		}
-		return false;
+		return false;*/
 		/*Chunk[] chunks = null;
 		chunks = loadedChunks.get(w.getName());
 		if(chunks == null) return false;
@@ -228,39 +232,39 @@ public class WaterChunkThread extends Thread {
 	}
 
 	public void addLoadedChunk(Chunk c) {
-		try {
-			mainLocker.lock();
+		/*try {
+			mainLocker.lock();*/
 			Map<ChunkCoordinates, SmallChunkData> cs = loadedChunks.get(c.getWorld().getName());
 			if(cs == null){
-				cs = new HashMap<ChunkCoordinates, SmallChunkData>();
+				cs = new ConcurrentHashMap<ChunkCoordinates, SmallChunkData>();
 				cs.put(new ChunkCoordinates(c.getWorld(), c.getX(), c.getZ()), new SmallChunkData(c));
 				loadedChunks.put(c.getWorld().getName(), cs);
 			} else {
 				cs.put(new ChunkCoordinates(c.getWorld(), c.getX(), c.getZ()), new SmallChunkData(c));
 			}
-		} catch (InterruptedException e) {
+		/*} catch (InterruptedException e) {
 			e.printStackTrace();
 		} finally {
 			mainLocker.unlock();
 		}
-		
+		*/
 	}
 	
 	public void removeLoadedChunk(Chunk c) {
-		try {
-			mainLocker.lock();
+		/*try {
+			mainLocker.lock();*/
 			Map<ChunkCoordinates, SmallChunkData> cs = loadedChunks.get(c.getWorld().getName());
 			if(cs == null){
 				return;
 			} else {
 				cs.remove(new ChunkCoordinates(c.getWorld(), c.getX(), c.getZ()));
 			}
-		} catch (InterruptedException e) {
+		/*} catch (InterruptedException e) {
 			e.printStackTrace();
 		} finally {
 			mainLocker.unlock();
 		}
-		
+		*/
 	}
 	
 }

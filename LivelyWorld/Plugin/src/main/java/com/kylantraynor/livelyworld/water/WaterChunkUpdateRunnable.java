@@ -36,7 +36,7 @@ public class WaterChunkUpdateRunnable extends BukkitRunnable {
 		if(updateType == UpdateType.LEVEL){
 			if(!chunk.getWorld().isChunkLoaded(chunk.getX(), chunk.getZ())) return;
 			if(!Utils.hasPlayerWithinChunk(chunk.getX(), chunk.getZ(), 10)) return;
-			if(!Utils.hasPlayerWithinChunk(chunk.getX(), chunk.getZ(), 1) && Utils.fastRandomDouble() > 0.01) return;
+			if(!Utils.hasPlayerWithinChunk(chunk.getX(), chunk.getZ(), 2) && Utils.fastRandomDouble() > 0.01) return;
 			for(int y = 0; y < 256; y++){
 				for(int x = 0; x < 16; x++){
 					for(int z = 0; z < 16; z++){

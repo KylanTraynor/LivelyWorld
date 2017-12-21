@@ -191,6 +191,12 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 
 		pm.registerEvents(this, this);
 		
+		startRandomBlockUpdater();
+		
+		startRandomChunkUpdater();
+	}
+	
+	private void startRandomBlockUpdater(){
 		randomBlockPicker = new BukkitRunnable() {
 
 			@Override
@@ -270,6 +276,18 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 				blockUpdatePeriod);
 	}
 
+	private void startRandomChunkUpdater() {
+		BukkitRunnable br = new BukkitRunnable(){
+
+			@Override
+			public void run() {
+				UpdateManager.processRandomChunkUpdate(Bukkit.getWorld("world"));
+			}
+			
+		};
+		br.runTaskTimer(this, 200, 5);
+	}
+
 	private void loadDatabase() {
 		this.database = new SQLite(this);
 		this.database.load();
@@ -295,15 +313,15 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 		if (usingCreatures) {
 			creatures.onBlockUpdate(b, p);
 		}
-		if (usingVegetation) {
+		/*if (usingVegetation) {
 			vegetation.onBlockUpdate(b, p);
-		}
+		}*/
 		if (usingBurn) {
 			burn.onBlockUpdate(b, p);
 		}
-		if (usingGravity) {
+		/*if (usingGravity) {
 			gravity.onBlockUpdate(b, p);
-		}
+		}*/
 	}
 
 	private boolean isInValidWorld(Location location) {
@@ -866,6 +884,10 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 		if(usingGravity){
 			if(event.getEntityType() == EntityType.FALLING_BLOCK) gravity.checkGravityOn(event.getBlock());
 		}
+		if(event.getBlock().getType() == Material.SOIL && event.getTo() == Material.DIRT){
+			event.setCancelled(true);
+			return;
+		}
 	}
 	
 	public Material getHighestMaterial(World w, int x, int z){
@@ -905,5 +927,13 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 
 	public long getMainThreadId() {
 		return mainThreadId ;
+	}
+
+	public GravityModule getGravityModule() {
+		return gravity;
+	}
+
+	public VegetationModule getVegetationModule() {
+		return vegetation;
 	}
 }

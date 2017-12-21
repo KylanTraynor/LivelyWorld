@@ -27,8 +27,9 @@ public class WaterData {
 	/*private static int outCurrentCode = 9;
 	private static int outStrengthCode = 12;*/
 	private static long maxSalt = 0xfL;
-	private static int saltCode = 24; // 15 (4 bits) 0000 1111 0000 0000 0000 0000 0000 0000*/ 
-	private static int stableCode = 31; // 1 (1 bit) 1000 0000 0000 0000 0000 0000 0000 0000*/ 
+	private static int saltCode = 24; // 15 (4 bits) 0000 1111 0000 0000 0000 0000 0000 0000
+	private static int stableCode = 31; // 1 (1 bit) 1000 0000 0000 0000 0000 0000 0000 0000 
+	private static int heatCode = 30; //   1 (1 bit) 0100 0000 0000 0000 0000 0000 0000 0000
 	
 	public WaterData(WaterChunk chunk, int x, int y, int z){
 		this.x = x;
@@ -208,6 +209,15 @@ public class WaterData {
 		setData((getData() & (~(1L << stableCode))) | ((value ? 1L : 0L) << stableCode));
 	}
 	
+	public boolean isHeatSource(){
+		return ((getData() & (1 << heatCode)) >>> heatCode) == 1;
+	}
+	
+	
+	public void setHeatSource(boolean value){
+		setData((getData() & (~(1L << heatCode))) | ((value ? 1L : 0L) << heatCode));
+	}
+	
 	public boolean isSalted(){
 		return getSalt() > 0;
 	}
@@ -246,6 +256,10 @@ public class WaterData {
 		}
 		if(resistance == 15) return 0;
 		return 1.0 / resistance;
+	}
+	
+	public static int getMaxQuantityFor(Material material){
+		return (int) (maxLevel - getResistanceFor(material));
 	}
 	
 	public static int getResistanceFor(Material material){

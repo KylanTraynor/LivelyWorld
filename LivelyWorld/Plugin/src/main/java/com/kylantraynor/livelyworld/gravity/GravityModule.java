@@ -17,6 +17,7 @@ import com.kylantraynor.livelyworld.LivelyWorld;
 public class GravityModule {
 	private LivelyWorld plugin;
 	private boolean debug;
+	private boolean isEnabled = false;
 	final Map<Material, GravityProperties> blockProperties = new HashMap<Material, GravityProperties>();
 
 	public GravityModule(LivelyWorld livelyWorld) {
@@ -24,6 +25,11 @@ public class GravityModule {
 	}
 
 	public void enable() {
+		isEnabled = true;
+	}
+	
+	public boolean isEnabled(){
+		return isEnabled;
 	}
 
 	public void onBlockUpdate(Block b, Player p) {

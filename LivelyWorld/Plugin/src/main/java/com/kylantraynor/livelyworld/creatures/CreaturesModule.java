@@ -151,6 +151,7 @@ public class CreaturesModule {
 		if(e.getType() == EntityType.COW) return true;
 		if(e.getType() == EntityType.SHEEP) return true;
 		if(e.getType() == EntityType.HORSE) return true;
+		if(e.getType() == EntityType.DONKEY) return true;
 		if(e.getType() == EntityType.LLAMA) return true;
 		return false;
 	}

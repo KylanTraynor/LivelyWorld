@@ -30,6 +30,7 @@ public class VegetationModule implements Listener {
 
 	private LivelyWorld plugin;
 	private boolean debug = false;
+	private boolean isEnabled = false;
 
 	public VegetationModule(LivelyWorld plugin) {
 		this.setPlugin(plugin);
@@ -37,10 +38,11 @@ public class VegetationModule implements Listener {
 
 	public void onEnable() {
 		plugin.getServer().getPluginManager().registerEvents(this, plugin);
+		this.isEnabled = true;
 	}
 
 	public void onDisable() {
-
+		this.isEnabled = false;
 	}
 
 	public LivelyWorld getPlugin() {
@@ -56,12 +58,12 @@ public class VegetationModule implements Listener {
 			if (b.getLocation().distanceSquared(p.getLocation()) < 25)
 				return;
 		}
-		while (b.getType() == Material.AIR) {
+		/*while (b.getType() == Material.AIR) {
 			if (b.getLocation().getBlockY() <= 1) {
 				return;
 			}
 			b = b.getRelative(BlockFace.DOWN);
-		}
+		}*/
 		switch (b.getType()) {
 		case SAPLING:
 		case LOG:
@@ -376,5 +378,9 @@ public class VegetationModule implements Listener {
 		} else {
 			plugin.getLogger().info("Crops block wasn't instance of Crops?");
 		}
+	}
+
+	public boolean isEnabled() {
+		return isEnabled ;
 	}
 }

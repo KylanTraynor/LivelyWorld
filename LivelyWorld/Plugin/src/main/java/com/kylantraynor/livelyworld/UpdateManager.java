@@ -77,10 +77,10 @@ public class UpdateManager {
 		if(LivelyWorld.getInstance().getWaterModule().isEnabled() && Utils.fastRandomDouble() < 0.01){
 			processWaterUpdate(block);
 		}
-		if(LivelyWorld.getInstance().getGravityModule().isEnabled() && Utils.fastRandomDouble() < 0.01){
+		if(LivelyWorld.getInstance().getGravityModule().isEnabled() && Utils.fastRandomDouble() < 0.0001){
 			LivelyWorld.getInstance().getGravityModule().checkGravityOn(block);
 		}
-		if(LivelyWorld.getInstance().getVegetationModule().isEnabled() && Utils.fastRandomDouble() < 0.01){
+		if(LivelyWorld.getInstance().getVegetationModule().isEnabled() && Utils.fastRandomDouble() < 0.001){
 			LivelyWorld.getInstance().getVegetationModule().onBlockUpdate(block, null);
 		}
 	}

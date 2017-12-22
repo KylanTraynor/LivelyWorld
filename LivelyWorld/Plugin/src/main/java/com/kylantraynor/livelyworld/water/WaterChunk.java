@@ -665,4 +665,8 @@ public class WaterChunk {
 		if(r == null) return false;
 		return r.isLoaded();
 	}
+
+	public byte[] getData() {
+		return data;
+	}
 }

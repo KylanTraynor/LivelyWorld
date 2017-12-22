@@ -59,13 +59,13 @@ public class UpdateManager {
 	}
 
 	private static void processBlockUpdate(Block block) {
-		if(LivelyWorld.getInstance().getWaterModule().isEnabled()){
+		if(LivelyWorld.getInstance().getWaterModule().isEnabled() && Utils.fastRandomDouble() < 0.01){
 			processWaterUpdate(block);
 		}
 		if(LivelyWorld.getInstance().getGravityModule().isEnabled() && Utils.fastRandomDouble() < 0.01){
 			LivelyWorld.getInstance().getGravityModule().checkGravityOn(block);
 		}
-		if(LivelyWorld.getInstance().getVegetationModule().isEnabled()){
+		if(LivelyWorld.getInstance().getVegetationModule().isEnabled() && Utils.fastRandomDouble() < 0.01){
 			LivelyWorld.getInstance().getVegetationModule().onBlockUpdate(block, null);
 		}
 	}

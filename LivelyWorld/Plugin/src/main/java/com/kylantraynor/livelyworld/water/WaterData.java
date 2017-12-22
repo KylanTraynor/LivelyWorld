@@ -538,7 +538,7 @@ public class WaterData {
 		}
 	}
 
-	 void setLevelUnchecked(int value) {
+	 public void setLevelUnchecked(int value) {
 		 long newData = (getData() & (~maxLevel)) | ((long) value);
 		if(toWaterLevel(value) != toWaterLevel(getLevel())){
 			setDataUnchecked(newData);

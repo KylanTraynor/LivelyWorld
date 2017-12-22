@@ -1,5 +1,8 @@
 package com.kylantraynor.livelyworld;
 
+import java.time.Instant;
+import java.time.temporal.ChronoField;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -10,12 +13,24 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 
 import com.kylantraynor.livelyworld.hooks.HookManager;
-import com.kylantraynor.livelyworld.water.WaterChunk;
 import com.kylantraynor.livelyworld.water.WaterData;
 
 public class UpdateManager {
 	
+	private static Instant lastBlockUpdate = Instant.now();
+	private static long blockUpdatePeriod = 5L;
+
 	public static void processRandomChunkUpdate(World world){
+		
+		if (Instant.now().get(ChronoField.MILLI_OF_SECOND)
+				- lastBlockUpdate.get(ChronoField.MILLI_OF_SECOND) > (ChronoField.MILLI_OF_SECOND
+				.range().getMaximum() * (blockUpdatePeriod + 1) / 20.0)) {
+			lastBlockUpdate = Instant.now();
+			return;
+		} else {
+			lastBlockUpdate = Instant.now();
+		}
+		
 		Chunk[] chunksToUpdate = new Chunk[getOnlinePlayersInWorld(world)];
 		for(int i = 0; i < chunksToUpdate.length; i++){
 			chunksToUpdate[i] = world.getLoadedChunks()[Utils.fastRandomInt(world.getLoadedChunks().length)];

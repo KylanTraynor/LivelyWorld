@@ -2,6 +2,7 @@ package com.kylantraynor.livelyworld;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -11,6 +12,8 @@ import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import com.kylantraynor.livelyworld.api.AnimalsHelper;
 
@@ -369,5 +372,46 @@ public class Utils {
 			}
 		}
 		return false;
+	}
+	
+	public static String getLoreInfo(ItemStack is, String info){
+		ItemMeta m = is.getItemMeta();
+		if(m == null) return null;
+		List<String> lore = m.getLore();
+		if(lore == null) return null;
+		for(String s : lore){
+			if(s.startsWith(info + ": ")){
+				return s.substring(info.length() + 2);
+			}
+		}
+		return null;
+	}
+	
+	public static int keepBetween(int min, int value, int max){
+		if(value < min) return min;
+		if(value > max) return max;
+		return value;
+	}
+	
+	public static void setLoreInfo(ItemStack is, String info, String value){
+		ItemMeta m = is.getItemMeta();
+		if(m == null) return;
+		List<String> lore = m.getLore();
+		if(lore != null){
+			boolean updated = false;
+			for(int i = 0; i < lore.size(); i++){
+				if(lore.get(i).startsWith(info + ": ")){
+					lore.set(i, info + ": " + value);
+					updated = true;
+				}
+			}
+			if(!updated) lore.add(info+": " + value);
+		} else {
+			lore = new ArrayList<String>();
+			lore.add(info+": " + value);
+		}
+		m.setLore(lore);
+		is.setItemMeta(m);
+		return;
 	}
 }

@@ -17,6 +17,7 @@ import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
@@ -127,12 +128,18 @@ public class WaterListener implements Listener{
 		if(!LivelyWorld.getInstance().getWaterModule().isEnabled()) return;
 		Block b = event.getBlockClicked().getRelative(event.getBlockFace());
 		Chunk c = b.getChunk();
+		
+		ItemStack is = event.getPlayer().getInventory().getItemInMainHand();
+		String info = Utils.getLoreInfo(is, "Level");
+		
+		final int level = (int) (info != null ? Utils.keepBetween(0, Integer.parseInt(info), (int) WaterData.maxLevel) : WaterData.maxLevel);
+		
 		if(!c.getWorld().getName().equals("world")) return;
 		BukkitRunnable br = new BukkitRunnable(){
 			@Override
 			public void run() {
 				WaterChunk wc = WaterChunk.get(c.getWorld(), c.getX(), c.getZ());
-				wc.addWaterAt(Math.floorMod(b.getX(), 16), b.getY(), Math.floorMod(b.getZ(), 16), (int) WaterData.maxLevel);
+				wc.addWaterAt(Math.floorMod(b.getX(), 16), b.getY(), Math.floorMod(b.getZ(), 16), level);
 			}
 		};
 		br.runTaskAsynchronously(LivelyWorld.getInstance());
@@ -140,25 +147,20 @@ public class WaterListener implements Listener{
 	
 	@EventHandler(ignoreCancelled = true)
 	public void onPlayerBucketFill(PlayerBucketFillEvent event){
-		Block b = event.getBlockClicked();
-		Biome clickedBiome = b.getBiome();
-		switch(clickedBiome){
-		case OCEAN:
-			if(b.getY() > LivelyWorld.getInstance().getOceanY()) return;
-		case RIVER:
-			final Material m = event.getBlockClicked().getType();
-			final byte data = event.getBlockClicked().getData();
-			BukkitRunnable bk = new BukkitRunnable(){
-				@Override
-				public void run() {
-					event.getBlockClicked().setType(m);
-					event.getBlockClicked().setData(data);
-				}
-			};
-			bk.runTaskLater(LivelyWorld.getInstance(), 1);
-			return;
-		default:
-		}
+		if(!LivelyWorld.getInstance().getWaterModule().isEnabled()) return;
+		Block b = event.getBlockClicked().getRelative(event.getBlockFace());
+		Chunk c = b.getChunk();
+		if(!c.getWorld().getName().equals("world")) return;
+		BukkitRunnable br = new BukkitRunnable(){
+			@Override
+			public void run() {
+				WaterChunk wc = WaterChunk.get(c.getWorld(), c.getX(), c.getZ());
+				WaterData d = wc.getAt(Math.floorMod(b.getX(), 16), b.getY(), Math.floorMod(b.getZ(), 16));
+				Utils.setLoreInfo(event.getItemStack(), "Level", "" + d.getLevel());
+				d.setLevel(0);
+			}
+		};
+		br.runTaskAsynchronously(LivelyWorld.getInstance());
 	}
 	
 	@EventHandler(ignoreCancelled = true)

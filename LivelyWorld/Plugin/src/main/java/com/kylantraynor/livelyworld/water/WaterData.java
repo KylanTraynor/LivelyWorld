@@ -284,6 +284,8 @@ public class WaterData {
 		case LONG_GRASS: case DOUBLE_PLANT: case RED_ROSE: case YELLOW_FLOWER:
 		case LEAVES: case LEAVES_2:
 			return 30;
+		case ANVIL:
+			return 100;
 		case SAND: case GRAVEL: case SNOW: case SNOW_BLOCK:
 			return 200;
 		case DIRT: case GRASS_PATH: case GRASS: case SOIL: case CLAY:
@@ -464,6 +466,9 @@ public class WaterData {
 		for(int i = 0; i < 4; i++){
 			levels[i] = relatives[i].getLevel();
 			max[i] = relatives[i].getMaxQuantity();
+			if(max[i] < 254){
+				max[i] = (int) (max[i] * Utils.fastRandomDouble());
+			}
 		}
 		int[] diff;
 		int minDiff;

@@ -2,6 +2,7 @@ package com.kylantraynor.livelyworld.water;
 
 import java.util.Collection;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
@@ -29,6 +30,11 @@ public class WaterChunkUpdateRunnable extends BukkitRunnable {
 		this.updateType = type;
 	}
 	
+	public int getPCS(){
+		int pc = Bukkit.getOnlinePlayers().size();
+		return pc * pc;
+	}
+	
 	@Override
 	public void run() {
 		int level = 0;
@@ -36,7 +42,11 @@ public class WaterChunkUpdateRunnable extends BukkitRunnable {
 		if(updateType == UpdateType.LEVEL){
 			if(!chunk.getWorld().isChunkLoaded(chunk.getX(), chunk.getZ())) return;
 			if(!Utils.hasPlayerWithinChunk(chunk.getX(), chunk.getZ(), 10)) return;
-			if(!Utils.hasPlayerWithinChunk(chunk.getX(), chunk.getZ(), 2) && Utils.fastRandomDouble() > 0.01) return;
+			if(!Utils.hasPlayerWithinChunk(chunk.getX(), chunk.getZ(), 2) &&
+					Utils.fastRandomDouble() > (0.01 * 
+					(1.0 / (getPCS() + 1))
+					)
+			) return;
 			for(int y = 0; y < 256; y++){
 				for(int x = 0; x < 16; x++){
 					for(int z = 0; z < 16; z++){

@@ -273,14 +273,14 @@ public class WaterData {
 		switch (material){
 		case WATER: case STATIONARY_WATER: case AIR:
 			return 1;
-		case LADDER: case RAILS: case TORCH: case IRON_FENCE:
+		case LADDER: case RAILS: case TORCH: case IRON_FENCE: case WALL_SIGN: case SIGN_POST:
 		case WOOD_PLATE: case STONE_PLATE: case IRON_PLATE: case GOLD_PLATE:
 			return 2;
 		case TRAP_DOOR:
 		case WOODEN_DOOR: case WOOD_DOOR:
-		case SPRUCE_DOOR: case DARK_OAK_DOOR: case JUNGLE_DOOR: case BIRCH_DOOR:
-		case FENCE_GATE: case  SPRUCE_FENCE_GATE: case DARK_OAK_FENCE_GATE: case JUNGLE_FENCE_GATE: case BIRCH_FENCE_GATE:
-		case FENCE: case SPRUCE_FENCE: case DARK_OAK_FENCE: case JUNGLE_FENCE: case BIRCH_FENCE:
+		case ACACIA_DOOR: case SPRUCE_DOOR: case DARK_OAK_DOOR: case JUNGLE_DOOR: case BIRCH_DOOR:
+		case FENCE_GATE: case ACACIA_FENCE_GATE: case  SPRUCE_FENCE_GATE: case DARK_OAK_FENCE_GATE: case JUNGLE_FENCE_GATE: case BIRCH_FENCE_GATE:
+		case FENCE: case ACACIA_FENCE: case SPRUCE_FENCE: case DARK_OAK_FENCE: case JUNGLE_FENCE: case BIRCH_FENCE:
 			return 20;
 		case LONG_GRASS: case DOUBLE_PLANT: case RED_ROSE: case YELLOW_FLOWER:
 		case LEAVES: case LEAVES_2:
@@ -291,7 +291,7 @@ public class WaterData {
 			return 200;
 		case DIRT: case GRASS_PATH: case GRASS: case SOIL: case CLAY:
 			return 215;
-		case COBBLESTONE:
+		case COBBLESTONE: case COBBLE_WALL:
 			return 225;
 		default:
 			return 255;

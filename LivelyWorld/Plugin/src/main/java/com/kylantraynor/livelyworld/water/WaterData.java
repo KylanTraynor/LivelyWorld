@@ -274,6 +274,7 @@ public class WaterData {
 		case WATER: case STATIONARY_WATER: case AIR:
 			return 1;
 		case LADDER: case RAILS: case TORCH: case IRON_FENCE:
+		case WOOD_PLATE: case STONE_PLATE: case IRON_PLATE: case GOLD_PLATE:
 			return 2;
 		case TRAP_DOOR:
 		case WOODEN_DOOR: case WOOD_DOOR:

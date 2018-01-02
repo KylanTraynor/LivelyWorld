@@ -403,7 +403,11 @@ public class WaterData {
 		WaterData down = getRelative(BlockFace.DOWN);
 		if(down != null){
 			int level = getLevel();
-			int transfer = Math.min(down.getMaxQuantity() - down.getLevel(), level);
+			int max = down.getMaxQuantity();
+			if(max < 245){
+				max = (int) (max * Utils.fastRandomDouble());
+			}
+			int transfer = Math.min(max - down.getLevel(), level);
 			if (transfer < 0) transfer = 0;
 			setLevelUnchecked(level - transfer);
 			down.setLevelUnchecked(down.getLevel() + transfer);

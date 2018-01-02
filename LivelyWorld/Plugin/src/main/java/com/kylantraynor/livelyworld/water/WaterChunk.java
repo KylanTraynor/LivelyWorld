@@ -551,52 +551,55 @@ public class WaterChunk {
 	
 	void tickAll(){
 		
-		if(Utils.fastRandomDouble() > 1.0 / (distanceSquaredFromNearestPlayer() + 1)) return;
-		
 		if(!isLoaded()) return;
-		if(!wasGenerated){
-			this.saturate();
-			wasGenerated = true;
-		}
-		Biome biome = null;
-		SmallChunkData scd = WaterChunkThread.getChunkData(this);
-		if(scd != null){
-			synchronized(this.data){
-				for(int x = 0; x < 16; x++){
-					for(int z = 0; z < 16; z++){
-						biome = scd.getBiome(x, z);
-						if(biome != null){
-							if((Utils.isOcean(biome) || biome == Biome.RIVER)){
-								int y = 48;
-								WaterData current = getAt(x,y,z);
-								while(y > 0 && Utils.isWater(current.getBlock())){
-									current.setLevelUnchecked((int) WaterData.maxLevel - 1);
-									current = getAt(x,--y,z);
+
+		if(Utils.fastRandomDouble() < 1.0 / (distanceSquaredFromNearestPlayer() + 1)){
+		
+			if(!wasGenerated){
+				this.saturate();
+				wasGenerated = true;
+			}
+			Biome biome = null;
+			SmallChunkData scd = WaterChunkThread.getChunkData(this);
+			if(scd != null){
+				synchronized(this.data){
+					for(int x = 0; x < 16; x++){
+						for(int z = 0; z < 16; z++){
+							biome = scd.getBiome(x, z);
+							if(biome != null){
+								if((Utils.isOcean(biome) || biome == Biome.RIVER)){
+									int y = 48;
+									WaterData current = getAt(x,y,z);
+									while(y > 0 && Utils.isWater(current.getBlock())){
+										current.setLevelUnchecked((int) WaterData.maxLevel - 1);
+										current = getAt(x,--y,z);
+									}
 								}
 							}
 						}
 					}
 				}
 			}
-		}
-		synchronized(this.data){
-			for(int y = 1; y < 256; y++){
-				for(int x = 0; x < 16; x++){
-					for(int z = 0; z < 16; z++){
-						if(WaterData.getWaterLevelAt(this,x,y,z) > 0){
-							getAt(x, y, z).moveWaterDown();
+			synchronized(this.data){
+				for(int y = 1; y < 256; y++){
+					for(int x = 0; x < 16; x++){
+						for(int z = 0; z < 16; z++){
+							if(WaterData.getWaterLevelAt(this,x,y,z) > 0){
+								getAt(x, y, z).moveWaterDown();
+							}
 						}
 					}
-				}
-				for(int x = 0; x < 16; x++){
-					for(int z = 0; z < 16; z++){
-						if(WaterData.getWaterLevelAt(this, x, y, z) > 1){
-							getAt(x,y,z).moveWaterHorizontally(false);
+					for(int x = 0; x < 16; x++){
+						for(int z = 0; z < 16; z++){
+							if(WaterData.getWaterLevelAt(this, x, y, z) > 1){
+								getAt(x,y,z).moveWaterHorizontally(false);
+							}
 						}
 					}
 				}
 			}
 		}
+		
 		if(LivelyWorld.getInstance().getWaterModule().isRealisticSimulation()){
 			if(needsUpdate()) updateVisually(true);
 		}

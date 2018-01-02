@@ -617,6 +617,7 @@ public class WaterChunk {
 	public void updateVisually(final boolean fullUpdate){
 		if(!LivelyWorld.getInstance().isEnabled()) return;
 		if(!isLoaded()) return;
+		if(Utils.hasHighLag()) return;
 		needsUpdate = false;
 		BukkitRunnable br = new WaterChunkUpdateRunnable(this, UpdateType.LEVEL);
 		br.runTask(LivelyWorld.getInstance());

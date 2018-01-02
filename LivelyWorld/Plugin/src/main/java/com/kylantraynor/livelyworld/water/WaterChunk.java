@@ -4,6 +4,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.zip.DeflaterOutputStream;
@@ -196,10 +198,12 @@ public class WaterChunk {
 	public static void unloadAll(){
 		if(disabled) return;
 		disabled = true;
-		while(!chunks.isEmpty()){
-			WaterChunk c = chunks.get(0);
+		ChunkCoordinates[] keys = chunks.keySet().toArray(new ChunkCoordinates[chunks.size()]);
+		for(ChunkCoordinates cc : keys){
+			WaterChunk c = chunks.get(cc);
+			if(c == null) continue;
 			c.unload();
-			chunks.remove(0);
+			chunks.remove(cc);
 			LivelyWorld.getInstance().getLogger().info("" + chunks.size() + " remaining.");
 		}
 	}

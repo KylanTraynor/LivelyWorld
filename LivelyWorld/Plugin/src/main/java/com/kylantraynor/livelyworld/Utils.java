@@ -23,6 +23,7 @@ public class Utils {
 	private static long rand = System.currentTimeMillis();
 	private static int[] xor128 = {123456789,362436069,521288629,88675123};
 	private static int t;
+	private static long tickLength;
 	
 	public static class ChunkCoordinates{
 		final private String world;
@@ -413,5 +414,20 @@ public class Utils {
 		m.setLore(lore);
 		is.setItemMeta(m);
 		return;
+	}
+	public static void setTickLength(long l) {
+		tickLength = l;
+	}
+	
+	public static int getTickLength(){
+		return (int) tickLength;
+	}
+	
+	public static boolean hasLag(){
+		return tickLength > 52;
+	}
+	
+	public static boolean hasHighLag(){
+		return tickLength > 55;
 	}
 }

@@ -552,8 +552,8 @@ public class WaterChunk {
 	void tickAll(){
 		
 		if(!isLoaded()) return;
-
-		if(Utils.fastRandomDouble() > 1.0 / Math.max(Math.sqrt(distanceSquaredFromNearestPlayer()), 1)) return;
+		double dist = Math.sqrt(distanceSquaredFromNearestPlayer());
+		if(Utils.fastRandomDouble() > 1.0 / Math.max(dist, 1)) return;
 		
 		if(!wasGenerated){
 			this.saturate();
@@ -600,7 +600,11 @@ public class WaterChunk {
 		}
 		
 		if(LivelyWorld.getInstance().getWaterModule().isRealisticSimulation()){
-			if(needsUpdate()) updateVisually(true);
+			if(needsUpdate()){
+				if(!(Utils.hasLag() && dist > 2)){
+					updateVisually(true);
+				}
+			}
 		}
 		if(Utils.fastRandomDouble() < 0.01){
 			if(!isLoaded()) return;

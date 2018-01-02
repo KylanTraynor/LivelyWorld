@@ -121,6 +121,8 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 
 	private long mainThreadId = Thread.currentThread().getId();
 
+	private BukkitRunnable lagChecker;
+
 	public void log(Level level, String message) {
 		getLogger().log(level, "[" + PLUGIN_NAME + "] " + message);
 	}
@@ -190,12 +192,25 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 		}
 
 		pm.registerEvents(this, this);
-		
+		startLagChecker();
 		startRandomBlockUpdater();
 		
 		startRandomChunkUpdater();
 	}
 	
+	private void startLagChecker() {
+		lagChecker = new BukkitRunnable(){
+			private long lastupdate = System.currentTimeMillis();
+			@Override
+			public void run() {
+				Utils.setTickLength(System.currentTimeMillis() - lastupdate);
+				lastupdate = System.currentTimeMillis();
+			}
+			
+		};
+		lagChecker.runTaskTimer(this, 1, 1);
+	}
+
 	private void startRandomBlockUpdater(){
 		randomBlockPicker = new BukkitRunnable() {
 
@@ -296,14 +311,9 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 	protected void updateBlock(Block b, Player p) {
 		if (!isInValidWorld(b.getLocation()))
 			return;
-		if (Instant.now().get(ChronoField.MILLI_OF_SECOND)
-				- lastBlockUpdate.get(ChronoField.MILLI_OF_SECOND) > (ChronoField.MILLI_OF_SECOND
-				.range().getMaximum() * (blockUpdatePeriod + 1) / 20.0)) {
-			lastBlockUpdate = Instant.now();
-			return;
-		} else {
-			lastBlockUpdate = Instant.now();
-		}
+		
+		if(Utils.hasLag()) return;
+		
 		if (usingClimate) {
 			climate.onBlockUpdate(b, p);
 		}
@@ -437,6 +447,7 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 			climate.disable();
 		}
 		tides.disable();
+		lagChecker = null;
 		randomBlockPicker = null;
 		saveConfig();
 	}

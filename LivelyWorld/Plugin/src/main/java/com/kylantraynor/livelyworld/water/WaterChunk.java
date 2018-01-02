@@ -541,7 +541,18 @@ public class WaterChunk {
 		this.isLoaded = b;
 	}
 	
+	private int distanceSquaredFromNearestPlayer(){
+		int result = 200;
+		for(int[] c : WaterChunkThread.getPlayerCoordinates(this.world)){
+			result = Math.min((c[0] - x) * (c[0] - x) + (c[1] - z) * (c[1] - z), result);
+		}
+		return result;
+	}
+	
 	void tickAll(){
+		
+		if(Utils.fastRandomDouble() > 1.0 / (distanceSquaredFromNearestPlayer() + 1)) return;
+		
 		if(!isLoaded()) return;
 		if(!wasGenerated){
 			this.saturate();

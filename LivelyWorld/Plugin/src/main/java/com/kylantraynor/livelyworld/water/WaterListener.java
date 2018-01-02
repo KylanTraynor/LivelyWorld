@@ -14,6 +14,9 @@ import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
@@ -121,6 +124,23 @@ public class WaterListener implements Listener{
 			}
 		default:
 		}*/
+	}
+	
+	@EventHandler
+	public void onPlayerMove(PlayerMoveEvent event){
+		if(event.getFrom().getChunk() != event.getTo().getChunk()){
+			LivelyWorld.getInstance().getWaterModule().getWaterThread().updateOnlinePlayer(event.getPlayer());
+		}
+	}
+	
+	@EventHandler
+	public void onPlayerJoin(PlayerJoinEvent event){
+		LivelyWorld.getInstance().getWaterModule().getWaterThread().updateOnlinePlayer(event.getPlayer());
+	}
+	
+	@EventHandler
+	public void onPlayerQuit(PlayerQuitEvent event){
+		LivelyWorld.getInstance().getWaterModule().getWaterThread().removeOnlinePlayer(event.getPlayer());
 	}
 	
 	@EventHandler(ignoreCancelled = true)

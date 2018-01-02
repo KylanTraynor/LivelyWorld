@@ -1,6 +1,7 @@
 package com.kylantraynor.livelyworld.water;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +12,7 @@ import org.bukkit.Chunk;
 import org.bukkit.ChunkSnapshot;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
+import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import com.kylantraynor.livelyworld.LivelyWorld;
@@ -22,6 +24,7 @@ import com.kylantraynor.livelyworld.Utils.SmallChunkData;
 public class WaterChunkThread extends Thread {
 	
 	private String name = "WaterChunk Thread";
+	final public static Map<String, Map<String, int[]>> playerCoordinates = new ConcurrentHashMap<String, Map<String, int[]>>();
 	final public static Map<String, Map<ChunkCoordinates,SmallChunkData>> loadedChunks = new ConcurrentHashMap<String, Map<ChunkCoordinates, SmallChunkData>>();
 	final static Enclosed<Chunk[]> chunksFetcher = new Enclosed<Chunk[]>();
 	//final static PrioritizedLock mainLocker = new PrioritizedLock(LivelyWorld.getInstance().getMainThreadId());
@@ -251,20 +254,44 @@ public class WaterChunkThread extends Thread {
 	}
 	
 	public void removeLoadedChunk(Chunk c) {
-		/*try {
-			mainLocker.lock();*/
-			Map<ChunkCoordinates, SmallChunkData> cs = loadedChunks.get(c.getWorld().getName());
-			if(cs == null){
-				return;
-			} else {
-				cs.remove(new ChunkCoordinates(c.getWorld(), c.getX(), c.getZ()));
-			}
-		/*} catch (InterruptedException e) {
-			e.printStackTrace();
-		} finally {
-			mainLocker.unlock();
+		Map<ChunkCoordinates, SmallChunkData> cs = loadedChunks.get(c.getWorld().getName());
+		if(cs == null){
+			return;
+		} else {
+			cs.remove(new ChunkCoordinates(c.getWorld(), c.getX(), c.getZ()));
 		}
-		*/
 	}
 	
+	public void removeOnlinePlayer(Player p) {
+		Map<String, int[]> cs = playerCoordinates.get(p.getWorld().getName());
+		if(cs == null){
+			return;
+		} else {
+			cs.remove(p.getUniqueId().toString());
+		}
+	}
+	
+	public void updateOnlinePlayer(Player p) {
+		Map<String, int[]> cs = playerCoordinates.get(p.getWorld().getName());
+		if(cs == null){
+			cs = new ConcurrentHashMap<String, int[]>();
+			cs.put(p.getUniqueId().toString(), new int[] {p.getLocation().getChunk().getX(), p.getLocation().getChunk().getZ()});
+			playerCoordinates.put(p.getWorld().getName(), cs);
+		} else {
+			cs.put(p.getUniqueId().toString(), new int[] {p.getLocation().getChunk().getX(), p.getLocation().getChunk().getZ()});
+		}
+	}
+	
+	public static List<int[]> getPlayerCoordinates(World w){
+		Map<String, int[]> cs = playerCoordinates.get(w.getName());
+		if(cs == null){
+			return null;
+		} else {
+			List<int[]> result = new ArrayList<int[]>();
+			for(int[] coords : cs.values()){
+				result.add(coords);
+			}
+			return result;
+		}
+	}
 }

@@ -553,7 +553,7 @@ public class WaterChunk {
 		
 		if(!isLoaded()) return;
 
-		if(Utils.fastRandomDouble() > 1.0 / (distanceSquaredFromNearestPlayer() + 1)) return;
+		if(Utils.fastRandomDouble() > 1.0 / Math.max(distanceSquaredFromNearestPlayer(), 1)) return;
 		
 		if(!wasGenerated){
 			this.saturate();

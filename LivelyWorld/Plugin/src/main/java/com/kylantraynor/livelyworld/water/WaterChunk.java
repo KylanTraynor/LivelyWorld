@@ -613,12 +613,12 @@ public class WaterChunk {
 		if(LivelyWorld.getInstance().getWaterModule().isRealisticSimulation()){
 			if(needsUpdate()){
 				if(!(Utils.hasLag() && dist > 2)){
-					if(dist > 10) return;
-					if(!(dist < 2) && Utils.fastRandomDouble() > (0.01 * 
+					if(dist < 10){
+						if((dist < 2) || Utils.fastRandomDouble() > (0.01 * 
 							(1.0 / (getPlayerCountSquared() + 1))
 							)
-					) return;
-					updateVisuallyCheckLag();
+						) updateVisuallyCheckLag();
+					}
 				}
 			}
 		}

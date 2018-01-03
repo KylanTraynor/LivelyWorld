@@ -28,7 +28,7 @@ public class WaterData {
 	private static int outStrengthCode = 12;*/
 	private static long maxSalt = 0xfL;
 	private static int saltCode = 24; // 15 (4 bits) 0000 1111 0000 0000 0000 0000 0000 0000
-	private static int stableCode = 31; // 1 (1 bit) 1000 0000 0000 0000 0000 0000 0000 0000 
+	private static int updateCode = 31; // 1 (1 bit) 1000 0000 0000 0000 0000 0000 0000 0000 
 	private static int heatCode = 30; //   1 (1 bit) 0100 0000 0000 0000 0000 0000 0000 0000
 	
 	public WaterData(WaterChunk chunk, int x, int y, int z){
@@ -128,6 +128,7 @@ public class WaterData {
 		if(toWaterLevel(value) != toWaterLevel(getLevel()) && getResistance() <= 1){
 			setData(newData);
 			chunk.setNeedsUpsate(true);
+			setUpdate(true);
 		} else {
 			setData(newData);
 		}
@@ -200,13 +201,13 @@ public class WaterData {
 		setData((getData() & (~(maxSalt << saltCode))) | ((long) value) << saltCode);
 	}
 	
-	public boolean isStable(){
-		return (getData() & (1 << stableCode)) >>> stableCode == 1;
+	public boolean needsUpdate(){
+		return (getData() & (1 << updateCode)) >>> updateCode == 1;
 	}
 	
 	
-	public void setStable(boolean value){
-		setData((getData() & (~(1L << stableCode))) | ((value ? 1L : 0L) << stableCode));
+	public void setUpdate(boolean value){
+		setData((getData() & (~(1L << updateCode))) | ((value ? 1L : 0L) << updateCode));
 	}
 	
 	public boolean isHeatSource(){

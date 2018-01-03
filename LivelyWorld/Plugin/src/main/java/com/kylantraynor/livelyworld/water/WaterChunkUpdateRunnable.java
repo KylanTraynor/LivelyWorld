@@ -24,10 +24,12 @@ public class WaterChunkUpdateRunnable extends BukkitRunnable {
 	
 	private final WaterChunk chunk;
 	private final UpdateType updateType;
+	private byte[][][] levels;
 	
-	public WaterChunkUpdateRunnable(WaterChunk chunk, UpdateType type){
+	public WaterChunkUpdateRunnable(WaterChunk chunk, UpdateType type, byte[][][] level){
 		this.chunk = chunk;
 		this.updateType = type;
+		this.levels = level;
 	}
 	
 	public int getPCS(){
@@ -50,7 +52,7 @@ public class WaterChunkUpdateRunnable extends BukkitRunnable {
 			for(int y = 0; y < 256; y++){
 				for(int x = 0; x < 16; x++){
 					for(int z = 0; z < 16; z++){
-						level = WaterData.getWaterLevelAt(chunk, x, y, z);
+						level = Utils.toUnsignedInt(levels[x][y][z]);
 						currentBlock = chunk.getWorld().getChunkAt(chunk.getX(), chunk.getZ()).getBlock(x, y, z);
 						if(canReplace(currentBlock.getType())){
 							if(WaterData.toWaterLevel(level) != Utils.getWaterHeight(currentBlock)){

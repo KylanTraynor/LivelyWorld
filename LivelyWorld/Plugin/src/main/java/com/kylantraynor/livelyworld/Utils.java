@@ -430,4 +430,8 @@ public class Utils {
 	public static boolean hasHighLag(){
 		return tickLength > 55;
 	}
+	
+	public static int toUnsignedInt(byte b){
+		return ((int)b) & 0xFF;
+	}
 }

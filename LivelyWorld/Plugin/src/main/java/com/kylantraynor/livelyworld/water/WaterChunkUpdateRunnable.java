@@ -47,7 +47,7 @@ public class WaterChunkUpdateRunnable extends BukkitRunnable {
 				for(int x = 0; x < 16; x++){
 					for(int z = 0; z < 16; z++){
 						wd = chunk.getAt(x, y, z);
-						if(!wd.needsUpdate()) continue;
+						//if(!wd.needsUpdate()) continue;
 						level = wd.getLevel();
 						currentBlock = chunk.getWorld().getChunkAt(chunk.getX(), chunk.getZ()).getBlock(x, y, z);
 						if(canReplace(currentBlock.getType())){

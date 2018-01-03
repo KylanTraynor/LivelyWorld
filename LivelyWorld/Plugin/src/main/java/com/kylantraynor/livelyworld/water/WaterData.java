@@ -128,7 +128,6 @@ public class WaterData {
 		if(toWaterLevel(value) != toWaterLevel(getLevel()) && getResistance() <= 1){
 			setData(newData);
 			chunk.setNeedsUpsate(true);
-			setUpdate(true);
 		} else {
 			setData(newData);
 		}

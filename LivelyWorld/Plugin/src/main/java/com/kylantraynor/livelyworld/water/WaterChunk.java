@@ -591,12 +591,10 @@ public class WaterChunk {
 				}
 			}
 		}
-		byte[][][] level = new byte[16][256][16];
 		synchronized(this.data){
 			for(int y = 1; y < 256; y++){
 				for(int x = 0; x < 16; x++){
 					for(int z = 0; z < 16; z++){
-						getAt(x, y, z).setUpdate(false);
 						if(WaterData.getWaterLevelAt(this,x,y,z) > 0){
 							getAt(x, y, z).moveWaterDown();
 						}

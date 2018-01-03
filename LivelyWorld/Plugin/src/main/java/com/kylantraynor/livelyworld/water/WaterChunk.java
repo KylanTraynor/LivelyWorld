@@ -608,15 +608,7 @@ public class WaterChunk {
 		if(LivelyWorld.getInstance().getWaterModule().isRealisticSimulation()){
 			if(needsUpdate()){
 				if(!(Utils.hasLag() && dist > 2)){
-					byte[][][] level = new byte[16][256][16];
-					for(int x = 0; x < 16; x++){
-						for(int y = 0; y < 256; y++){
-							for(int z = 0; z < 16; z++){
-								level[x][y][z] = (byte) WaterData.getWaterLevelAt(this, x, y, z);
-							}
-						}
-					}
-					updateVisually(level);
+					updateVisuallyCheckLag();
 				}
 			}
 		}
@@ -628,10 +620,22 @@ public class WaterChunk {
 	}
 	
 	
-	public void updateVisually(final byte[][][] level){
+	public void updateVisuallyCheckLag(){
+		if(Utils.hasHighLag()) return;
+		updateVisually();
+	}
+	
+	public void updateVisually(){
 		if(!LivelyWorld.getInstance().isEnabled()) return;
 		if(!isLoaded()) return;
-		if(Utils.hasHighLag()) return;
+		byte[][][] level = new byte[16][256][16];
+		for(int x = 0; x < 16; x++){
+			for(int y = 0; y < 256; y++){
+				for(int z = 0; z < 16; z++){
+					level[x][y][z] = (byte) WaterData.getWaterLevelAt(this, x, y, z);
+				}
+			}
+		}
 		needsUpdate = false;
 		BukkitRunnable br = new WaterChunkUpdateRunnable(this, UpdateType.LEVEL, level);
 		br.runTask(LivelyWorld.getInstance());

@@ -520,7 +520,7 @@ public class TidesModule {
 				sender.sendMessage("Updating chunk.");
 				Player player1 = (Player) sender;
 				Chunk c1 = player1.getLocation().getChunk();
-				WaterChunk.get(c1.getWorld(), c1.getX(), c1.getZ()).updateVisually();
+				WaterChunk.get(c1.getWorld(), c1.getX(), c1.getZ()).updateVisually(null);
 				break;
 			case "GET":
 				if(args.length >= 3){

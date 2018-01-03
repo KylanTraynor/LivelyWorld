@@ -586,6 +586,7 @@ public class WaterChunk {
 				}
 			}
 		}
+		byte[][][] level = new byte[16][256][16];
 		synchronized(this.data){
 			for(int y = 1; y < 256; y++){
 				for(int x = 0; x < 16; x++){
@@ -603,12 +604,20 @@ public class WaterChunk {
 					}
 				}
 			}
+			
+			for(int x = 0; x < 16; x++){
+				for(int y = 0; y < 256; y++){
+					for(int z = 0; z < 16; z++){
+						level[x][y][z] = (byte) WaterData.getWaterLevelAt(this, x, y, z);
+					}
+				}
+			}
 		}
 		
 		if(LivelyWorld.getInstance().getWaterModule().isRealisticSimulation()){
 			if(needsUpdate()){
 				if(!(Utils.hasLag() && dist > 2)){
-					updateVisuallyCheckLag();
+					updateVisuallyCheckLag(level);
 				}
 			}
 		}
@@ -620,19 +629,21 @@ public class WaterChunk {
 	}
 	
 	
-	public void updateVisuallyCheckLag(){
+	public void updateVisuallyCheckLag(byte[][][] level){
 		if(Utils.hasHighLag()) return;
-		updateVisually();
+		updateVisually(level);
 	}
 	
-	public void updateVisually(){
+	public void updateVisually(byte[][][] level){
 		if(!LivelyWorld.getInstance().isEnabled()) return;
 		if(!isLoaded()) return;
-		byte[][][] level = new byte[16][256][16];
-		for(int x = 0; x < 16; x++){
-			for(int y = 0; y < 256; y++){
-				for(int z = 0; z < 16; z++){
-					level[x][y][z] = (byte) WaterData.getWaterLevelAt(this, x, y, z);
+		if(level == null){
+			level = new byte[16][256][16];
+			for(int x = 0; x < 16; x++){
+				for(int y = 0; y < 256; y++){
+					for(int z = 0; z < 16; z++){
+						level[x][y][z] = (byte) WaterData.getWaterLevelAt(this, x, y, z);
+					}
 				}
 			}
 		}

@@ -28,6 +28,8 @@ public class WaterChunk {
 	final static int currentVersion = 1;
 	static boolean disabled = false;
 	
+	double tickRandom = Utils.fastRandomDouble();
+	
 	final byte[] data = new byte[16 * 16 * 256 * 4];
 	private boolean isLoaded = false;
 	private final int x;
@@ -558,7 +560,7 @@ public class WaterChunk {
 		if(!isLoaded()) return;
 		double dist = Math.sqrt(distanceSquaredFromNearestPlayer());
 		if(Utils.fastRandomDouble() > 1.0 / Math.max(dist, 1)) return;
-		
+		tickRandom = Utils.fastRandomDouble();
 		if(!wasGenerated){
 			this.saturate();
 			wasGenerated = true;

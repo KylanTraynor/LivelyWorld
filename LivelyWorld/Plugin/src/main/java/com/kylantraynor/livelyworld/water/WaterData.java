@@ -405,7 +405,7 @@ public class WaterData {
 			int level = getLevel();
 			int max = down.getMaxQuantity();
 			if(max < 245){
-				max = (int) (max * Utils.fastRandomDouble());
+				max = (int) (max * chunk.tickRandom);
 			}
 			int transfer = Math.min(max - down.getLevel(), level);
 			if (transfer < 0) transfer = 0;
@@ -472,7 +472,7 @@ public class WaterData {
 			levels[i] = relatives[i].getLevel();
 			max[i] = relatives[i].getMaxQuantity();
 			if(max[i] < 245){
-				max[i] = (int) (max[i] * Utils.fastRandomDouble());
+				max[i] = (int) (max[i] * chunk.tickRandom);
 			}
 		}
 		int[] diff;

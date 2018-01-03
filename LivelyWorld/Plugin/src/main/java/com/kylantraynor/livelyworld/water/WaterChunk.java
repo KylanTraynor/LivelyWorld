@@ -38,6 +38,7 @@ public class WaterChunk {
 	private boolean needsUpdate = false;
 	private boolean wasGenerated = false;
 	private static Utils.Lock fileLock = new Utils.Lock();
+	private long lastUpdate = System.currentTimeMillis();
 	
 	public WaterChunk(World w, int x, int z){
 		this.world = w;
@@ -631,6 +632,10 @@ public class WaterChunk {
 	
 	
 	public void updateVisuallyCheckLag(){
+		if(System.currentTimeMillis() - lastUpdate < 1000){
+			return;
+		}
+		lastUpdate = System.currentTimeMillis();
 		if(Utils.hasHighLag()) return;
 		updateVisually();
 	}

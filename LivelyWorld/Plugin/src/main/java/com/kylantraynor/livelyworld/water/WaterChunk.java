@@ -555,6 +555,10 @@ public class WaterChunk {
 		return result;
 	}
 	
+	private double getPlayerCountSquared(){
+		return Math.pow(WaterChunkThread.getPlayerCoordinates(this.world).size(), 2);
+	}
+	
 	void tickAll(){
 		
 		if(!isLoaded()) return;
@@ -604,20 +608,17 @@ public class WaterChunk {
 					}
 				}
 			}
-			
-			for(int x = 0; x < 16; x++){
-				for(int y = 0; y < 256; y++){
-					for(int z = 0; z < 16; z++){
-						level[x][y][z] = (byte) WaterData.getWaterLevelAt(this, x, y, z);
-					}
-				}
-			}
 		}
 		
 		if(LivelyWorld.getInstance().getWaterModule().isRealisticSimulation()){
 			if(needsUpdate()){
 				if(!(Utils.hasLag() && dist > 2)){
-					updateVisuallyCheckLag(level);
+					if(dist > 10) return;
+					if(!(dist < 2) && Utils.fastRandomDouble() > (0.01 * 
+							(1.0 / (getPlayerCountSquared() + 1))
+							)
+					) return;
+					updateVisuallyCheckLag();
 				}
 			}
 		}
@@ -629,26 +630,16 @@ public class WaterChunk {
 	}
 	
 	
-	public void updateVisuallyCheckLag(byte[][][] level){
+	public void updateVisuallyCheckLag(){
 		if(Utils.hasHighLag()) return;
-		updateVisually(level);
+		updateVisually();
 	}
 	
-	public void updateVisually(byte[][][] level){
+	public void updateVisually(){
 		if(!LivelyWorld.getInstance().isEnabled()) return;
 		if(!isLoaded()) return;
-		if(level == null){
-			level = new byte[16][256][16];
-			for(int x = 0; x < 16; x++){
-				for(int y = 0; y < 256; y++){
-					for(int z = 0; z < 16; z++){
-						level[x][y][z] = (byte) WaterData.getWaterLevelAt(this, x, y, z);
-					}
-				}
-			}
-		}
 		needsUpdate = false;
-		BukkitRunnable br = new WaterChunkUpdateRunnable(this, UpdateType.LEVEL, level);
+		BukkitRunnable br = new WaterChunkUpdateRunnable(this, UpdateType.LEVEL);
 		br.runTask(LivelyWorld.getInstance());
 	}
 	

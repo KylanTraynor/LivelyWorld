@@ -24,12 +24,10 @@ public class WaterChunkUpdateRunnable extends BukkitRunnable {
 	
 	private final WaterChunk chunk;
 	private final UpdateType updateType;
-	private byte[][][] levels;
 	
-	public WaterChunkUpdateRunnable(WaterChunk chunk, UpdateType type, byte[][][] level){
+	public WaterChunkUpdateRunnable(WaterChunk chunk, UpdateType type){
 		this.chunk = chunk;
 		this.updateType = type;
-		this.levels = level;
 	}
 	
 	public int getPCS(){
@@ -43,16 +41,10 @@ public class WaterChunkUpdateRunnable extends BukkitRunnable {
 		Block currentBlock = null;
 		if(updateType == UpdateType.LEVEL){
 			if(!chunk.getWorld().isChunkLoaded(chunk.getX(), chunk.getZ())) return;
-			if(!Utils.hasPlayerWithinChunk(chunk.getX(), chunk.getZ(), 10)) return;
-			if(!Utils.hasPlayerWithinChunk(chunk.getX(), chunk.getZ(), 2) &&
-					Utils.fastRandomDouble() > (0.01 * 
-					(1.0 / (getPCS() + 1))
-					)
-			) return;
 			for(int y = 0; y < 256; y++){
 				for(int x = 0; x < 16; x++){
 					for(int z = 0; z < 16; z++){
-						level = Utils.toUnsignedInt(levels[x][y][z]);
+						level = WaterData.getWaterLevelAt(chunk, x, y, z);
 						currentBlock = chunk.getWorld().getChunkAt(chunk.getX(), chunk.getZ()).getBlock(x, y, z);
 						if(canReplace(currentBlock.getType())){
 							if(WaterData.toWaterLevel(level) != Utils.getWaterHeight(currentBlock)){

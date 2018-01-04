@@ -3,6 +3,7 @@ package com.kylantraynor.livelyworld.water;
 import java.util.Collection;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
@@ -38,19 +39,20 @@ public class WaterChunkUpdateRunnable extends BukkitRunnable {
 	
 	@Override
 	public void run() {
+		if(!chunk.getWorld().isChunkLoaded(chunk.getX(), chunk.getZ())) return;
+		Chunk c = chunk.getWorld().getChunkAt(chunk.getX(), chunk.getZ());
 		int level = 0;
 		int waterLevel = 0;
 		WaterData wd = null;
 		Block currentBlock = null;
 		if(updateType == UpdateType.LEVEL){
-			if(!chunk.getWorld().isChunkLoaded(chunk.getX(), chunk.getZ())) return;
 			for(int y = 0; y < 256; y++){
 				for(int x = 0; x < 16; x++){
 					for(int z = 0; z < 16; z++){
 						wd = chunk.getAt(x, y, z);
 						//if(!wd.needsUpdate()) continue;
 						level = wd.getLevel();
-						currentBlock = chunk.getWorld().getChunkAt(chunk.getX(), chunk.getZ()).getBlock(x, y, z);
+						currentBlock = c.getBlock(x, y, z);
 						if(canReplace(currentBlock.getType())){
 							waterLevel = WaterData.toWaterLevel(level);
 							if(waterLevel != Utils.getWaterHeight(currentBlock)){
@@ -64,11 +66,10 @@ public class WaterChunkUpdateRunnable extends BukkitRunnable {
 				}
 			}
 		} else if(updateType == UpdateType.RESISTANCE){
-			if(!chunk.getWorld().isChunkLoaded(chunk.getX(), chunk.getZ())) return;
 			for(int y = 0; y < 256; y++){
 				for(int x = 0; x < 16; x++){
 					for(int z = 0; z < 16; z++){
-						currentBlock = chunk.getWorld().getChunkAt(chunk.getX(), chunk.getZ()).getBlock(x, y, z);
+						currentBlock = c.getBlock(x, y, z);
 						final int res = WaterData.getResistanceFor(currentBlock.getType());
 						wd = chunk.getAt(x, y, z);
 						if(wd.getResistance() != res){

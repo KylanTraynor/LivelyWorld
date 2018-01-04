@@ -622,7 +622,7 @@ public class WaterChunk {
 				}
 			}
 		}
-		if(Utils.fastRandomDouble() < 0.01){
+		if(Utils.fastRandomDouble() < 0.001){
 			if(!isLoaded()) return;
 			if(dist < 10){
 				if((dist < 2) || Utils.fastRandomDouble() > (0.01 * 

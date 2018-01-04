@@ -624,8 +624,15 @@ public class WaterChunk {
 		}
 		if(Utils.fastRandomDouble() < 0.01){
 			if(!isLoaded()) return;
-			BukkitRunnable br = new WaterChunkUpdateRunnable(this, UpdateType.RESISTANCE);
-			br.runTask(LivelyWorld.getInstance());
+			if(dist < 10){
+				if((dist < 2) || Utils.fastRandomDouble() > (0.01 * 
+					(1.0 / (getPlayerCountSquared() + 1))
+					)
+				) {
+					BukkitRunnable br = new WaterChunkUpdateRunnable(this, UpdateType.RESISTANCE);
+					br.runTask(LivelyWorld.getInstance());
+				}
+			}
 		}
 	}
 	

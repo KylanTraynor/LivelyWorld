@@ -66,22 +66,15 @@ public class WaterChunkUpdateRunnable extends BukkitRunnable {
 				}
 			}
 		} else if(updateType == UpdateType.RESISTANCE){
+			int res = 0;
 			for(int y = 0; y < 256; y++){
 				for(int x = 0; x < 16; x++){
 					for(int z = 0; z < 16; z++){
 						currentBlock = c.getBlock(x, y, z);
-						final int res = WaterData.getResistanceFor(currentBlock.getType());
+						res = WaterData.getResistanceFor(currentBlock.getType());
 						wd = chunk.getAt(x, y, z);
 						if(wd.getResistance() != res){
-							final WaterData d = wd;
-							BukkitRunnable br = new BukkitRunnable(){
-
-								@Override
-								public void run() {
-									d.setResistance(res);
-								}
-								
-							};
+							BukkitRunnable br = new WaterResistanceUpdate(wd, res);
 							br.runTaskAsynchronously(LivelyWorld.getInstance());
 						}
 					}

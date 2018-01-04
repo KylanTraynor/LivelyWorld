@@ -8,6 +8,7 @@ import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import com.kylantraynor.livelyworld.LivelyWorld;
 import com.kylantraynor.livelyworld.Utils;
 
 /**
@@ -68,7 +69,20 @@ public class WaterChunkUpdateRunnable extends BukkitRunnable {
 				for(int x = 0; x < 16; x++){
 					for(int z = 0; z < 16; z++){
 						currentBlock = chunk.getWorld().getChunkAt(chunk.getX(), chunk.getZ()).getBlock(x, y, z);
-						WaterData.setResistanceAt(chunk, x, y, z, WaterData.getResistanceFor(currentBlock.getType()));
+						final int res = WaterData.getResistanceFor(currentBlock.getType());
+						wd = chunk.getAt(x, y, z);
+						if(wd.getResistance() != res){
+							final WaterData d = wd;
+							BukkitRunnable br = new BukkitRunnable(){
+
+								@Override
+								public void run() {
+									d.setResistance(res);
+								}
+								
+							};
+							br.runTaskAsynchronously(LivelyWorld.getInstance());
+						}
 					}
 				}
 			}

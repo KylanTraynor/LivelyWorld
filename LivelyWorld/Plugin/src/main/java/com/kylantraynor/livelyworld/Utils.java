@@ -8,14 +8,17 @@ import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import com.kylantraynor.livelyworld.api.AnimalsHelper;
+import com.kylantraynor.livelyworld.climate.ClimateUtils;
 
 public class Utils {
 	
@@ -433,5 +436,38 @@ public class Utils {
 	
 	public static int toUnsignedInt(byte b){
 		return ((int)b) & 0xFF;
+	}
+	
+	public static Block getHighestSnowBlockAround(Block b, int range) {
+		Block result = b;
+		for(int x = b.getX() - range; x <= b.getX() + range; x++){
+			for(int z = b.getZ() - range; z <= b.getZ() + range; z++){
+				Block block = b.getWorld().getBlockAt(x, b.getY(), z);
+				switch(block.getType()){
+				case SNOW_BLOCK:
+				case SNOW:
+					if(block.getType() == Material.SNOW_BLOCK){
+						while(ClimateUtils.isSnow(block.getRelative(BlockFace.UP))){
+							block = block.getRelative(BlockFace.UP);
+						}
+					}
+					if(ClimateUtils.getSnowLayers(block) > ClimateUtils.getSnowLayers(result) || block.getY() > result.getY()){
+						result = block;
+					}
+					break;
+				default:
+					
+				}
+			}
+		}
+		return result;
+	}
+	
+	public static void spawnLightning(Block b) {
+		Location loc = b.getLocation();
+		b.getLocation().getWorld().spigot().strikeLightning(loc, true);
+		b.getWorld().playSound(loc, Sound.ENTITY_LIGHTNING_IMPACT, 20, 1);
+		loc.setY(255);
+		b.getWorld().playSound(loc, Sound.ENTITY_LIGHTNING_THUNDER, 300, 1);
 	}
 }

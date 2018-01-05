@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.zip.DeflaterOutputStream;
@@ -557,7 +558,9 @@ public class WaterChunk {
 	}
 	
 	private double getPlayerCountSquared(){
-		return Math.pow(WaterChunkThread.getPlayerCoordinates(this.world).size(), 2);
+		List<int[]> coords = WaterChunkThread.getPlayerCoordinates(this.world);
+		if(coords == null) return 0;
+		return coords.size() * coords.size();
 	}
 	
 	void tickAll(){

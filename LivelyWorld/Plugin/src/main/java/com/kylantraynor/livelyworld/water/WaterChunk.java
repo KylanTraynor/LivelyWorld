@@ -551,7 +551,9 @@ public class WaterChunk {
 	
 	private int distanceSquaredFromNearestPlayer(){
 		int result = 200;
-		for(int[] c : WaterChunkThread.getPlayerCoordinates(this.world)){
+		List<int[]> coords = WaterChunkThread.getPlayerCoordinates(this.world);
+		if(coords == null) return 200;
+		for(int[] c : coords){
 			result = Math.min((c[0] - x) * (c[0] - x) + (c[1] - z) * (c[1] - z), result);
 		}
 		return result;

@@ -262,6 +262,10 @@ public class WaterData {
 		return (int) (maxLevel - getResistanceFor(material));
 	}
 	
+	public static int getMaxSaltFor(int level){
+		return (int) Math.max((int) maxSalt * ((double) level / ((int) maxLevel)), 1);
+	}
+	
 	public static int getResistanceFor(Material material){
 		/*if(material == null){
 			if(!chunk.isLoaded() || !WaterChunkThread.isChunkLoaded(chunk.getWorld(), chunk.getX(), chunk.getZ()))

@@ -390,9 +390,13 @@ public class WaterData {
 				if(!chunk.isLoaded() || !chunk.getWorld().isChunkLoaded(chunk.getX(), chunk.getZ()))
 					return;
 				Block b = getBlock();
-				if(getResistance() == 1 && b.getRelative(BlockFace.DOWN).getType() != Material.AIR && (b.getY() > 48 && !Utils.isOcean(chunk.getWorld().getBiome(getX(), getZ())))){
-					if(Utils.getWaterHeight(b) != toWaterLevel(getLevel())){
-						Utils.setWaterHeight(b, toWaterLevel(getLevel()), true);
+				if(canReplace(b.getType())){
+					int waterLevel = WaterData.toWaterLevel(getLevel());
+					if(waterLevel != Utils.getWaterHeight(b)){
+						if(waterLevel > 0 && isDropable(b.getType())){
+							b.breakNaturally();
+						}
+						Utils.setWaterHeight(b, waterLevel, true);
 					}
 				} else if(b.getRelative(BlockFace.DOWN).getType() == Material.AIR && b.getType() != Material.AIR && getLevel() > 0) {
 					chunk.getWorld().spawnParticle(Particle.DRIP_WATER, b.getX() + Math.random(), b.getY() - 0.01, b.getZ() + Math.random(), 1);
@@ -404,6 +408,25 @@ public class WaterData {
 		br.runTask(LivelyWorld.getInstance());
 	}
 
+	public static boolean canReplace(Material mat){
+		if(mat == Material.WATER) return true;
+		if(mat == Material.STATIONARY_WATER) return true;
+		if(mat == Material.AIR) return true;
+		if(mat == Material.LONG_GRASS) return true;
+		if(mat == Material.VINE) return true;
+		if(mat == Material.TORCH) return true;
+		if(mat == Material.SNOW) return true;
+		if(mat == Material.SNOW_BLOCK) return true;
+		return false;
+	}
+	
+	public static boolean isDropable(Material mat){
+		if(mat == Material.VINE) return true;
+		if(mat == Material.TORCH) return true;
+		if(mat == Material.LONG_GRASS) return true;
+		return false;
+	}
+	
 	public void moveWaterDown() {
 		WaterData down = getRelative(BlockFace.DOWN);
 		if(down != null){

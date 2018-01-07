@@ -193,6 +193,8 @@ public class WaterListener implements Listener{
 				Block b = event.getBlock();
 				WaterData wd = new WaterData(b.getWorld(), b.getX(), b.getY(), b.getZ());
 				wd.updateResistance();
+				
+				wd.sendChangedEvent();
 				wd.getRelative(BlockFace.DOWN).sendChangedEvent();
 				wd.getRelative(BlockFace.UP).sendChangedEvent();
 				wd.getRelative(BlockFace.NORTH).sendChangedEvent();
@@ -214,6 +216,8 @@ public class WaterListener implements Listener{
 				Block b = event.getBlock();
 				WaterData wd = new WaterData(b.getWorld(), b.getX(), b.getY(), b.getZ());
 				wd.updateResistance();
+				
+				wd.sendChangedEvent();
 				wd.getRelative(BlockFace.DOWN).sendChangedEvent();
 				wd.getRelative(BlockFace.UP).sendChangedEvent();
 				wd.getRelative(BlockFace.NORTH).sendChangedEvent();

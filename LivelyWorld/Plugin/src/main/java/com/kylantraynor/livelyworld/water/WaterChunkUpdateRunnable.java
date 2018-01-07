@@ -53,10 +53,10 @@ public class WaterChunkUpdateRunnable extends BukkitRunnable {
 						//if(!wd.needsUpdate()) continue;
 						level = wd.getLevel();
 						currentBlock = c.getBlock(x, y, z);
-						if(canReplace(currentBlock.getType())){
+						if(WaterData.canReplace(currentBlock.getType())){
 							waterLevel = WaterData.toWaterLevel(level);
 							if(waterLevel != Utils.getWaterHeight(currentBlock)){
-								if(waterLevel > 0 && isDropable(currentBlock.getType())){
+								if(waterLevel > 0 && WaterData.isDropable(currentBlock.getType())){
 									currentBlock.breakNaturally();
 								}
 								Utils.setWaterHeight(currentBlock, waterLevel, true);
@@ -81,24 +81,5 @@ public class WaterChunkUpdateRunnable extends BukkitRunnable {
 				}
 			}
 		}
-	}
-	
-	public boolean canReplace(Material mat){
-		if(mat == Material.WATER) return true;
-		if(mat == Material.STATIONARY_WATER) return true;
-		if(mat == Material.AIR) return true;
-		if(mat == Material.LONG_GRASS) return true;
-		if(mat == Material.VINE) return true;
-		if(mat == Material.TORCH) return true;
-		if(mat == Material.SNOW) return true;
-		if(mat == Material.SNOW_BLOCK) return true;
-		return false;
-	}
-	
-	public boolean isDropable(Material mat){
-		if(mat == Material.VINE) return true;
-		if(mat == Material.TORCH) return true;
-		if(mat == Material.LONG_GRASS) return true;
-		return false;
 	}
 }

@@ -408,12 +408,13 @@ public class WaterData {
 		WaterData down = getRelative(BlockFace.DOWN);
 		if(down != null){
 			int level = getLevel();
+			if(level < 1) return; 
 			int max = down.getMaxQuantity();
 			if(max < 245){
 				max = (int) (max * chunk.tickRandom);
 			}
 			int transfer = Math.min(max - down.getLevel(), level);
-			if (transfer < 0) transfer = 0;
+			if (transfer <= 0) return;
 			setLevelUnchecked(level - transfer);
 			down.setLevelUnchecked(down.getLevel() + transfer);
 			/*for(int i = 1; i <= level; i++){

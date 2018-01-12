@@ -7,7 +7,9 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import com.kylantraynor.livelyworld.LivelyWorld;
+import com.kylantraynor.livelyworld.Utils;
 import com.kylantraynor.livelyworld.water.WaterChunk;
+import com.kylantraynor.livelyworld.water.WaterData;
 
 public class SnowFallTask extends BukkitRunnable {
 
@@ -53,13 +55,24 @@ public class SnowFallTask extends BukkitRunnable {
 					snow.setType(Material.SNOW_BLOCK);
 				}*/
 			} else if (below.getType().isSolid()) {
-				if(below.getType() == Material.ICE || below.getType() == Material.PACKED_ICE || below.getType() == Material.FROSTED_ICE){
+				/*if(below.getType() == Material.ICE || below.getType() == Material.PACKED_ICE || below.getType() == Material.FROSTED_ICE){
 					b.setType(Material.SNOW_BLOCK);
-				} else {
+				} else {*/
 					b.setType(Material.SNOW);
-				}
-			} else if (ClimateUtils.isWater(below)){ 
-				if(below.getData() == 0){
+				//}
+			} else if (Utils.isWater(below)){ 
+				BukkitRunnable bk = new BukkitRunnable(){
+
+					@Override
+					public void run() {
+						WaterChunk c = WaterChunk.get(b.getWorld(), b.getChunk().getX(), b.getChunk().getZ());
+						c.addWaterAt(Math.floorMod(b.getX(), 16),  y,  Math.floorMod(b.getZ(), 16), (int)WaterData.maxLevel / 8);
+					}
+					
+				};
+				bk.runTaskAsynchronously(LivelyWorld.getInstance());
+				return;
+				/*if(below.getData() == 0){
 					if(below.getRelative(BlockFace.EAST).getType().isSolid()
 							|| below.getRelative(BlockFace.NORTH).getType().isSolid()
 							|| below.getRelative(BlockFace.SOUTH).getType().isSolid()
@@ -74,7 +87,7 @@ public class SnowFallTask extends BukkitRunnable {
 							|| below.getRelative(BlockFace.WEST).getType().isSolid()){
 						ClimateUtils.setSnowLayers(below, ClimateUtils.getWaterHeight(below));
 					}
-				}
+				}*/
 			} else if (below.getType() != Material.SIGN_POST
 					&& below.getType() != Material.SIGN
 					&& below.getType() != Material.RAILS) {

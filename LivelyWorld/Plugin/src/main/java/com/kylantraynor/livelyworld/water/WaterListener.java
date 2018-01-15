@@ -187,22 +187,7 @@ public class WaterListener implements Listener{
 	public void onBlockBreak(BlockBreakEvent event){
 		if(!event.getBlock().getWorld().getName().equals("world")) return;
 		if(!LivelyWorld.getInstance().getWaterModule().isRealisticSimulation()) return;
-		BukkitRunnable bk = new BukkitRunnable(){
-			@Override
-			public void run() {
-				Block b = event.getBlock();
-				WaterData wd = new WaterData(b.getWorld(), b.getX(), b.getY(), b.getZ());
-				wd.updateResistance();
-				
-				wd.sendChangedEvent();
-				wd.getRelative(BlockFace.DOWN).sendChangedEvent();
-				wd.getRelative(BlockFace.UP).sendChangedEvent();
-				wd.getRelative(BlockFace.NORTH).sendChangedEvent();
-				wd.getRelative(BlockFace.SOUTH).sendChangedEvent();
-				wd.getRelative(BlockFace.EAST).sendChangedEvent();
-				wd.getRelative(BlockFace.WEST).sendChangedEvent();
-			}
-		};
+		BukkitRunnable bk = new WaterDataUpdate(event.getBlock());
 		bk.runTaskLaterAsynchronously(LivelyWorld.getInstance(), 1);
 	}
 	
@@ -210,22 +195,7 @@ public class WaterListener implements Listener{
 	public void onBlockPlace(BlockPlaceEvent event){
 		if(!event.getBlock().getWorld().getName().equals("world")) return;
 		if(!LivelyWorld.getInstance().getWaterModule().isRealisticSimulation()) return;
-		BukkitRunnable bk = new BukkitRunnable(){
-			@Override
-			public void run() {
-				Block b = event.getBlock();
-				WaterData wd = new WaterData(b.getWorld(), b.getX(), b.getY(), b.getZ());
-				wd.updateResistance();
-				
-				wd.sendChangedEvent();
-				wd.getRelative(BlockFace.DOWN).sendChangedEvent();
-				wd.getRelative(BlockFace.UP).sendChangedEvent();
-				wd.getRelative(BlockFace.NORTH).sendChangedEvent();
-				wd.getRelative(BlockFace.SOUTH).sendChangedEvent();
-				wd.getRelative(BlockFace.EAST).sendChangedEvent();
-				wd.getRelative(BlockFace.WEST).sendChangedEvent();
-			}
-		};
+		BukkitRunnable bk = new WaterDataUpdate(event.getBlock());
 		bk.runTaskLaterAsynchronously(LivelyWorld.getInstance(), 1);
 	}
 	

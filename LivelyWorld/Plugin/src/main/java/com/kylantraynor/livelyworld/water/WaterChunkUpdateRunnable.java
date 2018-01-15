@@ -60,6 +60,9 @@ public class WaterChunkUpdateRunnable extends BukkitRunnable {
 									currentBlock.breakNaturally();
 								}
 								Utils.setWaterHeight(currentBlock, waterLevel, true);
+								if(wd.getResistance() != WaterData.getResistanceFor(currentBlock.getType())){
+									new WaterDataUpdate(currentBlock).runTaskLaterAsynchronously(LivelyWorld.getInstance(), 1);
+								}
 							}
 						}
 					}

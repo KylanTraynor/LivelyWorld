@@ -274,14 +274,14 @@ public class VegetationModule implements Listener {
 			above.setType(Material.LONG_GRASS);
 			above.setData((byte) 1);
 		} else if (above.getType() == Material.LONG_GRASS && above.getData() == 1
-				&& above.getLightLevel() > 13) {
+				&& above.getLightLevel() > 13 && above.getRelative(BlockFace.UP).getType() == Material.AIR) {
 			above.setType(Material.DOUBLE_PLANT);
 			above.setData((byte) 2);
 			Block top = above.getRelative(BlockFace.UP);
 			top.setType(Material.DOUBLE_PLANT);
 			top.setData((byte) 10);
 		} else if (above.getType() == Material.LONG_GRASS && above.getData() == 2
-				&& above.getLightLevel() > 13){
+				&& above.getLightLevel() > 13 && above.getRelative(BlockFace.UP).getType() == Material.AIR){
 			above.setType(Material.DOUBLE_PLANT);
 			above.setData((byte) 3);
 			Block top = above.getRelative(BlockFace.UP);

@@ -33,6 +33,7 @@ public class WaterChunkThread extends Thread {
 		try{
 			long lastUpdate = 0;
 			int lastDelay = 0;
+			long lastSave = 0;
 			while (!isInterrupted()) {
 				unloadChunks();
 				loadChunks();
@@ -49,6 +50,10 @@ public class WaterChunkThread extends Thread {
 					lastDelay = time - 500;
 					if(lastDelay < 0) lastDelay = 0;
 					lastUpdate = System.currentTimeMillis();
+				}
+				if(System.currentTimeMillis() >= lastSave + (1000 * 60 * 10)){
+					saveChunks();
+					lastSave = System.currentTimeMillis();
 				}
 			    cleanList();
 			}
@@ -182,6 +187,21 @@ public class WaterChunkThread extends Thread {
 					LivelyWorld.getInstance().getLogger().severe("Exception while ticking water chunk at " + c.getX() + "," + c.getZ()+ ".");
 					e.printStackTrace();
 				}
+			}
+			i++;
+		}
+	}
+	
+	private void saveChunks() {
+		int i = 0;
+		Object[] cs = WaterChunk.chunks.values().toArray();
+		while(i < cs.length){
+			WaterChunk c = (WaterChunk) cs[i];
+			if(c == null){
+				i++; continue;
+			}
+			if(c.isLoaded()){
+				c.save();
 			}
 			i++;
 		}

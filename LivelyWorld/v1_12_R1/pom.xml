@@ -14,11 +14,6 @@
 	<version>v1_12_R1</version>
 	<dependencies>
 		<dependency>
-			<groupId>org.bukkit</groupId>
-			<artifactId>craftbukkit</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
 			<groupId>com.kylantraynor</groupId>
 			<artifactId>livelyworld-api</artifactId>
 		</dependency>
@@ -29,11 +24,6 @@
 				<groupId>com.kylantraynor</groupId>
 				<artifactId>livelyworld-api</artifactId>
 				<version>API</version>
-			</dependency>
-			<dependency>
-				<groupId>org.bukkit</groupId>
-				<artifactId>craftbukkit</artifactId>
-				<version>1.12.2-R0.1-SNAPSHOT</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

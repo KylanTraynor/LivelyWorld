@@ -129,6 +129,11 @@ public class WaterListener implements Listener{
 	@EventHandler
 	public void onPlayerMove(PlayerMoveEvent event){
 		if(event.getFrom().getChunk() != event.getTo().getChunk()){
+			if(WaterChunk.disabled) return;
+			if(!LivelyWorld.getInstance().getWaterModule().isEnabled()) return;
+			Chunk c = event.getTo().getChunk();
+			if(!c.getWorld().getName().equals("world")) return;
+			LivelyWorld.getInstance().getWaterModule().getWaterThread().addLoadedChunk(c);
 			LivelyWorld.getInstance().getWaterModule().getWaterThread().updateOnlinePlayer(event.getPlayer());
 		}
 	}

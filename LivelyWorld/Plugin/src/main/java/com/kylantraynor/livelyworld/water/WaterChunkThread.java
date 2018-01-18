@@ -227,7 +227,6 @@ public class WaterChunkThread extends Thread {
 	}
 
 	private void loadChunks() {
-		int count = 30;
 		int i = 0;
 		Object[] cs = WaterChunk.chunks.values().toArray();
 		while(i < cs.length){

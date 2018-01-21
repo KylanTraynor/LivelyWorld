@@ -575,6 +575,16 @@ public class WaterChunk {
 			this.saturate();
 			wasGenerated = true;
 		}
+		byte[][][] levels = new byte[16][256][16];
+		boolean[][][] hasChanged = new boolean[16][256][16];
+		for(int x = 0; x < 16; x++){
+			for(int y = 0; y < 256; y++){
+				for(int z = 0; z < 16; z++){
+					levels[x][y][z] = (byte) getAt(x, y, z).getLevel();
+				}
+			}
+		}
+		
 		Biome biome = null;
 		SmallChunkData scd = WaterChunkThread.getChunkData(this);
 		if(scd != null){
@@ -615,8 +625,21 @@ public class WaterChunk {
 			}
 		}
 		
-		if(LivelyWorld.getInstance().getWaterModule().isRealisticSimulation()){
-			if(needsUpdate()){
+		boolean atLeastOneChanged = false;
+		for(int y = 1; y < 256; y++){
+			for(int x = 0; x < 16; x++){
+				for(int z = 0; z < 16; z++){
+					WaterData wd = getAt(x, y, z);
+					if(WaterData.toWaterLevel(wd.getLevel()) != WaterData.toWaterLevel(Byte.toUnsignedInt(levels[x][y][z]))){
+						wd.sendChangedEvent();
+						atLeastOneChanged = true;
+					}
+				}
+			}
+		}
+		
+		/*if(LivelyWorld.getInstance().getWaterModule().isRealisticSimulation()){
+			if(atLeastOneChanged){
 				if(!(Utils.hasLag() && dist > 2)){
 					if(dist < 10){
 						if((dist < 2) || Utils.fastRandomDouble() > (0.01 * 
@@ -638,7 +661,7 @@ public class WaterChunk {
 					br.runTask(LivelyWorld.getInstance());
 				}
 			}
-		}
+		}*/
 	}
 	
 	
@@ -657,6 +680,13 @@ public class WaterChunk {
 		needsUpdate = false;
 		BukkitRunnable br = new WaterChunkUpdateRunnable(this, UpdateType.LEVEL);
 		br.runTask(LivelyWorld.getInstance());
+	}
+	
+	public void updateVisuallyAsync(){
+		if(!LivelyWorld.getInstance().isEnabled()) return;
+		if(!isLoaded()) return;
+		if(!WaterChunkThread.isChunkLoaded(world, x, z)) return;
+		
 	}
 	
 	public void addWaterAt(int x, int y, int z, int amount) {

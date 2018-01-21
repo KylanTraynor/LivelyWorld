@@ -384,7 +384,8 @@ public class WaterData {
 	public void sendChangedEvent(){
 		//needsVisualUpdate = false;
 		if(!LivelyWorld.getInstance().getWaterModule().isRealisticSimulation()) return;
-		BukkitRunnable br = new BukkitRunnable(){
+		BukkitRunnable br = new VisualUpdateTask(getLevel(), getResistance());
+		/*BukkitRunnable br = new BukkitRunnable(){
 			@Override
 			public void run() {
 				if(!chunk.isLoaded() || !chunk.getWorld().isChunkLoaded(chunk.getX(), chunk.getZ()))
@@ -398,13 +399,16 @@ public class WaterData {
 						}
 						Utils.setWaterHeight(b, waterLevel, true);
 					}
+					if(WaterData.getResistanceFor(b.getType()) != getResistance()){
+						setResistance(WaterData.getResistanceFor(b.getType()));
+					}
 				} else if(b.getRelative(BlockFace.DOWN).getType() == Material.AIR && b.getType() != Material.AIR && getLevel() > 0) {
 					chunk.getWorld().spawnParticle(Particle.DRIP_WATER, b.getX() + Math.random(), b.getY() - 0.01, b.getZ() + Math.random(), 1);
 				}
 				//BlockWaterChangedEvent e = new BlockWaterChangedEvent(b, getData());
 				//Bukkit.getPluginManager().callEvent(e);
 			}
-		};
+		};*/
 		br.runTask(LivelyWorld.getInstance());
 	}
 
@@ -594,4 +598,37 @@ public class WaterData {
 	public void setNeedsVisualUpdate(boolean b) {
 		needsVisualUpdate = b;
 	}*/
+	 
+	public class VisualUpdateTask extends BukkitRunnable{
+
+		final int level;
+		final int resistance;
+		
+		public VisualUpdateTask(int level, int resistance){
+			this.level = level;
+			this.resistance = resistance;
+		}
+		
+		@Override
+		public void run() {
+			if(!chunk.isLoaded() || !chunk.getWorld().isChunkLoaded(chunk.getX(), chunk.getZ()))
+				return;
+			Block b = getBlock();
+			if(canReplace(b.getType())){
+				int waterLevel = WaterData.toWaterLevel(level);
+				if(waterLevel != Utils.getWaterHeight(b)){
+					if(waterLevel > 0 && isDropable(b.getType())){
+						b.breakNaturally();
+					}
+					Utils.setWaterHeight(b, waterLevel, true);
+				}
+				if(WaterData.getResistanceFor(b.getType()) != resistance){
+					setResistance(WaterData.getResistanceFor(b.getType()));
+				}
+			} else if(b.getRelative(BlockFace.DOWN).getType() == Material.AIR && b.getType() != Material.AIR && getLevel() > 0) {
+				chunk.getWorld().spawnParticle(Particle.DRIP_WATER, b.getX() + Math.random(), b.getY() - 0.01, b.getZ() + Math.random(), 1);
+			}
+		}
+		
+	}
 }

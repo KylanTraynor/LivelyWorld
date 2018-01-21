@@ -575,6 +575,10 @@ public class WaterChunk {
 			this.saturate();
 			wasGenerated = true;
 		}
+		byte[][] westLevels = new byte[256][16];
+		byte[][] eastLevels = new byte[256][16];
+		byte[][] northLevels = new byte[16][256];
+		byte[][] southLevels = new byte[16][256];
 		byte[][][] levels = new byte[16][256][16];
 		//boolean[][][] hasChanged = new boolean[16][256][16];
 		for(int x = 0; x < 16; x++){
@@ -584,6 +588,23 @@ public class WaterChunk {
 				}
 			}
 		}
+		WaterChunk westC = this.getRelative(-1, 0);
+		WaterChunk eastC = this.getRelative(1, 0);
+		for(int z = 0; z < 16; z++){
+			for(int y = 0; y < 256; y++){
+				westLevels[y][z] = (byte) westC.getAt(15, y, z).getLevel();
+				eastLevels[y][z] = (byte) eastC.getAt(0, y, z).getLevel();
+			}
+		}
+		WaterChunk northC = this.getRelative(0, -1);
+		WaterChunk southC = this.getRelative(0, 1);
+		for(int x = 0; x < 16; x++){
+			for(int y = 0; y < 256; y++){
+				northLevels[x][y] = (byte) northC.getAt(x, y, 16).getLevel();
+				southLevels[x][y] = (byte) southC.getAt(x, y, 0).getLevel();
+			}
+		}
+		
 		
 		Biome biome = null;
 		SmallChunkData scd = WaterChunkThread.getChunkData(this);
@@ -634,6 +655,30 @@ public class WaterChunk {
 						wd.sendChangedEvent();
 						atLeastOneChanged = true;
 					}
+				}
+			}
+		}
+		for(int z = 0; z < 16; z++){
+			for(int y = 0; y < 256; y++){
+				WaterData wd = westC.getAt(16, y, z);
+				if(WaterData.toWaterLevel(Byte.toUnsignedInt(westLevels[y][z])) != WaterData.toWaterLevel(wd.getLevel())){
+					wd.sendChangedEvent();
+				}
+				wd = eastC.getAt(0, y, z);
+				if(WaterData.toWaterLevel(Byte.toUnsignedInt(eastLevels[y][z])) != WaterData.toWaterLevel(wd.getLevel())){
+					wd.sendChangedEvent();
+				}
+			}
+		}
+		for(int x = 0; x < 16; x++){
+			for(int y = 0; y < 256; y++){
+				WaterData wd = northC.getAt(x, y, 16);
+				if(WaterData.toWaterLevel(Byte.toUnsignedInt(northLevels[x][y])) != WaterData.toWaterLevel(wd.getLevel())){
+					wd.sendChangedEvent();
+				}
+				wd = southC.getAt(x, y, 0);
+				if(WaterData.toWaterLevel(Byte.toUnsignedInt(southLevels[x][y])) != WaterData.toWaterLevel(wd.getLevel())){
+					wd.sendChangedEvent();
 				}
 			}
 		}

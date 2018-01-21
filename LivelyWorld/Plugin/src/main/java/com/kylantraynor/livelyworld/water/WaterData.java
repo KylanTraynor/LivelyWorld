@@ -491,11 +491,11 @@ public class WaterData {
 				return;
 		}
 		WaterData[] relatives = new WaterData[4];
-		int pressure = 0;
+		/*int pressure = 0;
 		if(y < 255){
 			WaterData up = chunk.getAt(x, y + 1, z);
 			pressure = up.getLevel() > 0 ? 1 : 0;
-		}
+		}*/
 		int level = 0;
 		// Gets a random offset number for the order in which surrounding blocks will be checked.
 		//int rdm = Utils.fastRandomInt(4);
@@ -549,7 +549,7 @@ public class WaterData {
 			for(int m = 0; m < 4; m++){
 				//if(levels[m] == -1) continue;
 				// Calculates the difference, and caps it to the difference between the target's max level and its current level.
-				diff[m] = Math.min((level + pressure) - levels[m], max[m] - levels[m]);
+				diff[m] = Math.min((level) - levels[m], max[m] - levels[m]);
 				// If there is a positive difference.
 				if(diff[m] > 1){
 					// Adds one to the number of columns to transfer water to.

@@ -24,6 +24,8 @@ public class WaterData {
 	public static int moistureCode = 0; // 255 (1 byte) 0000 0000 0000 0000 0000 0000 1111 1111
 	public static long maxResistance = 0xffL;
 	public static int resistanceCode = 8;
+	public static long maxPressure = 0xfL; // 255 (1 byte) 0000 0000 1111 1111 0000 0000 0000 0000
+	public static int pressureCode = 16;
 	/*private static int outCurrentCode = 9;
 	private static int outStrengthCode = 12;*/
 	private static long maxSalt = 0xfL;
@@ -148,6 +150,28 @@ public class WaterData {
 		//LivelyWorld.getInstance().getLogger().info("Start:" + Integer.toBinaryString(getData()));
 		//LivelyWorld.getInstance().getLogger().info(Integer.toBinaryString((getData() & (~(maxLevel << moistureCode)))) + " | " + Integer.toBinaryString((Utils.constrainTo(value, 0, maxLevel) << moistureCode)));
 		long newData = (getData() & (~(maxResistance << resistanceCode))) | (((long) value) << resistanceCode);
+		//LivelyWorld.getInstance().getLogger().info("Finish:" + Integer.toBinaryString(newData));
+		if(getData() != newData){
+			setData(newData);
+		}
+	}
+	
+	public int getPressure(){
+		return (int) ((getData() >>> pressureCode) & maxPressure);
+	}
+	
+	public void setPressure(int value){
+		if(value > maxPressure){
+			LivelyWorld.getInstance().getLogger().info("DEBUG: Pressure was too high! (" + value + ">" + maxPressure + ")");
+			value = (int) maxPressure;
+		} else if(value < 0){
+			LivelyWorld.getInstance().getLogger().info("DEBUG: Pressure was too low! (" + value + "<0)");
+			value = 0;
+		}
+		//LivelyWorld.getInstance().getLogger().info("DEBUG:");
+		//LivelyWorld.getInstance().getLogger().info("Start:" + Integer.toBinaryString(getData()));
+		//LivelyWorld.getInstance().getLogger().info(Integer.toBinaryString((getData() & (~(maxLevel << moistureCode)))) + " | " + Integer.toBinaryString((Utils.constrainTo(value, 0, maxLevel) << moistureCode)));
+		long newData = (getData() & (~(maxPressure << pressureCode))) | (((long) value) << pressureCode);
 		//LivelyWorld.getInstance().getLogger().info("Finish:" + Integer.toBinaryString(newData));
 		if(getData() != newData){
 			setData(newData);
@@ -467,6 +491,11 @@ public class WaterData {
 				return;
 		}
 		WaterData[] relatives = new WaterData[4];
+		int pressure = 0;
+		if(y < 255){
+			WaterData up = chunk.getAt(x, y + 1, z);
+			pressure = up.getLevel() > 0 ? 1 : 0;
+		}
 		int level = 0;
 		// Gets a random offset number for the order in which surrounding blocks will be checked.
 		//int rdm = Utils.fastRandomInt(4);
@@ -520,7 +549,7 @@ public class WaterData {
 			for(int m = 0; m < 4; m++){
 				//if(levels[m] == -1) continue;
 				// Calculates the difference, and caps it to the difference between the target's max level and its current level.
-				diff[m] = Math.min(level - levels[m], max[m] - levels[m]);
+				diff[m] = Math.min((level + pressure) - levels[m], max[m] - levels[m]);
 				// If there is a positive difference.
 				if(diff[m] > 1){
 					// Adds one to the number of columns to transfer water to.
@@ -589,6 +618,11 @@ public class WaterData {
 		} else {
 			setDataUnchecked(newData);
 		}
+	}
+	 
+	 public void setPressureUnchecked(int value) {
+		long newData = (getData() & (~(maxPressure << pressureCode))) | (((long) value) << pressureCode);
+		setDataUnchecked(newData);
 	}
 	
 	/*public boolean needsVisualUpdate(){

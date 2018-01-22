@@ -126,6 +126,13 @@ public class WaterChunk {
 		return WaterChunk.get(world, this.x + x, this.z + z);
 	}
 	
+	public WaterChunk getRelativeOrNull(int x, int z){
+		if(WaterChunkThread.isChunkLoaded(world, this.x + x, this.z + z)){
+			return WaterChunk.get(world, this.x + x, this.z + z);
+		}
+		return null;
+	}
+	
 	public WaterData getAt(int x, int y, int z){
 		if(!isLoaded) load();
 		return new WaterData(this, x, y, z);
@@ -588,20 +595,24 @@ public class WaterChunk {
 				}
 			}
 		}
-		WaterChunk westC = this.getRelative(-1, 0);
-		WaterChunk eastC = this.getRelative(1, 0);
+		WaterChunk westC = this.getRelativeOrNull(-1, 0);
+		WaterChunk eastC = this.getRelativeOrNull(1, 0);
 		for(int z = 0; z < 16; z++){
 			for(int y = 0; y < 256; y++){
-				westLevels[y][z] = (byte) westC.getAt(15, y, z).getLevel();
-				eastLevels[y][z] = (byte) eastC.getAt(0, y, z).getLevel();
+				if(westC != null)
+					westLevels[y][z] = (byte) westC.getAt(15, y, z).getLevel();
+				if(eastC != null)
+					eastLevels[y][z] = (byte) eastC.getAt(0, y, z).getLevel();
 			}
 		}
-		WaterChunk northC = this.getRelative(0, -1);
-		WaterChunk southC = this.getRelative(0, 1);
+		WaterChunk northC = this.getRelativeOrNull(0, -1);
+		WaterChunk southC = this.getRelativeOrNull(0, 1);
 		for(int x = 0; x < 16; x++){
 			for(int y = 0; y < 256; y++){
-				northLevels[x][y] = (byte) northC.getAt(x, y, 15).getLevel();
-				southLevels[x][y] = (byte) southC.getAt(x, y, 0).getLevel();
+				if(northC != null)
+					northLevels[x][y] = (byte) northC.getAt(x, y, 15).getLevel();
+				if(southC != null)
+					southLevels[x][y] = (byte) southC.getAt(x, y, 0).getLevel();
 			}
 		}
 		
@@ -660,25 +671,35 @@ public class WaterChunk {
 		}
 		for(int z = 0; z < 16; z++){
 			for(int y = 0; y < 256; y++){
-				WaterData wd = westC.getAt(15, y, z);
-				if(WaterData.toWaterLevel(Byte.toUnsignedInt(westLevels[y][z])) != WaterData.toWaterLevel(wd.getLevel())){
-					wd.sendChangedEvent();
+				WaterData wd = null;
+				if(westC != null){
+					wd = westC.getAt(15, y, z);
+					if(WaterData.toWaterLevel(Byte.toUnsignedInt(westLevels[y][z])) != WaterData.toWaterLevel(wd.getLevel())){
+						wd.sendChangedEvent();
+					}
 				}
-				wd = eastC.getAt(0, y, z);
-				if(WaterData.toWaterLevel(Byte.toUnsignedInt(eastLevels[y][z])) != WaterData.toWaterLevel(wd.getLevel())){
-					wd.sendChangedEvent();
+				if(eastC != null){
+					wd = eastC.getAt(0, y, z);
+					if(WaterData.toWaterLevel(Byte.toUnsignedInt(eastLevels[y][z])) != WaterData.toWaterLevel(wd.getLevel())){
+						wd.sendChangedEvent();
+					}
 				}
 			}
 		}
 		for(int x = 0; x < 16; x++){
 			for(int y = 0; y < 256; y++){
-				WaterData wd = northC.getAt(x, y, 15);
-				if(WaterData.toWaterLevel(Byte.toUnsignedInt(northLevels[x][y])) != WaterData.toWaterLevel(wd.getLevel())){
-					wd.sendChangedEvent();
+				WaterData wd = null;
+				if(northC != null){
+					wd = northC.getAt(x, y, 15);
+					if(WaterData.toWaterLevel(Byte.toUnsignedInt(northLevels[x][y])) != WaterData.toWaterLevel(wd.getLevel())){
+						wd.sendChangedEvent();
+					}
 				}
-				wd = southC.getAt(x, y, 0);
-				if(WaterData.toWaterLevel(Byte.toUnsignedInt(southLevels[x][y])) != WaterData.toWaterLevel(wd.getLevel())){
-					wd.sendChangedEvent();
+				if(southC != null){
+					wd = southC.getAt(x, y, 0);
+					if(WaterData.toWaterLevel(Byte.toUnsignedInt(southLevels[x][y])) != WaterData.toWaterLevel(wd.getLevel())){
+						wd.sendChangedEvent();
+					}
 				}
 			}
 		}

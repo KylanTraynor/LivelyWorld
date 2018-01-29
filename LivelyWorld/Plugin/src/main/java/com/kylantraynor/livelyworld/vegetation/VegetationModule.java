@@ -253,7 +253,7 @@ public class VegetationModule implements Listener {
 		int z = Utils.floorMod2(l.getBlockZ(), 4);
 		int y = l.getBlockY();
 		while (i < depth && y > 0) {
-			if(wc.getAt(x, y, z).getLevel() >= level){
+			if(wc.getLevel(x, y, z) >= level){
 				return true;
 			}
 			y--;

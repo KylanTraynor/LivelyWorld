@@ -31,6 +31,6 @@ public class BlockWaterChangedEvent extends BlockEvent{
 	}
 	
 	public int getNewLevel() {
-		return (int) (data & (WaterData.maxLevel << WaterData.moistureCode)) >>> WaterData.moistureCode;
+		return 0;//(int) (data & (WaterData.maxLevel << WaterData.moistureCode)) >>> WaterData.moistureCode;
 	}
 }

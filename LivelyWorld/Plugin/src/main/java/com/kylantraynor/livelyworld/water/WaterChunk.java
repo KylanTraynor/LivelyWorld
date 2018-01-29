@@ -26,8 +26,6 @@ import com.kylantraynor.livelyworld.LivelyWorld;
 import com.kylantraynor.livelyworld.Utils;
 import com.kylantraynor.livelyworld.Utils.ChunkCoordinates;
 import com.kylantraynor.livelyworld.Utils.SmallChunkData;
-import com.kylantraynor.livelyworld.water.ThreadSafeWaterData.VisualUpdateTask;
-import com.kylantraynor.livelyworld.water.WaterChunkUpdateRunnable.UpdateType;
 
 public class WaterChunk {
 	final static Map<ChunkCoordinates, WaterChunk> chunks = new ConcurrentHashMap<ChunkCoordinates, WaterChunk>(); 
@@ -1032,9 +1030,9 @@ public class WaterChunk {
 	public void updateVisually(){
 		if(!LivelyWorld.getInstance().isEnabled()) return;
 		if(!isLoaded()) return;
-		needsUpdate = false;
-		BukkitRunnable br = new WaterChunkUpdateRunnable(this, UpdateType.LEVEL);
-		br.runTask(LivelyWorld.getInstance());
+		//needsUpdate = false;
+		//BukkitRunnable br = new WaterChunkUpdateRunnable(this, UpdateType.LEVEL);
+		//br.runTask(LivelyWorld.getInstance());
 	}
 	
 	public void updateVisuallyAsync(){

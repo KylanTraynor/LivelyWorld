@@ -14,7 +14,7 @@ public class WaterResistanceUpdate extends BukkitRunnable {
 	
 	@Override
 	public void run() {
-		waterData.setResistance(newResistance);
+		//waterData.setResistance(newResistance);
 	}
 
 }

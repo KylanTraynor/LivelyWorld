@@ -8,14 +8,14 @@ public class WaterData {
 	final static int solidCode = 28;
 	public static final int maxLevel = 0xff;
 	
-	public WaterData(int data, int x, int y, int z) {
-		this(Utils.toByteArray(data), x, y, z);
+	public WaterData(int data, int pressure, int x, int y, int z) {
+		this(Utils.toByteArray(data), pressure, x, y, z);
 	}
 	
-	public WaterData(byte[] data, int x, int y, int z) {
+	public WaterData(byte[] data, int pressure, int x, int y, int z) {
 		level = data[0];
 		resistance = data[1];
-		isSolid = (data[3] & 1) == 1;
+		isSolid = ((data[3] & 0b00010000) >> 4) == 1;
 		pressure = 0;
 		this.x = (byte) x;
 		this.y = (byte) y;
@@ -67,13 +67,13 @@ public class WaterData {
 	
 	public int getData(){
 		byte b2 = 0;
-		byte b3 = (byte) (isSolid ? 1 : 0);
+		byte b3 = (byte) ((isSolid ? 1 : 0) << 4);
 		return Utils.toInt(level, resistance, b2, b3);
 	}
 
 	public byte[] getByteArray() {
 		byte b2 = 0;
-		byte b3 = (byte) (isSolid ? 1 : 0);
+		byte b3 = (byte) ((isSolid ? 1 : 0) << 4);
 		return new byte[] {level, resistance, b2, b3};
 	}
 }

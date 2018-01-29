@@ -36,10 +36,11 @@ public class WaterChunk {
 	
 	double tickRandom = Utils.fastRandomDouble();
 	
-	//final byte[] data = new byte[16 * 16 * 256 * 4];
-	final WaterData[][][] data = new WaterData[256][16][16];
-	final int dataLength = data.length * data[0].length * data[0][0].length;
-	final int dataByteLength = dataLength * 4;
+	final byte[] data = new byte[16 * 16 * 256 * 4];
+	final int[] pressure = new int[16*16*256];
+	//final WaterData[][][] data = new WaterData[256][16][16];
+	//final int dataLength = data.length * data[0].length * data[0][0].length;
+	//final int dataByteLength = dataLength * 4;
 	private boolean isLoaded = false;
 	private final int x;
 	private final int z;
@@ -53,7 +54,7 @@ public class WaterChunk {
 		this.world = w;
 		this.x = x;
 		this.z = z;
-		for(int y = 255; y >= 0; y--){
+		/*for(int y = 255; y >= 0; y--){
 			for(int x1 = 0; x1 < 16; x1++){
 				for(int z1 = 0; z1 < 16; z1++){
 					if(data[y][x1][z1] == null){
@@ -61,7 +62,7 @@ public class WaterChunk {
 					}
 				}
 			}
-		}
+		}*/
 	}
 	
 	@Override
@@ -152,7 +153,7 @@ public class WaterChunk {
 	
 	public WaterData getAt(int x, int y, int z){
 		if(!isLoaded) load();
-		return data[y][x][z];
+		return new WaterData(getData(x,y,z), getPressure(x,y,z), x, y, z);
 	}
 	
 	/*void setDataUnchecked(int data, int x, int y, int z){
@@ -181,11 +182,16 @@ public class WaterChunk {
 		return (y << 10) + (x << 6) + (z << 2);
 	}
 	
-	/*int getData(int x, int y, int z) {
+	int getData(int x, int y, int z) {
 		if(!isLoaded) load();
 		int index = getIndex(x, y, z);
 		return Utils.toInt(data[index], data[index + 1], data[index + 2], data[index + 3]);
-	}*/
+	}
+	
+	int getPressure(int x, int y, int z){
+		int index = getIndex(x, y, z) >> 2;
+		return pressure[index];
+	}
 	
 	public World getWorld() {
 		return world;
@@ -256,14 +262,14 @@ public class WaterChunk {
 			dos.write(Utils.toByteArray(currentVersion));
 			dos.write(Utils.toByteArray(getChunkStateCode()));
 			synchronized(this.data){
-				for(int y = 0; y < data.length; y++){
+				/*for(int y = 0; y < data.length; y++){
 					for(int x = 0; x < data[y].length; x++){
 						for(int z = 0; z < data[y][x].length; z++){
 							dos.write(data[y][x][z].getByteArray());
 						}
 					}
-				}
-				//dos.write(data);
+				}*/
+				dos.write(data);
 			}
 			dos.flush();
 		} catch (IOException e2) {
@@ -416,32 +422,34 @@ public class WaterChunk {
 				if(baos.size() > 8){
 					byte[] array = baos.toByteArray();
 					int version = Utils.toInt(array[0], array[1], array[2], array[3]);
-					if(version == currentVersion && baos.size() == dataByteLength + 8){
+					if(version == currentVersion && baos.size() == data.length + 8){
 						int chunkData = Utils.toInt(array[4], array[5], array[6], array[7]);
 						synchronized(data){
-							for(int i = 0; i < dataLength; i++){
-								int index = (i * 4) + 8;
+							for(int i = 8; i < data.length + 8; i++){
+								/*int index = (i * 4) + 8;
 								int y = (i >> 8) & (data.length - 1);
 								int x = (i >> 4) & (data[0].length - 1);
 								int z = i & (data[0][0].length - 1);
 								byte[] b = new byte[]{array[index], array[index + 1], array[index + 2], array[index + 3]};
 								//int d = Utils.toInt(array[index], array[index + 1], array[index + 2], array[index + 3]);
 								data[y][x][z] = new WaterData(b, x, y, z);
-								//data[i - 8] = array[i];
+								*/
+								data[i - 8] = array[i];
 							}
 						}
 						needsUpdate = ((chunkData & 1) == 1);
 						wasGenerated = ((chunkData & 2) == 2);
-					} else if(baos.size() == dataByteLength) {
+					} else if(baos.size() == data.length) {
 						synchronized(data){
-							for(int i = 0; i < dataLength; i++){
-								int index = (i * 4);
+							for(int i = 0; i < data.length; i++){
+								/*int index = (i * 4);
 								int y = (i >> 8) & (data.length - 1);
 								int x = (i >> 4) & (data[0].length - 1);
 								int z = i & (data[0][0].length - 1);
 								byte[] b = new byte[]{array[index], array[index + 1], array[index + 2], array[index + 3]};
 								//int d = Utils.toInt(array[index], array[index + 1], array[index + 2], array[index + 3]);
-								data[y][x][z] = new WaterData(b, x, y, z);
+								data[y][x][z] = new WaterData(b, x, y, z);*/
+								data[i] = array[i];
 							}
 						}
 					}
@@ -462,7 +470,7 @@ public class WaterChunk {
 				e1.printStackTrace();
 			}
 		}
-		
+		/*
 		int corruptedCount = 0;
 		for(int y = 255; y >= 0; y--){
 			for(int x = 0; x < 16; x++){
@@ -476,7 +484,7 @@ public class WaterChunk {
 		}
 		if(corruptedCount > 0){
 			LivelyWorld.getInstance().getLogger().info("Found " + corruptedCount + " missing data in chunk " + x + ", " + z +".");
-		}
+		}*/
 		
 		/*if(compressedData == null) return;
 		
@@ -617,7 +625,7 @@ public class WaterChunk {
 	
 	public void processWaterMove(int x, int y, int z){
 		
-		WaterData d = data[y][x][z];
+		WaterData d = getAt(x, y, z);
 		
 		if(d.getLevel() == 0) return;
 		if(d.isSolid){
@@ -627,32 +635,32 @@ public class WaterChunk {
 		}
 		
 		WaterData up = null;
-		if(y < 255) up = data[y + 1][x][z];
+		if(y < 255) up = getAt(x, y+1, z);
 		WaterData down = null;
-		if(y > 0) down = data[y - 1][x][z];
+		if(y > 0) down = getAt(x, y-1, z);
 		WaterData west = null;
 		if(x > 0){
-			west = data[y][x - 1][z];
+			west = getAt(x -1, y, z);
 		} else if(this.isRelativeLoaded(-1, 0)){
-			west = getRelative(-1,0).data[y][15][z];
+			west = getRelative(-1,0).getAt(15, y, z);
 		}
 		WaterData east = null;
 		if(x < 15){
-			east = data[y][x + 1][z];
+			east = getAt(x+1,y,z);
 		} else if(this.isRelativeLoaded(1, 0)){
-			east = getRelative(1,0).data[y][0][z];
+			east = getRelative(1,0).getAt(0,y,z);
 		}
 		WaterData north = null;
 		if(z > 0){
-			north = data[y][x][z - 1];
+			north = getAt(x,y,z-1);
 		} else if(this.isRelativeLoaded(0, -1)) {
-			north = getRelative(0,-1).data[y][x][15];
+			north = getRelative(0,-1).getAt(x,y,15);
 		}
 		WaterData south = null;
 		if(z < 15){
-			south = data[y][x][z + 1];
+			south = getAt(x, y, z+1);
 		} else if(this.isRelativeLoaded(0, 1)){
-			south = getRelative(0,1).data[y][x][0];
+			south = getRelative(0,1).getAt(x, y, 0);
 		}
 		
 		boolean stable = false;
@@ -712,8 +720,50 @@ public class WaterChunk {
 			}
 		}
 		
+		updateData(d);
+		
+		if(y < 255) updateData(up);
+		if(y > 0) updateData(down);
+		if(west != null){
+			if(x > 0){
+				updateData(west);
+			} else if(this.isRelativeLoaded(-1, 0)){
+				getRelative(-1,0).updateData(west);;
+			}
+		}
+		if(east != null){
+			if(x < 15){
+				updateData(east);
+			} else if(this.isRelativeLoaded(1, 0)){
+				getRelative(1,0).updateData(east);
+			}
+		}
+		if(north != null){
+			if(z > 0){
+				updateData(north);
+			} else if(this.isRelativeLoaded(0, -1)) {
+				getRelative(0,-1).updateData(north);
+			}
+		}
+		if(south != null){
+			if(z < 15){
+				updateData(south);
+			} else if(this.isRelativeLoaded(0, 1)){
+				getRelative(0,1).updateData(south);
+			}
+		}
 	}
 	
+	private void updateData(WaterData d) {
+		int index = getIndex(d.x, d.y, d.z);
+		byte[] dt = d.getByteArray();
+		data[index] = dt[0];
+		data[index+1] = dt[1];
+		data[index+2] = dt[2];
+		data[index+2] = dt[3];
+		pressure[index >> 2] = d.pressure;
+	}
+
 	public WaterData getMinPressure(WaterData... data){
 		WaterData min = data[0];
 		for(int i = 1; i < data.length; i++){
@@ -729,14 +779,15 @@ public class WaterChunk {
 	}
 
 	public void updatePressure(int x, int y, int z){
-		WaterData up = null;
-		if(y < 255) up = data[y + 1][x][z];
-		WaterData d = data[y][x][z];
-		d.pressure = d.getLevel();
-		if(d.isSolid){
-			d.pressure += d.getResistance();
-		} else if(up != null && !up.isSolid && d.getLevel() == 0xFF){
-			d.pressure += up.pressure;
+		int index = getIndex(x,y,z);
+		pressure[index >> 2] = getLevel(index);
+		if(isSolid(index)){
+			pressure[index >> 2] += getResistance(index);
+		} else if(y < 255 && getLevel(index) == 0xFF){
+			int upIndex = getIndex(x, y+1,z);
+			if(isSolid(upIndex)){
+				pressure[index >> 2] += pressure[upIndex >> 2];
+			}
 		}
 	}
 	
@@ -753,9 +804,9 @@ public class WaterChunk {
 		}
 		
 		// Get a snapshot of the actual chunk.
-		SmallChunkData c = null;
+		//SmallChunkData c = null;
 		if(WaterChunkThread.isChunkLoaded(world, x, z)){
-			c = WaterChunkThread.getChunkData(this);
+			//c = WaterChunkThread.getChunkData(this);
 		} else {
 			return;
 		}
@@ -766,13 +817,13 @@ public class WaterChunk {
 		Biome biome = null;
 		for(int x = 0; x < 16; x++){
 			for(int z = 0; z < 16; z++){
-				biome = c.getBiome(x, z);
+				biome = chunk.getBlock(x, 0, z).getBiome();
 				if(biome != null){
 					if((Utils.isOcean(biome) || biome == Biome.RIVER)){
 						int y = 48;
 						Material m = chunk.getBlock(x, y, z).getType();
 						while(y > 0 && (Utils.isWater(m) || m == Material.AIR)){
-							data[y][x][z].level = (byte) 0xFF;
+							data[getIndex(x,y,z)] = (byte) 0xFF;
 							y--;
 						}
 					}
@@ -786,8 +837,9 @@ public class WaterChunk {
 			for(int x = 0; x < 16; x++){
 				for(int z = 0; z < 16; z++){
 					Material m = chunk.getBlock(x, y, z).getType();
-					data[y][x][z].resistance = (byte) getResistanceFor(m);
-					data[y][x][z].isSolid = isSolid(m);
+					int index = getIndex(x, y, z);
+					data[index +1] = (byte) getResistanceFor(m);
+					data[index +3] = (byte) ((data[index + 3] & ~0x10) + (isSolid(m) ? 0x10 : 0x00));
 					updatePressure(x, y, z);
 				}
 			}
@@ -819,8 +871,9 @@ public class WaterChunk {
 						if(Utils.isWater(m)){
 							waterLevel = Utils.getWaterHeight(chunk.getBlock(x, y, z).getData());
 						}
-						if(waterLevel != toWaterLevel(data[y][x][z].getLevel())){
-							updateVisually(x,y,z, toWaterLevel(data[y][x][z].getLevel()));
+						int index = getIndex(x,y,z);
+						if(waterLevel != toWaterLevel(getLevel(index))){
+							updateVisually(x,y,z, toWaterLevel(getLevel(index)));
 						}
 					}
 				}
@@ -1113,19 +1166,55 @@ public class WaterChunk {
 	
 	public void addWaterAt(int x, int y, int z, int amount) {
 		if(!isLoaded()) return;
-		WaterData d = data[y][x][z];
-		if(d.getMaxQuantity() - d.getLevel() >= amount){
-			d.level += amount;
+		int index = getIndex(x,y,z);
+		if(getMaxQuantity(index) - getLevel(index) >= amount){
+			data[index] += amount;
 		} else {
 			int i = 0;
 			while(amount > 0 && (y + i) < 256){
-				d = getAt(x, y + i, z);
-				int added = Math.min((int) d.getMaxQuantity() - d.getLevel(), amount);
-				d.level += added;
+				index = getIndex(x,y+i,z);
+				int added = Math.min((int) getMaxQuantity(index) - getLevel(index), amount);
+				data[index] += added;
 				amount -= added;
 				i++;
 			}
 		}
+	}
+	
+	public int getLevel(int index){
+		return Byte.toUnsignedInt(data[index]);
+	}
+	
+	public int getLevel(int x, int y, int z){
+		int index = getIndex(x,y,z);
+		return getLevel(index);
+	}
+	
+	public int getResistance(int index){
+		return Byte.toUnsignedInt(data[index + 1]);
+	}
+	
+	public int getResistance(int x, int y, int z){
+		int index = getIndex(x,y,z);
+		return getResistance(index);
+	}
+	
+	public int getMaxQuantity(int index){
+		return 0xFF - Byte.toUnsignedInt(data[index + 1]);
+	}
+	
+	public int getMaxQuantity(int x, int y, int z){
+		int index = getIndex(x,y,z);
+		return getMaxQuantity(index);
+	}
+	
+	public boolean isSolid(int index){
+		return ((data[index + 3] & 0x10) >> 4) == 1;
+	}
+	
+	public boolean isSolid(int x, int y, int z){
+		int index = getIndex(x,y,z);
+		return isSolid(index);
 	}
 	
 	public void setNeedsUpsate(boolean value){
@@ -1141,9 +1230,9 @@ public class WaterChunk {
 		for(int y = 0; y < 256; y ++){
 			for(int x = 0; x < 16; x++){
 				for(int z = 0; z < 16; z++){
-					WaterData wd = data[y][x][z];
-					if(wd.getMaxQuantity() > 1 && wd.getMaxQuantity() < 254 && wd.getResistance() != getResistanceFor(Material.LEAVES)){
-						wd.level = (byte) wd.getMaxQuantity();
+					int index = getIndex(x,y,z);
+					if(getMaxQuantity(index) > 1 && getMaxQuantity(index) < 254 && getResistance(index) != getResistanceFor(Material.LEAVES)){
+						data[index] = (byte) getMaxQuantity(index);
 					}
 				}
 			}
@@ -1155,9 +1244,9 @@ public class WaterChunk {
 		for(int y = 0; y < 256; y ++){
 			for(int x = 0; x < 16; x++){
 				for(int z = 0; z < 16; z++){
-					WaterData wd = data[y][x][z];
-					if(wd.getMaxQuantity() >= 254){
-						wd.level = 0;
+					int index = getIndex(x,y,z);
+					if(getMaxQuantity(index) >= 254){
+						data[index] = (byte) 0;
 					}
 				}
 			}
@@ -1188,8 +1277,9 @@ public class WaterChunk {
 			this.x = x;
 			this.y = y;
 			this.z = z;
-			this.level = chunk.data[y][x][z].getLevel();
-			this.resistance = chunk.data[y][x][z].getResistance();
+			int index = chunk.getIndex(x, y, z);
+			this.level = Byte.toUnsignedInt(chunk.data[index]);
+			this.resistance = Byte.toUnsignedInt(chunk.data[index+1]);
 		}
 		
 		@Override

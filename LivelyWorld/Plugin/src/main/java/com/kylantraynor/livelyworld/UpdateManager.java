@@ -13,6 +13,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 
 import com.kylantraynor.livelyworld.hooks.HookManager;
+import com.kylantraynor.livelyworld.water.WaterChunk;
 import com.kylantraynor.livelyworld.water.WaterData;
 
 public class UpdateManager {
@@ -87,13 +88,14 @@ public class UpdateManager {
 
 	private static void processWaterUpdate(Block block) {
 		if(block.getType() == Material.SOIL){
-			WaterData data = new WaterData(block.getChunk(), Math.floorMod(block.getX(), 16), block.getY(), Math.floorMod(block.getZ(), 16));
+			WaterChunk wc = WaterChunk.get(block.getWorld(), block.getX() >> 4, block.getZ() >> 4);
+			WaterData data = wc.getAt(Math.floorMod(block.getX(), 16), block.getY(), Math.floorMod(block.getZ(), 16));
 			int moisture = block.getData();
 			if(data.getLevel() > 0){
 				block.setData((byte) 7);
 				if(block.getRelative(BlockFace.UP).getType() == Material.CROPS){
 					if(Utils.fastRandomDouble() > 0.9){
-						data.setLevel(data.getLevel() - 1);
+						data.level--;
 					}
 				}
 			} else if(moisture > 0){

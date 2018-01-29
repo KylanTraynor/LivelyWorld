@@ -196,17 +196,25 @@ public class WaterListener implements Listener{
 		if(!LivelyWorld.getInstance().getWaterModule().isRealisticSimulation()) return;
 		/*BukkitRunnable bk = new WaterDataUpdate(event.getBlock());
 		bk.runTaskLaterAsynchronously(LivelyWorld.getInstance(), 1);*/
-		SmallChunkData scd = WaterChunkThread.getChunkData(event.getBlock().getWorld(), event.getBlock().getChunk().getX(), event.getBlock().getChunk().getZ());
-		if(scd != null){
-			int x = Utils.floorMod2(event.getBlock().getX(), 4);
-			int z = Utils.floorMod2(event.getBlock().getZ(), 4);
-			scd.getState(x, event.getBlock().getY(), z).setData(new MaterialData(Material.AIR));
-		} else {
-			scd = LivelyWorld.getInstance().getWaterModule().getWaterThread().addLoadedChunk(event.getBlock().getChunk());
-			int x = Utils.floorMod2(event.getBlock().getX(), 4);
-			int z = Utils.floorMod2(event.getBlock().getZ(), 4);
-			scd.getState(x, event.getBlock().getY(), z).setData(new MaterialData(Material.AIR));
-		}
+		BukkitRunnable bk = new BukkitRunnable(){
+
+			@Override
+			public void run() {
+				SmallChunkData scd = WaterChunkThread.getChunkData(event.getBlock().getWorld(), event.getBlock().getChunk().getX(), event.getBlock().getChunk().getZ());
+				if(scd != null){
+					int x = Utils.floorMod2(event.getBlock().getX(), 4);
+					int z = Utils.floorMod2(event.getBlock().getZ(), 4);
+					scd.getState(x, event.getBlock().getY(), z).setData(new MaterialData(Material.AIR));
+				} else {
+					scd = LivelyWorld.getInstance().getWaterModule().getWaterThread().addLoadedChunk(event.getBlock().getChunk());
+					int x = Utils.floorMod2(event.getBlock().getX(), 4);
+					int z = Utils.floorMod2(event.getBlock().getZ(), 4);
+					scd.getState(x, event.getBlock().getY(), z).setData(new MaterialData(Material.AIR));
+				}
+			}
+			
+		};
+		bk.runTaskLater(LivelyWorld.getInstance(), 1);
 	}
 	
 	@EventHandler(ignoreCancelled = true)
@@ -215,17 +223,25 @@ public class WaterListener implements Listener{
 		if(!LivelyWorld.getInstance().getWaterModule().isRealisticSimulation()) return;
 		/*BukkitRunnable bk = new WaterDataUpdate(event.getBlock());
 		bk.runTaskLaterAsynchronously(LivelyWorld.getInstance(), 1);*/
-		SmallChunkData scd = WaterChunkThread.getChunkData(event.getBlock().getWorld(), event.getBlock().getChunk().getX(), event.getBlock().getChunk().getZ());
-		if(scd != null){
-			int x = Utils.floorMod2(event.getBlock().getX(), 4);
-			int z = Utils.floorMod2(event.getBlock().getZ(), 4);
-			scd.getState(x, event.getBlock().getY(), z).setData(event.getBlockPlaced().getState().getData());
-		} else {
-			scd = LivelyWorld.getInstance().getWaterModule().getWaterThread().addLoadedChunk(event.getBlock().getChunk());
-			int x = Utils.floorMod2(event.getBlock().getX(), 4);
-			int z = Utils.floorMod2(event.getBlock().getZ(), 4);
-			scd.getState(x, event.getBlock().getY(), z).setData(event.getBlockPlaced().getState().getData());
-		}
+		BukkitRunnable bk = new BukkitRunnable(){
+
+			@Override
+			public void run() {
+				SmallChunkData scd = WaterChunkThread.getChunkData(event.getBlock().getWorld(), event.getBlock().getChunk().getX(), event.getBlock().getChunk().getZ());
+				if(scd != null){
+					int x = Utils.floorMod2(event.getBlock().getX(), 4);
+					int z = Utils.floorMod2(event.getBlock().getZ(), 4);
+					scd.getState(x, event.getBlock().getY(), z).setData(event.getBlockPlaced().getState().getData());
+				} else {
+					scd = LivelyWorld.getInstance().getWaterModule().getWaterThread().addLoadedChunk(event.getBlock().getChunk());
+					int x = Utils.floorMod2(event.getBlock().getX(), 4);
+					int z = Utils.floorMod2(event.getBlock().getZ(), 4);
+					scd.getState(x, event.getBlock().getY(), z).setData(event.getBlockPlaced().getState().getData());
+				}
+			}
+			
+		};
+		bk.runTaskLater(LivelyWorld.getInstance(), 1);
 	}
 	
 	@EventHandler
@@ -234,7 +250,15 @@ public class WaterListener implements Listener{
 		if(!LivelyWorld.getInstance().getWaterModule().isEnabled()) return;
 		Chunk c = event.getChunk();
 		if(!c.getWorld().getName().equals("world")) return;
-		LivelyWorld.getInstance().getWaterModule().getWaterThread().addLoadedChunk(c);
+		BukkitRunnable bk = new BukkitRunnable(){
+
+			@Override
+			public void run() {
+				LivelyWorld.getInstance().getWaterModule().getWaterThread().addLoadedChunk(c);
+			}
+			
+		};
+		bk.runTaskLater(LivelyWorld.getInstance(), 1);
 		/*BukkitRunnable br = new BukkitRunnable(){
 			@Override
 			public void run() {

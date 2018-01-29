@@ -755,7 +755,7 @@ public class WaterChunk {
 	}
 	
 	private void updateData(WaterData d) {
-		int index = getIndex(d.x, d.y, d.z);
+		int index = getIndex(d.getX(), d.getY(), d.getZ());
 		byte[] dt = d.getByteArray();
 		data[index] = dt[0];
 		data[index+1] = dt[1];

@@ -17,6 +17,7 @@ import com.kylantraynor.livelyworld.Utils;
  * @author Baptiste
  *
  */
+/*
 public class WaterChunkUpdateRunnable extends BukkitRunnable {
 
 	public enum UpdateType{
@@ -85,4 +86,4 @@ public class WaterChunkUpdateRunnable extends BukkitRunnable {
 			}
 		}
 	}
-}
+}*/

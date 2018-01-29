@@ -182,7 +182,7 @@ public class WaterListener implements Listener{
 				WaterChunk wc = WaterChunk.get(c.getWorld(), c.getX(), c.getZ());
 				WaterData d = wc.getAt(Math.floorMod(b.getX(), 16), b.getY(), Math.floorMod(b.getZ(), 16));
 				Utils.setLoreInfo(event.getItemStack(), "Level", "" + d.getLevel());
-				d.setLevel(0);
+				d.level = 0;
 			}
 		};
 		br.runTaskAsynchronously(LivelyWorld.getInstance());

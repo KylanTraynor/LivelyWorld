@@ -33,13 +33,13 @@ public class WaterDataUpdate extends BukkitRunnable{
 	
 	@Override
 	public void run() {
-		WaterChunk c = WaterChunk.get(world, chunkX, chunkZ);
+		/*WaterChunk c = WaterChunk.get(world, chunkX, chunkZ);
 		WaterData wd = c.getAt(x, y, z);
-		if(wd.getResistance() != WaterData.getResistanceFor(mat)){
-			wd.setResistance(WaterData.getResistanceFor(mat));
+		if(wd.getResistance() != WaterChunk.getResistanceFor(mat)){
+			wd.resistance = (byte) (WaterChunk.getResistanceFor(mat));
 		}
 		if(level > 0 && level != wd.getLevel()){
-			wd.setLevel(level);
+			wd.level = (byte) level;
 		}
 		
 		wd.sendChangedEvent();
@@ -48,6 +48,6 @@ public class WaterDataUpdate extends BukkitRunnable{
 		wd.getRelative(BlockFace.NORTH).sendChangedEvent();
 		wd.getRelative(BlockFace.SOUTH).sendChangedEvent();
 		wd.getRelative(BlockFace.EAST).sendChangedEvent();
-		wd.getRelative(BlockFace.WEST).sendChangedEvent();
+		wd.getRelative(BlockFace.WEST).sendChangedEvent();*/
 	}
 }

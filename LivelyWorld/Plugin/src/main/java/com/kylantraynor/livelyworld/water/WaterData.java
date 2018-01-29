@@ -8,6 +8,7 @@ public class WaterData {
 	
 	final static int resistanceCode = 8;
 	final static int solidCode = 28;
+	public static final int maxLevel = 0xff;
 	
 	public WaterData(int data, int x, int y, int z) {
 		this(Utils.toByteArray(data), x, y, z);
@@ -32,12 +33,28 @@ public class WaterData {
 	public boolean isSolid;
 	public int lastDirection = 0;
 	
+	public int getX(){
+		return Byte.toUnsignedInt(x);
+	}
+	
+	public int getZ(){
+		return Byte.toUnsignedInt(z);
+	}
+	
+	public int getY(){
+		return Byte.toUnsignedInt(y);
+	}
+	
 	public int getLevel(){
 		return Byte.toUnsignedInt(level);
 	}
 	
 	public int getResistance(){
 		return Byte.toUnsignedInt(resistance);
+	}
+	
+	public int getSalt(){
+		return 0;
 	}
 	
 	public int getMaxQuantity(){

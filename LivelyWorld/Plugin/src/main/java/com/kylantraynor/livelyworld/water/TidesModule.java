@@ -546,7 +546,7 @@ public class TidesModule {
 								WaterChunk c = WaterChunk.get(p.getWorld(), p.getLocation().getBlockX() >> 4, p.getLocation().getBlockZ() >> 4);
 								WaterData wd = c.getAt(Math.floorMod(p.getLocation().getBlockX(),16), p.getLocation().getBlockY(), Math.floorMod(p.getLocation().getBlockZ(),16));
 								while(wd.getLevel() < 1 && wd.getY() > 0){
-									wd = wd.getRelative(BlockFace.DOWN);
+									wd = c.getAt(wd.getX(), wd.getY() - 1, wd.getZ());
 								}
 								p.sendMessage("Closest water block: Y" + wd.getY() + ".");
 								p.sendMessage("DEBUG : GetData: " + Integer.toBinaryString((int) wd.getData()));

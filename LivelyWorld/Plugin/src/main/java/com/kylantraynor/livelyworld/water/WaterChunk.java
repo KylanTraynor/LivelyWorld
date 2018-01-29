@@ -736,7 +736,7 @@ public class WaterChunk {
 		// Get a snapshot of the actual chunk.
 		ChunkSnapshot c = null;
 		if(WaterChunkThread.isChunkLoaded(world, x, z)){
-			c = world.getChunkAt(x, z).getChunkSnapshot();
+			c = world.getChunkAt(x, z).getChunkSnapshot(false, true, false);
 		} else {
 			return;
 		}

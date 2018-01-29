@@ -196,7 +196,7 @@ public class WaterListener implements Listener{
 		if(!LivelyWorld.getInstance().getWaterModule().isRealisticSimulation()) return;
 		/*BukkitRunnable bk = new WaterDataUpdate(event.getBlock());
 		bk.runTaskLaterAsynchronously(LivelyWorld.getInstance(), 1);*/
-		BukkitRunnable bk = new BukkitRunnable(){
+		/*BukkitRunnable bk = new BukkitRunnable(){
 
 			@Override
 			public void run() {
@@ -214,7 +214,7 @@ public class WaterListener implements Listener{
 			}
 			
 		};
-		bk.runTaskLater(LivelyWorld.getInstance(), 1);
+		bk.runTaskLater(LivelyWorld.getInstance(), 1);*/
 	}
 	
 	@EventHandler(ignoreCancelled = true)
@@ -223,7 +223,7 @@ public class WaterListener implements Listener{
 		if(!LivelyWorld.getInstance().getWaterModule().isRealisticSimulation()) return;
 		/*BukkitRunnable bk = new WaterDataUpdate(event.getBlock());
 		bk.runTaskLaterAsynchronously(LivelyWorld.getInstance(), 1);*/
-		BukkitRunnable bk = new BukkitRunnable(){
+		/*BukkitRunnable bk = new BukkitRunnable(){
 
 			@Override
 			public void run() {
@@ -241,7 +241,7 @@ public class WaterListener implements Listener{
 			}
 			
 		};
-		bk.runTaskLater(LivelyWorld.getInstance(), 1);
+		bk.runTaskLater(LivelyWorld.getInstance(), 1);*/
 	}
 	
 	@EventHandler

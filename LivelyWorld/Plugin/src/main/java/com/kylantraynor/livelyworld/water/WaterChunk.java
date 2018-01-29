@@ -738,6 +738,9 @@ public class WaterChunk {
 	void update(){
 		if(!isLoaded) return;
 		
+		double dist = Math.sqrt(distanceSquaredFromNearestPlayer());
+		if(Utils.fastRandomDouble() > 2.0 / Math.max(dist, 1)) return;
+		
 		// If the chunk was not generate, generate it.
 		if(!wasGenerated){
 			this.saturate();

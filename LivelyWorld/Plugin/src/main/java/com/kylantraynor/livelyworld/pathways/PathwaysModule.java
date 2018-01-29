@@ -16,6 +16,7 @@ import org.bukkit.material.Stairs;
 import org.bukkit.material.Step;
 
 import com.kylantraynor.livelyworld.LivelyWorld;
+import com.kylantraynor.livelyworld.Utils;
 import com.kylantraynor.livelyworld.deterioration.DeteriorationCause;
 import com.kylantraynor.livelyworld.events.BlockDeteriorateEvent;
 
@@ -180,20 +181,20 @@ public class PathwaysModule {
 			}
 			snow.getWorld().playSound(snow.getLocation(),
 					Sound.BLOCK_SNOW_BREAK, 1,
-					(float) ((Math.random() + 1) / 2));
+					(float) ((Utils.fastRandomDouble() + 1) / 2));
 			return;
 		}
 		// If block is Grass
 		if (b.getType() == Material.GRASS) {
 			// then if a random double is bellow the probability for dirt to
 			// appear
-			if (Math.random() <= probabilityDirt * multiplier) {
+			if (Utils.fastRandomDouble() <= probabilityDirt * multiplier) {
 				// Change the grass to dirt
 				b.setType(Material.DIRT, false);
 			}
 		} else if (b.getType() == Material.DIRT && b.getData() == 0) {
 			// Same for coarse (coarse = dirt with data value of 1)
-			if (Math.random() <= probabilityCoarse * multiplier) {
+			if (Utils.fastRandomDouble() <= probabilityCoarse * multiplier) {
 				if (b.getBiome() == Biome.FOREST
 						|| b.getBiome() == Biome.JUNGLE) {
 					b.setData((byte) 2, false);
@@ -206,7 +207,7 @@ public class PathwaysModule {
 			if (b.getRelative(BlockFace.UP).getType() == Material.RAILS)
 				return;
 			// Same for grassPath
-			if (Math.random() <= probabilityPath * multiplier) {
+			if (Utils.fastRandomDouble() <= probabilityPath * multiplier) {
 				b.setType(Material.GRASS_PATH, false);
 			}
 		} else if (b.getType() == Material.GRAVEL) {
@@ -218,19 +219,19 @@ public class PathwaysModule {
 			if (b.getRelative(BlockFace.UP).getType() == Material.RAILS)
 				return;
 			// Same for stairs
-			if (Math.random() <= probabilityCblStairs * multiplier) {
+			if (Utils.fastRandomDouble() <= probabilityCblStairs * multiplier) {
 				turnToCobbleStairs(b);
 			}
 		} else if (b.getType() == Material.COBBLESTONE_STAIRS) {
 			// Same for slabs
-			if (Math.random() <= probabilityCblStairs * multiplier) {
+			if (Utils.fastRandomDouble() <= probabilityCblStairs * multiplier) {
 				turnToCobbleSlab(b);
 			}
 		} else if (b.getType() == Material.SNOW_BLOCK) {
 			b.setType(Material.SNOW);
 			b.setData((byte) 6);
 			b.getWorld().playSound(b.getLocation(), Sound.BLOCK_SNOW_BREAK, 1,
-					(float) ((Math.random() + 1) / 2));
+					(float) ((Utils.fastRandomDouble() + 1) / 2));
 		}
 	}
 	
@@ -246,7 +247,7 @@ public class PathwaysModule {
 			// Since the state has to be stairs, just get a stairs object
 			Stairs stairs = (Stairs) state.getData();
 			// For a value between 0 and 3...
-			switch ((int) (Math.random() * 4)) {
+			switch (Utils.fastRandomInt(4)) {
 			case 0:
 				// if it's 0, set the stairs to face north
 				stairs.setFacingDirection(BlockFace.NORTH);

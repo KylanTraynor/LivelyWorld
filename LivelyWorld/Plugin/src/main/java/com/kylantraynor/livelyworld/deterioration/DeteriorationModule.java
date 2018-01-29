@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.material.MaterialData;
 
 import com.kylantraynor.livelyworld.LivelyWorld;
+import com.kylantraynor.livelyworld.Utils;
 import com.kylantraynor.livelyworld.events.BlockDeteriorateEvent;
 
 public class DeteriorationModule {
@@ -91,7 +92,7 @@ public class DeteriorationModule {
 					"Trying to spawn Cobweb at " + b.getLocation());
 		if (b.getLightFromSky() > 8)
 			return;
-		if (Math.random() * 100 <= 50 && b.getType() == Material.AIR) {
+		if (Utils.fastRandomInt(100) <= 50 && b.getType() == Material.AIR) {
 			BlockDeteriorateEvent event = new BlockDeteriorateEvent(b, DeteriorationCause.Age, new MaterialData(Material.WEB));
 			Bukkit.getPluginManager().callEvent(event);
 			

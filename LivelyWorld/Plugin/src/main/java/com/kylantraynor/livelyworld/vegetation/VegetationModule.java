@@ -103,7 +103,7 @@ public class VegetationModule implements Listener {
 		Block above = b.getRelative(BlockFace.UP);
 		if (above.getType() != Material.AIR)
 			return;
-		int rand = (int) (Math.random() * 3);
+		int rand = Utils.fastRandomInt(4);
 		switch (rand) {
 		case 0:
 			tryPlantDandelion(above);
@@ -116,6 +116,7 @@ public class VegetationModule implements Listener {
 			break;
 		case 3:
 			tryPlantBlueOrchid(above);
+			break;
 		default:
 
 		}
@@ -248,8 +249,8 @@ public class VegetationModule implements Listener {
 	private boolean isWaterLevelBelow(Location l, int level, int depth) {
 		int i = 1;
 		WaterChunk wc = WaterChunk.get(l.getWorld(), l.getBlockX() >> 4, l.getBlockZ() >> 4);
-		int x = Math.floorMod(l.getBlockX(), 16);
-		int z = Math.floorMod(l.getBlockZ(), 16);
+		int x = Utils.floorMod2(l.getBlockX(), 4);
+		int z = Utils.floorMod2(l.getBlockZ(), 4);
 		int y = l.getBlockY();
 		while (i < depth && y > 0) {
 			if(wc.getAt(x, y, z).getLevel() >= level){

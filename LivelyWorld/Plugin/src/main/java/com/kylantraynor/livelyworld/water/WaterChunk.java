@@ -380,8 +380,8 @@ public class WaterChunk {
 				LivelyWorld.getInstance().getLogger().warning(getFile().getName()+": Unexpected file size (" + f.length() + "). Chunk won't be loaded.");
 				return;
 			}
-			int locationIndex = (Math.floorMod(getX(),32) * 32 * 4) + (Math.floorMod(getZ(),32) * 4);
-			int sizeIndex = ((4096) + (Math.floorMod(getX(),32) * 32 * 4) + (Math.floorMod(getZ(),32) * 4));
+			int locationIndex = ((Utils.floorMod2(getX(),5) << 5) + Utils.floorMod2(getZ(),5)) << 2;
+			int sizeIndex = (4096 + ((Utils.floorMod2(getX(),5) << 5) + Utils.floorMod2(getZ(),5)) << 2);
 			
 			f.seek(locationIndex);
 			int location = f.readInt();

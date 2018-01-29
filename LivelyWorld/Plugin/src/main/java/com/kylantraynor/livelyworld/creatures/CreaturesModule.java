@@ -22,6 +22,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import com.kylantraynor.livelyworld.LivelyWorld;
+import com.kylantraynor.livelyworld.Utils;
 import com.kylantraynor.livelyworld.api.AnimalsHelper;
 
 public class CreaturesModule {
@@ -55,12 +56,12 @@ public class CreaturesModule {
 			public void run() {
 				for(World world : getPlugin().getServer().getWorlds()){
 					for(Chunk chunk : world.getLoadedChunks()){
-						if(Math.random() >= 0.5) continue;
+						if(Utils.fastRandomDouble() >= 0.5) continue;
 						Entity[] entities = chunk.getEntities();
 						for(Entity e : entities){
 							if(isAnimal(e)){
 								if(e.getPassengers().size() > 0) continue;
-								if(Math.random() >= 0.05) continue;
+								if(Utils.fastRandomDouble() >= 0.05) continue;
 								Location lastLoc = endangeredAnimals.get(e.getUniqueId());
 								if(lastLoc != null){
 									if(lastLoc.getBlock() == e.getLocation().getBlock()){
@@ -90,7 +91,7 @@ public class CreaturesModule {
 									if(animal.getHealth() >= mxHealth - 2 && animal.canBreed()){
 										if(getHelper() != null){
 											if(!getHelper().isInLoveMode(animal)){
-												if(Math.random() < 0.1){
+												if(Utils.fastRandomDouble() < 0.1){
 													getHelper().startLoveMode(animal);
 												}
 											}
@@ -157,8 +158,8 @@ public class CreaturesModule {
 	}
 	
 	public Block getEdibleBlockAround(Block block){
-		int xs = Math.random() > 0.5 ? 1 : -1;
-		int zs = Math.random() > 0.5 ? 1 : -1;
+		int xs = Utils.fastRandomDouble() > 0.5 ? 1 : -1;
+		int zs = Utils.fastRandomDouble() > 0.5 ? 1 : -1;
 		int xcrement = xs < 0 ? 1 : -1;
 		int zcrement = zs < 0 ? 1 : -1;
 		for(int x = xs; x != xs * -1; x += xcrement){
@@ -229,7 +230,7 @@ public class CreaturesModule {
 			if (b.getLocation().distanceSquared(p.getLocation()) > 400) {
 				// plugin.log(Level.INFO, "Creature update3!");
 				if (b.getBiome() == Biome.DEEP_OCEAN) {
-					if (Math.random() * 100 <= 20) {
+					if (Utils.fastRandomInt(100) <= 20) {
 						b.getLocation()
 								.getWorld()
 								.spawnEntity(b.getLocation(),

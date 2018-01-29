@@ -11,6 +11,8 @@ import org.bukkit.entity.FallingBlock;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
+import com.kylantraynor.livelyworld.Utils;
+
 public class GravityTask extends BukkitRunnable {
 
 	private GravityModule module;
@@ -98,7 +100,7 @@ public class GravityTask extends BukkitRunnable {
 		boolean hasAirBelow = !module.isSolidBlock(world
 				.getBlockAt(x, y - 1, z));
 		if (!hasAirBelow) {
-			if (Math.random() < 0.5) {
+			if (Utils.fastRandomDouble() < 0.5) {
 				GravityTask task = new GravityTask(module, world, x, y - 1, z);
 				task.runTaskLater(module.getPlugin(), 10);
 			}
@@ -107,7 +109,7 @@ public class GravityTask extends BukkitRunnable {
 				GravityProperties gp = module.getBlockProperties(getBlock());
 				if(gp != null){
 					if(gp.getType() == GravityType.SANDLIKE){
-						if(Math.random() < (1.0 / gp.stability))
+						if(Utils.fastRandomDouble() < (1.0 / gp.stability))
 							spawnFallingBlock(airDirection);
 					}
 				}
@@ -158,7 +160,7 @@ public class GravityTask extends BukkitRunnable {
 				if (getBlock().getData() < 2) {
 					if (hasSupport(world, x, y, z, 5, true)) {
 						if (!hasSupport(world, x, y, z, 4, false)) {
-							if (Math.random() < 0.1) {
+							if (Utils.fastRandomDouble() < 0.1) {
 								getBlock().setData((byte) 2);
 							}
 						}
@@ -195,7 +197,7 @@ public class GravityTask extends BukkitRunnable {
 			for (int x = this.x - 1; x <= this.x + 1; x++) {
 				for (int y = this.y; y <= this.y + 1; y++) {
 					for (int z = this.z - 1; z <= this.z + 1; z++) {
-						if (Math.random() < 0.5) {
+						if (Utils.fastRandomDouble() < 0.5) {
 							GravityTask task = new GravityTask(module, world,
 									x, y, z);
 							task.runTaskLater(module.getPlugin(), 10);
@@ -243,7 +245,7 @@ public class GravityTask extends BukkitRunnable {
 					continue;
 				if (module.isSolidBlock(w.getBlockAt(x, y - 1, z))) {
 					if (spread) {
-						if (Math.random() < 0.5) {
+						if (Utils.fastRandomDouble() < 0.5) {
 							GravityTask task = new GravityTask(module, w, x,
 									y - 1, z);
 							task.runTaskLater(module.getPlugin(), 10);

@@ -366,6 +366,17 @@ public class Utils {
 	}
 	
 	/**
+	 * Fast modulus for powers of two.
+	 * @param n
+	 * @param power
+	 * @return
+	 */
+	static public int floorMod2(final int n, final int power){
+		final int d = n >> power;
+		return n - (d << power);
+	}
+	
+	/**
 	 * Returns a double between [0 and 1]
 	 * @return
 	 */

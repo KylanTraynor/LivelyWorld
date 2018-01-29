@@ -65,7 +65,7 @@ public class WeatherEffectsRunnable extends BukkitRunnable {
 										WaterChunk wc = WaterChunk.get(fb.getWorld(), chunkX, chunkZ);
 										if(wc.isLoaded()){
 											WaterData wd = wc.getAt(Math.floorMod(fb.getX(), 16), fb.getY(), Math.floorMod(fb.getZ(), 16));
-											wd.setLevel(Math.max(wd.getLevel() - evaporation, 0));
+											wd.level = (byte) Math.max(wd.getLevel() - evaporation, 0);
 										}
 									}
 								};
@@ -86,7 +86,7 @@ public class WeatherEffectsRunnable extends BukkitRunnable {
 									public void run() {
 										WaterChunk wc = WaterChunk.get(fb.getWorld(), chunkX, chunkZ);
 										if(wc.isLoaded()){
-											wc.addWaterAt(Math.floorMod(fb.getX(), 16), fb.getY(), Math.floorMod(fb.getZ(), 16), (int) (amount * WaterData.maxLevel) / 8);
+											wc.addWaterAt(Math.floorMod(fb.getX(), 16), fb.getY(), Math.floorMod(fb.getZ(), 16), (int) (amount * 0xFF) / 8);
 										}
 									}
 								};

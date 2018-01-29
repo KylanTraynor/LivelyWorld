@@ -1,7 +1,5 @@
 package com.kylantraynor.livelyworld.water;
 
-import java.util.Random;
-
 import com.kylantraynor.livelyworld.Utils;
 
 public class WaterData {

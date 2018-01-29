@@ -52,6 +52,15 @@ public class WaterChunk {
 		this.world = w;
 		this.x = x;
 		this.z = z;
+		for(int y = 255; y >= 0; y--){
+			for(int x1 = 0; x1 < 16; x1++){
+				for(int z1 = 0; z1 < 16; z1++){
+					if(data[y][x1][z1] == null){
+						data[y][x1][z1] = new WaterData(0, x1, y, z1);
+					}
+				}
+			}
+		}
 	}
 	
 	@Override
@@ -405,7 +414,7 @@ public class WaterChunk {
 					if(version == currentVersion && baos.size() == dataByteLength + 8){
 						int chunkData = Utils.toInt(array[4], array[5], array[6], array[7]);
 						synchronized(data){
-							for(int i = 0; i < dataLength; i += 4){
+							for(int i = 0; i < dataLength; i++){
 								int index = (i * 4) + 8;
 								int y = (i >> 8) & (data.length - 1);
 								int x = (i >> 4) & (data[0].length - 1);
@@ -460,7 +469,9 @@ public class WaterChunk {
 				}
 			}
 		}
-		LivelyWorld.getInstance().getLogger().info("Found " + corruptedCount + " missing data in chunk " + x + ", " + z +".");
+		if(corruptedCount > 0){
+			LivelyWorld.getInstance().getLogger().info("Found " + corruptedCount + " missing data in chunk " + x + ", " + z +".");
+		}
 		
 		/*if(compressedData == null) return;
 		
@@ -725,7 +736,7 @@ public class WaterChunk {
 	}
 	
 	void update(){
-		if(!isLoaded()) load();
+		if(!isLoaded) load();
 		
 		// If the chunk was not generate, generate it.
 		if(!wasGenerated){

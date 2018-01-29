@@ -18,6 +18,7 @@ import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.material.MaterialData;
 
 import com.kylantraynor.livelyworld.climate.ClimateUtils;
 
@@ -85,7 +86,7 @@ public class Utils {
 		private int z = 0;
 		
 		private Biome[][] biomes = new Biome[16][16];
-		private BlockState[][][] blockStates = new BlockState[256][16][16];
+		private MaterialData[][][] data = new MaterialData[256][16][16];
 		
 		public SmallChunkData(Chunk c){
 			x = c.getX();
@@ -99,7 +100,7 @@ public class Utils {
 			for(int y = 0; y < 256; y ++){
 				for(int x = 0; x < 16; x ++){
 					for(int z = 0; z < 16; z ++){
-						blockStates[y][x][z] = c.getBlock(x, y, z).getState();
+						data[y][x][z] = c.getBlock(x, y, z).getState().getData();
 					}
 				}
 			}
@@ -122,11 +123,15 @@ public class Utils {
 		}
 		
 		public Material getMaterial(int x, int y, int z){
-			return blockStates[y][x][z].getType();
+			return data[y][x][z].getItemType();
 		}
 		
-		public BlockState getState(int x, int y, int z){
-			return blockStates[y][x][z];
+		public MaterialData getData(int x, int y, int z){
+			return data[y][x][z];
+		}
+
+		public void setData(int x2, int y, int z2, MaterialData materialData) {
+			data[y][x2][z2] = materialData;
 		}
 	}
 	

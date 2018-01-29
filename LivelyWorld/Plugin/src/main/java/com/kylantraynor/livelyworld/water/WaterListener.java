@@ -204,12 +204,12 @@ public class WaterListener implements Listener{
 				if(scd != null){
 					int x = Utils.floorMod2(event.getBlock().getX(), 4);
 					int z = Utils.floorMod2(event.getBlock().getZ(), 4);
-					scd.getState(x, event.getBlock().getY(), z).setData(new MaterialData(Material.AIR));
+					scd.setData(x, event.getBlock().getY(), z, new MaterialData(Material.AIR));
 				} else {
 					scd = LivelyWorld.getInstance().getWaterModule().getWaterThread().addLoadedChunk(event.getBlock().getChunk());
 					int x = Utils.floorMod2(event.getBlock().getX(), 4);
 					int z = Utils.floorMod2(event.getBlock().getZ(), 4);
-					scd.getState(x, event.getBlock().getY(), z).setData(new MaterialData(Material.AIR));
+					scd.setData(x, event.getBlock().getY(), z, new MaterialData(Material.AIR));
 				}
 			}
 			
@@ -231,12 +231,12 @@ public class WaterListener implements Listener{
 				if(scd != null){
 					int x = Utils.floorMod2(event.getBlock().getX(), 4);
 					int z = Utils.floorMod2(event.getBlock().getZ(), 4);
-					scd.getState(x, event.getBlock().getY(), z).setData(event.getBlockPlaced().getState().getData());
+					scd.setData(x, event.getBlock().getY(), z, event.getBlockPlaced().getState().getData());
 				} else {
 					scd = LivelyWorld.getInstance().getWaterModule().getWaterThread().addLoadedChunk(event.getBlock().getChunk());
 					int x = Utils.floorMod2(event.getBlock().getX(), 4);
 					int z = Utils.floorMod2(event.getBlock().getZ(), 4);
-					scd.getState(x, event.getBlock().getY(), z).setData(event.getBlockPlaced().getState().getData());
+					scd.setData(x, event.getBlock().getY(), z, event.getBlockPlaced().getState().getData());
 				}
 			}
 			

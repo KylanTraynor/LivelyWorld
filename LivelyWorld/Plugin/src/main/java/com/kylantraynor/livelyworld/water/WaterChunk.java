@@ -813,7 +813,7 @@ public class WaterChunk {
 					if(canReplace(m)){
 						int waterLevel = 0;
 						if(Utils.isWater(m)){
-							waterLevel = Utils.getWaterHeight(c.getState(x, y, z).getData().getData());
+							waterLevel = Utils.getWaterHeight(c.getData(x, y, z).getData());
 						}
 						if(waterLevel != toWaterLevel(data[y][x][z].getLevel())){
 							updateVisually(x,y,z, toWaterLevel(data[y][x][z].getLevel()));

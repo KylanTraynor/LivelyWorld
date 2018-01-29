@@ -813,11 +813,11 @@ public class WaterChunk {
 		for(int y = 0; y < 256; y++){
 			for(int x = 0; x < 16; x++){
 				for(int z = 0; z < 16; z++){
-					MaterialData m = chunk.getBlock(x, y, z).getState().getData();
-					if(canReplace(m.getItemType())){
+					Material m = chunk.getBlock(x, y, z).getType();
+					if(canReplace(m)){
 						int waterLevel = 0;
-						if(Utils.isWater(m.getItemType())){
-							waterLevel = Utils.getWaterHeight(m.getData());
+						if(Utils.isWater(m)){
+							waterLevel = Utils.getWaterHeight(chunk.getBlock(x, y, z).getData());
 						}
 						if(waterLevel != toWaterLevel(data[y][x][z].getLevel())){
 							updateVisually(x,y,z, toWaterLevel(data[y][x][z].getLevel()));

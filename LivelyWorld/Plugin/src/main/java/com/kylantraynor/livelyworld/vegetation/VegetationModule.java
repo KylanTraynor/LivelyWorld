@@ -24,6 +24,7 @@ import com.kylantraynor.livelyworld.climate.ClimateChunk;
 import com.kylantraynor.livelyworld.climate.ClimateUtils;
 import com.kylantraynor.livelyworld.climate.Planet;
 import com.kylantraynor.livelyworld.climate.Temperature;
+import com.kylantraynor.livelyworld.water.WaterChunk;
 import com.kylantraynor.livelyworld.water.WaterData;
 
 public class VegetationModule implements Listener {
@@ -136,7 +137,7 @@ public class VegetationModule implements Listener {
 		if (isClimateOk) {
 			if (debug)
 				Bukkit.getServer().getLogger().info("Climate is Ok");
-			if (isWaterLevelBelow(b.getLocation(), (int) WaterData.maxLevel / 8, 10)) {
+			if (isWaterLevelBelow(b.getLocation(), 0xFF / 8, 10)) {
 				if (debug)
 					Bukkit.getServer().getLogger()
 							.info("Found enough water underground.");
@@ -246,13 +247,15 @@ public class VegetationModule implements Listener {
 	
 	private boolean isWaterLevelBelow(Location l, int level, int depth) {
 		int i = 1;
-		Location currentLocation = l.clone();
-
-		while (i < depth && currentLocation.getBlockY() > 0) {
-			currentLocation.add(0, -1, 0);
-			if(WaterData.getWaterLevelAt(l.getWorld(), l.getBlockX(), l.getBlockY(), l.getBlockZ()) >= level){
+		WaterChunk wc = WaterChunk.get(l.getWorld(), l.getBlockX() >> 4, l.getBlockZ() >> 4);
+		int x = Math.floorMod(l.getBlockX(), 16);
+		int z = Math.floorMod(l.getBlockZ(), 16);
+		int y = l.getBlockY();
+		while (i < depth && y > 0) {
+			if(wc.getAt(x, y, z).getLevel() >= level){
 				return true;
 			}
+			y--;
 			i++;
 		}
 		return false;

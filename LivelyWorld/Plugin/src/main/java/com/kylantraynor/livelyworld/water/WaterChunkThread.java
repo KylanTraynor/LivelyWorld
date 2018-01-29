@@ -182,7 +182,7 @@ public class WaterChunkThread extends Thread {
 			}
 			if(c.isLoaded() && isChunkLoaded(c.getWorld(), c.getX(), c.getZ())){
 				try{
-					c.tickAll();
+					c.update();
 				} catch (Exception e){
 					LivelyWorld.getInstance().getLogger().severe("Exception while ticking water chunk at " + c.getX() + "," + c.getZ()+ ".");
 					e.printStackTrace();

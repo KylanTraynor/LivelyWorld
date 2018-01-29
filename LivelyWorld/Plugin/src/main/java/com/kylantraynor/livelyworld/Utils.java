@@ -28,6 +28,11 @@ public class Utils {
 	private static int t;
 	private static long tickLength;
 	
+	@SafeVarargs
+	public static <T> T[] toArray(T... t){
+		return t;
+	}
+	
 	public static class ChunkCoordinates{
 		final private String world;
 		final private int x;

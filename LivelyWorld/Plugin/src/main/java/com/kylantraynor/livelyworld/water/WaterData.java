@@ -15,7 +15,7 @@ public class WaterData {
 	public WaterData(byte[] data, int pressure, int x, int y, int z) {
 		level = data[0];
 		resistance = data[1];
-		isSolid = ((data[3] & 0b00010000) >> 4) == 1;
+		isSolid = ((data[3] & 0x10) >> 4) == 1;
 		pressure = 0;
 		this.x = (byte) x;
 		this.y = (byte) y;
@@ -67,13 +67,13 @@ public class WaterData {
 	
 	public int getData(){
 		byte b2 = 0;
-		byte b3 = (byte) ((isSolid ? 1 : 0) << 4);
+		byte b3 = (byte) (isSolid ? 0x10 : 0x00);
 		return Utils.toInt(level, resistance, b2, b3);
 	}
 
 	public byte[] getByteArray() {
 		byte b2 = 0;
-		byte b3 = (byte) ((isSolid ? 1 : 0) << 4);
+		byte b3 = (byte) (isSolid ? 0x10 : 0x00);
 		return new byte[] {level, resistance, b2, b3};
 	}
 }

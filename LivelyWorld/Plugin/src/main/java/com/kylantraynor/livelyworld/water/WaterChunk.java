@@ -891,7 +891,7 @@ public class WaterChunk {
 		if(material == null) return 0;
 		switch (material){
 		case WATER: case STATIONARY_WATER: case AIR:
-			return 1;
+			return 0;
 		case WOOD_BUTTON: case STONE_BUTTON:
 		case LADDER: case RAILS: case TORCH: case IRON_FENCE: case WALL_SIGN: case SIGN_POST:
 		case WOOD_PLATE: case STONE_PLATE: case IRON_PLATE: case GOLD_PLATE:
@@ -1305,5 +1305,12 @@ public class WaterChunk {
 			}
 		}
 		
+	}
+
+	public void setLevel(int x, int y, int z, int l) {
+		if(l < 0) l = 0;
+		if(l > 0xFF) l = 0xFF;
+		int index = getIndex(x,y,z);
+		data[index] = (byte) l;
 	}
 }

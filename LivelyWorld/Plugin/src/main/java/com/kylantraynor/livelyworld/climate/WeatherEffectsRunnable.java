@@ -65,8 +65,9 @@ public class WeatherEffectsRunnable extends BukkitRunnable {
 									public void run() {
 										WaterChunk wc = WaterChunk.get(fb.getWorld(), chunkX, chunkZ);
 										if(wc.isLoaded()){
-											WaterData wd = wc.getAt(Utils.floorMod2(fb.getX(), 4), fb.getY(), Utils.floorMod2(fb.getZ(), 4));
-											wd.level = (byte) Math.max(wd.getLevel() - evaporation, 0);
+											int xc = Utils.floorMod2(fb.getX(), 4);
+											int zc = Utils.floorMod2(fb.getZ(), 4);
+											wc.setLevel(xc, fb.getY(), zc, wc.getLevel(xc, fb.getY(), zc) - evaporation);
 										}
 									}
 								};

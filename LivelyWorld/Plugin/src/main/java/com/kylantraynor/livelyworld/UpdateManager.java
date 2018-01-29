@@ -44,8 +44,8 @@ public class UpdateManager {
 				double worldRadiusX = HookManager.getWorldBorder().getWorldRadiusX(world);
 				double worldRadiusZ = HookManager.getWorldBorder().getWorldRadiusZ(world);
 				if(worldRadiusX == 0 || worldRadiusZ == 0) return;
-					randomX = (int) Math.round(Math.random() * (worldRadiusX * 2) - worldRadiusX);
-				randomZ = (int) Math.round(Math.random() * (worldRadiusZ * 2) - worldRadiusZ);
+					randomX = (int) (Utils.fastRandomInt((int) (worldRadiusX * 2)) - worldRadiusX);
+				randomZ = (int) (Utils.fastRandomInt((int) (worldRadiusZ * 2)) - worldRadiusZ);
 				randomX += worldCenter.getBlockX();
 				randomZ += worldCenter.getBlockZ();
 			} else {
@@ -89,13 +89,15 @@ public class UpdateManager {
 	private static void processWaterUpdate(Block block) {
 		if(block.getType() == Material.SOIL){
 			WaterChunk wc = WaterChunk.get(block.getWorld(), block.getX() >> 4, block.getZ() >> 4);
-			WaterData data = wc.getAt(Math.floorMod(block.getX(), 16), block.getY(), Math.floorMod(block.getZ(), 16));
+			int xc = Utils.floorMod2(block.getX(), 4);
+			int zc = Utils.floorMod2(block.getZ(), 4);
 			int moisture = block.getData();
-			if(data.getLevel() > 0){
+			int level = wc.getLevel(xc, block.getY(), zc);
+			if(level > 0){
 				block.setData((byte) 7);
 				if(block.getRelative(BlockFace.UP).getType() == Material.CROPS){
 					if(Utils.fastRandomDouble() > 0.9){
-						data.level--;
+						wc.setLevel(xc, block.getY(), zc, level - 1);
 					}
 				}
 			} else if(moisture > 0){

@@ -806,8 +806,8 @@ public class WaterChunk {
 		}
 		
 		if(System.currentTimeMillis() - lastUpdate < 1000) return;
-		if(this.distanceSquaredFromNearestPlayer() > 100) return;
-		if(this.distanceSquaredFromNearestPlayer() > 5 && Utils.fastRandomDouble() > 0.01) return;
+		if(dist > 10) return;
+		if(dist > 2 && Utils.fastRandomDouble() > 0.01) return;
 		if(!chunk.isLoaded()) return;
 		
 		for(int y = 0; y < 256; y++){

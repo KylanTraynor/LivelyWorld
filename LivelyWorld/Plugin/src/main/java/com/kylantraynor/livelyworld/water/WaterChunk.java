@@ -896,6 +896,9 @@ public class WaterChunk {
 		if(mat == Material.STATIONARY_WATER) return true;
 		if(mat == Material.AIR) return true;
 		if(mat == Material.LONG_GRASS) return true;
+		if(mat == Material.RED_ROSE) return true;
+		if(mat == Material.YELLOW_FLOWER) return true;
+		if(mat == Material.DOUBLE_PLANT) return true;
 		if(mat == Material.VINE) return true;
 		if(mat == Material.TORCH) return true;
 		if(mat == Material.SNOW) return true;
@@ -907,6 +910,9 @@ public class WaterChunk {
 		if(mat == Material.VINE) return true;
 		if(mat == Material.TORCH) return true;
 		if(mat == Material.LONG_GRASS) return true;
+		if(mat == Material.RED_ROSE) return true;
+		if(mat == Material.YELLOW_FLOWER) return true;
+		if(mat == Material.DOUBLE_PLANT) return true;
 		return false;
 	}
 	
@@ -917,7 +923,8 @@ public class WaterChunk {
 	}
 
 	public static int toWaterLevel(int level){
-		if(level <= 16){
+		return (level + 16) >> 5;
+		/*if(level <= 16){
 			return 0;
 		} else if(level < 48){
 			return 1;
@@ -935,7 +942,7 @@ public class WaterChunk {
 			return 7;
 		} else {
 			return 8;
-		}
+		}*/
 	}
 	/*
 	void tickAll(){
@@ -1193,7 +1200,7 @@ public class WaterChunk {
 			if(canReplace(b.getType())){
 				int waterLevel = toWaterLevel(level);
 				if(waterLevel != Utils.getWaterHeight(b)){
-					if(waterLevel > 0 && isDropable(b.getType())){
+					if(waterLevel > 3 && isDropable(b.getType())){
 						b.breakNaturally();
 					}
 					Utils.setWaterHeight(b, waterLevel, true);

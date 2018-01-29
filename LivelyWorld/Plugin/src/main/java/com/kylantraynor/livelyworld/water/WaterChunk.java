@@ -616,7 +616,7 @@ public class WaterChunk {
 		
 		if(d.getLevel() == 0) return;
 		if(d.isSolid){
-			if(tickRandom * 255 <= d.getResistance()){
+			if(Utils.fastRandomInt(256) <= d.getResistance()){
 				return;
 			}
 		}
@@ -653,9 +653,9 @@ public class WaterChunk {
 		boolean stable = false;
 		while(d.getLevel() > 0 && !stable){
 			if(down != null){
-				int max = (int) (down.getMaxQuantity() * tickRandom);
+				int max = down.getMaxQuantityRDM();
 				if(down.getLevel() < max
-						&& down.pressure < d.pressure + max && 255 * tickRandom > down.getResistance()){
+						&& down.pressure < d.pressure + max && Utils.fastRandomInt(256) > down.getResistance()){
 					down.level++;
 					if(down.isSolid){
 						down.pressure++;
@@ -668,9 +668,9 @@ public class WaterChunk {
 				}
 			}
 			if(up != null){
-				int max = (int) (d.getMaxQuantity() * tickRandom);
+				int max = d.getMaxQuantityRDM();
 				if(up.pressure < d.pressure - max){
-					if(up.getLevel() < tickRandom * up.getMaxQuantity()){
+					if(up.getLevel() < up.getMaxQuantityRDM()){
 						up.level++;
 						up.pressure++;
 						d.level--;
@@ -688,7 +688,7 @@ public class WaterChunk {
 				stable = true;
 				d.lastDirection = 0;
 			} else if(min.pressure < d.pressure){
-				if(min.getLevel() < min.getMaxQuantity() * tickRandom){
+				if(min.getLevel() < min.getMaxQuantityRDM()){
 					min.level++;
 					min.pressure++;
 					d.level--;
@@ -713,7 +713,7 @@ public class WaterChunk {
 		WaterData min = data[0];
 		for(int i = 1; i < data.length; i++){
 			if(data[i] == null) continue;
-			if(data[i].isSolid && tickRandom*255 >= data[i].getResistance()) continue;
+			if(data[i].isSolid && Utils.fastRandomInt(256) >= data[i].getResistance()) continue;
 			if(min == null) {
 				min = data[i];
 			} else if(data[i].pressure < min.pressure){
@@ -785,7 +785,7 @@ public class WaterChunk {
 		// Update Level.
 		int xStep = Utils.fastRandomInt(2) < 1 ? -1 : 1;
 		int zStep = Utils.fastRandomInt(2) < 1 ? -1 : 1;
-		this.tickRandom = Utils.fastRandomDouble();
+		
 		for(int y = 0; y < 256; y++){
 			for(int x = xStep == 1 ? 0 : 15; xStep == 1 ? x < 16 : x >= 0; x += xStep){
 				for(int z = zStep == 1 ? 0 : 15; zStep == 1 ? z < 16 : z >= 0; z += zStep){

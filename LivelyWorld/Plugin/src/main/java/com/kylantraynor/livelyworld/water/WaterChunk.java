@@ -917,7 +917,25 @@ public class WaterChunk {
 	}
 
 	public static int toWaterLevel(int level){
-		return level / 32;
+		if(level <= 16){
+			return 0;
+		} else if(level < 48){
+			return 1;
+		} else if(level < 80){
+			return 2;
+		} else if(level < 112){
+			return 3;
+		} else if(level < 144){
+			return 4;
+		} else if(level < 176){
+			return 5;
+		} else if(level < 208){
+			return 6;
+		} else if(level < 240){
+			return 7;
+		} else {
+			return 8;
+		}
 	}
 	/*
 	void tickAll(){

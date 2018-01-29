@@ -1,7 +1,8 @@
 package com.kylantraynor.livelyworld;
 
+import it.unimi.dsi.util.XoRoShiRo128PlusRandom;
+
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import org.bukkit.Bukkit;
@@ -17,7 +18,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import com.kylantraynor.livelyworld.api.AnimalsHelper;
 import com.kylantraynor.livelyworld.climate.ClimateUtils;
 
 public class Utils {
@@ -25,6 +25,7 @@ public class Utils {
 	private static double sqrt2PI = Math.sqrt(2 * Math.PI);
 	private static long rand = System.currentTimeMillis();
 	private static int[] xor128 = {123456789,362436069,521288629,88675123};
+	private static XoRoShiRo128PlusRandom rdm = new XoRoShiRo128PlusRandom();
 	private static int t;
 	private static long tickLength;
 	
@@ -345,20 +346,23 @@ public class Utils {
 	}
 	
 	public static long randomLong(){
-		rand ^= (rand << 21);
+		return rdm.nextLong();
+		/*rand ^= (rand << 21);
 		rand ^= (rand >>> 35);
 		rand ^= (rand << 4);
-		return rand;
+		return rand;*/
 	}
 	
 	public static int fastRandomInt(){
-		t = xor128[0] ^ (xor128[0] << 11);
+		return rdm.nextInt();
+		/*t = xor128[0] ^ (xor128[0] << 11);
 	    xor128[0] = xor128[1]; xor128[1] = xor128[2]; xor128[2] = xor128[3];
-	    return xor128[3] = xor128[3] ^ (xor128[3] >>> 19) ^ t ^ (t >>> 8);
+	    return xor128[3] = xor128[3] ^ (xor128[3] >>> 19) ^ t ^ (t >>> 8);*/
 	}
 	
 	public static int fastRandomInt(int max){
-		return Math.floorMod(fastRandomInt(), max);
+		return rdm.nextInt(max);
+		//return Math.floorMod(fastRandomInt(), max);
 	}
 	
 	/**
@@ -366,7 +370,8 @@ public class Utils {
 	 * @return
 	 */
 	public static double fastRandomDouble(){
-		return ((double)(fastRandomInt()) - ((double)Integer.MIN_VALUE)) / (-(Integer.MIN_VALUE * 2.0));
+		return rdm.nextDoubleFast();
+		//return ((double)(fastRandomInt()) - ((double)Integer.MIN_VALUE)) / (-(Integer.MIN_VALUE * 2.0));
 	}
 	public static boolean hasPlayerWithinChunk(int x, int z, int range) {
 		int px = 0;

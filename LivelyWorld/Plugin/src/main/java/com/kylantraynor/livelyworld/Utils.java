@@ -14,6 +14,7 @@ import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -84,6 +85,7 @@ public class Utils {
 		private int z = 0;
 		
 		private Biome[][] biomes = new Biome[16][16];
+		private BlockState[][][] blockStates = new BlockState[256][16][16];
 		
 		public SmallChunkData(Chunk c){
 			x = c.getX();
@@ -92,6 +94,13 @@ public class Utils {
 			for(int x = 0; x < 16; x ++){
 				for(int z = 0; z < 16; z ++){
 					biomes[x][z] = c.getBlock(x, 0, z).getBiome();
+				}
+			}
+			for(int y = 0; y < 256; y ++){
+				for(int x = 0; x < 16; x ++){
+					for(int z = 0; z < 16; z ++){
+						blockStates[y][x][z] = c.getBlock(x, y, z).getState();
+					}
 				}
 			}
 		}
@@ -110,6 +119,14 @@ public class Utils {
 		
 		public Biome getBiome(int x, int z){
 			return biomes[x][z];
+		}
+		
+		public Material getMaterial(int x, int y, int z){
+			return blockStates[y][x][z].getType();
+		}
+		
+		public BlockState getState(int x, int y, int z){
+			return blockStates[y][x][z];
 		}
 	}
 	

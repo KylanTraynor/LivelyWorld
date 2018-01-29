@@ -209,6 +209,10 @@ public class WaterChunk {
 		return wc;
 	}
 	
+	public static WaterChunk getOrNull(World world, int x, int z){
+		return chunks.get(new ChunkCoordinates(world, x, z));
+	}
+	
 	public static void unloadAll(){
 		if(disabled) return;
 		disabled = true;
@@ -748,9 +752,9 @@ public class WaterChunk {
 		}
 		
 		// Get a snapshot of the actual chunk.
-		ChunkSnapshot c = null;
+		SmallChunkData c = null;
 		if(WaterChunkThread.isChunkLoaded(world, x, z)){
-			c = world.getChunkAt(x, z).getChunkSnapshot(false, true, false);
+			c = WaterChunkThread.getChunkData(this);
 		} else {
 			return;
 		}
@@ -763,7 +767,7 @@ public class WaterChunk {
 				if(biome != null){
 					if((Utils.isOcean(biome) || biome == Biome.RIVER)){
 						int y = 48;
-						Material m = Material.getMaterial(c.getBlockTypeId(x, y, z));
+						Material m = c.getMaterial(x, y, z);
 						while(y > 0 && (Utils.isWater(m) || m == Material.AIR)){
 							data[y][x][z].level = (byte) 0xFF;
 							y--;
@@ -777,7 +781,7 @@ public class WaterChunk {
 		for(int y = 255; y >= 0; y--){
 			for(int x = 0; x < 16; x++){
 				for(int z = 0; z < 16; z++){
-					Material m = Material.getMaterial(c.getBlockTypeId(x, y, z));
+					Material m = c.getMaterial(x, y, z);
 					data[y][x][z].resistance = (byte) getResistanceFor(m);
 					data[y][x][z].isSolid = isSolid(m);
 					updatePressure(x, y, z);
@@ -804,11 +808,16 @@ public class WaterChunk {
 		for(int y = 0; y < 256; y++){
 			for(int x = 0; x < 16; x++){
 				for(int z = 0; z < 16; z++){
-					Material m = Material.getMaterial(c.getBlockTypeId(x, y, z));
-					byte d = (byte) c.getBlockData(x, y, z);
+					Material m = c.getMaterial(x, y, z);
 					
-					if(canReplace(m) && Utils.getWaterHeight(m, d) != toWaterLevel(data[y][x][z].getLevel())){
-						updateVisually(x,y,z, toWaterLevel(data[y][x][z].getLevel()));
+					if(canReplace(m)){
+						int waterLevel = 0;
+						if(Utils.isWater(m)){
+							waterLevel = Utils.getWaterHeight(c.getState(x, y, z).getData().getData());
+						}
+						if(waterLevel != toWaterLevel(data[y][x][z].getLevel())){
+							updateVisually(x,y,z, toWaterLevel(data[y][x][z].getLevel()));
+						}
 					}
 				}
 			}

@@ -127,6 +127,13 @@ public class WaterChunkThread extends Thread {
 		
 	}
 	
+	
+	public static SmallChunkData getChunkData(World w, int chunkX, int chunkZ){
+		Map<ChunkCoordinates, SmallChunkData> chunks = loadedChunks.get(w.getName());
+		if(chunks == null) return null;
+		return chunks.get(new ChunkCoordinates(w, chunkX, chunkZ));
+	}
+	
 	public static boolean isChunkLoaded(World w, int chunkX, int chunkZ){
 		/*try{
 			return w.isChunkLoaded(chunkX, chunkZ);
@@ -257,16 +264,20 @@ public class WaterChunkThread extends Thread {
 		}*/
 	}
 
-	public void addLoadedChunk(Chunk c) {
+	public SmallChunkData addLoadedChunk(Chunk c) {
 		/*try {
 			mainLocker.lock();*/
 			Map<ChunkCoordinates, SmallChunkData> cs = loadedChunks.get(c.getWorld().getName());
 			if(cs == null){
 				cs = new ConcurrentHashMap<ChunkCoordinates, SmallChunkData>();
-				cs.put(new ChunkCoordinates(c.getWorld(), c.getX(), c.getZ()), new SmallChunkData(c));
+				SmallChunkData scd = new SmallChunkData(c);
+				cs.put(new ChunkCoordinates(c.getWorld(), c.getX(), c.getZ()), scd);
 				loadedChunks.put(c.getWorld().getName(), cs);
+				return scd;
 			} else {
-				cs.put(new ChunkCoordinates(c.getWorld(), c.getX(), c.getZ()), new SmallChunkData(c));
+				SmallChunkData scd = new SmallChunkData(c);
+				cs.put(new ChunkCoordinates(c.getWorld(), c.getX(), c.getZ()), scd);
+				return scd;
 			}
 		/*} catch (InterruptedException e) {
 			e.printStackTrace();

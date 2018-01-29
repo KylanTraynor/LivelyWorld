@@ -21,11 +21,13 @@ import org.bukkit.event.vehicle.VehicleMoveEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.MaterialData;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import com.kylantraynor.livelyworld.LivelyWorld;
 import com.kylantraynor.livelyworld.Utils;
+import com.kylantraynor.livelyworld.Utils.SmallChunkData;
 import com.kylantraynor.livelyworld.api.BoatHelper;
 import com.kylantraynor.livelyworld.events.BlockWaterLevelChangeEvent;
 
@@ -192,16 +194,38 @@ public class WaterListener implements Listener{
 	public void onBlockBreak(BlockBreakEvent event){
 		if(!event.getBlock().getWorld().getName().equals("world")) return;
 		if(!LivelyWorld.getInstance().getWaterModule().isRealisticSimulation()) return;
-		BukkitRunnable bk = new WaterDataUpdate(event.getBlock());
-		bk.runTaskLaterAsynchronously(LivelyWorld.getInstance(), 1);
+		/*BukkitRunnable bk = new WaterDataUpdate(event.getBlock());
+		bk.runTaskLaterAsynchronously(LivelyWorld.getInstance(), 1);*/
+		SmallChunkData scd = WaterChunkThread.getChunkData(event.getBlock().getWorld(), event.getBlock().getChunk().getX(), event.getBlock().getChunk().getZ());
+		if(scd != null){
+			int x = Utils.floorMod2(event.getBlock().getX(), 4);
+			int z = Utils.floorMod2(event.getBlock().getZ(), 4);
+			scd.getState(x, event.getBlock().getY(), z).setData(new MaterialData(Material.AIR));
+		} else {
+			scd = LivelyWorld.getInstance().getWaterModule().getWaterThread().addLoadedChunk(event.getBlock().getChunk());
+			int x = Utils.floorMod2(event.getBlock().getX(), 4);
+			int z = Utils.floorMod2(event.getBlock().getZ(), 4);
+			scd.getState(x, event.getBlock().getY(), z).setData(new MaterialData(Material.AIR));
+		}
 	}
 	
 	@EventHandler(ignoreCancelled = true)
 	public void onBlockPlace(BlockPlaceEvent event){
 		if(!event.getBlock().getWorld().getName().equals("world")) return;
 		if(!LivelyWorld.getInstance().getWaterModule().isRealisticSimulation()) return;
-		BukkitRunnable bk = new WaterDataUpdate(event.getBlock());
-		bk.runTaskLaterAsynchronously(LivelyWorld.getInstance(), 1);
+		/*BukkitRunnable bk = new WaterDataUpdate(event.getBlock());
+		bk.runTaskLaterAsynchronously(LivelyWorld.getInstance(), 1);*/
+		SmallChunkData scd = WaterChunkThread.getChunkData(event.getBlock().getWorld(), event.getBlock().getChunk().getX(), event.getBlock().getChunk().getZ());
+		if(scd != null){
+			int x = Utils.floorMod2(event.getBlock().getX(), 4);
+			int z = Utils.floorMod2(event.getBlock().getZ(), 4);
+			scd.getState(x, event.getBlock().getY(), z).setData(event.getBlockPlaced().getState().getData());
+		} else {
+			scd = LivelyWorld.getInstance().getWaterModule().getWaterThread().addLoadedChunk(event.getBlock().getChunk());
+			int x = Utils.floorMod2(event.getBlock().getX(), 4);
+			int z = Utils.floorMod2(event.getBlock().getZ(), 4);
+			scd.getState(x, event.getBlock().getY(), z).setData(event.getBlockPlaced().getState().getData());
+		}
 	}
 	
 	@EventHandler

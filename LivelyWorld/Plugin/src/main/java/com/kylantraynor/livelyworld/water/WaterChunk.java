@@ -736,7 +736,7 @@ public class WaterChunk {
 	}
 	
 	void update(){
-		if(!isLoaded) load();
+		if(!isLoaded) return;
 		
 		// If the chunk was not generate, generate it.
 		if(!wasGenerated){

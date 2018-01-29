@@ -449,6 +449,19 @@ public class WaterChunk {
 			}
 		}
 		
+		int corruptedCount = 0;
+		for(int y = 255; y >= 0; y--){
+			for(int x = 0; x < 16; x++){
+				for(int z = 0; z < 16; z++){
+					if(data[y][x][z] == null){
+						data[y][x][z] = new WaterData(0, x, y, z);
+						corruptedCount++;
+					}
+				}
+			}
+		}
+		LivelyWorld.getInstance().getLogger().info("Found " + corruptedCount + " missing data in chunk " + x + ", " + z +".");
+		
 		/*if(compressedData == null) return;
 		
 		Inflater inflater = new Inflater();

@@ -1071,7 +1071,7 @@ public class WaterChunk {
 	}
 	
 	public void addWaterAt(int x, int y, int z, int amount) {
-		if(!isLoaded()) load();
+		if(!isLoaded()) return;
 		WaterData d = data[y][x][z];
 		if(d.getMaxQuantity() - d.getLevel() >= amount){
 			d.level += amount;

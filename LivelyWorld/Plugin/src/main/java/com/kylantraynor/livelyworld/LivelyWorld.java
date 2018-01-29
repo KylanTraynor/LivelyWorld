@@ -488,8 +488,8 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 			snowBaseLevel = ClimateUtils.getSnowLayers(sb);
 		}
 
-		int xIncrement = Math.random() >= 0.5 ? 1 : -1; 
-		int zIncrement = Math.random() >= 0.5 ? 1 : -1;
+		int xIncrement = Utils.fastRandomDouble() >= 0.5 ? 1 : -1; 
+		int zIncrement = Utils.fastRandomDouble() >= 0.5 ? 1 : -1;
 		for (int x = startX - xIncrement; x <= startX + 1 && x >= startX - 1; x += xIncrement) {
 			for (int z = startZ - zIncrement; z <= startZ + 1 && z >= startZ - 1; z += zIncrement) {
 				if (x * x == 1 && z * z == 1)
@@ -540,7 +540,7 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 			// in the direction of -Y, if not, it sets the falling distance to
 			// 0.
 			if (event.getPlayer().getFallDistance() > 2) {
-				if (event.getPlayer().getVelocity().getY() > -0.5) {
+				if (event.getPlayer().getVelocity().getY() > 0) {
 					event.getPlayer().setFallDistance(2);
 				}
 			}
@@ -573,7 +573,7 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 	public void onEntiryDeath(EntityDeathEvent event) {
 		switch (event.getEntityType()) {
 		case CHICKEN:
-			for (int i = 0; i < (Math.random() * 5) + 8; i++) {
+			for (int i = 0; i < Utils.fastRandomInt(5) + 8; i++) {
 				event.getEntity()
 						.getLocation()
 						.getWorld()
@@ -582,21 +582,21 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 			}
 			break;
 		case COW:
-			for (int i = 0; i < (Math.random() * 5) + 8; i++) {
+			for (int i = 0; i < Utils.fastRandomInt(5) + 8; i++) {
 				event.getEntity()
 						.getLocation()
 						.getWorld()
 						.dropItemNaturally(event.getEntity().getLocation(),
 								new ItemStack(Material.RAW_BEEF, 1));
 			}
-			for (int i = 1; i < (Math.random() * 2) + 1; i++) {
+			for (int i = 1; i < Utils.fastRandomInt(2) + 1; i++) {
 				event.getEntity()
 						.getLocation()
 						.getWorld()
 						.dropItemNaturally(event.getEntity().getLocation(),
 								new ItemStack(Material.LEATHER, 1));
 			}
-			for (int i = 0; i < (Math.random() * 5) + 5; i++) {
+			for (int i = 0; i < Utils.fastRandomInt(5) + 5; i++) {
 				event.getEntity()
 						.getLocation()
 						.getWorld()
@@ -612,7 +612,7 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 				if (horse.getVariant() == Variant.UNDEAD_HORSE
 						|| horse.getVariant() == Variant.SKELETON_HORSE) {
 				} else {
-					for (int i = 1; i < (Math.random() * 2) + 1; i++) {
+					for (int i = 1; i < Utils.fastRandomInt(2) + 1; i++) {
 						event.getEntity()
 								.getLocation()
 								.getWorld()
@@ -621,7 +621,7 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 										new ItemStack(Material.LEATHER, 1));
 					}
 				}
-				for (int i = 0; i < (Math.random() * 5) + 5; i++) {
+				for (int i = 0; i < Utils.fastRandomInt(5) + 5; i++) {
 					event.getEntity()
 							.getLocation()
 							.getWorld()
@@ -635,14 +635,14 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 		case OCELOT:
 			break;
 		case PIG:
-			for (int i = 0; i < (Math.random() * 5) + 3; i++) {
+			for (int i = 0; i < Utils.fastRandomInt(5) + 3; i++) {
 				event.getEntity()
 						.getLocation()
 						.getWorld()
 						.dropItemNaturally(event.getEntity().getLocation(),
 								new ItemStack(Material.PORK, 1));
 			}
-			for (int i = 0; i < (Math.random() * 5) + 2; i++) {
+			for (int i = 0; i < Utils.fastRandomInt(5) + 2; i++) {
 				event.getEntity()
 						.getLocation()
 						.getWorld()
@@ -651,7 +651,7 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 			}
 			break;
 		case RABBIT:
-			for (int i = 0; i < (Math.random() * 2) + 1; i++) {
+			for (int i = 0; i < Utils.fastRandomInt(2) + 1; i++) {
 				event.getEntity()
 						.getLocation()
 						.getWorld()
@@ -660,14 +660,14 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 			}
 			break;
 		case SHEEP:
-			for (int i = 0; i < (Math.random() * 5) + 5; i++) {
+			for (int i = 0; i < Utils.fastRandomInt(5) + 5; i++) {
 				event.getEntity()
 						.getLocation()
 						.getWorld()
 						.dropItemNaturally(event.getEntity().getLocation(),
 								new ItemStack(Material.MUTTON, 1));
 			}
-			for (int i = 0; i < (Math.random() * 4) + 4; i++) {
+			for (int i = 0; i < Utils.fastRandomInt(4) + 4; i++) {
 				event.getEntity()
 						.getLocation()
 						.getWorld()

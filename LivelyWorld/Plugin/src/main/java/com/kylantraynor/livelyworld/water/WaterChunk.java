@@ -873,7 +873,7 @@ public class WaterChunk {
 						}
 						int index = getIndex(x,y,z);
 						if(waterLevel != toWaterLevel(getLevel(index))){
-							updateVisually(x,y,z, toWaterLevel(getLevel(index)));
+							updateVisually(x,y,z);
 						}
 					}
 				}
@@ -969,7 +969,7 @@ public class WaterChunk {
 		return false;
 	}
 	
-	private void updateVisually(int x, int y, int z, int waterLevel) {
+	private void updateVisually(int x, int y, int z) {
 		if(!LivelyWorld.getInstance().getWaterModule().isRealisticSimulation()) return;
 		BukkitRunnable br = new VisualUpdateTask(this, x, y, z);
 		br.runTask(LivelyWorld.getInstance());
@@ -1277,9 +1277,8 @@ public class WaterChunk {
 			this.x = x;
 			this.y = y;
 			this.z = z;
-			int index = chunk.getIndex(x, y, z);
-			this.level = Byte.toUnsignedInt(chunk.data[index]);
-			this.resistance = Byte.toUnsignedInt(chunk.data[index+1]);
+			this.level = chunk.getLevel(x, y, z);
+			this.resistance = chunk.getResistance(x, y, z);
 		}
 		
 		@Override
@@ -1290,10 +1289,16 @@ public class WaterChunk {
 			if(canReplace(b.getType())){
 				int waterLevel = toWaterLevel(level);
 				if(waterLevel != Utils.getWaterHeight(b)){
-					if(waterLevel > 3 && isDropable(b.getType())){
-						b.breakNaturally();
+					if(isDropable(b.getType())){
+						if(waterLevel > 3){
+							b.breakNaturally();
+							Utils.setWaterHeight(b, waterLevel, true);
+						}
+					} else if(waterLevel > 0) {
+						Utils.setWaterHeight(b, waterLevel, true);
+					} else if(Utils.isWater(b.getType())){
+						Utils.setWaterHeight(b, 0, true);
 					}
-					Utils.setWaterHeight(b, waterLevel, true);
 				}
 			} else if(b.getRelative(BlockFace.DOWN).getType() == Material.AIR && b.getType() != Material.AIR && level > 0) {
 				chunk.getWorld().spawnParticle(Particle.DRIP_WATER, b.getX() + Utils.fastRandomDouble(), b.getY() - 0.01, b.getZ() + Utils.fastRandomDouble(), 1);

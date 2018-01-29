@@ -7,12 +7,14 @@ public class WaterData {
 	final static int resistanceCode = 8;
 	final static int solidCode = 28;
 	public static final int maxLevel = 0xff;
+	private WaterChunk chunk;
 	
-	public WaterData(int data, int pressure, int x, int y, int z) {
-		this(Utils.toByteArray(data), pressure, x, y, z);
+	public WaterData(WaterChunk chunk, int data, int pressure, int x, int y, int z) {
+		this(chunk, Utils.toByteArray(data), pressure, x, y, z);
 	}
 	
-	public WaterData(byte[] data, int pressure, int x, int y, int z) {
+	public WaterData(WaterChunk c, byte[] data, int pressure, int x, int y, int z) {
+		chunk = c;
 		level = data[0];
 		resistance = data[1];
 		isSolid = ((data[3] & 0x10) >> 4) == 1;
@@ -75,5 +77,9 @@ public class WaterData {
 		byte b2 = 0;
 		byte b3 = (byte) (isSolid ? 0x10 : 0x00);
 		return new byte[] {level, resistance, b2, b3};
+	}
+	
+	public void update(){
+		chunk.updateData(this);
 	}
 }

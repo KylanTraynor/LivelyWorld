@@ -153,7 +153,7 @@ public class WaterChunk {
 	
 	public WaterData getAt(int x, int y, int z){
 		if(!isLoaded) load();
-		return new WaterData(getData(x,y,z), getPressure(x,y,z), x, y, z);
+		return new WaterData(this, getData(x,y,z), getPressure(x,y,z), x, y, z);
 	}
 	
 	/*void setDataUnchecked(int data, int x, int y, int z){
@@ -722,45 +722,21 @@ public class WaterChunk {
 		
 		updateData(d);
 		
-		if(y < 255) updateData(up);
-		if(y > 0) updateData(down);
-		if(west != null){
-			if(x > 0){
-				updateData(west);
-			} else if(this.isRelativeLoaded(-1, 0)){
-				getRelative(-1,0).updateData(west);;
-			}
-		}
-		if(east != null){
-			if(x < 15){
-				updateData(east);
-			} else if(this.isRelativeLoaded(1, 0)){
-				getRelative(1,0).updateData(east);
-			}
-		}
-		if(north != null){
-			if(z > 0){
-				updateData(north);
-			} else if(this.isRelativeLoaded(0, -1)) {
-				getRelative(0,-1).updateData(north);
-			}
-		}
-		if(south != null){
-			if(z < 15){
-				updateData(south);
-			} else if(this.isRelativeLoaded(0, 1)){
-				getRelative(0,1).updateData(south);
-			}
-		}
+		if(up != null) up.update();
+		if(down != null) down.update();
+		if(west != null) west.update();
+		if(east != null) east.update();
+		if(north != null) north.update();
+		if(south != null) south.update();
 	}
 	
-	private void updateData(WaterData d) {
+	void updateData(WaterData d) {
 		int index = getIndex(d.getX(), d.getY(), d.getZ());
 		byte[] dt = d.getByteArray();
 		data[index] = dt[0];
 		data[index+1] = dt[1];
 		data[index+2] = dt[2];
-		data[index+2] = dt[3];
+		data[index+3] = dt[3];
 		pressure[index >> 2] = d.pressure;
 	}
 

@@ -20,6 +20,7 @@ import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.material.MaterialData;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import com.kylantraynor.livelyworld.LivelyWorld;
@@ -758,7 +759,9 @@ public class WaterChunk {
 		} else {
 			return;
 		}
+		Chunk chunk = world.getChunkAt(x, z);
 		
+		if(!chunk.isLoaded()) return;
 		// Saturate Oceans.
 		Biome biome = null;
 		for(int x = 0; x < 16; x++){
@@ -767,7 +770,7 @@ public class WaterChunk {
 				if(biome != null){
 					if((Utils.isOcean(biome) || biome == Biome.RIVER)){
 						int y = 48;
-						Material m = c.getMaterial(x, y, z);
+						Material m = chunk.getBlock(x, y, z).getType();
 						while(y > 0 && (Utils.isWater(m) || m == Material.AIR)){
 							data[y][x][z].level = (byte) 0xFF;
 							y--;
@@ -777,11 +780,12 @@ public class WaterChunk {
 			}
 		}
 		
+		if(!chunk.isLoaded()) return;
 		// Update Pressure.
 		for(int y = 255; y >= 0; y--){
 			for(int x = 0; x < 16; x++){
 				for(int z = 0; z < 16; z++){
-					Material m = c.getMaterial(x, y, z);
+					Material m = chunk.getBlock(x, y, z).getType();
 					data[y][x][z].resistance = (byte) getResistanceFor(m);
 					data[y][x][z].isSolid = isSolid(m);
 					updatePressure(x, y, z);
@@ -804,16 +808,16 @@ public class WaterChunk {
 		if(System.currentTimeMillis() - lastUpdate < 1000) return;
 		if(this.distanceSquaredFromNearestPlayer() > 100) return;
 		if(this.distanceSquaredFromNearestPlayer() > 5 && Utils.fastRandomDouble() > 0.01) return;
+		if(!chunk.isLoaded()) return;
 		
 		for(int y = 0; y < 256; y++){
 			for(int x = 0; x < 16; x++){
 				for(int z = 0; z < 16; z++){
-					Material m = c.getMaterial(x, y, z);
-					
-					if(canReplace(m)){
+					MaterialData m = chunk.getBlock(x, y, z).getState().getData();
+					if(canReplace(m.getItemType())){
 						int waterLevel = 0;
-						if(Utils.isWater(m)){
-							waterLevel = Utils.getWaterHeight(c.getData(x, y, z).getData());
+						if(Utils.isWater(m.getItemType())){
+							waterLevel = Utils.getWaterHeight(m.getData());
 						}
 						if(waterLevel != toWaterLevel(data[y][x][z].getLevel())){
 							updateVisually(x,y,z, toWaterLevel(data[y][x][z].getLevel()));

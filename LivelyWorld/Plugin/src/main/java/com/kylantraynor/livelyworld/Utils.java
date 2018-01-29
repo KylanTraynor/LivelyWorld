@@ -86,7 +86,7 @@ public class Utils {
 		private int z = 0;
 		
 		private Biome[][] biomes = new Biome[16][16];
-		private MaterialData[][][] data = new MaterialData[256][16][16];
+		//private MaterialData[][][] data = new MaterialData[256][16][16];
 		
 		public SmallChunkData(Chunk c){
 			x = c.getX();
@@ -97,13 +97,13 @@ public class Utils {
 					biomes[x][z] = c.getBlock(x, 0, z).getBiome();
 				}
 			}
-			for(int y = 0; y < 256; y ++){
+			/*for(int y = 0; y < 256; y ++){
 				for(int x = 0; x < 16; x ++){
 					for(int z = 0; z < 16; z ++){
 						data[y][x][z] = new MaterialData(c.getBlock(x, y, z).getType(), c.getBlock(x, y, z).getData());
 					}
 				}
-			}
+			}*/
 		}
 		
 		public int getX(){
@@ -122,7 +122,7 @@ public class Utils {
 			return biomes[x][z];
 		}
 		
-		public Material getMaterial(int x, int y, int z){
+		/*public Material getMaterial(int x, int y, int z){
 			return data[y][x][z].getItemType();
 		}
 		
@@ -132,7 +132,7 @@ public class Utils {
 
 		public void setData(int x2, int y, int z2, MaterialData materialData) {
 			data[y][x2][z2] = materialData;
-		}
+		}*/
 	}
 	
 	public static class Enclosed<T>{

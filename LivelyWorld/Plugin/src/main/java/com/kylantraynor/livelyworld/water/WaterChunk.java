@@ -407,9 +407,9 @@ public class WaterChunk {
 						synchronized(data){
 							for(int i = 0; i < dataLength; i += 4){
 								int index = (i * 4) + 8;
-								int y = (i >> 8) & data.length;
-								int x = (i >> 4) & data[0].length;
-								int z = i & data[0][0].length;
+								int y = (i >> 8) & (data.length - 1);
+								int x = (i >> 4) & (data[0].length - 1);
+								int z = i & (data[0][0].length - 1);
 								byte[] b = new byte[]{array[index], array[index + 1], array[index + 2], array[index + 3]};
 								//int d = Utils.toInt(array[index], array[index + 1], array[index + 2], array[index + 3]);
 								data[y][x][z] = new WaterData(b, x, y, z);
@@ -422,9 +422,9 @@ public class WaterChunk {
 						synchronized(data){
 							for(int i = 0; i < dataLength; i++){
 								int index = (i * 4);
-								int y = (i >> 8) & data.length;
-								int x = (i >> 4) & data[0].length;
-								int z = i & data[0][0].length;
+								int y = (i >> 8) & (data.length - 1);
+								int x = (i >> 4) & (data[0].length - 1);
+								int z = i & (data[0][0].length - 1);
 								byte[] b = new byte[]{array[index], array[index + 1], array[index + 2], array[index + 3]};
 								//int d = Utils.toInt(array[index], array[index + 1], array[index + 2], array[index + 3]);
 								data[y][x][z] = new WaterData(b, x, y, z);

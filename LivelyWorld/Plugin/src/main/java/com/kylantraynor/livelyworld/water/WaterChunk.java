@@ -32,6 +32,9 @@ public class WaterChunk {
 	final static Map<ChunkCoordinates, WaterChunk> chunks = new ConcurrentHashMap<ChunkCoordinates, WaterChunk>(); 
 	final static int sectorLength = 4096;
 	final static int currentVersion = 1;
+	final static int xInc = 1<<6;
+	final static int yInc = 1<<10;
+	final static int zInc = 1<<2;
 	static boolean disabled = false;
 	
 	double tickRandom = Utils.fastRandomDouble();
@@ -647,8 +650,8 @@ public class WaterChunk {
 	
 	private void processWaterMoveWaterData(int x, int y, int z) {
 		int index = getIndex(x,y,z);
-		int downIndex = y > 0 ? getIndex(x,y-1,z) : -1;
-		int upIndex = y < 255 ? getIndex(x,y+1,z) : -1;
+		int downIndex = y > 0 ? index - yInc : -1;
+		int upIndex = y < 255 ? index + yInc : -1;
 		
 		WaterData west = null;
 		if(x > 0){
@@ -739,12 +742,12 @@ public class WaterChunk {
 
 	private void processWaterMoveDirectData(int x, int y, int z) {
 		int index = getIndex(x,y,z);
-		int upIndex = y < 255 ? getIndex(x,y+1,z) : -1;
-		int downIndex = y > 0 ? getIndex(x,y-1,z) : -1;
-		int northIndex = getIndex(x,y,z-1);
-		int southIndex = getIndex(x,y,z+1);
-		int westIndex = getIndex(x-1,y,z);
-		int eastIndex = getIndex(x+1,y,z);
+		int upIndex = y < 255 ? index + yInc : -1;
+		int downIndex = y > 0 ? index - yInc : -1;
+		int northIndex = index - zInc;
+		int southIndex = index + zInc;
+		int westIndex = index - xInc;
+		int eastIndex = index + xInc;
 		boolean stable = false;
 		while(getLevel(index) > 0 && !stable){
 			if(y > 0){

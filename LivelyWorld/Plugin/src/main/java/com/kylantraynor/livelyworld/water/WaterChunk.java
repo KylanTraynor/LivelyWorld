@@ -189,8 +189,12 @@ public class WaterChunk {
 	}
 	
 	int getPressure(int x, int y, int z){
-		int index = getIndex(x, y, z) >> 2;
-		return pressure[index];
+		int index = getIndex(x, y, z);
+		return getPressure(index);
+	}
+	
+	int getPressure(int index){
+		return pressure[index >> 2];
 	}
 	
 	public World getWorld() {
@@ -625,19 +629,15 @@ public class WaterChunk {
 	
 	public void processWaterMove(int x, int y, int z){
 		
-		WaterData d = getAt(x, y, z);
-		
-		if(d.getLevel() == 0) return;
-		if(d.isSolid){
-			if(Utils.fastRandomInt(256) <= d.getResistance()){
+		int index = getIndex(x,y,z);
+		if(getLevel(index) == 0) return;
+		if(isSolid(index)){
+			if(Utils.fastRandomInt(256) <= getResistance(index)){
 				return;
 			}
 		}
-		
-		WaterData up = null;
-		if(y < 255) up = getAt(x, y+1, z);
-		WaterData down = null;
-		if(y > 0) down = getAt(x, y-1, z);
+		int downIndex = y > 0 ? getIndex(x,y-1,z) : -1;
+		int upIndex = y < 255 ? getIndex(x,y+1,z) : -1;
 		WaterData west = null;
 		if(x > 0){
 			west = getAt(x -1, y, z);
@@ -664,34 +664,34 @@ public class WaterChunk {
 		}
 		
 		boolean stable = false;
-		while(d.getLevel() > 0 && !stable){
-			if(down != null){
-				int max = down.getMaxQuantityRDM();
-				if(down.getLevel() < max
-						&& down.pressure < d.pressure + max && Utils.fastRandomInt(256) > down.getResistance()){
-					down.level++;
-					if(down.isSolid){
-						down.pressure++;
+		while(getLevel(index) > 0 && !stable){
+			if(y > 0){
+				int max = getMaxQuantityRDM(downIndex);
+				if(getLevel(downIndex) < max
+						&& getPressure(downIndex) < getPressure(index) + max && Utils.fastRandomInt(256) > getResistance(downIndex)){
+					data[downIndex]++;
+					if(isSolid(downIndex)){
+						pressure[downIndex>>2]++;
 					}
-					d.level--;
-					d.pressure--;
+					data[index]--;
+					pressure[index>>2]--;
 					stable = false;
-					d.lastDirection = 0;
+					//d.lastDirection = 0;
 					continue;
 				}
 			}
-			if(up != null){
-				int max = d.getMaxQuantityRDM();
-				if(up.pressure < d.pressure - max){
-					if(up.getLevel() < up.getMaxQuantityRDM()){
-						up.level++;
-						up.pressure++;
-						d.level--;
-						if(d.isSolid){
-							d.pressure--;
+			if(y < 255){
+				int max = getMaxQuantityRDM(index);
+				if(getPressure(upIndex) < getPressure(index) - max){
+					if(getLevel(upIndex) < getMaxQuantityRDM(upIndex)){
+						data[upIndex]++;
+						pressure[upIndex>>2]++;
+						data[index]--;
+						if(isSolid(index)){
+							pressure[index>>2]--;
 						}
 						stable = false;
-						d.lastDirection = 0;
+						//d.lastDirection = 0;
 						continue;
 					}
 				}
@@ -699,31 +699,26 @@ public class WaterChunk {
 			WaterData min = getMinPressure(north, east, west, south);
 			if(min == null) {
 				stable = true;
-				d.lastDirection = 0;
-			} else if(min.pressure < d.pressure){
+				//d.lastDirection = 0;
+			} else if(min.pressure < getPressure(index)){
 				if(min.getLevel() < min.getMaxQuantityRDM()){
 					min.level++;
 					min.pressure++;
-					d.level--;
-					d.pressure--;
+					data[index]--;
+					pressure[index>>2]--;
 					stable = false;
-					if(min == north) d.lastDirection = 1;
+					/*if(min == north) d.lastDirection = 1;
 					if(min == east) d.lastDirection = 2;
 					if(min == west) d.lastDirection = 3;
-					if(min == south) d.lastDirection = 4;
+					if(min == south) d.lastDirection = 4;*/
 				} else {
 					stable = true;
 				}
 			} else {
 				stable = true;
-				d.lastDirection = 0;
+				//d.lastDirection = 0;
 			}
 		}
-		
-		updateData(d);
-		
-		if(up != null) up.update();
-		if(down != null) down.update();
 		if(west != null) west.update();
 		if(east != null) east.update();
 		if(north != null) north.update();
@@ -732,11 +727,10 @@ public class WaterChunk {
 	
 	void updateData(WaterData d) {
 		int index = getIndex(d.getX(), d.getY(), d.getZ());
-		byte[] dt = d.getByteArray();
-		data[index] = dt[0];
-		data[index+1] = dt[1];
-		data[index+2] = dt[2];
-		data[index+3] = dt[3];
+		data[index] = d.level;
+		data[index+1] = d.resistance;
+		data[index+2] = 0;
+		data[index+3] = (byte) (d.isSolid ? 0x10 : 0x00);;
 		pressure[index >> 2] = d.pressure;
 	}
 
@@ -1182,6 +1176,14 @@ public class WaterChunk {
 	public int getMaxQuantity(int x, int y, int z){
 		int index = getIndex(x,y,z);
 		return getMaxQuantity(index);
+	}
+	
+	public int getMaxQuantityRDM(int index){
+		if(isSolid(index)){
+			return Utils.fastRandomInt(getMaxQuantity(index) + 1);
+		} else {
+			return getMaxQuantity(index);
+		}
 	}
 	
 	public boolean isSolid(int index){

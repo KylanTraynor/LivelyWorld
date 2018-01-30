@@ -1057,7 +1057,7 @@ public class WaterChunk {
 	private void updateVisually(int x, int y, int z) {
 		if(!LivelyWorld.getInstance().getWaterModule().isRealisticSimulation()) return;
 		BukkitRunnable br = new VisualUpdateTask(this, x, y, z);
-		br.runTask(LivelyWorld.getInstance());
+		br.runTaskLater(LivelyWorld.getInstance(), Utils.fastRandomInt(20));
 	}
 
 	public static int toWaterLevel(int level){

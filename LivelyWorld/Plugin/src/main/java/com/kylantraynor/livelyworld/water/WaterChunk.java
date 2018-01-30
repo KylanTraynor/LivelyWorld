@@ -636,8 +636,20 @@ public class WaterChunk {
 				return;
 			}
 		}
+		
+		if(x > 0 && x < 15 && z > 0 && z < 15){
+			processWaterMoveDirectData(x,y,z);
+		} else {
+			processWaterMoveWaterData(x,y,z);
+		}
+		
+	}
+	
+	private void processWaterMoveWaterData(int x, int y, int z) {
+		int index = getIndex(x,y,z);
 		int downIndex = y > 0 ? getIndex(x,y-1,z) : -1;
 		int upIndex = y < 255 ? getIndex(x,y+1,z) : -1;
+		
 		WaterData west = null;
 		if(x > 0){
 			west = getAt(x -1, y, z);
@@ -724,7 +736,81 @@ public class WaterChunk {
 		if(north != null) north.update();
 		if(south != null) south.update();
 	}
-	
+
+	private void processWaterMoveDirectData(int x, int y, int z) {
+		int index = getIndex(x,y,z);
+		int upIndex = y < 255 ? getIndex(x,y+1,z) : -1;
+		int downIndex = y > 0 ? getIndex(x,y-1,z) : -1;
+		int northIndex = getIndex(x,y,z-1);
+		int southIndex = getIndex(x,y,z+1);
+		int westIndex = getIndex(x-1,y,z);
+		int eastIndex = getIndex(x+1,y,z);
+		boolean stable = false;
+		while(getLevel(index) > 0 && !stable){
+			if(y > 0){
+				int max = getMaxQuantityRDM(downIndex);
+				if(getLevel(downIndex) < max
+						&& getPressure(downIndex) < getPressure(index) + max && Utils.fastRandomInt(256) > getResistance(downIndex)){
+					data[downIndex]++;
+					if(isSolid(downIndex)){
+						pressure[downIndex>>2]++;
+					}
+					data[index]--;
+					pressure[index>>2]--;
+					stable = false;
+					//d.lastDirection = 0;
+					continue;
+				}
+			}
+			if(y < 255){
+				int max = getMaxQuantityRDM(index);
+				if(getPressure(upIndex) < getPressure(index) - max){
+					if(getLevel(upIndex) < getMaxQuantityRDM(upIndex)){
+						data[upIndex]++;
+						pressure[upIndex>>2]++;
+						data[index]--;
+						if(isSolid(index)){
+							pressure[index>>2]--;
+						}
+						stable = false;
+						//d.lastDirection = 0;
+						continue;
+					}
+				}
+			}
+			int minIndex = getMinPressureDirectData(northIndex, southIndex, westIndex, eastIndex);
+			if(getPressure(minIndex) < getPressure(index)){
+				if(getLevel(minIndex) < getMaxQuantityRDM(minIndex)){
+					data[minIndex]++;
+					pressure[minIndex>>2]++;
+					data[index]--;
+					pressure[index>>2]--;
+					stable = false;
+					/*if(min == north) d.lastDirection = 1;
+					if(min == east) d.lastDirection = 2;
+					if(min == west) d.lastDirection = 3;
+					if(min == south) d.lastDirection = 4;*/
+				} else {
+					stable = true;
+				}
+			} else {
+				stable = true;
+				//d.lastDirection = 0;
+			}
+		}
+	}
+
+	private int getMinPressureDirectData(int... indices) {
+		int min = indices[0];
+		for(int i = 1; i < data.length; i++){
+			if(isSolid(indices[i]) && Utils.fastRandomInt(256) >= getResistance(indices[i])) continue;
+			if(getPressure(indices[i]) < getPressure(min)){
+				min = indices[i];
+			}
+		}
+		return min;
+	}
+
 	void updateData(WaterData d) {
 		int index = getIndex(d.getX(), d.getY(), d.getZ());
 		data[index] = d.level;

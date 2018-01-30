@@ -640,11 +640,11 @@ public class WaterChunk {
 			}
 		}
 		
-		if(x > 0 && x < 15 && z > 0 && z < 15){
+		//if(x > 0 && x < 15 && z > 0 && z < 15){
 			processWaterMoveDirectData(x,y,z);
-		} else {
-			processWaterMoveWaterData(x,y,z);
-		}
+		//} else {
+		//	processWaterMoveWaterData(x,y,z);
+		//}
 		
 	}
 	
@@ -744,10 +744,10 @@ public class WaterChunk {
 		int index = getIndex(x,y,z);
 		int upIndex = y < 255 ? index + yInc : -1;
 		int downIndex = y > 0 ? index - yInc : -1;
-		int northIndex = index - zInc;
-		int southIndex = index + zInc;
-		int westIndex = index - xInc;
-		int eastIndex = index + xInc;
+		int northIndex = z > 0 ? index - zInc : getIndex(x, y, 15);
+		int southIndex = z < 15 ? index + zInc : getIndex(x, y, 0);
+		int westIndex = x > 0 ? index - xInc : getIndex(15, y, z);
+		int eastIndex = x < 15 ? index + xInc : getIndex(0, y, z);
 		boolean stable = false;
 		while(getLevel(index) > 0 && !stable){
 			if(y > 0){
@@ -781,11 +781,26 @@ public class WaterChunk {
 					}
 				}
 			}
-			int minIndex = getMinPressureDirectData(northIndex, southIndex, westIndex, eastIndex);
-			if(getPressure(minIndex) < getPressure(index)){
-				if(getLevel(minIndex) < getMaxQuantityRDM(minIndex)){
-					data[minIndex]++;
-					pressure[minIndex>>2]++;
+			WaterChunk minC = this;
+			int minIndex = -1;
+			if(x == 0 || x == 15 || z == 0 || z == 15){
+				int[] indices = new int[]{northIndex, southIndex, westIndex, eastIndex};
+				WaterChunk[] chunks = new WaterChunk[]{
+						z > 0? this : getRelative(0,-1),
+						z < 15? this : getRelative(0,1),
+						x > 0? this : getRelative(-1,0),
+						x < 15? this : getRelative(1,0)
+					};
+				int min = getMinPressureDirectData(indices, chunks);
+				minC = chunks[min];
+				minIndex = indices[min];
+			} else {
+				minIndex = getMinPressureDirectData(northIndex, southIndex, westIndex, eastIndex);
+			}
+			if(minC.getPressure(minIndex) < getPressure(index)){
+				if(minC.getLevel(minIndex) < minC.getMaxQuantityRDM(minIndex)){
+					minC.data[minIndex]++;
+					minC.pressure[minIndex>>2]++;
 					data[index]--;
 					pressure[index>>2]--;
 					stable = false;
@@ -809,6 +824,17 @@ public class WaterChunk {
 			if(isSolid(indices[i]) && Utils.fastRandomInt(256) >= getResistance(indices[i])) continue;
 			if(getPressure(indices[i]) < getPressure(min)){
 				min = indices[i];
+			}
+		}
+		return min;
+	}
+	
+	private int getMinPressureDirectData(int[] indices, WaterChunk[] chunks) {
+		int min = 0;
+		for(int i = 1; i < indices.length; i++){
+			if(chunks[i].isSolid(indices[i]) && Utils.fastRandomInt(256) >= chunks[i].getResistance(indices[i])) continue;
+			if(chunks[i].getPressure(indices[i]) < chunks[min].getPressure(indices[min])){
+				min = i;
 			}
 		}
 		return min;

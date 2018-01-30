@@ -805,7 +805,7 @@ public class WaterChunk {
 
 	private int getMinPressureDirectData(int... indices) {
 		int min = indices[0];
-		for(int i = 1; i < data.length; i++){
+		for(int i = 1; i < indices.length; i++){
 			if(isSolid(indices[i]) && Utils.fastRandomInt(256) >= getResistance(indices[i])) continue;
 			if(getPressure(indices[i]) < getPressure(min)){
 				min = indices[i];

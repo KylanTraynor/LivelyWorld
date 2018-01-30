@@ -1385,12 +1385,12 @@ public class WaterChunk {
 					if(isDropable(b.getType())){
 						if(waterLevel > 3){
 							b.breakNaturally();
-							Utils.setWaterHeight(b, waterLevel, true);
+							Utils.setWaterHeight(b, waterLevel, true, true);
 						}
 					} else if(waterLevel > 0) {
-						Utils.setWaterHeight(b, waterLevel, true);
+						Utils.setWaterHeight(b, waterLevel, true, true);
 					} else if(Utils.isWater(b.getType())){
-						Utils.setWaterHeight(b, 0, true);
+						Utils.setWaterHeight(b, 0, true, true);
 					}
 				}
 			} else if(b.getRelative(BlockFace.DOWN).getType() == Material.AIR && b.getType() != Material.AIR && level > 0) {

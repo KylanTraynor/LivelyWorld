@@ -344,19 +344,23 @@ public class Utils {
 	}
 	
 	public static void setWaterHeight(Block b, int height, boolean canSource){
+		setWaterHeight(b, height, canSource, true);
+	}
+	
+	public static void setWaterHeight(Block b, int height, boolean canSource, boolean updateLight){
 		if(height == 0){
-			b.setType(Material.AIR, false);
-			b.setData((byte)0, false);
+			b.setType(Material.AIR, updateLight);
+			b.setData((byte)0, updateLight);
 		} else if(height == 8){
-			b.setType(Material.STATIONARY_WATER, false);
+			b.setType(Material.STATIONARY_WATER, updateLight);
 			if(canSource){
-				b.setData((byte)0, false);
+				b.setData((byte)0, updateLight);
 			} else {
-				b.setData((byte) 8, false);
+				b.setData((byte) 8, updateLight);
 			}
 		} else {
-			b.setType(Material.STATIONARY_WATER, false);
-			b.setData((byte) (8 - height), false);
+			b.setType(Material.STATIONARY_WATER, updateLight);
+			b.setData((byte) (8 - height), updateLight);
 		}
 	}
 	

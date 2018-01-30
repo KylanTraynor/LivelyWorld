@@ -1010,7 +1010,7 @@ public class WaterChunk {
 		case WOOD_BUTTON: case STONE_BUTTON:
 		case LADDER: case RAILS: case TORCH: case IRON_FENCE: case WALL_SIGN: case SIGN_POST:
 		case WOOD_PLATE: case STONE_PLATE: case IRON_PLATE: case GOLD_PLATE:
-		case LONG_GRASS: case DOUBLE_PLANT: case RED_ROSE: case YELLOW_FLOWER:
+		case LONG_GRASS: case DOUBLE_PLANT: case RED_ROSE: case YELLOW_FLOWER: case VINE:
 		case LEAVES: case LEAVES_2:
 		case ANVIL:
 		case TRAP_DOOR:

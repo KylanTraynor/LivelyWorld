@@ -958,7 +958,7 @@ public class WaterChunk {
 						}
 						int index = getIndex(x,y,z);
 						if(waterLevel != toWaterLevel(getLevel(index))){
-							updateVisually(x,y,z);
+							updateVisually(x,y,z, dist <= 2);
 						}
 					}
 				}
@@ -988,7 +988,7 @@ public class WaterChunk {
 		case FENCE: case ACACIA_FENCE: case SPRUCE_FENCE: case DARK_OAK_FENCE: case JUNGLE_FENCE: case BIRCH_FENCE: case NETHER_FENCE:
 			return 20;
 		case LONG_GRASS: case DOUBLE_PLANT: case RED_ROSE: case YELLOW_FLOWER:
-		case LEAVES: case LEAVES_2:
+		case LEAVES: case LEAVES_2: case VINE:
 			return 30;
 		case ANVIL:
 			return 100;
@@ -1054,10 +1054,10 @@ public class WaterChunk {
 		return false;
 	}
 	
-	private void updateVisually(int x, int y, int z) {
+	private void updateVisually(int x, int y, int z, boolean progressive) {
 		if(!LivelyWorld.getInstance().getWaterModule().isRealisticSimulation()) return;
 		BukkitRunnable br = new VisualUpdateTask(this, x, y, z);
-		br.runTaskLater(LivelyWorld.getInstance(), Utils.fastRandomInt(20));
+		br.runTaskLater(LivelyWorld.getInstance(), progressive? Utils.fastRandomInt(20) : 1);
 	}
 
 	public static int toWaterLevel(int level){

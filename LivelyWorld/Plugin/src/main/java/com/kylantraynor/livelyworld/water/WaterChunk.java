@@ -1400,10 +1400,18 @@ public class WaterChunk {
 		
 	}
 
-	public void setLevel(int x, int y, int z, int l) {
-		if(l < 0) l = 0;
-		if(l > 0xFF) l = 0xFF;
+	/**
+	 * Sets the water level at x, y, z, and enforces that level to be between
+	 * 0 and 255.
+	 * @param x in [0,15]
+	 * @param y in [0,255]
+	 * @param z in [0,15]
+	 * @param level
+	 */
+	public void setLevel(int x, int y, int z, int level) {
+		if(level < 0) level = 0;
+		if(level > 0xFF) level = 0xFF;
 		int index = getIndex(x,y,z);
-		data[index] = (byte) l;
+		data[index] = (byte) level;
 	}
 }

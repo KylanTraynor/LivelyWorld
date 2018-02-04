@@ -93,7 +93,11 @@ public class UpdateManager {
 			int zc = Utils.floorMod2(block.getZ(), 4);
 			int moisture = block.getData();
 			int level = wc.getLevel(xc, block.getY(), zc);
-			if(level > 0){
+			int aboveLevel = 0;
+			if(block.getY() < 255){
+				aboveLevel = wc.getLevel(xc, block.getY() + 1, zc);
+			}
+			if(level > 0 || aboveLevel > 0){
 				block.setData((byte) 7);
 				if(block.getRelative(BlockFace.UP).getType() == Material.CROPS){
 					if(Utils.fastRandomDouble() > 0.9){

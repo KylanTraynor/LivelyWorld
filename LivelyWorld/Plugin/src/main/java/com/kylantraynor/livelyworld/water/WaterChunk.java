@@ -880,7 +880,8 @@ public class WaterChunk {
 		if(!isLoaded) return;
 		
 		double dist = Math.sqrt(distanceSquaredFromNearestPlayer());
-		if(Utils.fastRandomFloat() > 2.0f / Math.max(dist, 1)) return;
+		float det = (float) (2.0f / Math.max(dist, 1));
+		if(Utils.fastRandomFloat() > det) return;
 		
 		// If the chunk was not generate, generate it.
 		if(!wasGenerated){
@@ -917,7 +918,7 @@ public class WaterChunk {
 		}
 		
 		if(!chunk.isLoaded()) return;
-		boolean refresh = dist <= 2 ? true : (dist < 10 ? (Utils.superFastRandomInt() < 127 ? true : false) : false);
+		boolean refresh = dist <= 2 ? true : (Utils.fastRandomFloat() > det ? true : false);
 		// Update Pressure.
 		for(int y = 255; y >= 0; y--){
 			for(int x = 0; x < 16; x++){

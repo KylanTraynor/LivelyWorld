@@ -880,7 +880,7 @@ public class WaterChunk {
 		if(!isLoaded) return;
 		
 		double dist = Math.sqrt(distanceSquaredFromNearestPlayer());
-		if(Utils.fastRandomDouble() > 2.0 / Math.max(dist, 1)) return;
+		if(Utils.fastRandomFloat() > 2.0f / Math.max(dist, 1)) return;
 		
 		// If the chunk was not generate, generate it.
 		if(!wasGenerated){
@@ -917,14 +917,17 @@ public class WaterChunk {
 		}
 		
 		if(!chunk.isLoaded()) return;
+		boolean refresh = dist <= 2 ? true : (dist < 10 ? (Utils.superFastRandomInt() < 127 ? true : false) : false);
 		// Update Pressure.
 		for(int y = 255; y >= 0; y--){
 			for(int x = 0; x < 16; x++){
 				for(int z = 0; z < 16; z++){
-					Material m = chunk.getBlock(x, y, z).getType();
 					int index = getIndex(x, y, z);
-					data[index +1] = (byte) getResistanceFor(m);
-					data[index +3] = (byte) ((data[index + 3] & ~0x10) + (isSolid(m) ? 0x10 : 0x00));
+					if(refresh){
+						Material m = chunk.getBlock(x, y, z).getType();
+						data[index +1] = (byte) getResistanceFor(m);
+						data[index +3] = (byte) ((data[index + 3] & ~0x10) + (isSolid(m) ? 0x10 : 0x00));
+					}
 					updatePressure(x, y, z);
 				}
 			}
@@ -948,6 +951,7 @@ public class WaterChunk {
 		if(System.currentTimeMillis() - lastUpdate < 1000) return;
 		if(dist > 10) return;
 		if(dist > 2 && Utils.superFastRandomInt() > 2) return;
+		if(!refresh) return;
 		if(!chunk.isLoaded()) return;
 		
 		for(int y = 0; y < 256; y++){

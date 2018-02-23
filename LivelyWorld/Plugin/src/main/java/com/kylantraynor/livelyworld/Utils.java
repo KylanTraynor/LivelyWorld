@@ -413,6 +413,15 @@ public class Utils {
 	}
 	
 	/**
+	 * Returns a float between [0 and 1]
+	 * @return
+	 */
+	public static float fastRandomFloat(){
+		return rdm.nextFloat();
+		//return ((double)(fastRandomInt()) - ((double)Integer.MIN_VALUE)) / (-(Integer.MIN_VALUE * 2.0));
+	}
+	
+	/**
 	 * Returns a random int between [0 and 255]
 	 * @return
 	 */

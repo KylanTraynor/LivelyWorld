@@ -879,8 +879,8 @@ public class WaterChunk {
 	void update(){
 		if(!isLoaded) return;
 		
-		double dist = Math.sqrt(distanceSquaredFromNearestPlayer());
-		float det = (float) (2.0f / Math.max(dist, 1));
+		int dist = (int) Math.sqrt(distanceSquaredFromNearestPlayer());
+		float det = (float) (2.0f / (Math.max(dist, 1) >> 2));
 		if(Utils.fastRandomFloat() > det) return;
 		
 		// If the chunk was not generate, generate it.

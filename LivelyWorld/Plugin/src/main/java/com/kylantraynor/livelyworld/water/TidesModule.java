@@ -38,6 +38,7 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.EnumWrappers.ResourcePackStatus;
 import com.kylantraynor.livelyworld.LivelyWorld;
+import com.kylantraynor.livelyworld.Utils;
 import com.kylantraynor.livelyworld.api.AnimalsHelper;
 import com.kylantraynor.livelyworld.api.BoatHelper;
 import com.kylantraynor.livelyworld.climate.Planet;
@@ -483,6 +484,10 @@ public class TidesModule {
 					}
 				}
 				sender.sendMessage("Loaded water chunks: " + count + "/" + WaterChunk.chunks.size() + "/" + LivelyWorld.getInstance().getServer().getWorld("world").getLoadedChunks().length);
+				sender.sendMessage("Timings: " + count + "/" + WaterChunk.chunks.size() + "/" + LivelyWorld.getInstance().getServer().getWorld("world").getLoadedChunks().length);
+				sender.sendMessage("Ocean Level: " + Utils.fitTimings(WaterChunk.averages[0]) + " (" + WaterChunk.samples[0] + ")");
+				sender.sendMessage("Pressure Update: " + Utils.fitTimings(WaterChunk.averages[1]) + " (" + WaterChunk.samples[1] + ")");
+				sender.sendMessage("Water Update: " + Utils.fitTimings(WaterChunk.averages[2]) + " (" + WaterChunk.samples[2] + ")");
 				break;
 			case "STOPWATERTHREAD":
 				sender.sendMessage("Stopping water thread.");

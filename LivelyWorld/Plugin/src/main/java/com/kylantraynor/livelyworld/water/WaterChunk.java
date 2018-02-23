@@ -53,6 +53,9 @@ public class WaterChunk {
 	private static Utils.Lock fileLock = new Utils.Lock();
 	private long lastUpdate = System.currentTimeMillis();
 	
+	public static long[] averages = new long[3];
+	public static long[] samples = new long[3];
+	
 	public WaterChunk(World w, int x, int z){
 		this.world = w;
 		this.x = x;
@@ -899,6 +902,7 @@ public class WaterChunk {
 		Chunk chunk = world.getChunkAt(x, z);
 		
 		if(!chunk.isLoaded()) return;
+		long time = System.nanoTime();
 		// Saturate Oceans.
 		Biome biome = null;
 		for(int x = 0; x < 16; x++){
@@ -916,10 +920,13 @@ public class WaterChunk {
 				}
 			}
 		}
-		
+		averages[0] = averages[0] * samples[0] + (System.nanoTime() - time);
+		samples[0]++;
+		averages[0]/=samples[0];
 		if(!chunk.isLoaded()) return;
 		boolean refresh = dist <= 2 ? true : (Utils.fastRandomFloat() > det ? true : false);
 		// Update Pressure.
+		time = System.nanoTime();
 		for(int y = 255; y >= 0; y--){
 			for(int x = 0; x < 16; x++){
 				for(int z = 0; z < 16; z++){
@@ -934,6 +941,10 @@ public class WaterChunk {
 			}
 		}
 		
+		averages[1] = averages[1] * samples[1] + (System.nanoTime() - time);
+		samples[1]++;
+		averages[1]/=samples[1];
+		
 		// Reset super fast random
 		Utils.superFastRandomIntReset();
 		
@@ -941,6 +952,7 @@ public class WaterChunk {
 		int xStep = Utils.superFastRandomInt() < 128 ? -1 : 1;
 		int zStep = Utils.superFastRandomInt() < 128 ? -1 : 1;
 		
+		time = System.nanoTime();
 		for(int y = 0; y < 256; y++){
 			for(int x = xStep == 1 ? 0 : 15; xStep == 1 ? x < 16 : x >= 0; x += xStep){
 				for(int z = zStep == 1 ? 0 : 15; zStep == 1 ? z < 16 : z >= 0; z += zStep){
@@ -948,6 +960,10 @@ public class WaterChunk {
 				}
 			}
 		}
+		
+		averages[2] = averages[2] * samples[2] + (System.nanoTime() - time);
+		samples[2]++;
+		averages[2]/=samples[2];
 		
 		if(System.currentTimeMillis() - lastUpdate < 1000) return;
 		if(dist > 10) return;

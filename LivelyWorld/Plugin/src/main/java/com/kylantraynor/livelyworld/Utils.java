@@ -435,6 +435,15 @@ public class Utils {
 		randByte = fastRandomInt();
 	}
 	
+	public static String fitTimings(long n){
+		if(n > 10000000){
+			return "" + (n / 1000000) + " ms";
+		} else if(n > 10000){
+			return "" + (n / 1000) + " µs";
+		} 
+		return "" + n + " ns";
+	}
+	
 	public static boolean hasPlayerWithinChunk(int x, int z, int range) {
 		int px = 0;
 		int pz = 0;

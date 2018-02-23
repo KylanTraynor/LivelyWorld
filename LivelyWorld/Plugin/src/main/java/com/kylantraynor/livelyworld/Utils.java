@@ -30,6 +30,7 @@ public class Utils {
 	private static XoRoShiRo128PlusRandom rdm = new XoRoShiRo128PlusRandom();
 	private static int t;
 	private static long tickLength;
+	private static int randByte = rdm.nextInt();
 	
 	@SafeVarargs
 	public static <T> T[] toArray(T... t){
@@ -410,6 +411,21 @@ public class Utils {
 		return rdm.nextDoubleFast();
 		//return ((double)(fastRandomInt()) - ((double)Integer.MIN_VALUE)) / (-(Integer.MIN_VALUE * 2.0));
 	}
+	
+	/**
+	 * Returns a random int between [0 and 255]
+	 * @return
+	 */
+	public static int superFastRandomInt(){
+		int x = (randByte << 1);
+		int y = (randByte >>> 1);
+		return (randByte = x ^ ~y) & 0xFF;
+	}
+	
+	public static void superFastRandomIntReset(){
+		randByte = fastRandomInt();
+	}
+	
 	public static boolean hasPlayerWithinChunk(int x, int z, int range) {
 		int px = 0;
 		int pz = 0;

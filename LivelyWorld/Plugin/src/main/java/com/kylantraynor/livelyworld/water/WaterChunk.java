@@ -753,7 +753,7 @@ public class WaterChunk {
 			if(y > 0){
 				int max = getMaxQuantityRDM(downIndex);
 				if(getLevel(downIndex) < max
-						&& getPressure(downIndex) < getPressure(index) + max && Utils.fastRandomInt(256) > getResistance(downIndex)){
+						&& getPressure(downIndex) < getPressure(index) + max && Utils.superFastRandomInt() > getResistance(downIndex)){
 					data[downIndex]++;
 					if(isSolid(downIndex)){
 						pressure[downIndex>>2]++;
@@ -821,7 +821,7 @@ public class WaterChunk {
 	private int getMinPressureDirectData(int... indices) {
 		int min = indices[0];
 		for(int i = 1; i < indices.length; i++){
-			if(isSolid(indices[i]) && Utils.fastRandomInt(256) >= getResistance(indices[i])) continue;
+			if(isSolid(indices[i]) && Utils.superFastRandomInt() >= getResistance(indices[i])) continue;
 			if(getPressure(indices[i]) < getPressure(min)){
 				min = indices[i];
 			}
@@ -832,7 +832,7 @@ public class WaterChunk {
 	private int getMinPressureDirectData(int[] indices, WaterChunk[] chunks) {
 		int min = 0;
 		for(int i = 1; i < indices.length; i++){
-			if(chunks[i].isSolid(indices[i]) && Utils.fastRandomInt(256) >= chunks[i].getResistance(indices[i])) continue;
+			if(chunks[i].isSolid(indices[i]) && Utils.superFastRandomInt() >= chunks[i].getResistance(indices[i])) continue;
 			if(chunks[i].getPressure(indices[i]) < chunks[min].getPressure(indices[min])){
 				min = i;
 			}
@@ -853,7 +853,7 @@ public class WaterChunk {
 		WaterData min = data[0];
 		for(int i = 1; i < data.length; i++){
 			if(data[i] == null) continue;
-			if(data[i].isSolid && Utils.fastRandomInt(256) >= data[i].getResistance()) continue;
+			if(data[i].isSolid && Utils.superFastRandomInt() >= data[i].getResistance()) continue;
 			if(min == null) {
 				min = data[i];
 			} else if(data[i].pressure < min.pressure){
@@ -930,9 +930,12 @@ public class WaterChunk {
 			}
 		}
 		
-		// Update Level.
-		int xStep = Utils.fastRandomInt(2) < 1 ? -1 : 1;
-		int zStep = Utils.fastRandomInt(2) < 1 ? -1 : 1;
+		// Reset super fast random
+		Utils.superFastRandomIntReset();
+		
+		// Update Level
+		int xStep = Utils.superFastRandomInt() < 128 ? -1 : 1;
+		int zStep = Utils.superFastRandomInt() < 128 ? -1 : 1;
 		
 		for(int y = 0; y < 256; y++){
 			for(int x = xStep == 1 ? 0 : 15; xStep == 1 ? x < 16 : x >= 0; x += xStep){
@@ -944,7 +947,7 @@ public class WaterChunk {
 		
 		if(System.currentTimeMillis() - lastUpdate < 1000) return;
 		if(dist > 10) return;
-		if(dist > 2 && Utils.fastRandomDouble() > 0.01) return;
+		if(dist > 2 && Utils.superFastRandomInt() > 2) return;
 		if(!chunk.isLoaded()) return;
 		
 		for(int y = 0; y < 256; y++){
@@ -1295,7 +1298,8 @@ public class WaterChunk {
 	
 	public int getMaxQuantityRDM(int index){
 		if(isSolid(index)){
-			return Utils.fastRandomInt(getMaxQuantity(index) + 1);
+			int result = getMaxQuantity(index) - Utils.superFastRandomInt();
+			return result > 0 ? result : 0;
 		} else {
 			return getMaxQuantity(index);
 		}

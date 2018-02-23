@@ -477,14 +477,14 @@ public class TidesModule {
 		if (args.length >= 2) {
 			switch (args[1].toUpperCase()) {
 			case "INFO":
-				int count = 0;
+				/*int count = 0;
 				for(int i = 0; i < WaterChunk.chunks.size(); i++){
 					if(WaterChunk.chunks.get(i).isLoaded()){
 						count++;
 					}
-				}
-				sender.sendMessage("Loaded water chunks: " + count + "/" + WaterChunk.chunks.size() + "/" + LivelyWorld.getInstance().getServer().getWorld("world").getLoadedChunks().length);
-				sender.sendMessage("Timings: " + count + "/" + WaterChunk.chunks.size() + "/" + LivelyWorld.getInstance().getServer().getWorld("world").getLoadedChunks().length);
+				}*/
+				//sender.sendMessage("Loaded water chunks: " + count + "/" + WaterChunk.chunks.size() + "/" + LivelyWorld.getInstance().getServer().getWorld("world").getLoadedChunks().length);
+				sender.sendMessage("Timings: ");
 				sender.sendMessage("Ocean Level: " + Utils.fitTimings(WaterChunk.averages[0]) + " (" + WaterChunk.samples[0] + ")");
 				sender.sendMessage("Pressure Update: " + Utils.fitTimings(WaterChunk.averages[1]) + " (" + WaterChunk.samples[1] + ")");
 				sender.sendMessage("Water Update: " + Utils.fitTimings(WaterChunk.averages[2]) + " (" + WaterChunk.samples[2] + ")");

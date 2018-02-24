@@ -486,8 +486,8 @@ public class TidesModule {
 				//sender.sendMessage("Loaded water chunks: " + count + "/" + WaterChunk.chunks.size() + "/" + LivelyWorld.getInstance().getServer().getWorld("world").getLoadedChunks().length);
 				sender.sendMessage("Timings: ");
 				sender.sendMessage("Ocean Level: " + Utils.fitTimings(WaterChunk.total[0] / WaterChunk.samples[0]) + " (" + WaterChunk.samples[0] + ")");
-				sender.sendMessage("Unsafe Pressure Update: " + Utils.fitTimings(WaterChunk.total[1] / WaterChunk.samples[1]) + " (" + WaterChunk.samples[1] + ")");
-				sender.sendMessage("Material Check: " + Utils.fitTimings(WaterChunk.total[3] / WaterChunk.samples[3]) + " (" + WaterChunk.samples[3] + ")");
+				sender.sendMessage("Pressure Update: " + Utils.fitTimings(WaterChunk.total[1] / WaterChunk.samples[1]) + " (" + WaterChunk.samples[1] + ")");
+				sender.sendMessage("Chunk Refresh: " + Utils.fitTimings(WaterChunk.total[3] / WaterChunk.samples[3]) + " (" + WaterChunk.samples[3] + ")");
 				sender.sendMessage("Water Update: " + Utils.fitTimings(WaterChunk.total[2] / WaterChunk.samples[2]) + " (" + WaterChunk.samples[2] + ")");
 				break;
 			case "STOPWATERTHREAD":

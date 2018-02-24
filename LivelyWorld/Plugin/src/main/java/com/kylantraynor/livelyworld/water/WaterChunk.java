@@ -952,20 +952,40 @@ public class WaterChunk {
 		}
 		
 		boolean refresh = dist <= 2 ? true : (Utils.fastRandomFloat() > (det/2) ? true : false);
+		if(refresh){
+			time = System.nanoTime();
+			for(int x = 0; x < 16; x++){
+				for(int z = 0; z < 16; z++){
+					if(weakChunk.get() != null){
+						for(int y = 0; y < 256; y++){
+							int index = getIndex(x, y, z);
+							if(weakChunk.get() != null){
+								Material m = weakChunk.get().getBlock(x, y, z).getType();
+								setResistanceUnsafe(index, (byte) getResistanceFor(m));
+								setSolidUnsafe(index, isSolid(m));
+							} else {
+								break;
+							}
+						}
+					} else {
+						break;
+					}
+				}
+			}
+			time = System.nanoTime() - time;
+			total[3] += time;
+			if(total[3] < 0){
+				total[3] = time;
+				samples[3] = 1;
+			} else {
+				samples[3]++;
+			}
+		}
 		// Update Pressure.
 		time = System.nanoTime();
-		long totalTime = 0;
 		for(int y = 255; y >= 0; y--){
 			for(int x = 0; x < 16; x++){
 				for(int z = 0; z < 16; z++){
-					int index = getIndex(x, y, z);
-					if(refresh && weakChunk.get() != null){
-						Material m = weakChunk.get().getBlock(x, y, z).getType();
-						long tt = System.nanoTime();
-						setResistanceUnsafe(index, (byte) getResistanceFor(m));
-						setSolidUnsafe(index, isSolid(m));
-						totalTime += System.nanoTime() - tt;
-					}
 					updatePressure(x, y, z);
 				}
 			}
@@ -978,15 +998,6 @@ public class WaterChunk {
 			samples[1] = 1;
 		} else {
 			samples[1]++;
-		}
-		if(refresh){
-			total[3] += totalTime;
-			if(total[3] < 0){
-				total[3] = totalTime;
-				samples[3] = 1;
-			} else {
-				samples[3]++;
-			}
 		}
 		
 		// Reset super fast random

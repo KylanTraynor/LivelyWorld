@@ -951,7 +951,7 @@ public class WaterChunk {
 			samples[0]++;
 		}
 		
-		boolean refresh = dist <= 2 ? true : (Utils.fastRandomFloat() > det ? true : false);
+		boolean refresh = dist <= 2 ? true : (Utils.fastRandomFloat() > (det/2) ? true : false);
 		// Update Pressure.
 		time = System.nanoTime();
 		long totalTime = 0;
@@ -960,11 +960,11 @@ public class WaterChunk {
 				for(int z = 0; z < 16; z++){
 					int index = getIndex(x, y, z);
 					if(refresh && weakChunk.get() != null){
-						long tt = System.nanoTime();
 						Material m = weakChunk.get().getBlock(x, y, z).getType();
-						totalTime += System.nanoTime() - tt;
+						long tt = System.nanoTime();
 						setResistanceUnsafe(index, (byte) getResistanceFor(m));
 						setSolidUnsafe(index, isSolid(m));
+						totalTime += System.nanoTime() - tt;
 					}
 					updatePressure(x, y, z);
 				}

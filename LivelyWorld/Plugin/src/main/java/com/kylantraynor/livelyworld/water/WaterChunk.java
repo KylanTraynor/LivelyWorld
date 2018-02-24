@@ -871,14 +871,15 @@ public class WaterChunk {
 
 	public void updatePressure(int x, int y, int z){
 		int index = getIndex(x,y,z);
+		int l = getLevelUnsafe(index);
 		int p = getLevelUnsafe(index);
 		if(isSolidUnsafe(index)){
 			p += getResistanceUnsafe(index);
-		} else if(y < 255 && getLevelUnsafe(index) == 0xFF){
-			int upIndex = getIndex(x, y+1,z);
-			if(isSolidUnsafe(upIndex)){
-				p += getPressureUnsafe(upIndex);
-			}
+		} else if(y < 255 && l == 0xFF){
+			//int upIndex = index + yInc;
+			//if(!isSolidUnsafe(upIndex)){
+				p += getPressureUnsafe(index + yInc);
+			//}
 		}
 		setPressureUnsafe(index, p);
 	}

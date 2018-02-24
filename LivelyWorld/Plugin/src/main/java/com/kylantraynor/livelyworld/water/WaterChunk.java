@@ -641,9 +641,9 @@ public class WaterChunk {
 	public void processWaterMove(final int x, final int y, final int z){
 		
 		int index = getIndex(x,y,z);
-		if(getLevel(index) == 0) return;
-		if(isSolid(index)){
-			if(Utils.superFastRandomInt() <= getResistance(index)){
+		if(getLevelUnsafe(index) == 0) return;
+		if(isSolidUnsafe(index)){
+			if(Utils.superFastRandomInt() <= getResistanceUnsafe(index)){
 				return;
 			}
 		}
@@ -760,10 +760,10 @@ public class WaterChunk {
 		while(getLevel(index) > 0 && !stable){
 			if(y > 0){
 				int max = getMaxQuantityRDM(downIndex);
-				if(getLevel(downIndex) < max
-						&& getPressure(downIndex) < getPressure(index) + max && Utils.superFastRandomInt() > getResistance(downIndex)){
+				if(getLevelUnsafe(downIndex) < max
+						&& getPressureUnsafe(downIndex) < getPressureUnsafe(index) + max && Utils.superFastRandomInt() > getResistance(downIndex)){
 					data[downIndex]++;
-					if(isSolid(downIndex)){
+					if(isSolidUnsafe(downIndex)){
 						pressure[downIndex>>2]++;
 					}
 					data[index]--;
@@ -775,12 +775,12 @@ public class WaterChunk {
 			}
 			if(y < 255){
 				int max = getMaxQuantityRDM(index);
-				if(getPressure(upIndex) < getPressure(index) - max){
-					if(getLevel(upIndex) < getMaxQuantityRDM(upIndex)){
+				if(getPressureUnsafe(upIndex) < getPressureUnsafe(index) - max){
+					if(getLevelUnsafe(upIndex) < getMaxQuantityRDM(upIndex)){
 						data[upIndex]++;
 						pressure[upIndex>>2]++;
 						data[index]--;
-						if(isSolid(index)){
+						if(isSolidUnsafe(index)){
 							pressure[index>>2]--;
 						}
 						stable = false;
@@ -805,8 +805,8 @@ public class WaterChunk {
 			} else {
 				minIndex = getMinPressureDirectData(northIndex, southIndex, westIndex, eastIndex);
 			}
-			if(minC.getPressure(minIndex) < getPressure(index)){
-				if(minC.getLevel(minIndex) < minC.getMaxQuantityRDM(minIndex)){
+			if(minC.getPressureUnsafe(minIndex) < getPressureUnsafe(index)){
+				if(minC.getLevelUnsafe(minIndex) < minC.getMaxQuantityRDM(minIndex)){
 					minC.data[minIndex]++;
 					minC.pressure[minIndex>>2]++;
 					data[index]--;
@@ -829,8 +829,8 @@ public class WaterChunk {
 	private int getMinPressureDirectData(int... indices) {
 		int min = indices[0];
 		for(int i = 1; i < indices.length; i++){
-			if(isSolid(indices[i]) && Utils.superFastRandomInt() >= getResistance(indices[i])) continue;
-			if(getPressure(indices[i]) < getPressure(min)){
+			if(isSolidUnsafe(indices[i]) && Utils.superFastRandomInt() >= getResistanceUnsafe(indices[i])) continue;
+			if(getPressureUnsafe(indices[i]) < getPressureUnsafe(min)){
 				min = indices[i];
 			}
 		}
@@ -840,8 +840,8 @@ public class WaterChunk {
 	private int getMinPressureDirectData(int[] indices, WaterChunk[] chunks) {
 		int min = 0;
 		for(int i = 1; i < indices.length; i++){
-			if(chunks[i].isSolid(indices[i]) && Utils.superFastRandomInt() >= chunks[i].getResistance(indices[i])) continue;
-			if(chunks[i].getPressure(indices[i]) < chunks[min].getPressure(indices[min])){
+			if(chunks[i].isSolidUnsafe(indices[i]) && Utils.superFastRandomInt() >= chunks[i].getResistanceUnsafe(indices[i])) continue;
+			if(chunks[i].getPressureUnsafe(indices[i]) < chunks[min].getPressureUnsafe(indices[min])){
 				min = i;
 			}
 		}
@@ -871,13 +871,12 @@ public class WaterChunk {
 		return min;
 	}
 
-	public void updatePressure(int x, int y, int z){
-		int index = getIndex(x,y,z);
+	public void updatePressure(int index){
 		int l = getLevelUnsafe(index);
 		int p = getLevelUnsafe(index);
 		if(isSolidUnsafe(index)){
 			p += getResistanceUnsafe(index);
-		} else if(y < 255 && l == 0xFF){
+		} else if(index >> 10 < 255 && l == 0xFF){
 			//int upIndex = index + yInc;
 			//if(!isSolidUnsafe(upIndex)){
 				p += getPressureUnsafe(index + yInc);
@@ -983,13 +982,16 @@ public class WaterChunk {
 		}
 		// Update Pressure.
 		time = System.nanoTime();
-		for(int y = 255; y >= 0; y--){
+		for(int i = data.length -4; i >= 0; i -= 4){
+			updatePressure(i);
+		}
+		/*for(int y = 255; y >= 0; y--){
 			for(int x = 0; x < 16; x++){
 				for(int z = 0; z < 16; z++){
 					updatePressure(x, y, z);
 				}
 			}
-		}
+		}*/
 		
 		time = System.nanoTime() - time;
 		total[1] += time;

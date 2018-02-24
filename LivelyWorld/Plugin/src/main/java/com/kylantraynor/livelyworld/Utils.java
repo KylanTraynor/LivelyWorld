@@ -2,6 +2,7 @@ package com.kylantraynor.livelyworld;
 
 import it.unimi.dsi.util.XoRoShiRo128PlusRandom;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +21,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.material.MaterialData;
 
+import sun.misc.Unsafe;
+
 import com.kylantraynor.livelyworld.climate.ClimateUtils;
 
 public class Utils {
@@ -31,6 +34,9 @@ public class Utils {
 	private static int t;
 	private static long tickLength;
 	private static int randByte = rdm.nextInt();
+	public static Unsafe unsafe = getUnsafe();
+	public static int baseAddressBytes = unsafe.arrayBaseOffset(byte[].class);
+	public static int baseAddressInts = unsafe.arrayBaseOffset(int[].class);
 	
 	@SafeVarargs
 	public static <T> T[] toArray(T... t){
@@ -443,6 +449,22 @@ public class Utils {
 		} 
 		return "" + n + " ns";
 	}
+	
+	@SuppressWarnings("restriction")
+    public static Unsafe getUnsafe() {
+        try {
+
+            Field singleoneInstanceField = Unsafe.class.getDeclaredField("theUnsafe");
+            singleoneInstanceField.setAccessible(true);
+            return (Unsafe) singleoneInstanceField.get(null);
+
+        } catch (IllegalArgumentException e) {
+        } catch (SecurityException e) {
+        } catch (NoSuchFieldException e) {
+        } catch (IllegalAccessException e) {
+        }
+		return null;
+    }
 	
 	public static boolean hasPlayerWithinChunk(int x, int z, int range) {
 		int px = 0;

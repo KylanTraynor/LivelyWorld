@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -22,6 +23,8 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.material.MaterialData;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import sun.misc.Unsafe;
 
 import com.kylantraynor.livelyworld.LivelyWorld;
 import com.kylantraynor.livelyworld.Utils;
@@ -868,15 +871,16 @@ public class WaterChunk {
 
 	public void updatePressure(int x, int y, int z){
 		int index = getIndex(x,y,z);
-		pressure[index >> 2] = getLevel(index);
-		if(isSolid(index)){
-			pressure[index >> 2] += getResistance(index);
-		} else if(y < 255 && getLevel(index) == 0xFF){
+		int p = getLevelUnsafe(index);
+		if(isSolidUnsafe(index)){
+			p += getResistanceUnsafe(index);
+		} else if(y < 255 && getLevelUnsafe(index) == 0xFF){
 			int upIndex = getIndex(x, y+1,z);
-			if(isSolid(upIndex)){
-				pressure[index >> 2] += pressure[upIndex >> 2];
+			if(isSolidUnsafe(upIndex)){
+				p += getPressureUnsafe(upIndex);
 			}
 		}
+		setPressureUnsafe(index, p);
 	}
 	
 	void update(){
@@ -913,7 +917,7 @@ public class WaterChunk {
 						int y = 48;
 						Material m = chunk.getBlock(x, y, z).getType();
 						while(y > 0 && (Utils.isWater(m) || m == Material.AIR)){
-							data[getIndex(x,y,z)] = (byte) 0xFF;
+							setLevelUnsafe(getIndex(x,y,z), (byte) 0xFF);
 							y--;
 						}
 					}
@@ -933,8 +937,8 @@ public class WaterChunk {
 					int index = getIndex(x, y, z);
 					if(refresh){
 						Material m = chunk.getBlock(x, y, z).getType();
-						data[index +1] = (byte) getResistanceFor(m);
-						data[index +3] = (byte) ((data[index + 3] & ~0x10) + (isSolid(m) ? 0x10 : 0x00));
+						setResistanceUnsafe(index, (byte) getResistanceFor(m));
+						setSolidUnsafe(index, isSolid(m));
 					}
 					updatePressure(x, y, z);
 				}
@@ -1439,4 +1443,41 @@ public class WaterChunk {
 		int index = getIndex(x,y,z);
 		data[index] = (byte) level;
 	}
+	
+	
+	private int getPressureUnsafe(int index){
+		return Utils.unsafe.getInt(pressure, Utils.baseAddressInts + index);
+	}
+	
+	private int getLevelUnsafe(int index){
+		return Byte.toUnsignedInt(Utils.unsafe.getByte(data, Utils.baseAddressBytes + index));
+	}
+	
+	private int getResistanceUnsafe(int index){
+		return Byte.toUnsignedInt(Utils.unsafe.getByte(data, Utils.baseAddressBytes + index + 1));
+	}
+	
+	private boolean isSolidUnsafe(int index){
+		byte b = Utils.unsafe.getByte(data, Utils.baseAddressBytes + index + 3);
+		return (b & 0x10) == 0x10;
+	}
+	
+	private void setPressureUnsafe(int index, int value){
+		Utils.unsafe.putInt(pressure, Utils.baseAddressInts + index, value);
+	}
+	
+	private void setLevelUnsafe(int index, byte value){
+		Utils.unsafe.putByte(data, Utils.baseAddressBytes + index, value);
+	}
+	
+	private void setResistanceUnsafe(int index, byte value){
+		Utils.unsafe.putByte(data, Utils.baseAddressBytes + index + 1, value);
+	}
+	
+	private void setSolidUnsafe(int index, boolean value){
+		byte old = Utils.unsafe.getByte(data, Utils.baseAddressBytes + index + 3);
+		byte b = (byte) ((old & ~0x10) + (value ? 0x10 : 0x00));
+		Utils.unsafe.putByte(data, Utils.baseAddressBytes + index + 3, b);
+	}
+	
 }

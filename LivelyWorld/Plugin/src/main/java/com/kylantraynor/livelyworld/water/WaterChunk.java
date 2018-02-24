@@ -638,9 +638,8 @@ public class WaterChunk {
 		return coords.size() * coords.size();
 	}
 	
-	public void processWaterMove(final int x, final int y, final int z){
+	public void processWaterMove(final int index){
 		
-		int index = getIndex(x,y,z);
 		if(getLevelUnsafe(index) == 0) return;
 		if(isSolidUnsafe(index)){
 			if(Utils.superFastRandomInt() <= getResistanceUnsafe(index)){
@@ -648,11 +647,7 @@ public class WaterChunk {
 			}
 		}
 		
-		//if(x > 0 && x < 15 && z > 0 && z < 15){
-			processWaterMoveDirectData(x,y,z);
-		//} else {
-		//	processWaterMoveWaterData(x,y,z);
-		//}
+		processWaterMoveDirectData(index);
 		
 	}
 	
@@ -748,8 +743,10 @@ public class WaterChunk {
 		if(south != null) south.update();
 	}
 
-	private void processWaterMoveDirectData(final int x, final int y, final int z) {
-		int index = getIndex(x,y,z);
+	private void processWaterMoveDirectData(int index) {
+		final int y = index >> 10;
+		final int x = (index >> 6) & 0x0F;
+		final int z = (index >> 2) & 0x0F;
 		int upIndex = y < 255 ? index + yInc : -1;
 		int downIndex = y > 0 ? index - yInc : -1;
 		int northIndex = z > 0 ? index - zInc : getIndex(x, y, 15);
@@ -757,31 +754,31 @@ public class WaterChunk {
 		int westIndex = x > 0 ? index - xInc : getIndex(15, y, z);
 		int eastIndex = x < 15 ? index + xInc : getIndex(0, y, z);
 		boolean stable = false;
-		while(getLevel(index) > 0 && !stable){
+		while(getLevelUnsafe(index) > 0 && !stable){
 			if(y > 0){
-				int max = getMaxQuantityRDM(downIndex);
+				int max = getMaxQuantityRDMUnsafe(downIndex);
 				if(getLevelUnsafe(downIndex) < max
-						&& getPressureUnsafe(downIndex) < getPressureUnsafe(index) + max && Utils.superFastRandomInt() > getResistance(downIndex)){
-					data[downIndex]++;
+						&& getPressureUnsafe(downIndex) < getPressureUnsafe(index) + max && Utils.superFastRandomInt() > getResistanceUnsafe(downIndex)){
+					setLevelUnsafe(downIndex, (byte) (getLevelUnsafe(downIndex) + 1));
 					if(isSolidUnsafe(downIndex)){
-						pressure[downIndex>>2]++;
+						setPressureUnsafe(downIndex, getPressureUnsafe(downIndex) + 1);
 					}
-					data[index]--;
-					pressure[index>>2]--;
+					setLevelUnsafe(index, (byte) (getLevelUnsafe(index) - 1));
+					setPressureUnsafe(index, getPressureUnsafe(index) - 1);
 					stable = false;
 					//d.lastDirection = 0;
 					continue;
 				}
 			}
 			if(y < 255){
-				int max = getMaxQuantityRDM(index);
+				int max = getMaxQuantityRDMUnsafe(index);
 				if(getPressureUnsafe(upIndex) < getPressureUnsafe(index) - max){
-					if(getLevelUnsafe(upIndex) < getMaxQuantityRDM(upIndex)){
-						data[upIndex]++;
-						pressure[upIndex>>2]++;
-						data[index]--;
+					if(getLevelUnsafe(upIndex) < getMaxQuantityRDMUnsafe(upIndex)){
+						setLevelUnsafe(upIndex, (byte) (getLevelUnsafe(index) + 1));
+						setPressureUnsafe(upIndex, getPressureUnsafe(upIndex) + 1);
+						setLevelUnsafe(index, (byte) (getLevelUnsafe(index) - 1));
 						if(isSolidUnsafe(index)){
-							pressure[index>>2]--;
+							setPressureUnsafe(index, getPressureUnsafe(index) - 1);
 						}
 						stable = false;
 						//d.lastDirection = 0;
@@ -806,11 +803,11 @@ public class WaterChunk {
 				minIndex = getMinPressureDirectData(northIndex, southIndex, westIndex, eastIndex);
 			}
 			if(minC.getPressureUnsafe(minIndex) < getPressureUnsafe(index)){
-				if(minC.getLevelUnsafe(minIndex) < minC.getMaxQuantityRDM(minIndex)){
-					minC.data[minIndex]++;
-					minC.pressure[minIndex>>2]++;
-					data[index]--;
-					pressure[index>>2]--;
+				if(minC.getLevelUnsafe(minIndex) < minC.getMaxQuantityRDMUnsafe(minIndex)){
+					minC.setLevelUnsafe(minIndex, (byte) (minC.getLevelUnsafe(minIndex) + 1));
+					minC.setPressureUnsafe(minIndex, getPressureUnsafe(minIndex) + 1);
+					setLevelUnsafe(index, (byte) (getLevelUnsafe(index) - 1));
+					setPressureUnsafe(index, getPressureUnsafe(index) - 1);
 					stable = false;
 					/*if(min == north) d.lastDirection = 1;
 					if(min == east) d.lastDirection = 2;
@@ -903,7 +900,7 @@ public class WaterChunk {
 		if(!isLoaded) return;
 		
 		int dist = (int) Math.sqrt(distanceSquaredFromNearestPlayer());
-		float det = (float) (2.0f / (Math.max(dist, 1) >> 2));
+		float det = (float) (2.0f / (Math.max(dist, 1) >> 1));
 		if(Utils.fastRandomFloat() > det) return;
 		if(dist > 10) return;
 		
@@ -1014,7 +1011,7 @@ public class WaterChunk {
 		for(int y = 0; y < 256; y++){
 			for(int x = xStep == 1 ? 0 : 15; xStep == 1 ? x < 16 : x >= 0; x += xStep){
 				for(int z = zStep == 1 ? 0 : 15; zStep == 1 ? z < 16 : z >= 0; z += zStep){
-					processWaterMove(x, y, z);
+					processWaterMove(getIndex(x,y,z));
 				}
 			}
 		}
@@ -1387,6 +1384,19 @@ public class WaterChunk {
 		byte old = Utils.unsafe.getByte(data, Utils.baseAddressBytes + index + 3);
 		byte b = (byte) ((old & ~0x10) + (value ? 0x10 : 0x00));
 		Utils.unsafe.putByte(data, Utils.baseAddressBytes + index + 3, b);
+	}
+	
+	private int getMaxQuantityUnsafe(int index){
+		return 0xFF - getResistanceUnsafe(index);
+	}
+	
+	private int getMaxQuantityRDMUnsafe(int index){
+		if(isSolidUnsafe(index)){
+			int result = getMaxQuantityUnsafe(index) - Utils.superFastRandomInt();
+			return result > 0 ? result : 0;
+		} else {
+			return getMaxQuantityUnsafe(index);
+		}
 	}
 	
 }

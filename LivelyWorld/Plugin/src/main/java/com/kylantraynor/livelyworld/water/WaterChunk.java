@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Iterator;
@@ -53,6 +54,7 @@ public class WaterChunk {
 	private final World world;
 	private boolean needsUpdate = false;
 	private boolean wasGenerated = false;
+	private WeakReference<Chunk> weakChunk;
 	private static Utils.Lock fileLock = new Utils.Lock();
 	private long lastUpdate = System.currentTimeMillis();
 	
@@ -916,22 +918,25 @@ public class WaterChunk {
 		if(!WaterChunkThread.isChunkLoaded(world, x, z)){
 			return;
 		}
-		Chunk chunk = world.getChunkAt(x, z);
-		
-		if(!chunk.isLoaded()) return;
+		weakChunk = new WeakReference<Chunk>(world.getChunkAt(x, z));
+
 		long time = System.nanoTime();
 		// Saturate Oceans.
 		Biome biome = null;
 		for(int x = 0; x < 16; x++){
 			for(int z = 0; z < 16; z++){
-				biome = chunk.getBlock(x, 0, z).getBiome();
+				if(weakChunk.get() != null){
+					biome = weakChunk.get().getBlock(x, 0, z).getBiome();
+				}
 				if(biome != null){
 					if((Utils.isOcean(biome) || biome == Biome.RIVER)){
 						int y = 48;
-						Material m = chunk.getBlock(x, y, z).getType();
-						while(y > 0 && (Utils.isWater(m) || m == Material.AIR)){
-							setLevelUnsafe(getIndex(x,y,z), (byte) 0xFF);
-							y--;
+						if(weakChunk.get() != null){
+							Material m = weakChunk.get().getBlock(x, y, z).getType();
+							while(y > 0 && (Utils.isWater(m) || m == Material.AIR)){
+								setLevelUnsafe(getIndex(x,y,z), (byte) 0xFF);
+								y--;
+							}
 						}
 					}
 				}
@@ -945,19 +950,18 @@ public class WaterChunk {
 		} else {
 			samples[0]++;
 		}
-		if(!chunk.isLoaded()) return;
+		
 		boolean refresh = dist <= 2 ? true : (Utils.fastRandomFloat() > det ? true : false);
 		// Update Pressure.
-		boolean safe = Utils.superFastRandomInt() < 127;
 		time = System.nanoTime();
 		long totalTime = 0;
 		for(int y = 255; y >= 0; y--){
 			for(int x = 0; x < 16; x++){
 				for(int z = 0; z < 16; z++){
 					int index = getIndex(x, y, z);
-					if(refresh){
+					if(refresh && weakChunk.get() != null){
 						long tt = System.nanoTime();
-						Material m = chunk.getBlock(x, y, z).getType();
+						Material m = weakChunk.get().getBlock(x, y, z).getType();
 						totalTime += System.nanoTime() - tt;
 						setResistanceUnsafe(index, (byte) getResistanceFor(m));
 						setSolidUnsafe(index, isSolid(m));
@@ -1014,20 +1018,21 @@ public class WaterChunk {
 		if(dist > 10) return;
 		if(dist > 2 && Utils.superFastRandomInt() > 2) return;
 		if(!refresh) return;
-		if(!chunk.isLoaded()) return;
 		
 		for(int y = 0; y < 256; y++){
 			for(int x = 0; x < 16; x++){
 				for(int z = 0; z < 16; z++){
-					Material m = chunk.getBlock(x, y, z).getType();
-					if(canReplace(m)){
-						int waterLevel = 0;
-						if(Utils.isWater(m)){
-							waterLevel = Utils.getWaterHeight(chunk.getBlock(x, y, z).getData());
-						}
-						int index = getIndex(x,y,z);
-						if(waterLevel != toWaterLevel(getLevel(index))){
-							updateVisually(x,y,z, dist <= 2);
+					if(weakChunk.get() != null){
+						Material m = weakChunk.get().getBlock(x, y, z).getType();
+						if(canReplace(m)){
+							int waterLevel = 0;
+							if(Utils.isWater(m)){
+								waterLevel = Utils.getWaterHeight(weakChunk.get().getBlock(x, y, z).getData());
+							}
+							int index = getIndex(x,y,z);
+							if(waterLevel != toWaterLevel(getLevel(index))){
+								updateVisually(x,y,z, dist <= 2);
+							}
 						}
 					}
 				}

@@ -950,51 +950,38 @@ public class WaterChunk {
 		// Update Pressure.
 		boolean safe = Utils.superFastRandomInt() < 127;
 		time = System.nanoTime();
-		if(safe){
-			for(int y = 255; y >= 0; y--){
-				for(int x = 0; x < 16; x++){
-					for(int z = 0; z < 16; z++){
-						int index = getIndex(x, y, z);
-						if(refresh){
-							Material m = chunk.getBlock(x, y, z).getType();
-							setResistance(index, (byte) getResistanceFor(m));
-							setSolid(index, isSolid(m));
-						}
-						safeUpdatePressure(x, y, z);
+		long totalTime = 0;
+		for(int y = 255; y >= 0; y--){
+			for(int x = 0; x < 16; x++){
+				for(int z = 0; z < 16; z++){
+					int index = getIndex(x, y, z);
+					if(refresh){
+						long tt = System.nanoTime();
+						Material m = chunk.getBlock(x, y, z).getType();
+						totalTime += System.nanoTime() - tt;
+						setResistanceUnsafe(index, (byte) getResistanceFor(m));
+						setSolidUnsafe(index, isSolid(m));
 					}
+					updatePressure(x, y, z);
 				}
 			}
-			
-			time = System.nanoTime() - time;
-			total[3] += time;
+		}
+		
+		time = System.nanoTime() - time;
+		total[1] += time;
+		if(total[1] < 0){
+			total[1] = time;
+			samples[1] = 1;
+		} else {
+			samples[1]++;
+		}
+		if(refresh){
+			total[3] += totalTime;
 			if(total[3] < 0){
-				total[3] = time;
+				total[3] = totalTime;
 				samples[3] = 1;
 			} else {
 				samples[3]++;
-			}
-		} else {
-			for(int y = 255; y >= 0; y--){
-				for(int x = 0; x < 16; x++){
-					for(int z = 0; z < 16; z++){
-						int index = getIndex(x, y, z);
-						if(refresh){
-							Material m = chunk.getBlock(x, y, z).getType();
-							setResistanceUnsafe(index, (byte) getResistanceFor(m));
-							setSolidUnsafe(index, isSolid(m));
-						}
-						updatePressure(x, y, z);
-					}
-				}
-			}
-			
-			time = System.nanoTime() - time;
-			total[1] += time;
-			if(total[1] < 0){
-				total[1] = time;
-				samples[1] = 1;
-			} else {
-				samples[1]++;
 			}
 		}
 		

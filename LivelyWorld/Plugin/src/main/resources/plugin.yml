@@ -1,9 +1,0 @@
-name: LivelyWorld
-main: com.kylantraynor.livelyworld.LivelyWorld
-version: 0.0.3
-depend: [ProtocolLib, DraggyData, dynmap]
-commands:
-  livelyworld:
-    description: Access all livelyworld commands.
-    permission: livelyworld.all
-    aliases: [lw]

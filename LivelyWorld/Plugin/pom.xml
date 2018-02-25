@@ -12,7 +12,7 @@
 	<groupId>com.kylantraynor</groupId>
 	<artifactId>LivelyWorld</artifactId>
 	<build>
-    <sourceDirectory>src</sourceDirectory>
+    <sourceDirectory>src/main/java</sourceDirectory>
     <directory>../target</directory>
     <plugins>
     	<plugin>

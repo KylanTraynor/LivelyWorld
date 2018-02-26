@@ -1,4 +1,4 @@
-package main.java.com.kylantraynor.livelyworld.livelyworld.api;
+package com.kylantraynor.livelyworld.api;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Animals;

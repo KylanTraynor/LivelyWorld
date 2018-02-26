@@ -11,7 +11,7 @@
   <name>LivelyWorld</name>
   <version>0.0.3-SNAPSHOT</version>
   <build>
-    <sourceDirectory>src</sourceDirectory>
+    <sourceDirectory>src/main/java</sourceDirectory>
     <directory>../target</directory>
     <plugins>
       <plugin>

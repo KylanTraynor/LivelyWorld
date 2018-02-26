@@ -1099,7 +1099,7 @@ public class WaterChunk {
 		data[index + 3] = b;
 	}
 	
-	/*public void setNeedsUpsate(boolean value){
+	/*public void setNeedsUpdate(boolean value){
 		needsUpdate = value;
 	}
 	

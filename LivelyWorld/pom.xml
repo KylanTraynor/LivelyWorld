@@ -4,6 +4,23 @@
   <artifactId>LivelyWorld-Project</artifactId>
  <build>
 	<sourceDirectory>src</sourceDirectory>
+	 <!-- Filter only plugin.yml -->
+	 <resources>
+		 <resource>
+			 <directory>src/main/resources</directory>
+			 <filtering>true</filtering>
+			 <includes>
+				 <include>plugin.yml</include>
+			 </includes>
+		 </resource>
+		 <resource>
+			 <directory>src/main/resources</directory>
+			 <filtering>false</filtering>
+			 <excludes>
+				 <exclude>plugin.yml</exclude>
+			 </excludes>
+		 </resource>
+	 </resources>
 	<plugins>
 	  <plugin>
 		<artifactId>maven-compiler-plugin</artifactId>

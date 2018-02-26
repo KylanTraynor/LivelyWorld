@@ -1,5 +1,5 @@
 ame: LivelyWorld
-version: 0.0.3
+version: "${project.version}-${BUILD_NUMBER}"
 author: KylanTraynor
 main: LivelyWorld
 depend: [ DraggyData, dynmap, TitleManager, ProtocolLib ]

@@ -2,7 +2,7 @@ ame: LivelyWorld
 version: 0.0.3
 author: KylanTraynor
 main: LivelyWorld
-depend: DraggyData,dynmap,TitleManager,ProtocolLib
+depend: [ DraggyData, dynmap, TitleManager, ProtocolLib ]
 commands:
       livelyworld:
                description: All the commands related to LivelyWorld

@@ -65,7 +65,9 @@ public class WeatherEffectsRunnable extends BukkitRunnable {
 										if(wc.isLoaded()){
 											int xc = Utils.floorMod2(fb.getX(), 4);
 											int zc = Utils.floorMod2(fb.getZ(), 4);
-											wc.setLevel(xc, fb.getY(), zc, wc.getLevel(xc, fb.getY(), zc) - evaporation);
+											int oldLevel = wc.getLevel(xc, fb.getY(), zc);
+											wc.setLevel(xc, fb.getY(), zc, oldLevel - evaporation);
+											WaterChunk.delta[1] -= (oldLevel-evaporation < 0 ? oldLevel : evaporation);
 										}
 									}
 								};
@@ -86,7 +88,9 @@ public class WeatherEffectsRunnable extends BukkitRunnable {
 									public void run() {
 										WaterChunk wc = WaterChunk.get(fb.getWorld(), chunkX, chunkZ);
 										if(wc.isLoaded()){
-											wc.addWaterAt(Utils.floorMod2(fb.getX(), 4), fb.getY(), Utils.floorMod2(fb.getZ(), 4), (int) (amount * 0xFF) / 8);
+											int am = (int) (amount * 0xFF) / 8;
+											wc.addWaterAt(Utils.floorMod2(fb.getX(), 4), fb.getY(), Utils.floorMod2(fb.getZ(), 4), am);
+											WaterChunk.delta[2] += am;
 										}
 									}
 								};
@@ -114,6 +118,7 @@ public class WeatherEffectsRunnable extends BukkitRunnable {
 								WaterChunk wc = WaterChunk.get(fb.getWorld(), chunkX, chunkZ);
 								if(wc.isLoaded()){
 									wc.addWaterAt(Utils.floorMod2(fb.getX(), 4), fb.getY(), Utils.floorMod2(fb.getZ(), 4), 2);
+									WaterChunk.delta[2] += 2;
 								}
 							}
 						};
@@ -137,6 +142,7 @@ public class WeatherEffectsRunnable extends BukkitRunnable {
 								WaterChunk wc = WaterChunk.get(fb.getWorld(), chunkX, chunkZ);
 								if(wc.isLoaded()){
 									wc.addWaterAt(Utils.floorMod2(fb.getX(), 4), fb.getY(), Utils.floorMod2(fb.getZ(), 4), 4);
+									WaterChunk.delta[2] += 4;
 								}
 							}
 						};

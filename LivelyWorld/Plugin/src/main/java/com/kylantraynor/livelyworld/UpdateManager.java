@@ -100,6 +100,7 @@ public class UpdateManager {
 				if(block.getRelative(BlockFace.UP).getType() == Material.CROPS){
 					if(Utils.fastRandomDouble() > 0.9){
 						wc.setLevel(xc, block.getY(), zc, level - 1);
+						WaterChunk.delta[3] -= 1;
 					}
 				}
 			} else if(moisture > 0){

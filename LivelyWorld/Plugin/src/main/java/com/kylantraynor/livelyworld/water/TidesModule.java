@@ -474,6 +474,7 @@ public class TidesModule {
 				sender.sendMessage("Pressure Update: " + Utils.fitTimings(WaterChunk.total[1] / WaterChunk.samples[1]) + " (" + WaterChunk.samples[1] + ")");
 				sender.sendMessage("Chunk Refresh: " + Utils.fitTimings(WaterChunk.total[3] / WaterChunk.samples[3]) + " (" + WaterChunk.samples[3] + ")");
 				sender.sendMessage("Water Update: " + Utils.fitTimings(WaterChunk.total[2] / WaterChunk.samples[2]) + " (" + WaterChunk.samples[2] + ")");
+				sender.sendMessage("BALANCE:  Flow: " + WaterChunk.delta[0] + " Evaporation: " + WaterChunk.delta[1] + " Rain: " + WaterChunk.delta[2] + " Plants: " + WaterChunk.delta[3]);
 				break;
 			case "STOPWATERTHREAD":
 				sender.sendMessage("Stopping water thread.");

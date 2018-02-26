@@ -569,4 +569,20 @@ public class Utils {
 		loc.setY(255);
 		b.getWorld().playSound(loc, Sound.ENTITY_LIGHTNING_THUNDER, 300, 1);
 	}
+
+	public static int sumOf(byte[] args, int step){
+		int result = 0;
+		for(int i = 0; i < args.length; i += step){
+			result += Byte.toUnsignedInt(args[i]);
+		}
+		return result;
+	}
+
+    public static int sumOf(int[] args, int step){
+        int result = 0;
+        for(int i = 0; i < args.length; i += step){
+            result += args[i];
+        }
+        return result;
+    }
 }

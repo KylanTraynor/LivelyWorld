@@ -11,6 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterOutputStream;
 
+import org.apache.commons.math3.exception.OutOfRangeException;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -31,6 +32,7 @@ public class WaterChunk {
 	final static int xInc = 1<<6;
 	final static int yInc = 1<<10;
 	final static int zInc = 1<<2;
+	static public int[] delta = new int[4];
 	static boolean disabled = false;
 	
 	double tickRandom = Utils.fastRandomDouble();
@@ -852,17 +854,18 @@ public class WaterChunk {
 		// Update Level
 		int xStep = Utils.superFastRandomInt() < 128 ? -1 : 1;
 		int zStep = Utils.superFastRandomInt() < 128 ? -1 : 1;
-		
+
+		int sum = Utils.sumOf(data, 4);
 		time = System.nanoTime();
-		for(int y = 0; y < 256; y++){
-			for(int x = xStep == 1 ? 0 : 15; xStep == 1 ? x < 16 : x >= 0; x += xStep){
-				for(int z = zStep == 1 ? 0 : 15; zStep == 1 ? z < 16 : z >= 0; z += zStep){
-					processWaterMove(getIndex(x,y,z));
-				}
-			}
-		}
-		
+		for(int y = 0; y < 256; y++) {
+            for (int x = xStep == 1 ? 0 : 15; xStep == 1 ? x < 16 : x >= 0; x += xStep) {
+                for (int z = zStep == 1 ? 0 : 15; zStep == 1 ? z < 16 : z >= 0; z += zStep) {
+                    processWaterMove(getIndex(x, y, z));
+                }
+            }
+        }
 		time = System.nanoTime() - time;
+		delta[0] += Utils.sumOf(data,4) - sum;
 		total[2] += time;
 		if(total[2] < 0){
 			total[2] = time;
@@ -1021,6 +1024,7 @@ public class WaterChunk {
 	
 	public void addWaterAt(int x, int y, int z, int amount) {
 		if(!isLoaded()) return;
+        checkRange(x,y,z);
 		int index = getIndex(x,y,z);
 		if(getMaxQuantity(index) - getLevel(index) >= amount){
 			data[index] += amount;
@@ -1041,6 +1045,7 @@ public class WaterChunk {
 	}
 	
 	public int getLevel(int x, int y, int z){
+        checkRange(x,y,z);
 		int index = getIndex(x,y,z);
 		return getLevel(index);
 	}
@@ -1050,6 +1055,7 @@ public class WaterChunk {
 	}
 	
 	public int getResistance(int x, int y, int z){
+        checkRange(x,y,z);
 		int index = getIndex(x,y,z);
 		return getResistance(index);
 	}
@@ -1063,6 +1069,7 @@ public class WaterChunk {
 	}
 	
 	public int getMaxQuantity(int x, int y, int z){
+        checkRange(x,y,z);
 		int index = getIndex(x,y,z);
 		return getMaxQuantity(index);
 	}
@@ -1081,6 +1088,7 @@ public class WaterChunk {
 	}
 	
 	public boolean isSolid(int x, int y, int z){
+        checkRange(x,y,z);
 		int index = getIndex(x,y,z);
 		return isSolid(index);
 	}
@@ -1181,6 +1189,12 @@ public class WaterChunk {
 		
 	}
 
+	private void checkRange(int x, int y, int z){
+        if(x >= 16 || x < 0) throw new OutOfRangeException(x, 0, 15);
+        if(z >= 16 || z < 0) throw new OutOfRangeException(z, 0, 15);
+        if(y >= 256 || y < 0) throw new OutOfRangeException(y, 0, 255);
+    }
+
 	/**
 	 * Sets the water level at x, y, z, and enforces that level to be between
 	 * 0 and 255.
@@ -1192,6 +1206,7 @@ public class WaterChunk {
 	public void setLevel(int x, int y, int z, int level) {
 		if(level < 0) level = 0;
 		if(level > 0xFF) level = 0xFF;
+		checkRange(x,y,z);
 		int index = getIndex(x,y,z);
 		data[index] = (byte) level;
 	}

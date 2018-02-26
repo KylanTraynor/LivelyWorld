@@ -37,7 +37,7 @@ public class GravityTask extends BukkitRunnable {
 	}
 	
 	private Vector hasAirAround(){
-		int rdm = (int) Math.floor(Math.random() * 4);
+		int rdm = Utils.fastRandomInt(4);
 		switch(rdm){
 		case 0:
 			if(!module.isSolidBlock(world.getBlockAt(x + 1, y, z)))

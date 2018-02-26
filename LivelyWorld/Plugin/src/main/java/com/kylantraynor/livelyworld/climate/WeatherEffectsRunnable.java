@@ -57,7 +57,7 @@ public class WeatherEffectsRunnable extends BukkitRunnable {
 						if(effectAmount > 0){
 							if(Utils.isWater(b)){
 								final Block fb = b;
-								final int evaporation = effectAmount;
+								final int evaporation = (int) (effectAmount * (1-c.getRelativeHumidity()));
 								BukkitRunnable br = new BukkitRunnable(){
 									@Override
 									public void run() {

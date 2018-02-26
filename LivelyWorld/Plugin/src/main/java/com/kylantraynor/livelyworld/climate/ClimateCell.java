@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
+import com.kylantraynor.livelyworld.Utils;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
@@ -480,7 +481,7 @@ public class ClimateCell extends VCell {
 			} else {
 				weather = Weather.STORM;
 			}
-		} else if (getRelativeHumidity() >= 55 + (Math.random() * 15)) {
+		} else if (getRelativeHumidity() >= 55 + (Utils.fastRandomInt(15))) {
 			if(getTemperature().isCelsiusBelow(3)){
 				weather = Weather.SNOW;
 			} else {

@@ -1,0 +1,113 @@
+usepathways: true
+useclimate: true
+usedeterioration: true
+usecreatures: true
+useburn: true
+usevegetation: true
+usetides: true
+usesounds: false
+pathways:
+  probabilities:
+    grass-dirt: 0.1
+    dirt-coarse: 0.05
+    coarse-gravel: 0.25
+    gravel-cobble: 0.12
+    cobble-cblstairs: 0.002
+    cblstairs-cblslab: 0.001
+    dirt: 0.1
+    coarse: 0.05
+    gravel: 0.025
+    cobble: 0.012
+    cblstairs: 0.0025
+    cblslab: 0.001
+    path: 0.025
+  multilpliers:
+    sneaking: 0
+    walking: 1
+    sprinting: 2
+    horse: 4
+  multipliers:
+    sprint: 2.0
+    horse: 8.0
+deteriorate:
+  probabilities:
+    stonebrick-cracked: 0.002
+    smoothdiorite-diorite: 0.003
+    smoothgranite-granite: 0.003
+    smoothandesite-andesite: 0.003
+updateradius: 250
+usegravity: true
+gravity:
+  blocks:
+    SOUL_SAND:
+      type: SANDLIKE
+      radius: 0
+      stability: 1
+    BRICK:
+      type: BASIC
+      radius: 4
+      stability: 1
+    SNOW_BLOCK:
+      type: SANDLIKE
+      radius: 0
+      stability: 1
+    RED_NETHER_BRICK:
+      type: BASIC
+      radius: 5
+      stability: 1
+    SMOOTH_STAIRS:
+      type: BASIC
+      radius: 4
+      stability: 1
+    SAND:
+      type: SANDLIKE
+      radius: 0
+      stability: 1
+    SANDSTONE:
+      type: BASIC
+      radius: 3
+      stability: 1
+    CONCRETE_POWDER:
+      type: SANDLIKE
+      radius: 0
+      stability: 1
+    DIRT:
+      type: BASIC
+      radius: 1
+      stability: 1
+    BRICK_STAIRS:
+      type: BASIC
+      radius: 4
+      stability: 1
+    COBBLESTONE_STAIRS:
+      type: BASIC
+      radius: 1
+      stability: 1
+    COBBLESTONE:
+      type: BASIC
+      radius: 1
+      stability: 1
+    NETHER_BRICK:
+      type: BASIC
+      radius: 5
+      stability: 1
+    GRASS:
+      type: BASIC
+      radius: 1
+      stability: 1
+    GRASS_PATH:
+      type: BASIC
+      radius: 1
+      stability: 1
+    GRAVEL:
+      type: SANDLIKE
+      radius: 0
+      stability: 1
+    CLAY:
+      type: SANDLIKE
+      radius: 0
+      stability: 1
+    NETHERRACK:
+      type: BASIC
+      radius: 1
+      stability: 1

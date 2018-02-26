@@ -1,4 +1,4 @@
-ame: LivelyWorld
+name: LivelyWorld
 version: ${project.version}
 author: KylanTraynor
 main: LivelyWorld

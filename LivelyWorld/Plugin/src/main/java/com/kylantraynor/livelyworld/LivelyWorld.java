@@ -530,7 +530,7 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 			// in the direction of -Y, if not, it sets the falling distance to
 			// 0.
 			if (event.getPlayer().getFallDistance() > 2) {
-				if (event.getPlayer().getVelocity().getY() > 0) {
+				if (event.getPlayer().getVelocity().getY() > 0 && getWaterModule().getOceanLevel(event.getFrom()) >= event.getFrom().getBlockY()) {
 					event.getPlayer().setFallDistance(2);
 				}
 			}

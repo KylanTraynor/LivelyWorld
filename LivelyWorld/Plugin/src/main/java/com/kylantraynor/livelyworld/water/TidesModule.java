@@ -180,7 +180,7 @@ public class TidesModule {
 		 */
 	}
 
-	private double getOceanLevel(Location l) {
+	public double getOceanLevel(Location l) {
 		double levelDiff = maxLevel - minLevel;
 
 		int days = (int) (l.getWorld().getFullTime() % (24000 * 8));
@@ -254,7 +254,7 @@ public class TidesModule {
 			}
 			for (int x = -1; x <= 1; x++) {
 				for (int z = -1; z <= 1; z++) {
-					if (Math.random() < 0.0001) {
+					if (Utils.fastRandomDouble() < 0.0001) {
 						Block b = location.clone().add(x, 0, z).getBlock();
 						BlockState state = b.getState();
 						MaterialData newMaterial = changingBlock.get(state.getData());

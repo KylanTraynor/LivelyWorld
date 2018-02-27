@@ -926,7 +926,8 @@ public class WaterChunk {
 		case FENCE: case ACACIA_FENCE: case SPRUCE_FENCE: case DARK_OAK_FENCE: case JUNGLE_FENCE: case BIRCH_FENCE: case NETHER_FENCE:
 			return 20;
 		case LONG_GRASS: case DOUBLE_PLANT: case RED_ROSE: case YELLOW_FLOWER:
-		case LEAVES: case LEAVES_2: case VINE: case WATER_LILY: case CROPS:
+		case LEAVES: case LEAVES_2: case VINE: case WATER_LILY:
+        case CROPS: case MELON_STEM: case PUMPKIN_STEM:
 			return 30;
 		case ANVIL:
 			return 100;
@@ -948,7 +949,8 @@ public class WaterChunk {
 		case WOOD_BUTTON: case STONE_BUTTON:
 		case LADDER: case RAILS: case TORCH: case IRON_FENCE: case WALL_SIGN: case SIGN_POST:
 		case WOOD_PLATE: case STONE_PLATE: case IRON_PLATE: case GOLD_PLATE:
-		case LONG_GRASS: case DOUBLE_PLANT: case RED_ROSE: case YELLOW_FLOWER: case VINE: case WATER_LILY: case CROPS:
+        case LONG_GRASS: case DOUBLE_PLANT: case RED_ROSE: case YELLOW_FLOWER: case VINE: case WATER_LILY:
+        case CROPS: case MELON_STEM: case PUMPKIN_STEM:
 		case LEAVES: case LEAVES_2:
 		case ANVIL:
 		case TRAP_DOOR:

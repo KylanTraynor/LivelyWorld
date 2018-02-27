@@ -326,15 +326,14 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 
 	private boolean isInValidWorld(Location location) {
 		if (location.getWorld() == worldCenter.getWorld()) {
-			if (location.getBlockX() < worldBorder + worldCenter.getBlockX()
+			return (location.getBlockX() < worldBorder + worldCenter.getBlockX()
 					&& location.getBlockX() > -worldBorder
 							+ worldCenter.getBlockX()
 					&& location.getBlockZ() < worldBorder
 							+ worldCenter.getBlockZ()
 					&& location.getBlockZ() > -worldBorder
 							+ worldCenter.getBlockZ()
-					&& location.getBlockY() > 0 && location.getBlockY() < 255)
-				return true;
+					&& location.getBlockY() > 0 && location.getBlockY() < 255);
 		}
 		return false;
 	}
@@ -697,11 +696,10 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 
 								@Override
 								public void run() {
-									if(item != null){
 									item.getLocation().getBlock().breakNaturally();
 									item.getLocation().getBlock().setType(fb.getMaterial());
 									item.getLocation().getBlock().setData(fb.getBlockData());
-									item.remove();}
+									item.remove();
 								}
 								
 							};

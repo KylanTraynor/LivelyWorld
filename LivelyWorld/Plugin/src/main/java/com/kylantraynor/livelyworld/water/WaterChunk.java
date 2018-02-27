@@ -893,7 +893,11 @@ public class WaterChunk {
 							if(waterLevel != toWaterLevel(getLevel(index))){
 								updateVisually(x,y,z, dist <= 2);
 							}
-						}
+						} else if(m == Material.SOIL){
+						    if(getLevel(getIndex(x,y,z)) > 1){
+						        updateVisually(x,y,z, dist <= 2);
+                            }
+                        }
 					}
 				}
 			}
@@ -1168,20 +1172,22 @@ public class WaterChunk {
 			if(!chunk.isLoaded() || !chunk.getWorld().isChunkLoaded(chunk.getX(), chunk.getZ()))
 				return;
 			Block b = chunk.getWorld().getChunkAt(chunk.x, chunk.z).getBlock(x, y, z);
-			if(canReplace(b.getType())){
-				int waterLevel = toWaterLevel(level);
-				if(waterLevel != Utils.getWaterHeight(b)){
-					if(isDropable(b.getType())){
-						if(waterLevel > 3){
-							b.breakNaturally();
-							Utils.setWaterHeight(b, waterLevel, true, true);
-						}
-					} else if(waterLevel > 0) {
-						Utils.setWaterHeight(b, waterLevel, true, true);
-					} else if(Utils.isWater(b.getType())){
-						Utils.setWaterHeight(b, 0, true, true);
-					}
-				}
+			if(canReplace(b.getType())) {
+                int waterLevel = toWaterLevel(level);
+                if (waterLevel != Utils.getWaterHeight(b)) {
+                    if (isDropable(b.getType())) {
+                        if (waterLevel > 3) {
+                            b.breakNaturally();
+                            Utils.setWaterHeight(b, waterLevel, true, true);
+                        }
+                    } else if (waterLevel > 0) {
+                        Utils.setWaterHeight(b, waterLevel, true, true);
+                    } else if (Utils.isWater(b.getType())) {
+                        Utils.setWaterHeight(b, 0, true, true);
+                    }
+                }
+            } else if(b.getType() == Material.SOIL && level > 0){
+			    b.setData((byte)7);
 			} else if(b.getRelative(BlockFace.DOWN).getType() == Material.AIR && b.getType() != Material.AIR && level > 0) {
 				chunk.getWorld().spawnParticle(Particle.DRIP_WATER, b.getX() + Utils.fastRandomDouble(), b.getY() - 0.01, b.getZ() + Utils.fastRandomDouble(), 1);
 			}

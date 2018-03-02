@@ -83,10 +83,10 @@ public class TidesModule {
 		changingBlock.put(Material.GRAVEL, new MaterialData(Material.SAND));
 		changingBlock.put(Material.SMOOTH_BRICK, new MaterialData(Material.SMOOTH_BRICK, (byte) 2));
 
-		int interval = 20 * 30;
+		/*int interval = 20 * 30;
 		tidesTask = new TideDispatcherTask(this, interval);
+		tidesTask.runTaskTimer(plugin, 20 * 10, interval);*/
 
-		tidesTask.runTaskTimer(plugin, 20 * 10, interval);
 		waterThread.setDaemon(true);
 		waterThread.start();
 	}

@@ -1,6 +1,6 @@
 name: LivelyWorld
 main: com.kylantraynor.livelyworld.LivelyWorld
-version: ${project.version}
+version: ${project.version}-Build ${build.number}
 author: KylanTraynor
 depend: [ DraggyData, dynmap, TitleManager, ProtocolLib ]
 commands:

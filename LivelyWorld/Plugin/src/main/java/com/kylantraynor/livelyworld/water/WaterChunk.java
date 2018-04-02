@@ -5,12 +5,16 @@ import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.lang.ref.WeakReference;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterOutputStream;
 
+import com.kylantraynor.livelyworld.utils.IntQueue;
+import com.kylantraynor.livelyworld.utils.ShortQueue;
 import org.apache.commons.math3.exception.OutOfRangeException;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
@@ -39,6 +43,7 @@ public class WaterChunk {
 	
 	final byte[] data = new byte[16 * 16 * 256 * 4];
 	final int[] pressure = new int[16*16*256];
+	final private ShortQueue updateQueue;
 	//final WaterData[][][] data = new WaterData[256][16][16];
 	//final int dataLength = data.length * data[0].length * data[0][0].length;
 	//final int dataByteLength = dataLength * 4;
@@ -59,6 +64,7 @@ public class WaterChunk {
 		this.world = w;
 		this.x = x;
 		this.z = z;
+		this.updateQueue = new ShortQueue(4096);
 		/*for(int y = 255; y >= 0; y--){
 			for(int x1 = 0; x1 < 16; x1++){
 				for(int z1 = 0; z1 < 16; z1++){
@@ -650,6 +656,7 @@ public class WaterChunk {
 			} else {
 				minIndex = getMinPressureDirectData(northIndex, southIndex, westIndex, eastIndex);
 			}
+			if(!minC.isLoaded()) return;
 			if(minC.getPressureUnsafe(minIndex) < getPressureUnsafe(index)){
 				if(minC.getLevelUnsafe(minIndex) < minC.getMaxQuantityRDMUnsafe(minIndex)){
 					minC.setLevelUnsafe(minIndex, (byte) (minC.getLevelUnsafe(minIndex) + 1));
@@ -729,20 +736,16 @@ public class WaterChunk {
 		}
 		setPressureUnsafe(index, p);
 	}
-	
-	/*public void safeUpdatePressure(int x, int y, int z){
-		int index = getIndex(x,y,z);
-		int p = getLevel(index);
-		if(isSolid(index)){
-			p += getResistance(index);
-		} else if(y < 255 && getLevel(index) == 0xFF){
-			int upIndex = getIndex(x, y+1,z);
-			if(isSolid(upIndex)){
-				p += getPressure(upIndex);
-			}
-		}
-		pressure[index >> 2] = p;
-	}*/
+
+	void updateQueue(){
+	    if(!isLoaded) return;
+	    int length = updateQueue.size();
+	    int i = 0;
+	    while(i++ < length){
+	        int index = Short.toUnsignedInt(updateQueue.removeShort()) << 2;
+	        updatePressure(index);
+        }
+    }
 	
 	void update(){
 		if(!isLoaded) return;

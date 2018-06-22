@@ -31,18 +31,18 @@ import com.kylantraynor.livelyworld.Utils.ChunkCoordinates;
 
 public class WaterChunk {
 	final static Map<ChunkCoordinates, WaterChunk> chunks = new ConcurrentHashMap<ChunkCoordinates, WaterChunk>(); 
-	final static int sectorLength = 4096;
-	final static int currentVersion = 1;
-	final static int xInc = 1<<6;
-	final static int yInc = 1<<10;
-	final static int zInc = 1<<2;
+	final private static int sectorLength = 4096;
+	final private static int currentVersion = 1;
+	final private static int xInc = 1<<6;
+	final private static int yInc = 1<<10;
+	final private static int zInc = 1<<2;
 	static public int[] delta = new int[4];
 	static boolean disabled = false;
 	
 	double tickRandom = Utils.fastRandomDouble();
 	
-	final byte[] data = new byte[16 * 16 * 256 * 4];
-	final int[] pressure = new int[16*16*256];
+	final private byte[] data = new byte[16 * 16 * 256 * 4];
+	final private int[] pressure = new int[16*16*256];
 	final private ShortQueue updateQueue;
 	//final WaterData[][][] data = new WaterData[256][16][16];
 	//final int dataLength = data.length * data[0].length * data[0][0].length;
@@ -350,7 +350,7 @@ public class WaterChunk {
 					f.seek(nextChunkIndex);
 					f.readFully(nextChunks);
 					f.seek(location * sectorLength);
-					LivelyWorld.getInstance().getLogger().info(getFile().getName()+": Rewriting at location: " + location + " (" + location*sectorLength + ") with a size of " + baos.size() + " with padding: " + finalPadding + " and " + newSectors + " sectors" + ". Moving " + nextChunks.length + " bytes.");
+					//LivelyWorld.getInstance().getLogger().info(getFile().getName()+": Rewriting at location: " + location + " (" + location*sectorLength + ") with a size of " + baos.size() + " with padding: " + finalPadding + " and " + newSectors + " sectors" + ". Moving " + nextChunks.length + " bytes.");
 					// Write Chunk Data
 					f.setLength(location * sectorLength);
 					f.write(baos.toByteArray());
@@ -680,7 +680,8 @@ public class WaterChunk {
 
 	private int getMinPressureDirectData(int... indices) {
 		int min = indices[0];
-		for(int i = 1; i < indices.length; i++){
+		int l = indices.length;
+		for(int i = 1; i < l; i++){
 			if(isSolidUnsafe(indices[i]) && Utils.superFastRandomInt() >= getResistanceUnsafe(indices[i])) continue;
 			if(getPressureUnsafe(indices[i]) < getPressureUnsafe(min)){
 				min = indices[i];
@@ -691,7 +692,8 @@ public class WaterChunk {
 	
 	private int getMinPressureDirectData(int[] indices, WaterChunk[] chunks) {
 		int min = 0;
-		for(int i = 1; i < indices.length; i++){
+		int l = indices.length;
+		for(int i = 1; i < l; i++){
 			if(chunks[i].isSolidUnsafe(indices[i]) && Utils.superFastRandomInt() >= chunks[i].getResistanceUnsafe(indices[i])) continue;
 			if(chunks[i].getPressureUnsafe(indices[i]) < chunks[min].getPressureUnsafe(indices[min])){
 				min = i;

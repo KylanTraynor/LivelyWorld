@@ -2,6 +2,7 @@ package com.kylantraynor.livelyworld.climate;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
@@ -105,6 +106,18 @@ public class ClimateUtils {
 		if(map == null) return null;
 		return map.getClimateCellAt(location);
 	}
+
+	public static ClimateCell getClimateCellAt(World w, int x, int z){
+		return getClimateCellAt(w, x, z, null);
+	}
+
+	public static ClimateCell getClimateCellAt(World w, int x, int z, ClimateCell ref){
+		Planet planet = Planet.getPlanet(w);
+		if(planet == null) return null;
+		ClimateMap map = planet.getClimateMap(w);
+		if(map == null) return null;
+		return map.getClimateCellAt(x, z);
+	}
 	
 	public static ClimateCell getClimateCellFor(Player p){
 		return LivelyWorld.getInstance().getClimateModule().getClimateCellFor(p);
@@ -206,8 +219,8 @@ public class ClimateUtils {
 		return new Temperature(result);
 	}
 	
-	public static Temperature getAltitudeWeightedTriangleTemperature(ClimateCell ref, Location l){
-		ClimateTriangle t = getClimateTriangle(l, ref);
+	public static Temperature getAltitudeWeightedTemperature(Location l){
+		ClimateSquare t = getClimateSquare(l);
 		if(t == null) return Temperature.NaN;
 		double temp = t.getTemperatureAt(l.getX(), l.getZ()).getValue();
 		
@@ -215,51 +228,11 @@ public class ClimateUtils {
 		return new Temperature(result);
 	}
 	
-	public static ClimateTriangle getClimateTriangle(Location location, ClimateCell ref){
+	public static ClimateSquare getClimateSquare(Location location){
 		VectorXZ v = new VectorXZ((float) location.getX(), (float) location.getZ());
-		ClimateCell cell = null;
-		if(ref != null){
-			if(ref.isInside(v)){
-				cell = ref;
-			} else {
-				for(ClimateCell c : ref.getNeighbours()){
-					if(c == null) continue;
-					if(c.isInside(v)) cell = c;
-				}
-				if(cell == null){
-					cell = getClimateCellAt(location);
-				}
-			}
-		} else {
-			cell = ClimateUtils.getClimateCellAt(location);
-		}
-		
+		ClimateCell cell = ClimateUtils.getClimateCellAt(location);
 		if(cell == null) return null;
-		
-		ClimateCell cell2 = null;
-		ClimateCell cell3 = null;
-		
-		for(VCell c : cell.getNeighbours()){
-			if(c == null) continue;
-			if(cell3 == null) cell3 = (ClimateCell)c;
-			else {
-				if(cell3.getSite().distanceSquared(v) > c.getSite().distanceSquared(v)){
-					if(cell2 == null) cell2 = (ClimateCell) c;
-					else if(cell2.getSite().distanceSquared(v) > c.getSite().distanceSquared(v)){
-						cell3 = cell2;
-						cell2 = (ClimateCell)c;
-					} else {
-						cell3 = (ClimateCell)c;
-					}
-				}
-			}
-		}
-		
-		if(cell2 == null || cell3 == null){
-			// Shouldn't happen.
-			return new ClimateTriangle(cell, cell, cell);
-		}
-		return new ClimateTriangle(cell, cell2, cell3);
+		return new ClimateSquare(cell, cell.getRelative(1,0), cell.getRelative(1,1), cell.getRelative(0,1));
 	}
 
 	@Deprecated

@@ -4,10 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 
-import org.bukkit.ChatColor;
-import org.bukkit.Chunk;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -151,7 +148,7 @@ public class ClimateModule {
 			case FROZEN_RIVER:
 				
 				//ClimateChunk c = ClimateChunk.getAt(b.getLocation());
-				if (map.getTemperatureAt(b.getLocation()).getValue() > 273.15
+				if (ClimateUtils.getTemperatureAt(b.getLocation()).getValue() > 273.15
 						&& b.getLocation().getY() <= 49) {
 					if (hasBiomeWithin(b.getLocation(), Biome.OCEAN, 5)) {
 						b.setBiome(Biome.OCEAN);
@@ -467,7 +464,7 @@ public class ClimateModule {
 								p.sendMessage(MessageHeader
 										+ ChatColor.GOLD
 										+ "Current temperature here: "
-										+ ClimateUtils.getAltitudeWeightedTriangleTemperature(c, p.getLocation()).toString(p));
+										+ ClimateUtils.getAltitudeWeightedTemperature(p.getLocation()).toString(p));
 							} else {
 								p.sendMessage(MessageHeader
 										+ ChatColor.RED
@@ -510,7 +507,7 @@ public class ClimateModule {
 	public void updateBiome(Block block, ClimateCell ref) {
 		ClimateCell c = ClimateUtils.getClimateCellAt(block.getLocation(), ref);
 		if(c == null) return;
-		ClimateTriangle t = ClimateUtils.getClimateTriangle(block.getLocation(), c);
+		ClimateSquare t = ClimateUtils.getClimateSquare(block.getLocation());
 		Temperature temp = t.getTemperatureAt(block.getX(), block.getZ());
 		double humidity = t.getHumidityAt(block.getX(), block.getZ());
 		if(c.getMap().getCurrentHighestHumidity() == 0) return;

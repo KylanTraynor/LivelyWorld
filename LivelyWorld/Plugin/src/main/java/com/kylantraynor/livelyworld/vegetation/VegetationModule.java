@@ -127,7 +127,7 @@ public class VegetationModule implements Listener {
 			Bukkit.getServer().getLogger().info("Trying to plant Blue Orchid");
 		boolean isClimateOk = false;
 		if (Planet.getPlanet(b.getWorld()) != null) {
-			Temperature averageTemp = ClimateUtils.getAltitudeWeightedTriangleTemperature(null, b.getLocation());
+			Temperature averageTemp = ClimateUtils.getAltitudeWeightedTemperature(b.getLocation());
 			isClimateOk = ClimateUtils.isAcceptableTemperature(averageTemp, 
 					Temperature.fromCelsius(21), 
 					Temperature.fromCelsius(15), 
@@ -154,7 +154,7 @@ public class VegetationModule implements Listener {
 			Bukkit.getServer().getLogger().info("Trying to plant Dandelion");
 		boolean isClimateOk = false;
 		if (Planet.getPlanet(b.getWorld()) != null) {
-			Temperature averageTemp = ClimateUtils.getAltitudeWeightedTriangleTemperature(null, b.getLocation());
+			Temperature averageTemp = ClimateUtils.getAltitudeWeightedTemperature(b.getLocation());
 			isClimateOk = ClimateUtils.isAcceptableTemperature(averageTemp, 
 					Temperature.fromCelsius(20), 
 					Temperature.fromCelsius(15), 
@@ -180,7 +180,7 @@ public class VegetationModule implements Listener {
 			Bukkit.getServer().getLogger().info("Trying to plant Poppy");
 		boolean isClimateOk = false;
 		if (Planet.getPlanet(b.getWorld()) != null) {
-			Temperature averageTemp = ClimateUtils.getAltitudeWeightedTriangleTemperature(null, b.getLocation());
+			Temperature averageTemp = ClimateUtils.getAltitudeWeightedTemperature(b.getLocation());
 			isClimateOk = ClimateUtils.isAcceptableTemperature(averageTemp, 
 					Temperature.fromCelsius(12), 
 					Temperature.fromCelsius(10), 
@@ -207,7 +207,7 @@ public class VegetationModule implements Listener {
 		boolean isClimateOk = false;
 		if (Planet.getPlanet(b.getWorld()) != null) {
 			ClimateCell c = ClimateUtils.getClimateCellAt(b.getLocation());
-			Temperature averageTemp = ClimateUtils.getAltitudeWeightedTriangleTemperature(c, b.getLocation());
+			Temperature averageTemp = ClimateUtils.getAltitudeWeightedTemperature(b.getLocation());
 			isClimateOk = ClimateUtils.isAcceptableTemperature(averageTemp,
 					Temperature.fromCelsius(17),
 					Temperature.fromCelsius(10),
@@ -263,7 +263,7 @@ public class VegetationModule implements Listener {
 	private void updateGrass(Block b) {
 		ClimateCell cell = ClimateUtils.getClimateCellAt(b.getLocation());
 		if(cell != null){
-			Temperature temp = ClimateUtils.getAltitudeWeightedTriangleTemperature(cell, b.getLocation());
+			Temperature temp = ClimateUtils.getAltitudeWeightedTemperature(b.getLocation());
 			boolean isClimateOk = ClimateUtils.isAcceptableTemperature(temp,
 					Temperature.fromCelsius(25),
 					Temperature.fromCelsius(10),
@@ -297,7 +297,7 @@ public class VegetationModule implements Listener {
 	private void tryPlantFern(Block b){
 		if(b.getType() != Material.AIR) return;
 		if(b.getLightFromSky() < 5) return;
-		Temperature temp = ClimateUtils.getAltitudeWeightedTriangleTemperature(null, b.getLocation());
+		Temperature temp = ClimateUtils.getAltitudeWeightedTemperature(b.getLocation());
 		boolean isClimateOk = ClimateUtils.isAcceptableTemperature(temp,
 				Temperature.fromCelsius(20),
 				Temperature.fromCelsius(10),

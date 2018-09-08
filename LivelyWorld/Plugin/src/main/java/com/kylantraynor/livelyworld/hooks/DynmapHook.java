@@ -111,11 +111,15 @@ public class DynmapHook {
 	private void updateWeather(World w) {
 		Planet planet = Planet.getPlanet(w);
 		ClimateMap map = planet.getClimateMap(w);
-		for(ClimateCell c : map.getCells()){
-			updateClimateCellArea(c);
+		for(ClimateCell[] cl : map.cells){
+			for(ClimateCell c : cl){
+				updateClimateCellArea(c);
+			}
 		}
-		for (ClimateCell c : map.getCells()) {
-			updateClimateCell(c);
+		for(ClimateCell[] cl : map.cells){
+			for(ClimateCell c : cl){
+				updateClimateCell(c);
+			}
 		}
 	}
 	
@@ -123,7 +127,7 @@ public class DynmapHook {
 		String cellid = "" + c.getX() + "_" + c.getZ() + "_weathercell";
 		AreaMarker m = temperaturesSet.createAreaMarker(cellid, c.getTemperature().toString("C") + "/"
 				+ c.getTemperature().toString("F")
-				, false, c.getWorld().getName(), c.getVerticesX(), c.getVerticesZ(), false);
+				, false, c.getWorld().getName(), c.verticesX, c.verticesZ, false);
 		if(m == null){
 			m = temperaturesSet.findAreaMarker(cellid);
 			if(m == null){

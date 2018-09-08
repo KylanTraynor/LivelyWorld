@@ -497,15 +497,21 @@ public class WaterChunk {
 	}*/
 	
 	private void processWaterMove(final int index){
-		
-		if(getLevelUnsafe(index) == 0) return;
+
+	    //if(!needsUpdate(index)) return;
+	    int level = getLevelUnsafe(index);
+		if(level == 0) return;
 		if(isSolidUnsafe(index)){
 			if(Utils.superFastRandomInt() <= getResistanceUnsafe(index)){
 				return;
 			}
 		}
-		
 		processWaterMoveDirectData(index);
+
+		// This should turn on updates for neighbouring blocks if the level changed.
+		/*if(getLevelUnsafe(index) != level){
+		    setNeedsUpdateUnsafe(index, true);
+        }*/
 		
 	}
 	
@@ -1110,6 +1116,16 @@ public class WaterChunk {
 		byte b = (byte) ((old & ~0x10) + (value ? 0x10 : 0x00));
 		data[index + 3] = b;
 	}
+
+	private boolean needsUpdate(int index){
+	    return ((data[index + 3] & 0b10000000)) == 0b10000000;
+    }
+
+    private void setNeedsUpdate(int index, boolean value){
+        byte old = data[index + 3];
+        byte b = (byte) ((old & ~0b10000000) + (value ? 0b10000000 : 0b00000000));
+        data[index + 3] = b;
+    }
 	
 	/*public void setNeedsUpdate(boolean value){
 		needsUpdate = value;
@@ -1242,6 +1258,11 @@ public class WaterChunk {
 		byte b = Utils.unsafe.getByte(data, Utils.baseAddressBytes + index + 3);
 		return (b & 0x10) == 0x10;
 	}
+
+	private boolean needsUpdateUnsafe(int index){
+	    byte b = Utils.unsafe.getByte(data, Utils.baseAddressBytes + index + 3);
+	    return (b & 0b10000000) == 0b10000000;
+    }
 	
 	private void setPressureUnsafe(int index, int value){
 		Utils.unsafe.putInt(pressure, Utils.baseAddressInts + index, value);
@@ -1260,6 +1281,12 @@ public class WaterChunk {
 		byte b = (byte) ((old & ~0x10) + (value ? 0x10 : 0x00));
 		Utils.unsafe.putByte(data, Utils.baseAddressBytes + index + 3, b);
 	}
+
+	private void setNeedsUpdateUnsafe(int index, boolean value){
+        byte old = Utils.unsafe.getByte(data, Utils.baseAddressBytes + index + 3);
+        byte b = (byte) ((old & ~0b10000000) + (value ? 0b10000000 : 0b00000000));
+        Utils.unsafe.putByte(data, Utils.baseAddressBytes + index + 3, b);
+    }
 	
 	private int getMaxQuantityUnsafe(int index){
 		return 0xFF - getResistanceUnsafe(index);

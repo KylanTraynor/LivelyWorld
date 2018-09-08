@@ -20,7 +20,9 @@ public class ClimateListener implements Listener{
 			}
 		}
 	}*/
-	
+
+
+	/*
 	@EventHandler
 	public void onPlayerMove(PlayerMoveEvent e){
 		if(e.isCancelled()) return;
@@ -37,5 +39,5 @@ public class ClimateListener implements Listener{
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent e){
 		LivelyWorld.getInstance().getClimateModule().updatePlayerCell(e.getPlayer());
-	}
+	}*/
 }

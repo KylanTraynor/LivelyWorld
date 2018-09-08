@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterInputStream;
 
+import com.kylantraynor.livelyworld.Utils;
 import org.bukkit.Location;
 import org.bukkit.World;
 
@@ -36,13 +37,29 @@ public class ClimateMap {
 	private Temperature highestTemperature = Temperature.fromCelsius(20);
 	private SizedList<ClimateCell> cache = new SizedList<ClimateCell>(10);
 
+	private int power = 1;
+	// use to go from cell coordinates to block coordinates
+    // cellX = (blockX >> power) + offsetx;
+    // cellZ = (blockZ >> power) + offsetz;
+    // blockX = (cellX - offsetx) << power;
+    // blockZ = (cellZ - offsetz) << power;
+	private int offsetx = 0;
+	private int offsetz = 0;
+	public ClimateCell[][] cells;
+	private int minX = 0;
+	private int minZ = 0;
+	private int maxX = 0;
+	private int maxZ = 0;
+	public int xCount = 0;
+	public int zCount = 0;
+
 	public ClimateMap(World world) {
-		this(world, 80);
+		this(world, 6);
 	}
 
-	public ClimateMap(World world, int resolution) {
+	public ClimateMap(World world, int power) {
 		this.world = world;
-		this.resolution = resolution;
+		this.power = power;
 	}
 	
 	public double incrementGenerationZ(double z, double step){
@@ -56,8 +73,66 @@ public class ClimateMap {
 	public double zAdjustedXStep(double z, double step){
 		return Math.max(step * Math.cos(z / Planet.getPlanet(world).getMaxZ()), 1);
 	}
-	
-	public void generateMap() {
+
+	public void generateMap(){
+	    if(HookManager.hasWorldBorder()){
+            WorldBorderHook hook = HookManager.getWorldBorder();
+            Location center = hook.getWorldCenter(world);
+            minX = (int) (center.getX() - hook.getWorldRadiusX(world));
+            minZ = (int) (center.getZ() - hook.getWorldRadiusZ(world));
+            maxX = (int) (center.getX() + hook.getWorldRadiusX(world));
+            maxZ = (int) (center.getZ() + hook.getWorldRadiusZ(world));
+
+            int minCellX = minX >> power;
+            int maxCellX = maxX >> power;
+            int minCellZ = minZ >> power;
+            int maxCellZ = maxZ >> power;
+
+            xCount = maxCellX - minCellX;
+            zCount = maxCellZ - minCellZ;
+
+            cells = new ClimateCell[xCount][zCount];
+
+            offsetx = -minCellX;
+            offsetz = -minCellZ;
+
+            for(int x = 0; x < xCount; x++){
+                for(int z = 0; z < zCount; z++){
+                    cells[x][z] = new ClimateCell();
+                    cells[x][z].setWorld(world);
+                    cells[x][z].setMap(this);
+                    cells[x][z].setCoords(x,z);
+                    cells[x][z].size = 1 << power;
+                }
+            }
+
+            LivelyWorld.getInstance().getLogger().info("Attempting to load previous climate data for map...");
+            List<ClimateCellData> data = loadAllData();
+            if(data.size() > 0){
+                LivelyWorld.getInstance().getLogger().info(data.size() + " previous data has been found.");
+            } else {
+                LivelyWorld.getInstance().getLogger().warning("No previous climate data could be found.");
+            }
+
+            int x=0;
+            int z=0;
+            for(int i = 0; i < data.size(); i++){
+                cells[x][z].init(data.get(i));
+                if(++z >= zCount){
+                    z = 0;
+                    x++;
+                }
+                if(x >= xCount){
+                    break;
+                }
+            }
+
+            generated = true;
+        }
+    }
+
+	@Deprecated
+	public void generateMapOld() {
 		if (HookManager.hasWorldBorder()) {
 
 			WorldBorderHook hook = HookManager.getWorldBorder();
@@ -165,8 +240,13 @@ public class ClimateMap {
 		return null;
 	}
 
-	public ClimateCell[] getCells() {
-		return this.generator.getCells();
+	public ClimateCell getClimateCellAt(int x, int z){
+		if (generated) {
+		    int cellX = (x >> power) + offsetx;
+		    int cellZ = (z >> power) + offsetz;
+			return cells[x][z];
+		}
+		return null;
 	}
 
 	private int lastCellUpdateId = 0;
@@ -181,11 +261,9 @@ public class ClimateMap {
 	private Temperature lowestHighTemperature = Temperature.fromCelsius(0);
 	
 	public void randomCellUpdate() {
-		lastCellUpdateId = (int) Math.floor(Math.random() * getCells().length);// = lastCellUpdateId >= getCells().length - 1 ? 0 : lastCellUpdateId + 1;
-		/*if(lastCellUpdateId == 0){
-			this.highestHumidity = 0;
-		}*/
-		ClimateCell c = getCells()[lastCellUpdateId];
+	    int x = Utils.fastRandomInt(xCount);
+	    int z = Utils.fastRandomInt(zCount);
+		ClimateCell c = cells[x][z];
 		if (c != null)
 		{
 			for(ClimateCell cell : c.getNeighbours()){
@@ -261,44 +339,6 @@ public class ClimateMap {
 		return lowestHighTemperature;
 	}
 
-	/**
-	 * Returns the temperature at the location from averaging the surrounding {@link ClimateCell}.
-	 * @param location
-	 * @return {@link Temperature} which can be NaN.
-	 */
-	public Temperature getTemperatureAt(Location location) {
-		
-		ClimateCell cell = getClimateCellAt(location);
-		if(cell == null) return Temperature.NaN;
-		VectorXZ v = new VectorXZ((float) location.getX(), (float) location.getZ());
-		
-		ClimateCell cell2 = null;
-		ClimateCell cell3 = null;
-		
-		for(VCell c : cell.getNeighbours()){
-			if(c == null) continue;
-			if(cell3 == null) cell3 = (ClimateCell)c;
-			else {
-				if(cell3.getSite().distanceSquared(v) > c.getSite().distanceSquared(v)){
-					if(cell2 == null) cell2 = (ClimateCell) c;
-					else if(cell2.getSite().distanceSquared(v) > c.getSite().distanceSquared(v)){
-						cell3 = cell2;
-						cell2 = (ClimateCell)c;
-					} else {
-						cell3 = (ClimateCell)c;
-					}
-				}
-			}
-		}
-		
-		if(cell2 == null || cell3 == null){
-			// Shouldn't happen.
-			return cell.getTemperature();
-		}
-		ClimateTriangle t = new ClimateTriangle(cell, cell2, cell3);
-		return t.getTemperatureAt(v);
-	}
-
 	public double getCurrentHighestHumidity() {
 		if(!hasChanged) return highestHumidity;
 		updateMinMaxValues();
@@ -336,42 +376,44 @@ public class ClimateMap {
 	}
 	
 	public void updateMinMaxValues(){
-		for(ClimateCell c : getCells()){
-			if(c.getTemperature().getValue() > highestTemperature.getValue()){
-				highestTemperature = c.getTemperature();
-			}
-			if(c.getTemperature().getValue() < lowestTemperature.getValue()){
-				lowestTemperature = c.getTemperature();
-			}
-			if(c.getHighTemperature().getValue() > highestHighTemperature.getValue()){
-				highestHighTemperature = c.getTemperature();
-			}
-			if(c.getHighTemperature().getValue() < lowestHighTemperature.getValue()){
-				lowestHighTemperature = c.getTemperature();
-			}
-			if(c.getLowAltitudePressure() > highestLowPressure){
-				highestLowPressure = c.getLowAltitudePressure();
-			}
-			if(c.getLowAltitudePressure() < lowestLowPressure){
-				lowestLowPressure = c.getLowAltitudePressure();
-			}
-			if(c.getHighAltitudePressure() > highestHighPressure){
-				highestHighPressure = c.getHighAltitudePressure();
-			}
-			if(c.getHighAltitudePressure() < lowestHighPressure){
-				lowestHighPressure = c.getHighAltitudePressure();
-			}
-			if(c.getHumidity() > highestHumidity){
-				highestHumidity = c.getHumidity();
-			}
-			if(c.getHumidity() < highestHumidity){
-				highestHumidity = c.getHumidity();
-			}
-			if(c.getLowWind().getSpeed() > highestWindSpeed){
-				highestWindSpeed = c.getLowWind().getSpeed();
-			}
-		}
-		this.hasChanged = false;
+        for(ClimateCell[] cl : cells){
+            for(ClimateCell c : cl){
+                if(c.getTemperature().getValue() > highestTemperature.getValue()){
+                    highestTemperature = c.getTemperature();
+                }
+                if(c.getTemperature().getValue() < lowestTemperature.getValue()){
+                    lowestTemperature = c.getTemperature();
+                }
+                if(c.getHighTemperature().getValue() > highestHighTemperature.getValue()){
+                    highestHighTemperature = c.getTemperature();
+                }
+                if(c.getHighTemperature().getValue() < lowestHighTemperature.getValue()){
+                    lowestHighTemperature = c.getTemperature();
+                }
+                if(c.getLowAltitudePressure() > highestLowPressure){
+                    highestLowPressure = c.getLowAltitudePressure();
+                }
+                if(c.getLowAltitudePressure() < lowestLowPressure){
+                    lowestLowPressure = c.getLowAltitudePressure();
+                }
+                if(c.getHighAltitudePressure() > highestHighPressure){
+                    highestHighPressure = c.getHighAltitudePressure();
+                }
+                if(c.getHighAltitudePressure() < lowestHighPressure){
+                    lowestHighPressure = c.getHighAltitudePressure();
+                }
+                if(c.getHumidity() > highestHumidity){
+                    highestHumidity = c.getHumidity();
+                }
+                if(c.getHumidity() < highestHumidity){
+                    highestHumidity = c.getHumidity();
+                }
+                if(c.getLowWind().getSpeed() > highestWindSpeed){
+                    highestWindSpeed = c.getLowWind().getSpeed();
+                }
+            }
+        }
+        this.hasChanged = false;
 	}
 	
 	public void clearMinMaxValues(){
@@ -403,12 +445,14 @@ public class ClimateMap {
 	}
 
 	public void saveAllData() {
-		byte[] bytes = new byte[getCells().length * ClimateCellData.getByteSize()];
+		byte[] bytes = new byte[xCount * zCount * ClimateCellData.getByteSize()];
 		ByteBuffer buff = ByteBuffer.wrap(bytes);
-		for(int i = 0; i < getCells().length; i++){
-			getCells()[i].getData().saveInto(buff);
-		}
-		
+		for(int x = 0; x < xCount; x++){
+		    for(int z = 0; z < zCount; z++){
+		        cells[x][z].getData().saveInto(buff);
+            }
+        }
+
 		try{
 			OutputStream out = null;
 			try{
@@ -464,4 +508,19 @@ public class ClimateMap {
 	    }
 	    return result.toByteArray();
 	}
+
+	public int toBlockX(int cellX){
+	    return (cellX - offsetx) << power;
+    }
+
+    public int toBlockZ(int cellZ){
+	    return (cellZ - offsetz) << power;
+    }
+
+    public int toCellX(int blockX){
+	    return (blockX >> power) + offsetx;
+    }
+    public int toCellZ(int blockZ){
+	    return (blockZ >> power) + offsetz;
+    }
 }

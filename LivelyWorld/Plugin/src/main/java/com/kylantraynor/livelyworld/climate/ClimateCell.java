@@ -52,15 +52,38 @@ public class ClimateCell extends VCell {
 	private Temperature maxTemp;
 	
 	private double humidityGeneration = Double.NaN;
+
+	private ClimateCell[] neighbours;
+
+	public int cellX;
+	public int cellZ;
+	public int size;
 	
 	private int x;
 	private int y;
 	private int z;
+
+	public double[] verticesX;
+	public double[] verticesZ;
 	
 	public ClimateCell() {
 		super();
 	}
-	
+
+	public void setCoords(int x, int z){
+		this.cellX = x;
+		this.cellZ = z;
+
+		this.x = map.toBlockX(cellX);
+		this.z = map.toBlockZ(cellZ);
+
+		verticesX = new double[]{map.toBlockX(cellX), map.toBlockX(cellX + 1), map.toBlockX(cellX + 1), map.toBlockX(cellX)};
+		verticesZ = new double[]{map.toBlockZ(cellZ), map.toBlockZ(cellZ), map.toBlockZ(cellZ + 1), map.toBlockZ(cellZ + 1)};
+	}
+
+	public ClimateCell getRelative(int x, int z){
+		return map.getClimateCellAt(this.x + x, this.z + z);
+	}
 	/**
 	 * Get the neighbouring climate cells.
 	 * Can be contain null objects if the cell is next to the map border.
@@ -68,11 +91,23 @@ public class ClimateCell extends VCell {
 	 */
 	@Override
 	public synchronized ClimateCell[] getNeighbours(){
-		ClimateCell[] result = new ClimateCell[super.getNeighbours().length];
-		for(int i = 0; i < super.getNeighbours().length; i++){
-			result[i] = (ClimateCell) super.getNeighbours()[i];
+		if(neighbours == null){
+			if(z > 0 && z < map.zCount - 1){
+				neighbours = new ClimateCell[4];
+				neighbours[3] = map.getClimateCellAt(x, z - 1);
+				neighbours[4] = map.getClimateCellAt(x, z + 1);
+			} else {
+				neighbours = new ClimateCell[3];
+				if(z == 0){
+					neighbours[3] = map.getClimateCellAt(x, z + 1);
+				} else {
+					neighbours[3] = map.getClimateCellAt(x, z - 1);
+				}
+			}
+			neighbours[1] = map.getClimateCellAt(x > 0 ? x - 1 : map.xCount - 1, z);
+			neighbours[2] = map.getClimateCellAt(x < map.xCount - 1 ? x + 1 : 0, z);
 		}
-		return result;
+		return neighbours;
 	}
 
 	/**
@@ -184,15 +219,7 @@ public class ClimateCell extends VCell {
 		if(!Double.isNaN(cellArea)){
 			return cellArea;
 		}
-		double area = 0;
-		for (VTriangle t : getTriangles()) {
-			VectorXZ a = t.points[0];
-			VectorXZ b = t.points[1];
-			VectorXZ c = t.points[2];
-			area += (a.getX() * (b.getZ() - c.getZ()) + b.getX()
-					* (c.getZ() - a.getZ()) + c.getX() * (a.getZ() - b.getZ())) * 0.5;
-		}
-		cellArea = area;
+		cellArea = size*size;
 		return cellArea;
 	}
 	

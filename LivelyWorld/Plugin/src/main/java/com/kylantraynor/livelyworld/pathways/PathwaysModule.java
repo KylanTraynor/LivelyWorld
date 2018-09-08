@@ -39,9 +39,9 @@ public class PathwaysModule {
 	// Default probability for gravel to turn into cobble
 	public double probabilityCobble = 0.012;
 	// Default probability for cobble to turn into cobblestone stairs
-	public double probabilityCblStairs = 0.0025;
+	public double probabilityCblStairs = 0.0001;
 	// Default probability for stairs to turn into cobble slabs
-	public double probabilityCblSlab = 0.0010;
+	public double probabilityCblSlab = 0.00005;
 
 	public void onEnable(LivelyWorld basePlugin) {
 		setPlugin(basePlugin);

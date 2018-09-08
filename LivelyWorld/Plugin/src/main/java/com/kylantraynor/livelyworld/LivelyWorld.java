@@ -457,7 +457,7 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 		} else if(event.getNewState().getType() == Material.ICE){
 			if(usingClimate){
 				climate.updateBiome(event.getBlock());
-				if(ClimateUtils.getAltitudeWeightedTriangleTemperature(null, event.getBlock().getLocation()).isCelsiusAbove(0)){
+				if(ClimateUtils.getAltitudeWeightedTemperature(event.getBlock().getLocation()).isCelsiusAbove(0)){
 					event.setCancelled(true);
 				}
 			}
@@ -843,7 +843,7 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 				switch (event.getBlock().getType()) {
 				case SUGAR_CANE:
 					c = ClimateUtils.getClimateCellAt(event.getBlock().getLocation());
-					temp = ClimateUtils.getAltitudeWeightedTriangleTemperature(c, event.getBlock().getLocation());
+					temp = ClimateUtils.getAltitudeWeightedTemperature(event.getBlock().getLocation());
 					if(temp.isNaN()) return;
 					if(!ClimateUtils.isAcceptableTemperature(
 							temp, Temperature.fromCelsius(32),
@@ -854,7 +854,7 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 					break;
 				case CACTUS:
 					c = ClimateUtils.getClimateCellAt(event.getBlock().getLocation());
-					temp = ClimateUtils.getAltitudeWeightedTriangleTemperature(c, event.getBlock().getLocation());
+					temp = ClimateUtils.getAltitudeWeightedTemperature(event.getBlock().getLocation());
 					if(temp.isNaN()) return;
 					double tempDistance = temp.getValue() - (273.15 + 35);
 					if (Math.random() * Math.abs(tempDistance) > 1) {

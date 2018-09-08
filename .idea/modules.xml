@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/LivelyWorld/Plugin/LivelyWorld.iml" filepath="$PROJECT_DIR$/LivelyWorld/Plugin/LivelyWorld.iml" />
+      <module fileurl="file://$PROJECT_DIR$/LivelyWorld/API/LivelyWorld-API.iml" filepath="$PROJECT_DIR$/LivelyWorld/API/LivelyWorld-API.iml" />
+      <module fileurl="file://$PROJECT_DIR$/LivelyWorld/LivelyWorld-Project.iml" filepath="$PROJECT_DIR$/LivelyWorld/LivelyWorld-Project.iml" />
+      <module fileurl="file://$PROJECT_DIR$/LivelyWorld/v1_12_R1/livelyworld-v1_12_R1.iml" filepath="$PROJECT_DIR$/LivelyWorld/v1_12_R1/livelyworld-v1_12_R1.iml" />
+    </modules>
+  </component>
+</project>

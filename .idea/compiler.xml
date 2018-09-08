@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="LivelyWorld (3) (groupId)" />
+        <module name="LivelyWorld-API" />
+        <module name="livelyworld-v1_12_R1" />
+      </profile>
+      <profile name="Annotation profile for LivelyWorld-Project" enabled="true">
+        <sourceOutputDir name="../target/generated-sources/annotations" />
+        <sourceTestOutputDir name="../target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="LivelyWorld" />
+        <module name="LivelyWorld (2)" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="LivelyWorld" target="1.8" />
+      <module name="LivelyWorld (1)" target="1.8" />
+      <module name="LivelyWorld (2)" target="1.8" />
+      <module name="LivelyWorld (3) (groupId)" target="1.5" />
+      <module name="LivelyWorld-API" target="1.8" />
+      <module name="LivelyWorld-Project" target="1.8" />
+      <module name="livelyworld-v1_12_R1" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

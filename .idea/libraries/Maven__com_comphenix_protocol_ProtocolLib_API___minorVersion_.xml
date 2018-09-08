@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: com.comphenix.protocol:ProtocolLib-API:${minorVersion}">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/comphenix/protocol/ProtocolLib-API/${minorVersion}/ProtocolLib-API-${minorVersion}.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/com/comphenix/protocol/ProtocolLib-API/${minorVersion}/ProtocolLib-API-${minorVersion}-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/comphenix/protocol/ProtocolLib-API/${minorVersion}/ProtocolLib-API-${minorVersion}-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

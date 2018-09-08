@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: com.kylantraynor:livelyworld-api:API">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/kylantraynor/livelyworld-api/API/LivelyWorld-API-API.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/com/kylantraynor/livelyworld-api/API/livelyworld-api-API-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/kylantraynor/livelyworld-api/API/livelyworld-api-API-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

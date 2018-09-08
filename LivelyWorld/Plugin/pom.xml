@@ -9,7 +9,6 @@
 		<relativePath>..</relativePath>
 		<version>PARENT</version>
 	</parent>
-	<groupId>com.kylantraynor</groupId>
 	<artifactId>LivelyWorld</artifactId>
 	<build>
     <sourceDirectory>src/main/java</sourceDirectory>

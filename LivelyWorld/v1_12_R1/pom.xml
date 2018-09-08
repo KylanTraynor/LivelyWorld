@@ -9,7 +9,6 @@
 		<relativePath>..</relativePath>
 		<version>PARENT</version>
 	</parent>
-	<groupId>com.kylantraynor</groupId>
 	<artifactId>livelyworld-v1_12_R1</artifactId>
 	<version>v1_12_R1</version>
 	<dependencies>

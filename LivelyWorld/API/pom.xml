@@ -8,7 +8,6 @@
     <relativePath>..</relativePath>
     <version>PARENT</version>
   </parent>
-  <groupId>com.kylantraynor</groupId>
   <artifactId>LivelyWorld-API</artifactId>
   <name>API</name>
   <version>API</version>

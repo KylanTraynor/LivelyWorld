@@ -73,7 +73,9 @@ public class ClimateUtils {
 		if(planet != null){
 			ClimateMap map = planet.getClimateMap(location.getWorld());
 			if(map == null) return Temperature.NaN;
-			return map.getTemperatureAt(location);
+			ClimateCell c = map.getClimateCellAt(location);
+			if(c == null) return Temperature.NaN;
+			c.getTemperature();
 		}
 		return Temperature.NaN;
 	}

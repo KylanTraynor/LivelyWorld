@@ -260,12 +260,10 @@ public class DynmapHook {
 				weather = weatherSet.createMarker(id,
 						c.getTemperature().toString("C") + "/"
 								+ c.getTemperature().toString("F"), c
-								.getWorld().getName(), (double) c.getSite()
-								.getX(), c.getAltitude(), (double) c.getSite()
-								.getZ(), weatherIcon, false);
+								.getWorld().getName(), (double) c.getX(), c.getAltitude(), (double) c.getZ(), weatherIcon, false);
 			} else {
-				weather.setLocation(c.getWorld().getName(), c.getSite().getX(),
-						c.getAltitude(), c.getSite().getZ());
+				weather.setLocation(c.getWorld().getName(), c.getX(),
+						c.getAltitude(), c.getZ());
 				weather.setLabel(c.getTemperature().toString("C") + "/"
 						+ c.getTemperature().toString("F"));
 				weather.setMarkerIcon(weatherIcon);

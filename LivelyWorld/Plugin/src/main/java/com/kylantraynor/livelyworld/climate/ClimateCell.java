@@ -543,8 +543,6 @@ public class ClimateCell extends VCell {
 	}
 	
 	public void init(ClimateCellData data){
-		x = (int) this.getSite().getX();
-		z = (int) this.getSite().getZ();
 		y = (int) world.getHighestBlockYAt(x, z) - 1;
 		humidityGeneration = Climate.getSurfaceHumidityGeneration(getWorld(), getX(), getZ());
 		if(data != null){

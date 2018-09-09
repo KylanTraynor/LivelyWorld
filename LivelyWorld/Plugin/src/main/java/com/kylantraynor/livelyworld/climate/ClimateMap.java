@@ -227,7 +227,9 @@ public class ClimateMap {
 		if (generated) {
 		    int cellX = (x >> power) + offsetx;
 		    int cellZ = (z >> power) + offsetz;
-			return cells[x][z];
+		    if(cellX > 0 && cellX < xCount && cellZ > 0 && cellZ < zCount){
+			    return cells[cellX][cellZ];
+            }
 		}
 		return null;
 	}

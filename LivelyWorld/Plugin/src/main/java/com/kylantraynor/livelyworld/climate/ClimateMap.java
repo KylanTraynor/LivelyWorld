@@ -114,17 +114,17 @@ public class ClimateMap {
                 LivelyWorld.getInstance().getLogger().warning("No previous climate data could be found.");
             }
 
-            int x=0;
-            int z=0;
-            for(int i = 0; i < data.size(); i++){
-                cells[x][z].init(data.get(i));
-                if(++z >= zCount){
-                    z = 0;
-                    x++;
+            int i =0;
+
+            for(int x = 0; x < xCount; x++){
+                for(int z =0; z < zCount; z++){
+                    if(i < data.size()){
+                        cells[x][z].init(data.get(i++));
+                    } else {
+                        cells[x][z].init(null);
+                    }
                 }
-                if(x >= xCount){
-                    break;
-                }
+                LivelyWorld.getInstance().getLogger().warning("Loading completed at " + (int) ((float)x / xCount * 100) + "%");
             }
 
             generated = true;

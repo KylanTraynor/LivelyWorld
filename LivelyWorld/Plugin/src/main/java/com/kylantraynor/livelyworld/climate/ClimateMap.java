@@ -220,24 +220,7 @@ public class ClimateMap {
 	public ClimateCell getClimateCellAt(Location location) {
 		if (location == null)
 			throw new NullPointerException("Location can't be Null");
-		if (generated) {
-			ClimateCell result = null;
-			for(ClimateCell c : cache){
-				if(c != null){
-					if(c.isInside(new VectorXZ((float) location.getX(), (float) location.getZ()))){
-						result = c;
-						break;
-					}
-				}
-			}
-			if(result == null){
-				result = this.generator.getCellAt(new VectorXZ(
-					(float) location.getX(), (float) location.getZ()));
-				cache.add(result);
-			}
-			return result;
-		}
-		return null;
+		return getClimateCellAt(location.getBlockX(), location.getBlockZ());
 	}
 
 	public ClimateCell getClimateCellAt(int x, int z){

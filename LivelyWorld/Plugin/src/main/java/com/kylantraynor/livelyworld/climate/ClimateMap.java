@@ -54,7 +54,7 @@ public class ClimateMap {
 	public int zCount = 0;
 
 	public ClimateMap(World world) {
-		this(world, 6);
+		this(world, 8);
 	}
 
 	public ClimateMap(World world, int power) {

@@ -25,7 +25,8 @@ public class WeatherEffectsRunnable extends BukkitRunnable {
 	public void run() {
 	    World world = Bukkit.getWorld("world");
         Chunk[] chunks = world.getLoadedChunks();
-		for(int i = 0; i < chunks.length; i++){
+        int l = chunks.length / 4;
+		for(int i = 0; i < l; i++){
 		    WeakReference<Chunk> chunkRef = new WeakReference<>(chunks[Utils.fastRandomInt(chunks.length)]);
 		    final int random_x = Utils.fastRandomInt(16);
 		    final int random_z = Utils.fastRandomInt(16);

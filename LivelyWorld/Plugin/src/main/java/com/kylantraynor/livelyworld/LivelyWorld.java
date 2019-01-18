@@ -561,113 +561,108 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 	@EventHandler
 	public void onEntiryDeath(EntityDeathEvent event) {
 		switch (event.getEntityType()) {
-		case CHICKEN:
-			for (int i = 0; i < Utils.fastRandomInt(5) + 8; i++) {
-				event.getEntity()
-						.getLocation()
-						.getWorld()
-						.dropItemNaturally(event.getEntity().getLocation(),
-								new ItemStack(Material.FEATHER, 1));
-			}
-			break;
-		case COW:
-			for (int i = 0; i < Utils.fastRandomInt(5) + 8; i++) {
-				event.getEntity()
-						.getLocation()
-						.getWorld()
-						.dropItemNaturally(event.getEntity().getLocation(),
-								new ItemStack(Material.RAW_BEEF, 1));
-			}
-			for (int i = 1; i < Utils.fastRandomInt(2) + 1; i++) {
-				event.getEntity()
-						.getLocation()
-						.getWorld()
-						.dropItemNaturally(event.getEntity().getLocation(),
-								new ItemStack(Material.LEATHER, 1));
-			}
-			for (int i = 0; i < Utils.fastRandomInt(5) + 5; i++) {
-				event.getEntity()
-						.getLocation()
-						.getWorld()
-						.dropItemNaturally(event.getEntity().getLocation(),
-								new ItemStack(Material.BONE, 1));
-			}
-			break;
-		case GUARDIAN:
-			break;
-		case HORSE:
-			if (event.getEntity() instanceof Horse) {
-				Horse horse = (Horse) event.getEntity();
-				if (horse.getVariant() == Variant.UNDEAD_HORSE
-						|| horse.getVariant() == Variant.SKELETON_HORSE) {
-				} else {
-					for (int i = 1; i < Utils.fastRandomInt(2) + 1; i++) {
-						event.getEntity()
-								.getLocation()
-								.getWorld()
-								.dropItemNaturally(
-										event.getEntity().getLocation(),
-										new ItemStack(Material.LEATHER, 1));
-					}
-				}
-				for (int i = 0; i < Utils.fastRandomInt(5) + 5; i++) {
-					event.getEntity()
-							.getLocation()
-							.getWorld()
-							.dropItemNaturally(event.getEntity().getLocation(),
-									new ItemStack(Material.BONE, 1));
-				}
-			}
-			break;
-		case MUSHROOM_COW:
-			break;
-		case OCELOT:
-			break;
-		case PIG:
-			for (int i = 0; i < Utils.fastRandomInt(5) + 3; i++) {
-				event.getEntity()
-						.getLocation()
-						.getWorld()
-						.dropItemNaturally(event.getEntity().getLocation(),
-								new ItemStack(Material.PORK, 1));
-			}
-			for (int i = 0; i < Utils.fastRandomInt(5) + 2; i++) {
-				event.getEntity()
-						.getLocation()
-						.getWorld()
-						.dropItemNaturally(event.getEntity().getLocation(),
-								new ItemStack(Material.BONE, 1));
-			}
-			break;
-		case RABBIT:
-			for (int i = 0; i < Utils.fastRandomInt(2) + 1; i++) {
-				event.getEntity()
-						.getLocation()
-						.getWorld()
-						.dropItemNaturally(event.getEntity().getLocation(),
-								new ItemStack(Material.BONE, 1));
-			}
-			break;
-		case SHEEP:
-			for (int i = 0; i < Utils.fastRandomInt(5) + 5; i++) {
-				event.getEntity()
-						.getLocation()
-						.getWorld()
-						.dropItemNaturally(event.getEntity().getLocation(),
-								new ItemStack(Material.MUTTON, 1));
-			}
-			for (int i = 0; i < Utils.fastRandomInt(4) + 4; i++) {
-				event.getEntity()
-						.getLocation()
-						.getWorld()
-						.dropItemNaturally(event.getEntity().getLocation(),
-								new ItemStack(Material.BONE, 1));
-			}
-			break;
-		default:
-			break;
+            case CHICKEN:
+                for (int i = 0; i < Utils.fastRandomInt(5) + 8; i++) {
+                    event.getEntity()
+                            .getLocation()
+                            .getWorld()
+                            .dropItemNaturally(event.getEntity().getLocation(),
+                                    new ItemStack(Material.FEATHER, 1));
+                }
+                break;
+            case COW:
+                for (int i = 0; i < Utils.fastRandomInt(5) + 8; i++) {
+                    event.getEntity()
+                            .getLocation()
+                            .getWorld()
+                            .dropItemNaturally(event.getEntity().getLocation(),
+                                    new ItemStack(Material.BEEF, 1));
+                }
+                for (int i = 1; i < Utils.fastRandomInt(2) + 1; i++) {
+                    event.getEntity()
+                            .getLocation()
+                            .getWorld()
+                            .dropItemNaturally(event.getEntity().getLocation(),
+                                    new ItemStack(Material.LEATHER, 1));
+                }
+                for (int i = 0; i < Utils.fastRandomInt(5) + 5; i++) {
+                    event.getEntity()
+                            .getLocation()
+                            .getWorld()
+                            .dropItemNaturally(event.getEntity().getLocation(),
+                                    new ItemStack(Material.BONE, 1));
+                }
+                break;
+            case GUARDIAN:
+                break;
+            case HORSE:
+                for (int i = 1; i < Utils.fastRandomInt(2) + 1; i++) {
+                    event.getEntity()
+                            .getLocation()
+                            .getWorld()
+                            .dropItemNaturally(
+                                    event.getEntity().getLocation(),
+                                    new ItemStack(Material.LEATHER, 1));
+                }
+                // No break: Continue to Zombie and Skeleton horses
+            case ZOMBIE_HORSE: case SKELETON_HORSE:
+                for (int i = 0; i < Utils.fastRandomInt(5) + 5; i++) {
+                    event.getEntity()
+                            .getLocation()
+                            .getWorld()
+                            .dropItemNaturally(event.getEntity().getLocation(),
+                                    new ItemStack(Material.BONE, 1));
+                }
+                break;
+            case MUSHROOM_COW:
+                break;
+            case OCELOT:
+                break;
+            case PIG:
+                for (int i = 0; i < Utils.fastRandomInt(5) + 3; i++) {
+                    event.getEntity()
+                            .getLocation()
+                            .getWorld()
+                            .dropItemNaturally(event.getEntity().getLocation(),
+                                    new ItemStack(Material.PORKCHOP, 1));
+                }
+                for (int i = 0; i < Utils.fastRandomInt(5) + 2; i++) {
+                    event.getEntity()
+                            .getLocation()
+                            .getWorld()
+                            .dropItemNaturally(event.getEntity().getLocation(),
+                                    new ItemStack(Material.BONE, 1));
+                }
+                break;
+            case RABBIT:
+                for (int i = 0; i < Utils.fastRandomInt(2) + 1; i++) {
+                    event.getEntity()
+                            .getLocation()
+                            .getWorld()
+                            .dropItemNaturally(event.getEntity().getLocation(),
+                                    new ItemStack(Material.BONE, 1));
+                }
+                break;
+            case SHEEP:
+                for (int i = 0; i < Utils.fastRandomInt(5) + 5; i++) {
+                    event.getEntity()
+                            .getLocation()
+                            .getWorld()
+                            .dropItemNaturally(event.getEntity().getLocation(),
+                                    new ItemStack(Material.MUTTON, 1));
+                }
+                for (int i = 0; i < Utils.fastRandomInt(4) + 4; i++) {
+                    event.getEntity()
+                            .getLocation()
+                            .getWorld()
+                            .dropItemNaturally(event.getEntity().getLocation(),
+                                    new ItemStack(Material.BONE, 1));
+                }
+                break;
+            default:
+                break;
 
-		}
+        }
 	}
 
 	public boolean hasPlayerInRange(Location l, double range) {
@@ -690,15 +685,16 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 			for(Entity e : ents){
 				if(e.getType() == EntityType.FALLING_BLOCK){
 					FallingBlock fb = (FallingBlock) e;
-					if(fb.getMaterial() == item.getItemStack().getType()){
+					Material m = fb.getBlockData().getMaterial();
+					if(m == item.getItemStack().getType()){
 						if(!item.getLocation().getBlock().getType().isSolid()){
 							BukkitRunnable br = new BukkitRunnable(){
 
 								@Override
 								public void run() {
 									item.getLocation().getBlock().breakNaturally();
-									item.getLocation().getBlock().setType(fb.getMaterial());
-									item.getLocation().getBlock().setData(fb.getBlockData());
+									item.getLocation().getBlock().setType(m);
+									item.getLocation().getBlock().setBlockData(fb.getBlockData());
 									item.remove();
 								}
 								
@@ -718,19 +714,23 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 		if (item != null) {
 			// log(Level.INFO, item.getItemStack().getType().toString());
 			switch (item.getItemStack().getType()) {
-			case SAPLING:
-				if (usingVegetation) {
-					//log(Level.INFO, "Attempting to plant sapling.");
-					if (event.getLocation().getChunk().isLoaded()) {
-						vegetation.plantSapling(event.getEntity()
-								.getItemStack().getData(), event.getLocation());
-					} else {
-						event.setCancelled(true);
-					}
-				}
-				break;
-			default:
-				break;
+                case OAK_SAPLING:
+                case DARK_OAK_SAPLING:
+                case BIRCH_SAPLING:
+                case JUNGLE_SAPLING:
+                case ACACIA_SAPLING:
+                case SPRUCE_SAPLING:
+                    if (usingVegetation) {
+                        //log(Level.INFO, "Attempting to plant sapling.");
+                        if (event.getLocation().getChunk().isLoaded()) {
+                            vegetation.plantSapling(item.getItemStack().getType(), event.getLocation());
+                        } else {
+                            event.setCancelled(true);
+                        }
+                    }
+                    break;
+                default:
+                    break;
 			}
 		} else {
 			// log(Level.INFO, "There was no item!");
@@ -795,47 +795,47 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 			BlockState state = event.getBlock().getState();
 			if(state instanceof Crops){
 				Crops crops = (Crops) state;
-				if(ClimateUtils.getSunRadiation(state.getLocation()) <= Math.random() && crops.getItemType() != Material.NETHER_WARTS){
+				if(ClimateUtils.getSunRadiation(state.getLocation()) <= Math.random() && crops.getItemType() != Material.NETHER_WART_BLOCK){
 					event.setCancelled(true);
 					return;
 				}
 				Temperature temp = null;
 				switch(crops.getItemType()){
-				case CROPS: // WHEAT
-					temp = ClimateUtils.getTemperatureAt(event.getBlock().getLocation());
-					if(temp.isNaN()) return;
-					if(!ClimateUtils.isAcceptableTemperature(temp, Temperature.fromCelsius(18.5), Temperature.fromCelsius(4), Temperature.fromCelsius(37))){
-						event.setCancelled(true);
-						return;
-					}
-					break;
-				case CARROT: case BEETROOT_BLOCK:
-					temp = ClimateUtils.getTemperatureAt(event.getBlock().getLocation());
-					if(temp.isNaN()) return;
-					if(!ClimateUtils.isAcceptableTemperature(temp, Temperature.fromCelsius(16.5), Temperature.fromCelsius(5), Temperature.fromCelsius(35))){
-						event.setCancelled(true);
-						return;
-					}
-					break;
-				case POTATO:
-					temp = ClimateUtils.getTemperatureAt(event.getBlock().getLocation());
-					if(temp.isNaN()) return;
-					if(!ClimateUtils.isAcceptableTemperature(temp, Temperature.fromCelsius(17.5), Temperature.fromCelsius(5), Temperature.fromCelsius(30))){
-						event.setCancelled(true);
-						return;
-					}
-					break;
-				case NETHER_WARTS:
-					temp = ClimateUtils.getTemperatureAt(event.getBlock().getLocation());
-					if(temp.isNaN() || event.getBlock().getBiome() == Biome.HELL) return;
-					if(!ClimateUtils.isAcceptableTemperature(temp,
-							Temperature.fromCelsius(60), Temperature.fromCelsius(40), Temperature.fromCelsius(100))){
-						event.setCancelled(true);
-						return;
-					}
-					break;
-				default:
-					break;
+                    case WHEAT: // WHEAT
+                        temp = ClimateUtils.getTemperatureAt(event.getBlock().getLocation());
+                        if(temp.isNaN()) return;
+                        if(!ClimateUtils.isAcceptableTemperature(temp, Temperature.fromCelsius(18.5), Temperature.fromCelsius(4), Temperature.fromCelsius(37))){
+                            event.setCancelled(true);
+                            return;
+                        }
+                        break;
+                    case CARROT: case BEETROOTS:
+                        temp = ClimateUtils.getTemperatureAt(event.getBlock().getLocation());
+                        if(temp.isNaN()) return;
+                        if(!ClimateUtils.isAcceptableTemperature(temp, Temperature.fromCelsius(16.5), Temperature.fromCelsius(5), Temperature.fromCelsius(35))){
+                            event.setCancelled(true);
+                            return;
+                        }
+                        break;
+                    case POTATO:
+                        temp = ClimateUtils.getTemperatureAt(event.getBlock().getLocation());
+                        if(temp.isNaN()) return;
+                        if(!ClimateUtils.isAcceptableTemperature(temp, Temperature.fromCelsius(17.5), Temperature.fromCelsius(5), Temperature.fromCelsius(30))){
+                            event.setCancelled(true);
+                            return;
+                        }
+                        break;
+                    case NETHER_WART_BLOCK:
+                        temp = ClimateUtils.getTemperatureAt(event.getBlock().getLocation());
+                        if(temp.isNaN() || event.getBlock().getBiome() == Biome.NETHER) return;
+                        if(!ClimateUtils.isAcceptableTemperature(temp,
+                                Temperature.fromCelsius(60), Temperature.fromCelsius(40), Temperature.fromCelsius(100))){
+                            event.setCancelled(true);
+                            return;
+                        }
+                        break;
+                    default:
+                        break;
 				}
 			} else {
 				ClimateCell c = null;
@@ -872,7 +872,7 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 	@EventHandler
 	public void onBlockBreak(BlockBreakEvent event){
 		if(usingVegetation){
-			if(event.getBlock().getType() == Material.CROPS){
+			if(Utils.isCrop(event.getBlock().getType())){
 				vegetation.onBreakCrops(event);
 			}
 		}
@@ -883,21 +883,10 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 		if(usingGravity){
 			if(event.getEntityType() == EntityType.FALLING_BLOCK) gravity.checkGravityOn(event.getBlock());
 		}
-		if(event.getBlock().getType() == Material.SOIL && event.getTo() == Material.DIRT){
+		if(event.getBlock().getType() == Material.FARMLAND && event.getTo() == Material.DIRT){
 			event.setCancelled(true);
 			return;
 		}
-	}
-	
-	public Material getHighestMaterial(World w, int x, int z){
-		int y = 255;
-		while(y >= 0){
-			if(w.getBlockTypeIdAt(x, y, z) != 0){
-				return Material.getMaterial(w.getBlockTypeIdAt(x, y, z));
-			}
-			y--;
-		}
-		return null;
 	}
 
 	public ClimateModule getClimateModule() {

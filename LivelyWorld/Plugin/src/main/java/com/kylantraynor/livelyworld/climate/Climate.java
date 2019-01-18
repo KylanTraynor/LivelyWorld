@@ -1,5 +1,6 @@
 package com.kylantraynor.livelyworld.climate;
 
+import com.kylantraynor.livelyworld.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -11,159 +12,151 @@ import com.kylantraynor.livelyworld.LivelyWorld;
 public class Climate {
 
 	public static double getHumidity(Material m) {
+		if(Utils.isTerracota(m) || Utils.isConcretePowder(m)) return -0.2;
+		if(Utils.isLeaves(m)) return 0.4;
 		switch (m) {
-		case SAND:
-		case STONE:
-		case SANDSTONE:
-		case RED_SANDSTONE:
-		case CONCRETE_POWDER:
-		case STAINED_CLAY:
-			return -0.2;
-		case SNOW:
-			return 0.3;
-		case GRASS:
-			return 0.4;
-		case DOUBLE_PLANT:
-		case LONG_GRASS:
-		case YELLOW_FLOWER:
-		case RED_ROSE:
-		case LEAVES:
-		case LEAVES_2:
-			return 0.4;
-		case WATER:
-		case STATIONARY_WATER:
-			return 1;
-		default:
-			return -0.01;
+			case SAND:
+			case STONE:
+			case SANDSTONE:
+			case RED_SANDSTONE:
+				return -0.2;
+			case SNOW:
+				return 0.3;
+			case GRASS_BLOCK:
+				return 0.4;
+			case TALL_GRASS:
+			case GRASS:
+			case DANDELION:
+			case POPPY:
+			case OXEYE_DAISY:
+				return 0.4;
+			case WATER:
+				return 1;
+			default:
+				return -0.01;
 		}
 	}
 
 	public static Temperature getMaxTemperatureFor(Material m) {
-		double temp = 0;
+		double temp;
 		switch (m) {
-		case PACKED_ICE:
-			temp = -40;
-			break;
-		case ICE:
-		case FROSTED_ICE:
-			temp = 0;
-			break;
-		case SNOW:
-		case SNOW_BLOCK:
-			temp = 0;
-			break;
-		case WATER:
-		case STATIONARY_WATER:
-			temp = 35;
-			break;
-		case DOUBLE_PLANT:
-		case LONG_GRASS:
-		case YELLOW_FLOWER:
-		case RED_ROSE:
-		case LEAVES:
-		case LEAVES_2:
-			temp = 25;
-			break;
-		case GRASS:
-			temp = 35;
-			break;
-		case DIRT:
-			temp = 40;
-			break;
-		case COBBLESTONE:
-		case GRAVEL:
-		case FURNACE:
-		case COBBLESTONE_STAIRS:
-			temp = 55;
-			break;
-		case SAND:
-		case STONE:
-		case SMOOTH_BRICK:
-		case DOUBLE_STEP:
-		case STEP:
-		case SANDSTONE:
-		case RED_SANDSTONE:
-		case STAINED_CLAY:
-			temp = 60;
-			break;
-		case IRON_BLOCK:
-		case GOLD_BLOCK:
-			temp = 120;
-			break;
-		case FIRE:
-		case TORCH:
-		case BURNING_FURNACE:
-			temp = 500;
-			break;
-		case LAVA:
-		case STATIONARY_LAVA:
-			temp = 1400;
-			break;
-		default:
-			temp = 27;
-			break;
+			case PACKED_ICE:
+				temp = -40;
+				break;
+			case ICE:
+			case FROSTED_ICE:
+				temp = 0;
+				break;
+			case SNOW:
+			case SNOW_BLOCK:
+				temp = 0;
+				break;
+			case WATER:
+				temp = 35;
+				break;
+			case TALL_GRASS:
+			case GRASS:
+			case DANDELION:
+			case POPPY:
+			case OXEYE_DAISY:
+				temp = 25;
+				break;
+			case GRASS_BLOCK:
+				temp = 35;
+				break;
+			case DIRT:
+				temp = 40;
+				break;
+			case COBBLESTONE:
+			case GRAVEL:
+			case COBBLESTONE_STAIRS:
+				temp = 55;
+				break;
+			case SAND:
+			case STONE:
+			case STONE_BRICKS:
+			case STONE_SLAB: case STONE_BRICK_SLAB:
+			case SANDSTONE:
+			case RED_SANDSTONE:
+			case SANDSTONE_SLAB: case RED_SANDSTONE_SLAB:
+				temp = 60;
+				break;
+			case IRON_BLOCK:
+			case GOLD_BLOCK:
+				temp = 120;
+				break;
+			case FIRE:
+			case TORCH:
+				temp = 500;
+				break;
+			case LAVA:
+				temp = 1400;
+				break;
+			default:
+				temp = 27;
+				break;
 		}
+		if(Utils.isLeaves(m)) temp = 25;
+		if(Utils.isTerracota(m)) temp = 60;
 		return Temperature.fromCelsius(temp);
 	}
 
 	public static Temperature getInertialTemperatureFor(Material m) {
-		double temp = 0;
+		double temp;
 		switch (m) {
-		case PACKED_ICE:
-			temp = -70;
-		case SNOW:
-		case SNOW_BLOCK:
-		case ICE:
-		case FROSTED_ICE:
-			temp = -30;
-			break;
-		case WATER:
-		case STATIONARY_WATER:
-			temp = 0;
-			break;
-		case DOUBLE_PLANT:
-		case LONG_GRASS:
-		case YELLOW_FLOWER:
-		case RED_ROSE:
-		case LEAVES:
-		case LEAVES_2:
-			temp = 0;
-			break;
-		case GRASS:
-			temp = 0;
-			break;
-		case DIRT:
-			temp = -5;
-			break;
-		case COBBLESTONE:
-		case GRAVEL:
-		case FURNACE:
-		case COBBLESTONE_STAIRS:
-			temp = 0;
-			break;
-		case SAND:
-		case STONE:
-		case SMOOTH_BRICK:
-		case DOUBLE_STEP:
-		case SANDSTONE:
-		case RED_SANDSTONE:
-		case STAINED_CLAY:
-		case STEP:
-			temp = 0;
-			break;
-		case FIRE:
-		case TORCH:
-		case BURNING_FURNACE:
-			temp = 500;
-			break;
-		case LAVA:
-		case STATIONARY_LAVA:
-			temp = 1400;
-			break;
-		default:
-			temp = 15;
-			break;
+			case PACKED_ICE:
+				temp = -70;
+				break;
+			case SNOW:
+			case SNOW_BLOCK:
+			case ICE:
+			case FROSTED_ICE:
+				temp = -30;
+				break;
+			case WATER:
+				temp = 0;
+				break;
+			case TALL_GRASS:
+			case GRASS:
+			case DANDELION:
+			case POPPY:
+				temp = 0;
+				break;
+			case GRASS_BLOCK:
+				temp = 0;
+				break;
+			case DIRT:
+				temp = -5;
+				break;
+			case COBBLESTONE:
+			case GRAVEL:
+			case FURNACE:
+			case COBBLESTONE_STAIRS:
+				temp = 0;
+				break;
+			case SAND:
+			case STONE:
+			case STONE_BRICKS:
+			case STONE_SLAB:
+			case STONE_BRICK_SLAB:
+			case SANDSTONE:
+			case RED_SANDSTONE:
+			case SANDSTONE_SLAB: case RED_SANDSTONE_SLAB:
+				temp = 0;
+				break;
+			case FIRE:
+			case TORCH:
+				temp = 500;
+				break;
+			case LAVA:
+				temp = 1400;
+				break;
+			default:
+				temp = 15;
+				break;
 		}
+		if(Utils.isLeaves(m)) temp = 0;
+		if(Utils.isTerracota(m)) temp = 0;
 		return Temperature.fromCelsius(temp);
 	}
 
@@ -182,11 +175,12 @@ public class Climate {
 	}
 	
 	public static boolean isHeatSource(Material mat){
-		if(mat == Material.FIRE) return true;
-		if(mat == Material.TORCH) return true;
-		if(mat == Material.LAVA) return true;
-		if(mat == Material.STATIONARY_LAVA) return true;
-		if(mat == Material.BURNING_FURNACE) return true;
+	    switch(mat){
+            case FIRE:
+            case TORCH:
+            case LAVA:
+                return true;
+        }
 		return false;
 	}
 
@@ -305,7 +299,7 @@ public class Climate {
 		int count = 0;
 		for(int x = blockX - 8; x <= blockX + 8; x++){
 			for(int z = blockZ - 8; z <= blockZ + 8; z++){
-				Material mat = LivelyWorld.getInstance().getHighestMaterial(w, x, z);
+				Material mat = Utils.getHighestMaterial(w, x, z);
 				if(mat == null) continue;
 				//int y = w.getHighestBlockYAt(x, z);
 				temp += Climate.getInertialTemperatureFor(mat).getValue();
@@ -322,7 +316,7 @@ public class Climate {
 		int count = 0;
 		for(int x = blockX - 8; x <= blockX + 8; x++){
 			for(int z = blockZ - 8; z <= blockZ + 8; z++){
-				Material mat = LivelyWorld.getInstance().getHighestMaterial(w, x, z);
+				Material mat = Utils.getHighestMaterial(w, x, z);
 				if(mat == null) continue;
 				temp += Climate.getMaxTemperatureFor(mat).getValue();
 				//temp += Climate.getTemperatureFor(mat, w, x, 0, z, false).getValue();
@@ -338,7 +332,7 @@ public class Climate {
 		int count = 0;
 		for(int x = blockX - 8; x <= blockX + 8; x++){
 			for(int z = blockZ - 8; z <= blockZ + 8; z++){
-				Material mat = LivelyWorld.getInstance().getHighestMaterial(w, x, z);
+				Material mat = Utils.getHighestMaterial(w, x, z);
 				if(mat == null) continue;
 				temp += Climate.getTemperatureFor(mat, w, x, 0, z, false).getValue();
 				//temp += (new Climate(b.getLocation()).getTemperature().value);
@@ -371,7 +365,7 @@ public class Climate {
 		int count = 0;
 		for(int x = blockX - 8; x <= blockX + 8; x++){
 			for(int z = blockZ - 8; z <= blockZ + 8; z++){
-				Material mat = LivelyWorld.getInstance().getHighestMaterial(world, x, z);
+				Material mat = Utils.getHighestMaterial(world, x, z);
 				if(mat == null) continue;
 				humidity += Climate.getHumidity(mat);
 				//temp += Climate.getTemperatureFor(mat, w, x, 0, z, false).getValue();

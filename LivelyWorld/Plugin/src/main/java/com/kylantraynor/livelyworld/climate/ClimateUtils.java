@@ -5,6 +5,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.type.Snow;
 import org.bukkit.entity.Player;
 
 import com.kylantraynor.livelyworld.LivelyWorld;
@@ -141,13 +142,13 @@ public class ClimateUtils {
 		int oldLayers = getSnowLayers(block);
 		if(layers == 0){
 			block.setType(Material.AIR);
-			block.setData((byte) 0);
 		} else if(layers == 8){
 			block.setType(Material.SNOW_BLOCK);
-			block.setData((byte) 0);
 		} else {
 			block.setType(Material.SNOW);
-			block.setData((byte) (layers - 1));
+			Snow snow = (Snow) block.getBlockData();
+			snow.setLayers(layers);
+			block.setBlockData(snow);
 			if(block.getRelative(BlockFace.DOWN).getType() == Material.GRASS){
 				block.getRelative(BlockFace.DOWN).setType(Material.DIRT);
 			}
@@ -171,7 +172,7 @@ public class ClimateUtils {
 				block.setType(Material.PACKED_ICE);
 			} else if ((block.getType() == Material.SNOW_BLOCK) && depth > 4){
 				block.setType(Material.ICE);
-			} else if (isWater(block)){
+			} else if (Utils.isWater(block)){
 				block.setType(Material.FROSTED_ICE); // Should eventually be changed into frosted ICE.
 			} else {
 				block.setType(Material.SNOW_BLOCK);

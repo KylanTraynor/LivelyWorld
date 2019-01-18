@@ -46,8 +46,8 @@ public class WaterListener implements Listener{
 					helper.setMotionVector(boat, v);
 				}
 			} else {
-				if((event.getTo().getBlock().getBiome() == Biome.BEACHES || 
-						event.getTo().getBlock().getBiome() == Biome.STONE_BEACH || 
+				if((event.getTo().getBlock().getBiome() == Biome.BEACH ||
+						event.getTo().getBlock().getBiome() == Biome.STONE_SHORE ||
 						event.getTo().getBlock().getBiome() == Biome.OCEAN ||
 						event.getTo().getBlock().getBiome() == Biome.DEEP_OCEAN) &&
 						(event.getTo().getY() > LivelyWorld.getInstance().getOceanY() - 1 &&
@@ -55,23 +55,23 @@ public class WaterListener implements Listener{
 				{
 					if ((event.getTo().clone().add(0, 1, 0).getBlock().isLiquid() || event
 							.getFrom().clone().add(0, 0, 0).getBlock().isLiquid())
-							&& event.getVehicle().getPassenger() != null) {
-						if (event.getVehicle().getPassenger().getVelocity().getY() < 0) {
+							&& event.getVehicle().getPassengers().size() > 0) {
+						if (event.getVehicle().getPassengers().get(0).getVelocity().getY() < 0) {
 							event.getVehicle().setVelocity(
 									event.getVehicle()
-											.getPassenger()
+											.getPassengers().get(0)
 											.getVelocity()
 											.add(new Vector(0d, Math.abs(event
-													.getVehicle().getPassenger()
+													.getVehicle().getPassengers().get(0)
 													.getVelocity().getY() + 0.5), 0d))
 											.add(event
 													.getVehicle()
-													.getPassenger()
+													.getPassengers().get(0)
 													.getLocation()
 													.getDirection()
 													.setY(0)
 													.add(event.getVehicle()
-															.getPassenger()
+															.getPassengers().get(0)
 															.getLocation()
 															.getDirection().setY(0)
 															.multiply(0.2))));
@@ -111,7 +111,7 @@ public class WaterListener implements Listener{
 		if(!Utils.isWater(event.getBlock())) return;
 		if(!event.getBlock().getWorld().getName().equals("world")) return;
 		if(!LivelyWorld.getInstance().getWaterModule().isRealisticSimulation()) return;
-		event.getBlock().setTypeIdAndData(Material.STATIONARY_WATER.getId(), event.getBlock().getData(), false);
+		//event.getBlock().setType(Material.WATER, false);
 		event.setCancelled(true);
 		/*Biome fromBiome = event.getBlock().getBiome();
 		switch(fromBiome){
@@ -156,7 +156,7 @@ public class WaterListener implements Listener{
 		ItemStack is = event.getPlayer().getInventory().getItemInMainHand();
 		String info = Utils.getLoreInfo(is, "Level");
 		
-		final int level = (int) (info != null ? Utils.keepBetween(0, Integer.parseInt(info), (int) WaterData.maxLevel) : WaterData.maxLevel);
+		final int level = (info != null ? Utils.keepBetween(0, Integer.parseInt(info), WaterData.maxLevel) : WaterData.maxLevel);
 		
 		if(!c.getWorld().getName().equals("world")) return;
 		BukkitRunnable br = new BukkitRunnable(){

@@ -19,32 +19,41 @@ public class Tree {
 	}
 
 	private static boolean isLog(Material type) {
-		if (type == Material.LOG)
-			return true;
-		if (type == Material.LOG_2)
-			return true;
+		switch(type){
+			case OAK_LOG:
+			case DARK_OAK_LOG:
+			case ACACIA_LOG:
+			case SPRUCE_LOG:
+			case JUNGLE_LOG:
+			case BIRCH_LOG:
+				return true;
+		}
 		return false;
 	}
 
 	private static boolean isBranch(Material type) {
-		if (type == Material.FENCE)
-			return true;
-		if (type == Material.SPRUCE_FENCE)
-			return true;
-		if (type == Material.ACACIA_FENCE)
-			return true;
-		if (type == Material.BIRCH_FENCE)
-			return true;
-		if(type == Material.DARK_OAK_FENCE)
-			return true;
+		switch(type){
+			case OAK_FENCE:
+			case SPRUCE_FENCE:
+			case ACACIA_FENCE:
+			case BIRCH_FENCE:
+			case DARK_OAK_FENCE:
+			case JUNGLE_FENCE:
+				return true;
+		}
 		return false;
 	}
 
 	private static boolean isLeaf(Material type) {
-		if (type == Material.LEAVES)
-			return true;
-		if (type == Material.LEAVES_2)
-			return true;
+		switch(type){
+			case OAK_LEAVES:
+			case DARK_OAK_LEAVES:
+			case ACACIA_LEAVES:
+			case BIRCH_LEAVES:
+			case SPRUCE_LEAVES:
+			case JUNGLE_LEAVES:
+				return true;
+		}
 		return false;
 	}
 

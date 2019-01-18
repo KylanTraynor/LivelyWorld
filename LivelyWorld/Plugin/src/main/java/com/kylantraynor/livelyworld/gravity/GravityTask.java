@@ -132,62 +132,60 @@ public class GravityTask extends BukkitRunnable {
 			}
 		} else {
 			switch (getBlock().getType()) {
-			case CLAY:
-			case SNOW_BLOCK:
-				module.setBlockProperties(getBlock().getType(),
-						GravityProperties.sandlike());
-				break;
-			case GRASS:
-			case DIRT:
-			case GRASS_PATH:
-				module.setBlockProperties(getBlock().getType(),
-						new GravityProperties(1, 1));
-				if (hasSupport(world, x, y, z, 1, true)) {
-					return;
-				}
-				break;
-			case COBBLESTONE:
-			case COBBLESTONE_STAIRS:
-				module.setBlockProperties(getBlock().getType(),
-						new GravityProperties(1, 1));
-				if (hasSupport(world, x, y, z, 1, true)) {
-					return;
-				}
-				break;
-			case SMOOTH_BRICK:
-				if (getBlock().getData() < 2) {
+				case CLAY:
+				case SNOW_BLOCK: case SNOW:
+					module.setBlockProperties(getBlock().getType(),
+							GravityProperties.sandlike());
+					break;
+				case GRASS_BLOCK:
+				case DIRT:
+				case GRASS_PATH:
+					module.setBlockProperties(getBlock().getType(),
+							new GravityProperties(1, 1));
+					if (hasSupport(world, x, y, z, 1, true)) {
+						return;
+					}
+					break;
+				case COBBLESTONE:
+				case COBBLESTONE_STAIRS:
+					module.setBlockProperties(getBlock().getType(),
+							new GravityProperties(1, 1));
+					if (hasSupport(world, x, y, z, 1, true)) {
+						return;
+					}
+					break;
+				case STONE_BRICKS:
 					if (hasSupport(world, x, y, z, 5, true)) {
 						if (!hasSupport(world, x, y, z, 4, false)) {
 							if (Utils.fastRandomDouble() < 0.1) {
-								getBlock().setData((byte) 2);
+								getBlock().setType(Material.CRACKED_STONE_BRICKS, false);
 							}
 						}
 						return;
 					}
-				} else {
+					break;
+				case CRACKED_STONE_BRICKS:
 					if (hasSupport(world, x, y, z, 4, true)) {
 						return;
 					}
-				}
-				getBlock().setData((byte) 2);
-				break;
-			case SMOOTH_STAIRS:
-				module.setBlockProperties(getBlock().getType(),
-						new GravityProperties(1, 4));
-				if (hasSupport(world, x, y, z, 4, true)) {
+					break;
+				case STONE_BRICK_STAIRS:
+					module.setBlockProperties(getBlock().getType(),
+							new GravityProperties(1, 4));
+					if (hasSupport(world, x, y, z, 4, true)) {
+						return;
+					}
+					break;
+				case BRICK:
+				case BRICK_STAIRS:
+					module.setBlockProperties(getBlock().getType(),
+							new GravityProperties(1, 4));
+					if (hasSupport(world, x, y, z, 4, true)) {
+						return;
+					}
+					break;
+				default:
 					return;
-				}
-				break;
-			case BRICK:
-			case BRICK_STAIRS:
-				module.setBlockProperties(getBlock().getType(),
-						new GravityProperties(1, 4));
-				if (hasSupport(world, x, y, z, 4, true)) {
-					return;
-				}
-				break;
-			default:
-				return;
 			}
 		}
 
@@ -267,12 +265,22 @@ public class GravityTask extends BukkitRunnable {
 	}
 
 	public boolean isSupportBeam(Block b) {
-		if (b.getType() == Material.LOG)
-			return true;
-		if (b.getType() == Material.LOG_2)
-			return true;
-		if (b.getType() == Material.IRON_BLOCK)
-			return true;
+		switch(b.getType()){
+			case OAK_LOG:
+			case DARK_OAK_LOG:
+			case ACACIA_LOG:
+			case BIRCH_LOG:
+			case SPRUCE_LOG:
+			case JUNGLE_LOG:
+			case IRON_BLOCK:
+			case STRIPPED_OAK_LOG:
+			case STRIPPED_DARK_OAK_LOG:
+			case STRIPPED_ACACIA_LOG:
+			case STRIPPED_BIRCH_LOG:
+			case STRIPPED_SPRUCE_LOG:
+			case STRIPPED_JUNGLE_LOG:
+				return true;
+		}
 		return false;
 	}
 	/*

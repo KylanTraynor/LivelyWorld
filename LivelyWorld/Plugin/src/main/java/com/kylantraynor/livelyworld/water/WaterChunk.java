@@ -23,6 +23,7 @@ import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.type.Farmland;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import com.kylantraynor.livelyworld.LivelyWorld;
@@ -30,7 +31,7 @@ import com.kylantraynor.livelyworld.Utils;
 import com.kylantraynor.livelyworld.Utils.ChunkCoordinates;
 
 public class WaterChunk {
-	final static Map<ChunkCoordinates, WaterChunk> chunks = new ConcurrentHashMap<ChunkCoordinates, WaterChunk>(); 
+	final static Map<ChunkCoordinates, WaterChunk> chunks = new ConcurrentHashMap<>();
 	final private static int sectorLength = 4096;
 	final private static int currentVersion = 1;
 	final private static int xInc = 1<<6;
@@ -238,7 +239,7 @@ public class WaterChunk {
 	public static void unloadAll(){
 		if(disabled) return;
 		disabled = true;
-		ChunkCoordinates[] keys = chunks.keySet().toArray(new ChunkCoordinates[chunks.size()]);
+		ChunkCoordinates[] keys = chunks.keySet().toArray(new ChunkCoordinates[0]);
 		for(ChunkCoordinates cc : keys){
 			WaterChunk c = chunks.get(cc);
 			if(c == null) continue;
@@ -418,7 +419,7 @@ public class WaterChunk {
 			
 			//LivelyWorld.getInstance().getLogger().info("Reading from location: " + location + " (" + location*sectorLength + ") with a size of " + size);
 			
-			ByteArrayOutputStream baos = null;
+			ByteArrayOutputStream baos;
 			InflaterOutputStream ios = null;
 			
 			try{
@@ -898,13 +899,13 @@ public class WaterChunk {
 						if(canReplace(m)){
 							int waterLevel = 0;
 							if(Utils.isWater(m)){
-								waterLevel = Utils.getWaterHeight(weakChunk.get().getBlock(x, y, z).getData());
+								waterLevel = Utils.getWaterHeight(weakChunk.get().getBlock(x, y, z).getBlockData());
 							}
 							int index = getIndex(x,y,z);
 							if(waterLevel != toWaterLevel(getLevel(index))){
 								updateVisually(x,y,z, dist <= 2);
 							}
-						} else if(m == Material.SOIL){
+						} else if(m == Material.FARMLAND){
 						    if(getLevel(getIndex(x,y,z)) > 1){
 						        updateVisually(x,y,z, dist <= 2);
                             }
@@ -924,57 +925,57 @@ public class WaterChunk {
 		}*/
 		if(material == null) return 0;
 		switch (material){
-		case WATER: case STATIONARY_WATER: case AIR:
-			return 0;
-		case WOOD_BUTTON: case STONE_BUTTON:
-		case LADDER: case RAILS: case TORCH: case IRON_FENCE: case WALL_SIGN: case SIGN_POST:
-		case WOOD_PLATE: case STONE_PLATE: case IRON_PLATE: case GOLD_PLATE:
-			return 2;
-		case TRAP_DOOR:
-		case WOODEN_DOOR: case WOOD_DOOR:
-		case ACACIA_DOOR: case SPRUCE_DOOR: case DARK_OAK_DOOR: case JUNGLE_DOOR: case BIRCH_DOOR:
-		case FENCE_GATE: case ACACIA_FENCE_GATE: case  SPRUCE_FENCE_GATE: case DARK_OAK_FENCE_GATE: case JUNGLE_FENCE_GATE: case BIRCH_FENCE_GATE:
-		case FENCE: case ACACIA_FENCE: case SPRUCE_FENCE: case DARK_OAK_FENCE: case JUNGLE_FENCE: case BIRCH_FENCE: case NETHER_FENCE:
-			return 20;
-		case LONG_GRASS: case DOUBLE_PLANT: case RED_ROSE: case YELLOW_FLOWER:
-		case LEAVES: case LEAVES_2: case VINE: case WATER_LILY:
-        case CROPS: case MELON_STEM: case PUMPKIN_STEM:
-			return 30;
-		case ANVIL:
-			return 100;
-		case SAND: case GRAVEL: case SNOW: case SNOW_BLOCK:
-			return 200;
-		case DIRT: case GRASS_PATH: case GRASS: case SOIL: case CLAY:
-			return 215;
-		case COBBLESTONE: case COBBLE_WALL:
-			return 225;
-		default:
-			return 255;
+			case WATER: case AIR:
+				return 0;
+			case ACACIA_BUTTON: case SPRUCE_BUTTON: case JUNGLE_BUTTON: case OAK_BUTTON: case DARK_OAK_BUTTON: case BIRCH_BUTTON: case STONE_BUTTON:
+			case LADDER: case RAIL: case TORCH: case IRON_BARS: case WALL_SIGN: case SIGN:
+			case ACACIA_PRESSURE_PLATE: case SPRUCE_PRESSURE_PLATE: case JUNGLE_PRESSURE_PLATE: case OAK_PRESSURE_PLATE: case DARK_OAK_PRESSURE_PLATE:
+			case BIRCH_PRESSURE_PLATE: case STONE_PRESSURE_PLATE: case LIGHT_WEIGHTED_PRESSURE_PLATE: case HEAVY_WEIGHTED_PRESSURE_PLATE:
+				return 2;
+			case ACACIA_TRAPDOOR: case SPRUCE_TRAPDOOR: case JUNGLE_TRAPDOOR: case BIRCH_TRAPDOOR: case OAK_TRAPDOOR: case DARK_OAK_TRAPDOOR:
+			case ACACIA_DOOR: case SPRUCE_DOOR: case OAK_DOOR: case DARK_OAK_DOOR: case JUNGLE_DOOR: case BIRCH_DOOR:
+			case OAK_FENCE_GATE: case ACACIA_FENCE_GATE: case  SPRUCE_FENCE_GATE: case DARK_OAK_FENCE_GATE: case JUNGLE_FENCE_GATE: case BIRCH_FENCE_GATE:
+			case OAK_FENCE: case ACACIA_FENCE: case SPRUCE_FENCE: case DARK_OAK_FENCE: case JUNGLE_FENCE: case BIRCH_FENCE: case NETHER_BRICK_FENCE:
+				return 20;
+			case GRASS: case TALL_GRASS: case ROSE_BUSH: case DANDELION: case LILAC:
+			case ACACIA_LEAVES: case SPRUCE_LEAVES: case JUNGLE_LEAVES: case BIRCH_LEAVES: case OAK_LEAVES: case DARK_OAK_LEAVES: case VINE: case LILY_PAD:
+			case WHEAT: case MELON_STEM: case PUMPKIN_STEM:
+				return 30;
+			case ANVIL:
+				return 100;
+			case SAND: case GRAVEL: case SNOW: case SNOW_BLOCK:
+				return 200;
+			case DIRT: case GRASS_PATH: case GRASS_BLOCK: case FARMLAND: case CLAY:
+				return 215;
+			case COBBLESTONE: case COBBLESTONE_WALL:
+				return 225;
+			default:
+				return 255;
 		}
 	}
 	
 	private static boolean isSolid(Material mat){
 		if(mat == null) return true;
 		switch (mat){
-		case WATER: case STATIONARY_WATER: case AIR:
-		case WOOD_BUTTON: case STONE_BUTTON:
-		case LADDER: case RAILS: case TORCH: case IRON_FENCE: case WALL_SIGN: case SIGN_POST:
-		case WOOD_PLATE: case STONE_PLATE: case IRON_PLATE: case GOLD_PLATE:
-        case LONG_GRASS: case DOUBLE_PLANT: case RED_ROSE: case YELLOW_FLOWER: case VINE: case WATER_LILY:
-        case CROPS: case MELON_STEM: case PUMPKIN_STEM:
-		case LEAVES: case LEAVES_2:
-		case ANVIL:
-		case TRAP_DOOR:
-		case WOODEN_DOOR: case WOOD_DOOR:
-		case ACACIA_DOOR: case SPRUCE_DOOR: case DARK_OAK_DOOR: case JUNGLE_DOOR: case BIRCH_DOOR:
-		case FENCE_GATE: case ACACIA_FENCE_GATE: case  SPRUCE_FENCE_GATE: case DARK_OAK_FENCE_GATE: case JUNGLE_FENCE_GATE: case BIRCH_FENCE_GATE:
-		case FENCE: case ACACIA_FENCE: case SPRUCE_FENCE: case DARK_OAK_FENCE: case JUNGLE_FENCE: case BIRCH_FENCE: case NETHER_FENCE:
-		case COBBLE_WALL:
-			return false;
-		case SAND: case GRAVEL: case SNOW: case SNOW_BLOCK:
-		case DIRT: case GRASS_PATH: case GRASS: case SOIL: case CLAY:
-		case COBBLESTONE:
-			return true;
+			case WATER: case AIR:
+			case ACACIA_BUTTON: case SPRUCE_BUTTON: case JUNGLE_BUTTON: case OAK_BUTTON: case DARK_OAK_BUTTON: case BIRCH_BUTTON: case STONE_BUTTON:
+			case LADDER: case RAIL: case TORCH: case IRON_BARS: case WALL_SIGN: case SIGN:
+			case ACACIA_PRESSURE_PLATE: case SPRUCE_PRESSURE_PLATE: case JUNGLE_PRESSURE_PLATE: case OAK_PRESSURE_PLATE: case DARK_OAK_PRESSURE_PLATE:
+			case BIRCH_PRESSURE_PLATE: case STONE_PRESSURE_PLATE: case LIGHT_WEIGHTED_PRESSURE_PLATE: case HEAVY_WEIGHTED_PRESSURE_PLATE:
+			case GRASS: case TALL_GRASS: case ROSE_BUSH: case DANDELION: case VINE: case LILY_PAD:
+			case WHEAT: case MELON_STEM: case PUMPKIN_STEM:
+			case ACACIA_LEAVES: case SPRUCE_LEAVES: case JUNGLE_LEAVES: case BIRCH_LEAVES: case OAK_LEAVES: case DARK_OAK_LEAVES:
+			case ANVIL:
+			case ACACIA_TRAPDOOR: case SPRUCE_TRAPDOOR: case JUNGLE_TRAPDOOR: case BIRCH_TRAPDOOR: case OAK_TRAPDOOR: case DARK_OAK_TRAPDOOR:
+			case ACACIA_DOOR: case SPRUCE_DOOR: case OAK_DOOR: case DARK_OAK_DOOR: case JUNGLE_DOOR: case BIRCH_DOOR:
+			case OAK_FENCE_GATE: case ACACIA_FENCE_GATE: case  SPRUCE_FENCE_GATE: case DARK_OAK_FENCE_GATE: case JUNGLE_FENCE_GATE: case BIRCH_FENCE_GATE:
+			case OAK_FENCE: case ACACIA_FENCE: case SPRUCE_FENCE: case DARK_OAK_FENCE: case JUNGLE_FENCE: case BIRCH_FENCE: case NETHER_BRICK_FENCE:
+			case COBBLESTONE_WALL:
+				return false;
+			case SAND: case GRAVEL: case SNOW: case SNOW_BLOCK:
+			case DIRT: case GRASS_PATH: case GRASS_BLOCK: case FARMLAND: case CLAY:
+			case COBBLESTONE:
+				return true;
 		}
 		
 		return true;
@@ -982,12 +983,11 @@ public class WaterChunk {
 	
 	private static boolean canReplace(Material mat){
 		if(mat == Material.WATER) return true;
-		if(mat == Material.STATIONARY_WATER) return true;
 		if(mat == Material.AIR) return true;
-		if(mat == Material.LONG_GRASS) return true;
-		if(mat == Material.RED_ROSE) return true;
-		if(mat == Material.YELLOW_FLOWER) return true;
-		if(mat == Material.DOUBLE_PLANT) return true;
+		if(mat == Material.GRASS) return true;
+		if(mat == Material.ROSE_BUSH) return true;
+		if(mat == Material.DANDELION) return true;
+		if(mat == Material.TALL_GRASS) return true;
 		if(mat == Material.VINE) return true;
 		if(mat == Material.TORCH) return true;
 		if(mat == Material.SNOW) return true;
@@ -998,10 +998,10 @@ public class WaterChunk {
 	private static boolean isDropable(Material mat){
 		if(mat == Material.VINE) return true;
 		if(mat == Material.TORCH) return true;
-		if(mat == Material.LONG_GRASS) return true;
-		if(mat == Material.RED_ROSE) return true;
-		if(mat == Material.YELLOW_FLOWER) return true;
-		if(mat == Material.DOUBLE_PLANT) return true;
+		if(mat == Material.GRASS) return true;
+		if(mat == Material.ROSE_BUSH) return true;
+		if(mat == Material.DANDELION) return true;
+		if(mat == Material.TALL_GRASS) return true;
 		return false;
 	}
 	
@@ -1141,7 +1141,7 @@ public class WaterChunk {
 			for(int x = 0; x < 16; x++){
 				for(int z = 0; z < 16; z++){
 					int index = getIndex(x,y,z);
-					if(getMaxQuantity(index) > 1 && getMaxQuantity(index) < 254 && getResistance(index) != getResistanceFor(Material.LEAVES)){
+					if(getMaxQuantity(index) > 1 && getMaxQuantity(index) < 254 && getResistance(index) != getResistanceFor(Material.OAK_LEAVES)){
 						data[index] = (byte) getMaxQuantity(index);
 					}
 				}
@@ -1210,8 +1210,10 @@ public class WaterChunk {
                         Utils.setWaterHeight(b, 0, true, true);
                     }
                 }
-            } else if(b.getType() == Material.SOIL && level > 0){
-			    b.setData((byte)7);
+            } else if(b.getType() == Material.FARMLAND && level > 0){
+				Farmland frmld = (Farmland) b.getBlockData();
+			    frmld.setMoisture(7);
+			    b.setBlockData(frmld, false);
 			} else if(b.getRelative(BlockFace.DOWN).getType() == Material.AIR && b.getType() != Material.AIR && level > 0) {
 				chunk.getWorld().spawnParticle(Particle.DRIP_WATER, b.getX() + Utils.fastRandomDouble(), b.getY() - 0.01, b.getZ() + Utils.fastRandomDouble(), 1);
 			}

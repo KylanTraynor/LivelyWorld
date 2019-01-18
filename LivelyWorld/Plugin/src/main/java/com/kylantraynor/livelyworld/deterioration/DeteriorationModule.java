@@ -6,6 +6,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.type.Slab;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -93,12 +94,11 @@ public class DeteriorationModule {
 		if (b.getLightFromSky() > 8)
 			return;
 		if (Utils.fastRandomInt(100) <= 50 && b.getType() == Material.AIR) {
-			BlockDeteriorateEvent event = new BlockDeteriorateEvent(b, DeteriorationCause.Age, new MaterialData(Material.WEB));
+			BlockDeteriorateEvent event = new BlockDeteriorateEvent(b, DeteriorationCause.Age, Material.COBWEB);
 			Bukkit.getPluginManager().callEvent(event);
 			
 			if(!event.isCancelled()){
-				b.setType(event.getTarget().getItemType());
-				b.setData(event.getTarget().getData());
+				b.setType(event.getTarget());
 			}
 		}
 	}
@@ -131,7 +131,7 @@ public class DeteriorationModule {
 			return true;
 		if (b.getType() == Material.BRICK)
 			return true;
-		if (b.getType() == Material.SMOOTH_BRICK)
+		if (b.getType() == Material.STONE_BRICKS)
 			return true;
 		if (b.getType() == Material.BOOKSHELF)
 			return true;
@@ -141,19 +141,42 @@ public class DeteriorationModule {
 			return true;
 		if (b.getType() == Material.COBBLESTONE)
 			return true;
-		if (b.getType() == Material.DOUBLE_STEP)
-			return true;
+		if (b.getBlockData() instanceof Slab)
+		{
+			if(((Slab)b.getBlockData()).getType() == Slab.Type.DOUBLE)
+				return true;
+		}
 		if (b.getType() == Material.FURNACE)
 			return true;
-		if (b.getType() == Material.LOG)
+		if (b.getType() == Material.OAK_LOG)
 			return true;
-		if (b.getType() == Material.LOG_2)
+		if (b.getType() == Material.DARK_OAK_LOG)
 			return true;
-		if (b.getType() == Material.HARD_CLAY)
+		if (b.getType() == Material.ACACIA_LOG)
 			return true;
-		if (b.getType() == Material.NETHER_BRICK)
+		if (b.getType() == Material.SPRUCE_LOG)
 			return true;
-		if (b.getType() == Material.PRISMARINE)
+		if (b.getType() == Material.JUNGLE_LOG)
+			return true;
+		if (b.getType() == Material.BIRCH_LOG)
+			return true;
+		if (b.getType() == Material.STRIPPED_OAK_LOG)
+			return true;
+		if (b.getType() == Material.STRIPPED_DARK_OAK_LOG)
+			return true;
+		if (b.getType() == Material.STRIPPED_ACACIA_LOG)
+			return true;
+		if (b.getType() == Material.STRIPPED_SPRUCE_LOG)
+			return true;
+		if (b.getType() == Material.STRIPPED_JUNGLE_LOG)
+			return true;
+		if (b.getType() == Material.STRIPPED_BIRCH_LOG)
+			return true;
+		if (b.getType() == Material.TERRACOTTA)
+			return true;
+		if (b.getType() == Material.NETHER_BRICKS)
+			return true;
+		if (b.getType() == Material.PRISMARINE_BRICKS)
 			return true;
 		if (b.getType() == Material.QUARTZ_BLOCK)
 			return true;

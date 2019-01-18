@@ -7,6 +7,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.data.Bisected;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -64,36 +65,49 @@ public class VegetationModule implements Listener {
 			b = b.getRelative(BlockFace.DOWN);
 		}*/
 		switch (b.getType()) {
-		case SAPLING:
-		case LOG:
-		case LOG_2:
-		case LEAVES:
-		case LEAVES_2:
-		case FENCE:
-		case DARK_OAK_FENCE:
-		case SPRUCE_FENCE:
-		case ACACIA_FENCE:
-		case BIRCH_FENCE:
-		case JUNGLE_FENCE:
-			updateTree(b);
-			break;
-		case GRASS:
-			double rdm = Utils.fastRandomDouble();
-			if (rdm <= 0.75) {
-				if(rdm <= 0.5)
-					updateGrass(b);
-				else
-					tryPlantFern(b.getRelative(BlockFace.UP));
-			} else {
-				updateFlower(b);
-			}
-			break;
-		case LONG_GRASS:
-			if(Math.random() < 0.1)
-				updateGrass(b.getRelative(BlockFace.DOWN));
-			break;
-		default:
-			break;
+			case OAK_SAPLING:
+			case DARK_OAK_SAPLING:
+            case SPRUCE_SAPLING:
+            case ACACIA_SAPLING:
+            case BIRCH_SAPLING:
+            case JUNGLE_SAPLING:
+            case OAK_LOG:
+            case DARK_OAK_LOG:
+            case ACACIA_LOG:
+            case SPRUCE_LOG:
+            case BIRCH_LOG:
+            case JUNGLE_LOG:
+            case OAK_LEAVES:
+            case DARK_OAK_LEAVES:
+            case SPRUCE_LEAVES:
+            case ACACIA_LEAVES:
+            case BIRCH_LEAVES:
+            case JUNGLE_LEAVES:
+			case OAK_FENCE:
+			case DARK_OAK_FENCE:
+			case SPRUCE_FENCE:
+			case ACACIA_FENCE:
+			case BIRCH_FENCE:
+			case JUNGLE_FENCE:
+				updateTree(b);
+				break;
+			case GRASS_BLOCK:
+				double rdm = Utils.fastRandomDouble();
+				if (rdm <= 0.75) {
+					if(rdm <= 0.5)
+						updateGrass(b);
+					else
+						tryPlantFern(b.getRelative(BlockFace.UP));
+				} else {
+					updateFlower(b);
+				}
+				break;
+			case GRASS:
+				if(Math.random() < 0.1)
+					updateGrass(b.getRelative(BlockFace.DOWN));
+				break;
+			default:
+				break;
 		}
 	}
 
@@ -140,8 +154,7 @@ public class VegetationModule implements Listener {
 				if (debug)
 					Bukkit.getServer().getLogger()
 							.info("Found enough water underground.");
-				b.setType(Material.RED_ROSE);
-				b.setData((byte)1);
+				b.setType(Material.BLUE_ORCHID, false);
 			}
 		} else {
 			if (debug)
@@ -163,11 +176,11 @@ public class VegetationModule implements Listener {
 		if (isClimateOk) {
 			if (debug)
 				Bukkit.getServer().getLogger().info("Climate is Ok");
-			if (isMaterialBelow(b.getLocation(), Material.STONE, (byte) 0, 10)) {
+			if (isMaterialBelow(b.getLocation(), Material.STONE, 10)) {
 				if (debug)
 					Bukkit.getServer().getLogger()
 							.info("Found right material underground.");
-				b.setType(Material.YELLOW_FLOWER);
+				b.setType(Material.DANDELION, false);
 			}
 		} else {
 			if (debug)
@@ -189,11 +202,11 @@ public class VegetationModule implements Listener {
 		if (isClimateOk) {
 			if (debug)
 				Bukkit.getServer().getLogger().info("Climate is Ok");
-			if (isMaterialBelow(b.getLocation(), Material.STONE, (byte) 1, 7)) {
+			if (isMaterialBelow(b.getLocation(), Material.GRANITE, 7)) {
 				if (debug)
 					Bukkit.getServer().getLogger()
 							.info("Found right material underground.");
-				b.setType(Material.RED_ROSE);
+				b.setType(Material.POPPY, false);
 			}
 		} else {
 			if (debug)
@@ -216,12 +229,11 @@ public class VegetationModule implements Listener {
 		if (isClimateOk) {
 			if (debug)
 				Bukkit.getServer().getLogger().info("Climate is Ok");
-			if (isMaterialBelow(b.getLocation(), Material.STONE, (byte) 3, 7)) {
+			if (isMaterialBelow(b.getLocation(), Material.DIORITE, 7)) {
 				if (debug)
 					Bukkit.getServer().getLogger()
 							.info("Found right material underground.");
-				b.setType(Material.RED_ROSE);
-				b.setData((byte) 8);
+				b.setType(Material.OXEYE_DAISY, false);
 			}
 		} else {
 			if (debug)
@@ -229,15 +241,14 @@ public class VegetationModule implements Listener {
 		}
 	}
 
-	private boolean isMaterialBelow(Location l, Material m, byte data, int depth) {
+	private boolean isMaterialBelow(Location l, Material m, int depth) {
 		int i = 1;
 		Location currentLocation = l.clone();
 
 		while (i < depth && currentLocation.getBlockY() > 0) {
 			currentLocation.add(0, -1, 0);
 			if (currentLocation.getBlock().getType() == m) {
-				if (currentLocation.getBlock().getData() == data)
-					return true;
+				return true;
 			}
 			i++;
 		}
@@ -273,24 +284,31 @@ public class VegetationModule implements Listener {
 		}
 		Block above = b.getRelative(BlockFace.UP);
 		if (above.getType() == Material.AIR && above.getLightLevel() > 5) {
-			above.setType(Material.LONG_GRASS);
-			above.setData((byte) 1);
-		} else if (above.getType() == Material.LONG_GRASS && above.getData() == 1
+			above.setType(Material.GRASS, false);
+		} else if (above.getType() == Material.GRASS
 				&& above.getLightLevel() > 13 && above.getRelative(BlockFace.UP).getType() == Material.AIR) {
-			above.setType(Material.DOUBLE_PLANT);
-			above.setData((byte) 2);
+			above.setType(Material.TALL_GRASS, false);
+            Bisected bs = (Bisected) above.getBlockData();
+            bs.setHalf(Bisected.Half.BOTTOM);
+            above.setBlockData(bs, false);
 			Block top = above.getRelative(BlockFace.UP);
-			top.setType(Material.DOUBLE_PLANT);
-			top.setData((byte) 10);
-		} else if (above.getType() == Material.LONG_GRASS && above.getData() == 2
+			top.setType(Material.TALL_GRASS, false);
+            bs = (Bisected)top.getBlockData();
+            bs.setHalf(Bisected.Half.TOP);
+            top.setBlockData(bs, false);
+		} else if (above.getType() == Material.FERN
 				&& above.getLightLevel() > 13 && above.getRelative(BlockFace.UP).getType() == Material.AIR){
-			above.setType(Material.DOUBLE_PLANT);
-			above.setData((byte) 3);
+			above.setType(Material.LARGE_FERN, false);
+            Bisected bs = (Bisected) above.getBlockData();
+            bs.setHalf(Bisected.Half.BOTTOM);
+            above.setBlockData(bs, false);
 			Block top = above.getRelative(BlockFace.UP);
-			top.setType(Material.DOUBLE_PLANT);
-			top.setData((byte) 10);
+			top.setType(Material.LARGE_FERN, false);
+            bs = (Bisected) top.getBlockData();
+            bs.setHalf(Bisected.Half.BOTTOM);
+            top.setBlockData(bs, false);
 		} else if (b.getLightFromSky() <= 1) {
-			b.setType(Material.DIRT);
+			b.setType(Material.DIRT, true);
 		}
 	}
 	
@@ -303,8 +321,7 @@ public class VegetationModule implements Listener {
 				Temperature.fromCelsius(10),
 				Temperature.fromCelsius(25));
 		if(isClimateOk){
-			b.setType(Material.LONG_GRASS);
-			b.setData((byte) 2);
+			b.setType(Material.FERN);
 		}
 		
 	}
@@ -313,20 +330,14 @@ public class VegetationModule implements Listener {
 
 	}
 
-	public void plantSapling(MaterialData data, Location location) {
+	public void plantSapling(Material sap, Location location) {
 		if(location.getBlock().getType().isBlock() || location.getBlock().getType().isSolid()) return;
 		if(location.getBlock().getLightFromSky() < 12) return;
-		if (data != null && data instanceof Sapling) {
-			Material base = location.getBlock().getRelative(BlockFace.DOWN)
-					.getType();
-			if (base == Material.DIRT || base == Material.GRASS) {
-				location.getBlock().setType(Material.SAPLING);
-				location.getBlock().setData(((Sapling) data).getData(), true);
-			}
-
-		} else {
-			//plugin.log(Level.INFO, "Couldn't plant sapling.");
-		}
+        Material base = location.getBlock().getRelative(BlockFace.DOWN)
+                .getType();
+        if (base == Material.DIRT || base == Material.COARSE_DIRT || base == Material.PODZOL || base == Material.GRASS_BLOCK) {
+            location.getBlock().setType(sap);
+        }
 	}
 
 	public void onCommand(CommandSender sender, Command cmd, String label,
@@ -355,23 +366,33 @@ public class VegetationModule implements Listener {
 		if(state.getData() instanceof Crops){
 			Crops crops = (Crops) state.getData();
 			switch(crops.getItemType()){
-			case CROPS:
+			case WHEAT:
 				plugin.getLogger().info("Processing Wheat Breaking.");
 				if(crops.getState() == CropState.RIPE){
 					ItemStack is = new ItemStack(Material.WHEAT, 15);
 					event.getBlock().getWorld().dropItemNaturally(event.getBlock().getLocation(), is);
 				}
 				break;
-			case NETHER_WARTS:
+			case NETHER_WART_BLOCK:
 				plugin.getLogger().info("Processing Nether Warts Breaking.");
 				if(crops.getState() == CropState.RIPE){
-					ItemStack is = new ItemStack(Material.NETHER_WARTS, 10);
+					ItemStack is = new ItemStack(Material.NETHER_WART, 10);
 					event.getBlock().getWorld().dropItemNaturally(event.getBlock().getLocation(), is);
 				}
 				break;
-			case CARROT:
+			case CARROTS:
+                plugin.getLogger().info("Processing Carrots Breaking.");
+                if(crops.getState() == CropState.RIPE){
+                    ItemStack is = new ItemStack(Material.CARROT, 6);
+                    event.getBlock().getWorld().dropItemNaturally(event.getBlock().getLocation(), is);
+                }
 				break;
-			case POTATO:
+			case POTATOES:
+                plugin.getLogger().info("Processing Potatoes Breaking.");
+                if(crops.getState() == CropState.RIPE){
+                    ItemStack is = new ItemStack(Material.POTATO, 6);
+                    event.getBlock().getWorld().dropItemNaturally(event.getBlock().getLocation(), is);
+                }
 				break;
 			default:
 				plugin.getLogger().info("Unexpected type of crop: " + crops.getItemType().toString());

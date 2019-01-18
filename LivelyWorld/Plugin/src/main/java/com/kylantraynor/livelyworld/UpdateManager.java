@@ -12,6 +12,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.type.Farmland;
 import org.bukkit.entity.Player;
 
 public class UpdateManager {
@@ -85,26 +86,29 @@ public class UpdateManager {
 	}
 
 	private static void processWaterUpdate(Block block) {
-		if(block.getType() == Material.SOIL){
+		if(block.getType() == Material.FARMLAND){
 			WaterChunk wc = WaterChunk.get(block.getWorld(), block.getX() >> 4, block.getZ() >> 4);
 			int xc = Utils.floorMod2(block.getX(), 4);
 			int zc = Utils.floorMod2(block.getZ(), 4);
-			int moisture = block.getData();
+			Farmland frld = (Farmland) block.getBlockData();
+			int moisture = frld.getMoisture();
 			int level = wc.getLevel(xc, block.getY(), zc);
 			int aboveLevel = 0;
 			if(block.getY() < 255){
 				aboveLevel = wc.getLevel(xc, block.getY() + 1, zc);
 			}
 			if(level > 0 || aboveLevel > 0){
-				block.setData((byte) 7);
-				if(block.getRelative(BlockFace.UP).getType() == Material.CROPS){
+				frld.setMoisture(7);
+				if(Utils.isCrop(block.getRelative(BlockFace.UP).getType())){
 					if(Utils.fastRandomDouble() > 0.9){
 						wc.setLevel(xc, block.getY(), zc, level - 1);
 						WaterChunk.delta[3] -= 1;
 					}
 				}
+				block.setBlockData(frld, false);
 			} else if(moisture > 0){
-				block.setData((byte) (moisture - 1));
+				frld.setMoisture(moisture - 1);
+				block.setBlockData(frld, false);
 			}
 		}
 	}

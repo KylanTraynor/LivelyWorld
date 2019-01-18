@@ -4,14 +4,17 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>com.kylantraynor</groupId>
-    <artifactId>LivelyWorld-Project</artifactId>
+    <artifactId>livelyworld-project</artifactId>
     <relativePath>..</relativePath>
     <version>PARENT</version>
   </parent>
-  <artifactId>LivelyWorld-API</artifactId>
+  <artifactId>livelyworld-api</artifactId>
   <name>API</name>
   <version>API</version>
   <url>http://maven.apache.org</url>
+  <build>
+    <sourceDirectory>src/main/java</sourceDirectory>
+  </build>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>

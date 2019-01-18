@@ -8,6 +8,7 @@ import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.data.type.Snow;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -168,14 +169,16 @@ public class PathwaysModule {
 	// Roll a dice and change block if necessary
 	@SuppressWarnings("deprecation")
 	public void changeBlock(Block b, double multiplier) {
-		if (b.getRelative(BlockFace.UP).getType() == Material.LONG_GRASS) {
+		if (b.getRelative(BlockFace.UP).getType() == Material.GRASS) {
 			b.getRelative(BlockFace.UP).breakNaturally();
 			b.getWorld().playSound(b.getLocation(), Sound.BLOCK_GRASS_STEP, 2,
 					(float) ((Math.random() + 1) / 2));
 		} else if (b.getRelative(BlockFace.UP).getType() == Material.SNOW) {
 			Block snow = b.getRelative(BlockFace.UP);
-			if (snow.getData() > 0) {
-				snow.setData((byte) (snow.getData() - 1));
+			Snow sn = (Snow) snow.getBlockData();
+			if (sn.getLayers() > 1) {
+				sn.setLayers (sn.getLayers() - 1);
+				snow.setBlockData(sn, false);
 			} else {
 				snow.breakNaturally();
 			}
@@ -185,26 +188,25 @@ public class PathwaysModule {
 			return;
 		}
 		// If block is Grass
-		if (b.getType() == Material.GRASS) {
+		if (b.getType() == Material.GRASS_BLOCK) {
 			// then if a random double is bellow the probability for dirt to
 			// appear
 			if (Utils.fastRandomDouble() <= probabilityDirt * multiplier) {
 				// Change the grass to dirt
 				b.setType(Material.DIRT, false);
 			}
-		} else if (b.getType() == Material.DIRT && b.getData() == 0) {
+		} else if (b.getType() == Material.DIRT) {
 			// Same for coarse (coarse = dirt with data value of 1)
 			if (Utils.fastRandomDouble() <= probabilityCoarse * multiplier) {
 				if (b.getBiome() == Biome.FOREST
 						|| b.getBiome() == Biome.JUNGLE) {
-					b.setData((byte) 2, false);
+					b.setType(Material.PODZOL, false);
 				} else {
-					b.setData((byte) 1, false);
+					b.setType(Material.COARSE_DIRT, false);
 				}
 			}
-		} else if (b.getType() == Material.DIRT
-				&& (b.getData() == 1 || b.getData() == 2)) {
-			if (b.getRelative(BlockFace.UP).getType() == Material.RAILS)
+		} else if (b.getType() == Material.COARSE_DIRT || b.getType() == Material.PODZOL) {
+			if (b.getRelative(BlockFace.UP).getType() == Material.RAIL)
 				return;
 			// Same for grassPath
 			if (Utils.fastRandomDouble() <= probabilityPath * multiplier) {
@@ -216,7 +218,7 @@ public class PathwaysModule {
 				b.setType(Material.COBBLESTONE);
 			}*/
 		} else if (b.getType() == Material.COBBLESTONE) {
-			if (b.getRelative(BlockFace.UP).getType() == Material.RAILS)
+			if (b.getRelative(BlockFace.UP).getType() == Material.RAIL)
 				return;
 			// Same for stairs
 			if (Utils.fastRandomDouble() <= probabilityCblStairs * multiplier) {
@@ -229,15 +231,16 @@ public class PathwaysModule {
 			}
 		} else if (b.getType() == Material.SNOW_BLOCK) {
 			b.setType(Material.SNOW);
-			b.setData((byte) 6);
+			Snow snow = (Snow) b.getBlockData();
+			snow.setLayers(snow.getMaximumLayers());
+			b.setBlockData(snow, false);
 			b.getWorld().playSound(b.getLocation(), Sound.BLOCK_SNOW_BREAK, 1,
 					(float) ((Utils.fastRandomDouble() + 1) / 2));
 		}
 	}
 	
 	private void turnToCobbleStairs(Block b){
-		BlockDeteriorateEvent event = new BlockDeteriorateEvent(b, DeteriorationCause.Walking,
-				new MaterialData(Material.COBBLESTONE_STAIRS));
+		BlockDeteriorateEvent event = new BlockDeteriorateEvent(b, DeteriorationCause.Walking, Material.COBBLESTONE_STAIRS);
 		Bukkit.getPluginManager().callEvent(event);
 		
 		if(!event.isCancelled()){
@@ -273,20 +276,11 @@ public class PathwaysModule {
 	}
 	
 	public void turnToCobbleSlab(Block b){
-		Step step = new Step();
-		step.setMaterial(Material.COBBLESTONE);
-		BlockDeteriorateEvent event = new BlockDeteriorateEvent(b, DeteriorationCause.Walking,
-				step);
+		BlockDeteriorateEvent event = new BlockDeteriorateEvent(b, DeteriorationCause.Walking, Material.COBBLESTONE_SLAB);
 		Bukkit.getPluginManager().callEvent(event);
 		
 		if(!event.isCancelled()){
-			b.setType(Material.STEP, false);
-			// Get the state of the block
-			BlockState state = b.getState();
-			// Update the data of the state
-			state.setData(event.getTarget());
-			// Update the state of the block
-			state.update(false, false);
+			b.setType(event.getTarget(), false);
 		}
 	}
 

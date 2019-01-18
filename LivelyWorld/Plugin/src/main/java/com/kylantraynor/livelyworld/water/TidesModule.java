@@ -49,9 +49,9 @@ public class TidesModule {
 
 	private ArrayList<Player> ignoredPlayers;
 	private boolean debug;
-	private Map<Material, MaterialData> changingBlock = new HashMap<Material, MaterialData>();
+	private Map<Material, Material> changingBlock = new HashMap<>();
 
-	public List<String> ignoreTimeOuts = new ArrayList<String>();
+	public List<String> ignoreTimeOuts = new ArrayList<>();
 	private boolean realisticSimulation = true;
 	
 	private BoatHelper boatHelper;
@@ -73,15 +73,15 @@ public class TidesModule {
 
 	public void enable() {
 		this.enabled = true;
-		this.ignoredPlayers = new ArrayList<Player>();
+		this.ignoredPlayers = new ArrayList<>();
 
-		changingBlock.put(Material.COBBLESTONE, new MaterialData(Material.MOSSY_COBBLESTONE));
-		changingBlock.put(Material.GRASS, new MaterialData(Material.DIRT));
-		changingBlock.put(Material.DIRT, new MaterialData(Material.SAND));
-		changingBlock.put(Material.MOSSY_COBBLESTONE, new MaterialData(Material.GRAVEL));
-		changingBlock.put(Material.STONE, new MaterialData(Material.COBBLESTONE));
-		changingBlock.put(Material.GRAVEL, new MaterialData(Material.SAND));
-		changingBlock.put(Material.SMOOTH_BRICK, new MaterialData(Material.SMOOTH_BRICK, (byte) 2));
+		changingBlock.put(Material.COBBLESTONE, Material.MOSSY_COBBLESTONE);
+		changingBlock.put(Material.GRASS, Material.DIRT);
+		changingBlock.put(Material.DIRT, Material.SAND);
+		changingBlock.put(Material.MOSSY_COBBLESTONE, Material.GRAVEL);
+		changingBlock.put(Material.STONE, Material.COBBLESTONE);
+		changingBlock.put(Material.GRAVEL, Material.SAND);
+		changingBlock.put(Material.STONE_BRICKS, Material.CRACKED_STONE_BRICKS);
 
 		/*int interval = 20 * 30;
 		tidesTask = new TideDispatcherTask(this, interval);
@@ -196,10 +196,9 @@ public class TidesModule {
 							// (l.getWorld().getTime() / 100.0));
 		double waveZ = 0.0;// 0.05 * Math.cos((l.getZ() * 2 * Math.PI / 500) +
 							// (l.getWorld().getTime() / 100.0));
-		double currentLevel = minLevel + (levelDiff) / 2.0
+		return minLevel + (levelDiff) / 2.0
 				+ (((levelDiff / 2.0) * moonPhaseModifier) * dayModifier)
 				+ waveX + waveZ;
-		return currentLevel;
 	}
 
 	private int getOceanBlockLevel(Location l) {
@@ -256,15 +255,13 @@ public class TidesModule {
 				for (int z = -1; z <= 1; z++) {
 					if (Utils.fastRandomDouble() < 0.0001) {
 						Block b = location.clone().add(x, 0, z).getBlock();
-						BlockState state = b.getState();
-						MaterialData newMaterial = changingBlock.get(state.getData());
+						Material newMaterial = changingBlock.get(b.getType());
 						if(newMaterial != null){
 							BlockDeteriorateEvent event = new BlockDeteriorateEvent(b,
 									DeteriorationCause.Erosion, newMaterial);
 							Bukkit.getPluginManager().callEvent(event);
 							if(!event.isCancelled()){
-								state.setData(newMaterial);
-								state.update();
+								b.setType(event.getTarget());
 							}
 						}
 					}
@@ -289,40 +286,34 @@ public class TidesModule {
 	}
 
 	public boolean isReplaceableMaterial(Location l) {
-		if (l.getBlock().getType() == Material.WATER)
-			return true;
-		if (l.getBlock().getType() == Material.STATIONARY_WATER)
-			return true;
-		if (l.getBlock().getType() == Material.AIR)
-			return true;
-		if (l.getBlock().getType() == Material.WATER_LILY)
-			return true;
-		if (l.getBlock().getType() == Material.TORCH)
-			return true;
-		if (l.getBlock().getType() == Material.SUGAR_CANE)
-			return true;
-		if (l.getBlock().getType() == Material.SUGAR_CANE_BLOCK)
-			return true;
-		if (l.getBlock().getType() == Material.CROPS)
-			return true;
-		if (l.getBlock().getType() == Material.LONG_GRASS)
-			return true;
-		if (l.getBlock().getType() == Material.DOUBLE_PLANT)
-			return true;
-		if (l.getBlock().getType() == Material.SAPLING)
-			return true;
-		if (l.getBlock().getType() == Material.RED_ROSE)
-			return true;
-		if (l.getBlock().getType() == Material.YELLOW_FLOWER)
-			return true;
-		if (l.getBlock().getType() == Material.VINE)
-			return true;
-		if (l.getBlock().getType() == Material.CACTUS)
-			return true;
-		if (l.getBlock().getType() == Material.SNOW)
-			return true;
-		if (l.getBlock().getType() == Material.RAILS)
-			return true;
+		Material m = l.getBlock().getType();
+		switch(m){
+			case WATER:
+			case AIR:
+			case LILY_PAD:
+			case TORCH:
+			case SUGAR_CANE:
+			case WHEAT:
+			case GRASS:
+			case TALL_GRASS:
+			case SPRUCE_SAPLING:
+			case ACACIA_SAPLING:
+			case BIRCH_SAPLING:
+			case OAK_SAPLING:
+			case JUNGLE_SAPLING:
+			case DARK_OAK_SAPLING:
+			case DANDELION:
+			case ROSE_BUSH:
+			case SUNFLOWER:
+			case BLUE_ORCHID:
+			case VINE:
+			case CACTUS:
+			case RAIL:
+			case POWERED_RAIL:
+			case ACTIVATOR_RAIL:
+			case DETECTOR_RAIL:
+				return true;
+		}
 		return false;
 	}
 
@@ -331,7 +322,7 @@ public class TidesModule {
 			return false;
 		}
 		if (beachRegression) {
-			if (l.getBlock().getBiome() == Biome.BEACHES) {
+			if (l.getBlock().getBiome() == Biome.BEACH) {
 				l.getBlock().setBiome(Biome.PLAINS);
 			}
 			return false;
@@ -346,7 +337,7 @@ public class TidesModule {
 			return true;
 		} else if (oceanDepth == 0) {
 			Biome b = l.getBlock().getBiome();
-			if (b == Biome.BEACHES || b == Biome.STONE_BEACH || b == Biome.OCEAN || b == Biome.DEEP_OCEAN) {
+			if (b == Biome.BEACH || b == Biome.STONE_SHORE || b == Biome.OCEAN || b == Biome.DEEP_OCEAN) {
 				l.getBlock().setBiome(Biome.PLAINS);
 			}
 			return false;
@@ -371,8 +362,8 @@ public class TidesModule {
 				if ((x == -1 || x == 1) && (z == -1 || z == 1))
 					continue;
 				Biome biome = l.clone().add(x, 0, z).getBlock().getBiome();
-				if (biome == Biome.BEACHES || biome == Biome.STONE_BEACH || biome == Biome.OCEAN) {
-					l.getBlock().setBiome(Biome.BEACHES);
+				if (biome == Biome.BEACH || biome == Biome.STONE_SHORE || biome == Biome.OCEAN) {
+					l.getBlock().setBiome(Biome.BEACH);
 					return true;
 				}
 			}
@@ -432,12 +423,12 @@ public class TidesModule {
 	}
 
 	public boolean isNextToWater(Location l) {
-		if (l.getBlock().getBiome() == Biome.BEACHES || l.getBlock().getBiome() == Biome.STONE_BEACH) {
+		if (l.getBlock().getBiome() == Biome.BEACH || l.getBlock().getBiome() == Biome.STONE_SHORE) {
 			if (l.getBlock().getRelative(BlockFace.DOWN).getType() == Material.AIR)
 				return false;
 			return true;
 		}
-		if (l.getBlock().getBiome() == Biome.HELL) {
+		if (l.getBlock().getBiome() == Biome.NETHER) {
 			return false;
 		}
 		if (l.getBlock().getRelative(BlockFace.EAST).isLiquid())
@@ -517,7 +508,7 @@ public class TidesModule {
 			case "GET":
 				if(args.length >= 3){
 					final Player p = (Player) sender;
-					BukkitRunnable br = null;
+					BukkitRunnable br;
 					switch(args[2].toUpperCase()) {
 					case "MOISTURE":
 						br = new BukkitRunnable(){

@@ -1,6 +1,7 @@
 package com.kylantraynor.livelyworld.events;
 
 import com.kylantraynor.livelyworld.deterioration.DeteriorationCause;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
@@ -11,10 +12,10 @@ public class BlockDeteriorateEvent extends BlockEvent implements Cancellable{
 
 	private boolean cancelled = false;
 	private DeteriorationCause cause = null;
-	private MaterialData target = null;
+	private Material target;
 	private static final HandlerList handlers = new HandlerList();
 	
-	public BlockDeteriorateEvent(Block theBlock, DeteriorationCause cause, MaterialData target) {
+	public BlockDeteriorateEvent(Block theBlock, DeteriorationCause cause, Material target) {
 		super(theBlock);
 		this.setCause(cause);
 		this.target = target;
@@ -47,7 +48,7 @@ public class BlockDeteriorateEvent extends BlockEvent implements Cancellable{
 		this.cause = cause;
 	}
 
-	public MaterialData getTarget() {
+	public Material getTarget() {
 		return target;
 	}
 }

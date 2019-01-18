@@ -73,8 +73,7 @@ public class WeatherEffectsRunnable extends BukkitRunnable {
                             } else {
                                 Block sb = b;
                                 while((sb.getRelative(BlockFace.DOWN).getType() == Material.AIR ||
-                                        sb.getRelative(BlockFace.DOWN).getType() == Material.LEAVES ||
-                                        sb.getRelative(BlockFace.DOWN).getType() == Material.LEAVES_2) &&
+                                        Utils.isLeaves(sb.getRelative(BlockFace.DOWN).getType())) &&
                                         sb.getY() > 1){
                                     sb = sb.getRelative(BlockFace.DOWN);
                                 }

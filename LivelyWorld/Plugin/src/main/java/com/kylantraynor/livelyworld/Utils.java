@@ -16,6 +16,8 @@ import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.Levelled;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -85,9 +87,9 @@ public class Utils {
 	}
 	
 	public static class SmallChunkData{
-		private String worldName = "world";
-		private int x = 0;
-		private int z = 0;
+		private String worldName;
+		private int x;
+		private int z;
 		
 		private Biome[][] biomes = new Biome[16][16];
 		//private MaterialData[][][] data = new MaterialData[256][16][16];
@@ -305,27 +307,28 @@ public class Utils {
 	}
 	
 	public static boolean isWater(Material mat){
-		return mat == Material.WATER || mat == Material.STATIONARY_WATER;
+		return mat == Material.WATER;
 	}
 	
 	public static int getWaterHeight(Block b) {
 		if(!isWater(b)) return 0; 
-		return getWaterHeight(b.getData());
+		return getWaterHeight((Levelled) b.getBlockData());
 	}
 	
-	public static int getWaterHeight(Material type, byte data){
-		if(!isWater(type)) return 0;
-		return getWaterHeight(data);
+	public static int getWaterHeight(BlockData data){
+		if(!isWater(data.getMaterial())) return 0;
+        return getWaterHeight((Levelled) data);
 	}
 	
-	public static int getWaterHeight(byte data){
-		int result = 8 - data;
+	public static int getWaterHeight(Levelled data){
+		int result = 8 - data.getLevel();
 		if(result <= 0) result = 8;
 		return result;
 	}
-	
+
+	@Deprecated
 	public static void setClientWaterHeight(Block b, int height){
-		Material m = b.getType();
+		/*Material m = b.getType();
 		byte data = b.getData();
 		if(height == 0){
 			m = Material.AIR;
@@ -344,7 +347,7 @@ public class Utils {
 					p.sendBlockChange(b.getLocation(), m, data);
 				}
 			}
-		}
+		}*/
 	}
 	
 	public static void setWaterHeight(Block b, int height, boolean canSource){
@@ -354,17 +357,20 @@ public class Utils {
 	public static void setWaterHeight(Block b, int height, boolean canSource, boolean updateLight){
 		if(height == 0){
 			b.setType(Material.AIR, updateLight);
-			b.setData((byte)0, updateLight);
 		} else if(height == 8){
-			b.setType(Material.STATIONARY_WATER, updateLight);
+			b.setType(Material.WATER, updateLight);
+			Levelled lvl = (Levelled) b.getBlockData();
 			if(canSource){
-				b.setData((byte)0, updateLight);
+			    lvl.setLevel(0);
 			} else {
-				b.setData((byte) 8, updateLight);
+			    lvl.setLevel(8);
 			}
+			b.setBlockData(lvl, updateLight);
 		} else {
-			b.setType(Material.STATIONARY_WATER, updateLight);
-			b.setData((byte) (8 - height), updateLight);
+			b.setType(Material.WATER, updateLight);
+			Levelled lvl = (Levelled) b.getBlockData();
+			lvl.setLevel(8 - height);
+			b.setBlockData(lvl, updateLight);
 		}
 	}
 	
@@ -511,7 +517,7 @@ public class Utils {
 			}
 			if(!updated) lore.add(info+": " + value);
 		} else {
-			lore = new ArrayList<String>();
+			lore = new ArrayList<>();
 			lore.add(info+": " + value);
 		}
 		m.setLore(lore);
@@ -565,9 +571,9 @@ public class Utils {
 	public static void spawnLightning(Block b) {
 		Location loc = b.getLocation();
 		b.getLocation().getWorld().spigot().strikeLightning(loc, true);
-		b.getWorld().playSound(loc, Sound.ENTITY_LIGHTNING_IMPACT, 20, 1);
+		b.getWorld().playSound(loc, Sound.ENTITY_LIGHTNING_BOLT_IMPACT, 20, 1);
 		loc.setY(255);
-		b.getWorld().playSound(loc, Sound.ENTITY_LIGHTNING_THUNDER, 300, 1);
+		b.getWorld().playSound(loc, Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 300, 1);
 	}
 
 	public static int sumOf(byte[] args, int step){
@@ -584,5 +590,88 @@ public class Utils {
             result += args[i];
         }
         return result;
+    }
+
+	public static boolean isCrop(Material mat){
+		switch(mat){
+			case WHEAT:
+			case CARROTS:
+			case BEETROOTS:
+				return true;
+			default:
+				return false;
+		}
+	}
+
+    public static Material getHighestMaterial(World w, int x, int z){
+        int y = 255;
+        while(y >= 0){
+            Material m = w.getBlockAt(x,y,z).getType();
+            if(m != Material.AIR){
+                return m;
+            }
+            y--;
+        }
+        return null;
+    }
+
+    public static boolean isConcretePowder(Material mat){
+	    switch(mat){
+            case CYAN_CONCRETE_POWDER:
+            case BLACK_CONCRETE_POWDER:
+            case BLUE_CONCRETE_POWDER:
+            case BROWN_CONCRETE_POWDER:
+            case GRAY_CONCRETE_POWDER:
+            case GREEN_CONCRETE_POWDER:
+            case LIGHT_BLUE_CONCRETE_POWDER:
+            case LIGHT_GRAY_CONCRETE_POWDER:
+            case LIME_CONCRETE_POWDER:
+            case MAGENTA_CONCRETE_POWDER:
+            case ORANGE_CONCRETE_POWDER:
+            case PINK_CONCRETE_POWDER:
+            case PURPLE_CONCRETE_POWDER:
+            case RED_CONCRETE_POWDER:
+            case WHITE_CONCRETE_POWDER:
+            case YELLOW_CONCRETE_POWDER:
+                return true;
+        }
+        return false;
+    }
+
+    public static boolean isTerracota(Material mat){
+	    switch(mat){
+            case TERRACOTTA:
+            case BLACK_TERRACOTTA:
+            case BLUE_TERRACOTTA:
+            case BROWN_TERRACOTTA:
+            case CYAN_TERRACOTTA:
+            case GRAY_TERRACOTTA:
+            case GREEN_TERRACOTTA:
+            case LIGHT_BLUE_TERRACOTTA:
+            case LIGHT_GRAY_TERRACOTTA:
+            case LIME_TERRACOTTA:
+            case MAGENTA_TERRACOTTA:
+            case ORANGE_TERRACOTTA:
+            case PINK_TERRACOTTA:
+            case PURPLE_TERRACOTTA:
+            case RED_TERRACOTTA:
+            case WHITE_TERRACOTTA:
+            case YELLOW_TERRACOTTA:
+                return true;
+        }
+        return false;
+    }
+
+    public static boolean isLeaves(Material m){
+	    switch(m){
+            case OAK_LEAVES:
+            case DARK_OAK_LEAVES:
+            case ACACIA_LEAVES:
+            case SPRUCE_LEAVES:
+            case JUNGLE_LEAVES:
+            case BIRCH_LEAVES:
+                return true;
+        }
+        return false;
     }
 }

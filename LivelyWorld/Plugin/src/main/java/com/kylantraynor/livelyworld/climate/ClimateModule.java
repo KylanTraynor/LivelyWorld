@@ -31,7 +31,7 @@ public class ClimateModule {
 	private BukkitRunnable weatherUpdater;
 	private BukkitRunnable weatherEffectsUpdater;
 	
-	private Map<String, ClimateCell> playerCache = new HashMap<String, ClimateCell>();
+	private Map<String, ClimateCell> playerCache = new HashMap<>();
 
 	static final String MessageHeader = ChatColor.GOLD + "[" + ChatColor.WHITE
 			+ "Climate" + ChatColor.GOLD + "] " + ChatColor.WHITE;
@@ -183,7 +183,7 @@ public class ClimateModule {
 				SnowFallTask task = new SnowFallTask(this, c, topBlock.getX(), topBlock.getY(), topBlock.getZ());
 				task.runTaskLater(this.getPlugin(), 1);
 			}
-		} else if ((b.getType() == Material.WATER || b.getType() == Material.STATIONARY_WATER)) {
+		} else if ((b.getType() == Material.WATER)) {
 			for (int x = -2; x <= 2; x++) {
 				for (int z = -2; z <= 2; z++) {
 					Location loc = b.getLocation();
@@ -513,134 +513,186 @@ public class ClimateModule {
 		if(c.getMap().getCurrentHighestHumidity() == 0) return;
 		if(temp.isNaN()) return;
 		switch (block.getBiome()) {
-		case COLD_BEACH:
-			if(temp.isCelsiusAbove(5)){
-				block.setBiome(Biome.STONE_BEACH);
-			}
-			break;
-		case STONE_BEACH:
-			if(temp.isCelsiusBelow(5)){
-				block.setBiome(Biome.COLD_BEACH);
-			} else if(temp.isCelsiusAbove(20)){
-				block.setBiome(Biome.BEACHES);
-			}
-			break;
-		case BEACHES:
-			if(temp.isCelsiusBelow(15)){
-				block.setBiome(Biome.STONE_BEACH);
-			}
-			break;
-		case TAIGA_COLD:
-			if(temp.isCelsiusAbove(5)){
-				block.setBiome(Biome.TAIGA);
-			}
-			break;
-		case TAIGA_COLD_HILLS:
-			if(temp.isCelsiusAbove(5)){
-				block.setBiome(Biome.TAIGA_HILLS);
-			}
-			break;
-		case TAIGA:
-			if(temp.isCelsiusAbove(20)){
-				block.setBiome(Biome.FOREST);
-			} else if(temp.isCelsiusBelow(5)){
-				block.setBiome(Biome.TAIGA_COLD);
-			}
-			break;
-		case TAIGA_HILLS:
-			if(temp.isCelsiusAbove(20)){
-				block.setBiome(Biome.FOREST_HILLS);
-			} else if(temp.isCelsiusBelow(5)){
-				block.setBiome(Biome.TAIGA_COLD_HILLS);
-			}
-			break;
-		case ICE_MOUNTAINS:
-			if(temp.isCelsiusAbove(5)){
-				block.setBiome(Biome.EXTREME_HILLS);
-			}
-			break;
-		case EXTREME_HILLS:
-			if(temp.isCelsiusBelow(0)){
-				block.setBiome(Biome.ICE_MOUNTAINS);
-			} else if(temp.isCelsiusAbove(25)){
-				if(humidity / c.getMap().getCurrentHighestHumidity() > 0.25){
-					block.setBiome(Biome.JUNGLE_HILLS);
-				} else {
-					block.setBiome(Biome.SAVANNA_ROCK);
+			case SNOWY_BEACH:
+				if(temp.isCelsiusAbove(5)){
+					block.setBiome(Biome.STONE_SHORE);
 				}
-			}
-			break;
-		case JUNGLE_HILLS:
-			if(temp.isCelsiusBelow(20)){
-				block.setBiome(Biome.EXTREME_HILLS);
-			} else if(humidity / c.getMap().getCurrentHighestHumidity() <  0.20){
-				block.setBiome(Biome.SAVANNA_ROCK);
-			}
-			break;
-		case SAVANNA_ROCK:
-			if(temp.isCelsiusBelow(20)){
-				block.setBiome(Biome.EXTREME_HILLS);
-			} else if(temp.isCelsiusAbove(35) && (humidity / c.getMap().getCurrentHighestHumidity() < 0.1)){
-				block.setBiome(Biome.DESERT_HILLS);
-			} else if(humidity / c.getMap().getCurrentHighestHumidity() > 0.25){
-				block.setBiome(Biome.JUNGLE_HILLS);
-			}
-			break;
-		case DESERT_HILLS:
-			if(humidity / c.getMap().getCurrentHighestHumidity() > 0.15){
-				block.setBiome(Biome.SAVANNA_ROCK);
-			}
-		case ICE_FLATS:
-			if(temp.isCelsiusAbove(5)){
-				block.setBiome(Biome.PLAINS);
-			}
-			break;
-		case PLAINS:
-			if(temp.isCelsiusBelow(0)){
-				block.setBiome(Biome.ICE_FLATS);
-			} else if(temp.isCelsiusAbove(25)){
-				if(humidity / c.getMap().getCurrentHighestHumidity() > 0.25){
+				break;
+			case STONE_SHORE:
+				if(temp.isCelsiusBelow(5)){
+					block.setBiome(Biome.SNOWY_BEACH);
+				} else if(temp.isCelsiusAbove(20)){
+					block.setBiome(Biome.BEACH);
+				}
+				break;
+			case BEACH:
+				if(temp.isCelsiusBelow(15)){
+					block.setBiome(Biome.STONE_SHORE);
+				}
+				break;
+			case SNOWY_TAIGA:
+				if(temp.isCelsiusAbove(5)){
+					block.setBiome(Biome.TAIGA);
+				}
+				break;
+			case SNOWY_TAIGA_HILLS:
+				if(temp.isCelsiusAbove(5)){
+					block.setBiome(Biome.TAIGA_HILLS);
+				}
+				break;
+			case TAIGA:
+				if(temp.isCelsiusAbove(20)){
+					block.setBiome(Biome.FOREST);
+				} else if(temp.isCelsiusBelow(5)){
+					block.setBiome(Biome.SNOWY_TAIGA);
+				}
+				break;
+			case TAIGA_HILLS:
+				if(temp.isCelsiusAbove(20)){
+					block.setBiome(Biome.WOODED_HILLS);
+				} else if(temp.isCelsiusBelow(5)){
+					block.setBiome(Biome.SNOWY_TAIGA_HILLS);
+				}
+				break;
+			case SNOWY_MOUNTAINS:
+				if(temp.isCelsiusAbove(5)){
+					block.setBiome(Biome.MOUNTAINS);
+				}
+				break;
+			case MOUNTAINS:
+				if(temp.isCelsiusBelow(0)){
+					block.setBiome(Biome.SNOWY_MOUNTAINS);
+				} else if(temp.isCelsiusAbove(25)){
+					if(humidity / c.getMap().getCurrentHighestHumidity() > 0.25){
+						block.setBiome(Biome.JUNGLE_HILLS);
+					} else {
+						block.setBiome(Biome.SAVANNA_PLATEAU);
+					}
+				}
+				break;
+			case JUNGLE_HILLS:
+				if(temp.isCelsiusBelow(20)){
+					block.setBiome(Biome.MOUNTAINS);
+				} else if(humidity / c.getMap().getCurrentHighestHumidity() <  0.20){
+					block.setBiome(Biome.SAVANNA_PLATEAU);
+				}
+				break;
+			case SAVANNA_PLATEAU:
+				if(temp.isCelsiusBelow(20)){
+					block.setBiome(Biome.MOUNTAINS);
+				} else if(temp.isCelsiusAbove(35) && (humidity / c.getMap().getCurrentHighestHumidity() < 0.1)){
+					block.setBiome(Biome.DESERT_HILLS);
+				} else if(humidity / c.getMap().getCurrentHighestHumidity() > 0.25){
+					block.setBiome(Biome.JUNGLE_HILLS);
+				}
+				break;
+			case DESERT_HILLS:
+				if(humidity / c.getMap().getCurrentHighestHumidity() > 0.15){
+					block.setBiome(Biome.SAVANNA_PLATEAU);
+				}
+			case SNOWY_TUNDRA:
+				if(temp.isCelsiusAbove(5)){
+					block.setBiome(Biome.PLAINS);
+				}
+				break;
+			case PLAINS:
+				if(temp.isCelsiusBelow(0)){
+					block.setBiome(Biome.SNOWY_TUNDRA);
+				} else if(temp.isCelsiusAbove(25)){
+					if(humidity / c.getMap().getCurrentHighestHumidity() > 0.25){
+						block.setBiome(Biome.JUNGLE);
+					} else {
+						block.setBiome(Biome.SAVANNA);
+					}
+				}
+				break;
+			case SAVANNA:
+				if(temp.isCelsiusBelow(20)){
+					block.setBiome(Biome.PLAINS);
+				} else if(temp.isCelsiusAbove(35) && (humidity / c.getMap().getCurrentHighestHumidity() < 0.1)){
+					block.setBiome(Biome.DESERT);
+				} else if(humidity / c.getMap().getCurrentHighestHumidity() > 0.25){
 					block.setBiome(Biome.JUNGLE);
-				} else {
+				}
+				break;
+			case DESERT:
+				if(humidity / c.getMap().getCurrentHighestHumidity() > 0.15){
 					block.setBiome(Biome.SAVANNA);
 				}
-			}
-			break;
-		case SAVANNA:
-			if(temp.isCelsiusBelow(20)){
-				block.setBiome(Biome.PLAINS);
-			} else if(temp.isCelsiusAbove(35) && (humidity / c.getMap().getCurrentHighestHumidity() < 0.1)){
-				block.setBiome(Biome.DESERT);
-			} else if(humidity / c.getMap().getCurrentHighestHumidity() > 0.25){
-				block.setBiome(Biome.JUNGLE);
-			}
-			break;
-		case DESERT:
-			if(humidity / c.getMap().getCurrentHighestHumidity() > 0.15){
-				block.setBiome(Biome.SAVANNA);
-			}
-		case FROZEN_OCEAN:
-			if(temp.isCelsiusAbove(-5)){
-				block.setBiome(Biome.OCEAN);
-			}
-			break;
-		case OCEAN:
-			if(temp.isCelsiusBelow(-10)){
-				block.setBiome(Biome.FROZEN_OCEAN);
-			}
-			break;
-		case FROZEN_RIVER:
-			if(temp.isCelsiusAbove(3)){
-				block.setBiome(Biome.RIVER);
-			}
-			break;
-		case RIVER:
-			if(temp.isCelsiusBelow(0)){
-				block.setBiome(Biome.FROZEN_RIVER);
-			}
-			break;
-		default:
-			break;
+			case FROZEN_OCEAN:
+				if(temp.isCelsiusAbove(-5)){
+					block.setBiome(Biome.COLD_OCEAN);
+				}
+				break;
+            case COLD_OCEAN:
+                if(temp.isCelsiusBelow(-6)){
+                    block.setBiome(Biome.FROZEN_OCEAN);
+                } else if(temp.isCelsiusAbove(10)){
+                    block.setBiome(Biome.OCEAN);
+                }
+                break;
+			case OCEAN:
+				if(temp.isCelsiusBelow(9)){
+					block.setBiome(Biome.COLD_OCEAN);
+				} else if(temp.isCelsiusAbove(20)){
+					block.setBiome(Biome.LUKEWARM_OCEAN);
+				}
+				break;
+			case LUKEWARM_OCEAN:
+				if(temp.isCelsiusBelow(19)){
+					block.setBiome(Biome.OCEAN);
+				} else if(temp.isCelsiusAbove(26)){
+					block.setBiome(Biome.WARM_OCEAN);
+				}
+				break;
+			case WARM_OCEAN:
+				if(temp.isCelsiusBelow(25)){
+					block.setBiome(Biome.LUKEWARM_OCEAN);
+				}
+				break;
+            case DEEP_FROZEN_OCEAN:
+                if(temp.isCelsiusAbove(-5)){
+                    block.setBiome(Biome.DEEP_COLD_OCEAN);
+                }
+                break;
+            case DEEP_COLD_OCEAN:
+                if(temp.isCelsiusBelow(-6)){
+                    block.setBiome(Biome.DEEP_FROZEN_OCEAN);
+                } else if(temp.isCelsiusAbove(10)){
+                    block.setBiome(Biome.DEEP_OCEAN);
+                }
+                break;
+            case DEEP_OCEAN:
+                if(temp.isCelsiusBelow(9)){
+                    block.setBiome(Biome.DEEP_COLD_OCEAN);
+                } else if(temp.isCelsiusAbove(20)){
+                    block.setBiome(Biome.DEEP_LUKEWARM_OCEAN);
+                }
+                break;
+            case DEEP_LUKEWARM_OCEAN:
+                if(temp.isCelsiusBelow(19)){
+                    block.setBiome(Biome.DEEP_OCEAN);
+                } else if(temp.isCelsiusAbove(26)){
+                    block.setBiome(Biome.DEEP_WARM_OCEAN);
+                }
+                break;
+            case DEEP_WARM_OCEAN:
+                if(temp.isCelsiusBelow(25)){
+                    block.setBiome(Biome.DEEP_LUKEWARM_OCEAN);
+                }
+                break;
+			case FROZEN_RIVER:
+				if(temp.isCelsiusAbove(3)){
+					block.setBiome(Biome.RIVER);
+				}
+				break;
+			case RIVER:
+				if(temp.isCelsiusBelow(0)){
+					block.setBiome(Biome.FROZEN_RIVER);
+				}
+				break;
+			default:
+				break;
 		}
 	}
 

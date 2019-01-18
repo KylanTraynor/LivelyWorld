@@ -38,7 +38,7 @@ public class SnowFallTask extends BukkitRunnable {
 		if (getBlock().equals(b) || Math.random() < 0.01) {
 			module.updateBiome(b);
 			// Stop if temperature is above 1
-			ClimateCell cell = ClimateUtils.getClimateCellAt(b.getLocation(), this.cell);
+			//ClimateCell cell = ClimateUtils.getClimateCellAt(b.getLocation(), this.cell);
 			if(ClimateUtils.getAltitudeWeightedTemperature(b.getLocation()).isCelsiusAbove(3)){
 				WaterChunk wc = WaterChunk.get(b.getWorld(), b.getChunk().getX(), b.getChunk().getZ());
 				wc.addWaterAt(Math.floorMod(b.getX(), 16), b.getY(), Math.floorMod(b.getZ(), 16), 1);
@@ -46,8 +46,7 @@ public class SnowFallTask extends BukkitRunnable {
 			}
 			Block below = b.getRelative(BlockFace.DOWN);
 			if (below.getType() == Material.SNOW) {
-				Block snow = below;
-				ClimateUtils.setSnowLayers(snow, ClimateUtils.getSnowLayers(snow) + 1);
+				ClimateUtils.setSnowLayers(below, ClimateUtils.getSnowLayers(below) + 1);
 				/*if (snow.getData() < 6) {
 					snow.setData((byte) (snow.getData() + 1));
 				} else {
@@ -65,7 +64,7 @@ public class SnowFallTask extends BukkitRunnable {
 					@Override
 					public void run() {
 						WaterChunk c = WaterChunk.get(b.getWorld(), b.getChunk().getX(), b.getChunk().getZ());
-						c.addWaterAt(Math.floorMod(b.getX(), 16),  y,  Math.floorMod(b.getZ(), 16), (int)WaterData.maxLevel / 8);
+						c.addWaterAt(Math.floorMod(b.getX(), 16),  y,  Math.floorMod(b.getZ(), 16), WaterData.maxLevel / 8);
 					}
 					
 				};
@@ -87,9 +86,9 @@ public class SnowFallTask extends BukkitRunnable {
 						ClimateUtils.setSnowLayers(below, ClimateUtils.getWaterHeight(below));
 					}
 				}*/
-			} else if (below.getType() != Material.SIGN_POST
-					&& below.getType() != Material.SIGN
-					&& below.getType() != Material.RAILS) {
+			} else if (below.getType() != Material.SIGN
+					&& below.getType() != Material.WALL_SIGN
+					&& below.getType() != Material.RAIL) {
 				below.breakNaturally();
 				below.setType(Material.SNOW);
 			}

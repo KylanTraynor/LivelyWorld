@@ -543,7 +543,7 @@ public class ClimateCell extends VCell {
 	}
 	
 	public void init(ClimateCellData data){
-		y = (int) world.getHighestBlockYAt(x, z) - 1;
+		y = world.getHighestBlockYAt(x, z) - 1;
 		humidityGeneration = Climate.getSurfaceHumidityGeneration(getWorld(), getX(), getZ());
 		if(data != null){
 			this.temperature = new Temperature(data.getTemperature());
@@ -556,9 +556,12 @@ public class ClimateCell extends VCell {
 			Biome b = world.getBiome(x, z);
 			if(b == Biome.DESERT || 
 					b == Biome.DESERT_HILLS || 
-					b == Biome.MESA || 
-					b == Biome.MESA_CLEAR_ROCK || 
-					b == Biome.MESA_ROCK) {
+					b == Biome.BADLANDS ||
+					b == Biome.BADLANDS_PLATEAU ||
+					b == Biome.ERODED_BADLANDS ||
+					b == Biome.MODIFIED_BADLANDS_PLATEAU ||
+					b == Biome.MODIFIED_WOODED_BADLANDS_PLATEAU ||
+					b == Biome.WOODED_BADLANDS_PLATEAU) {
 				
 				humidity = 0;
 			}
@@ -591,13 +594,13 @@ public class ClimateCell extends VCell {
 	}
 	
 	public String[] getPlayersWithin(){
-		List<String> result = new ArrayList<String>();
+		List<String> result = new ArrayList<>();
 		for(Entry<String, ClimateCell> e : LivelyWorld.getInstance().getClimateModule().getPlayerCache().entrySet()){
 			if(e.getValue() == this){
 				result.add(e.getKey());
 			}
 		}
-		return result.toArray(new String[result.size()]);
+		return result.toArray(new String[0]);
 	}
 	
 	public double getMostDistance(){

@@ -1,5 +1,6 @@
 package com.kylantraynor.livelyworld.burn;
 
+import com.kylantraynor.livelyworld.Utils;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -42,11 +43,11 @@ public class BurnModule implements Listener {
 		// plugin.log(Level.INFO, "Block ignited: " +
 		// block.getType().toString());;
 		switch (block.getType()) {
-		case GRASS:
+		case GRASS_BLOCK:
 			block.setType(Material.DIRT);
 			break;
 		case DIRT:
-			block.setData((byte) 1);
+			block.setType(Material.COARSE_DIRT);
 			break;
 		default:
 			break;
@@ -58,38 +59,37 @@ public class BurnModule implements Listener {
 		// plugin.log(Level.INFO, "Block burning: " +
 		// block.getType().toString());;
 		switch (block.getType()) {
-		case LOG:
-		case LOG_2:
-		case COAL_BLOCK:
-			BukkitRunnable n = new BukkitRunnable() {
+			case OAK_LOG: case DARK_OAK_LOG:
+			case ACACIA_LOG: case SPRUCE_LOG:
+			case BIRCH_LOG: case JUNGLE_LOG:
+			case COAL_BLOCK:
+				BukkitRunnable n = new BukkitRunnable() {
 
-				@Override
-				public void run() {
-					block.setType(Material.COAL_BLOCK);
-				}
+					@Override
+					public void run() {
+						block.setType(Material.COAL_BLOCK, false);
+					}
 
-			};
-			n.runTaskLater(plugin, 10L);
-			break;
-		case LEAVES:
-		case LEAVES_2:
+				};
+				n.runTaskLater(plugin, 10L);
+				break;
+			default:
+				break;
+		}
+		if(Utils.isLeaves(block.getType())){
+			final Material mat = block.getType();
 			BukkitRunnable n1 = new BukkitRunnable() {
 
 				@Override
 				public void run() {
-					BlockState state = block.getState();
-					if (state != null && state instanceof Leaves) {
-						Leaves b = (Leaves) state.getData();
-						block.setType(Material.SAPLING);
-						block.setData(b.getSpecies().getData());
+					switch(mat){
+						case OAK_LEAVES: block.setType(Material.OAK_SAPLING); break;
+						case DARK_OAK_LEAVES: block.setType(Material.DARK_OAK_SAPLING); break;
 					}
 				}
 
 			};
 			n1.runTaskLater(plugin, 10L);
-			break;
-		default:
-			break;
 		}
 	}
 

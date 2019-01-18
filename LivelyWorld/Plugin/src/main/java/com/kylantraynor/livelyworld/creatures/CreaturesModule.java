@@ -31,7 +31,7 @@ public class CreaturesModule {
 	private LivelyWorld plugin;
 	private BukkitRunnable runnable;
 	private AnimalsHelper helper;
-	private Map<UUID, Location> endangeredAnimals = new HashMap<UUID, Location>();
+	private Map<UUID, Location> endangeredAnimals = new HashMap<>();
 
 	public void onEnable(LivelyWorld plugin) {
 		this.setPlugin(plugin);
@@ -86,7 +86,7 @@ public class CreaturesModule {
 									}
 									ate = true;
 								}
-								if(ate == true){
+								if(ate){
 									double mxHealth = animal.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
 									if(animal.getHealth() >= mxHealth - 2 && animal.canBreed()){
 										if(getHelper() != null){
@@ -174,26 +174,44 @@ public class CreaturesModule {
 	}
 	
 	public boolean isEdibleBlock(Block block){
+		if(block.getType() == Material.GRASS_BLOCK) return true;
 		if(block.getType() == Material.GRASS) return true;
-		if(block.getType() == Material.LONG_GRASS) return true;
-		if(block.getType() == Material.DOUBLE_PLANT) return true;
-		if(block.getType() == Material.LEAVES) return true;
-		if(block.getType() == Material.RED_ROSE) return true;
-		if(block.getType() == Material.LEAVES_2) return true;
-		if(block.getType() == Material.CROPS) return true;
+		if(block.getType() == Material.TALL_GRASS) return true;
+		if(block.getType() == Material.FERN) return true;
+		if(block.getType() == Material.LARGE_FERN) return true;
+		if(block.getType() == Material.OAK_LEAVES) return true;
+		if(block.getType() == Material.DARK_OAK_LEAVES) return true;
+		if(block.getType() == Material.ACACIA_LEAVES) return true;
+		if(block.getType() == Material.SPRUCE_LEAVES) return true;
+		if(block.getType() == Material.BIRCH_LEAVES) return true;
+		if(block.getType() == Material.JUNGLE_LEAVES) return true;
+		if(block.getType() == Material.POPPY) return true;
+		if(block.getType() == Material.OXEYE_DAISY) return true;
+		if(block.getType() == Material.BLUE_ORCHID) return true;
+		if(block.getType() == Material.DANDELION) return true;
+		if(block.getType() == Material.WHEAT) return true;
+		if(block.getType() == Material.CARROTS) return true;
 		if(block.getType() == Material.HAY_BLOCK) return true;
-		if(block.getType() == Material.YELLOW_FLOWER) return true;
 		return false;
 	}
 	
 	public boolean isBreakableBlock(Block block){
-		if(block.getType() == Material.LONG_GRASS) return true;
-		if(block.getType() == Material.DOUBLE_PLANT) return true;
-		if(block.getType() == Material.LEAVES) return true;
-		if(block.getType() == Material.LEAVES_2) return true;
-		if(block.getType() == Material.CROPS) return true;
-		if(block.getType() == Material.RED_ROSE) return true;
-		if(block.getType() == Material.YELLOW_FLOWER) return true;
+		if(block.getType() == Material.GRASS) return true;
+		if(block.getType() == Material.TALL_GRASS) return true;
+		if(block.getType() == Material.FERN) return true;
+		if(block.getType() == Material.LARGE_FERN) return true;
+		if(block.getType() == Material.OAK_LEAVES) return true;
+		if(block.getType() == Material.DARK_OAK_LEAVES) return true;
+		if(block.getType() == Material.ACACIA_LEAVES) return true;
+		if(block.getType() == Material.SPRUCE_LEAVES) return true;
+		if(block.getType() == Material.BIRCH_LEAVES) return true;
+		if(block.getType() == Material.JUNGLE_LEAVES) return true;
+		if(block.getType() == Material.POPPY) return true;
+		if(block.getType() == Material.OXEYE_DAISY) return true;
+		if(block.getType() == Material.BLUE_ORCHID) return true;
+		if(block.getType() == Material.DANDELION) return true;
+		if(block.getType() == Material.WHEAT) return true;
+		if(block.getType() == Material.CARROTS) return true;
 		return false;
 	}
 

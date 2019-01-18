@@ -57,7 +57,7 @@ public class SoundManager {
 
 	public void playAmbiantSound(Biome b, Location l) {
 		switch (b) {
-		case BEACHES:
+		case BEACH:
 			l.setY(48);
 			if (l.getBlock().getType() == Material.SAND
 					|| l.getBlock().isLiquid()) {
@@ -74,10 +74,15 @@ public class SoundManager {
 		case FOREST:
 		case BIRCH_FOREST:
 		case JUNGLE:
-			if (l.getBlock().getType() == Material.LEAVES
-					|| l.getBlock().getType() == Material.LEAVES_2) {
-				playSound("birds", l, 3, 1);
-				break;
+			switch(l.getBlock().getType()){
+				case OAK_LEAVES:
+				case DARK_OAK_LEAVES:
+				case ACACIA_LEAVES:
+				case SPRUCE_LEAVES:
+				case BIRCH_LEAVES:
+				case JUNGLE_LEAVES:
+					playSound("birds", l, 3, 1);
+					break;
 			}
 			break;
 		default:

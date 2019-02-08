@@ -197,7 +197,7 @@ public class Utils {
 		    	wait();
 		    }
 		    isLocked = true;
-		    priorityWaiting = false;
+		    if(callingThread.getId() == priority) priorityWaiting = false;
 		    lockedCount++;
 		    lockedBy = callingThread;
 		}
@@ -375,10 +375,21 @@ public class Utils {
 	}
 	
 	public static boolean isOcean(Biome biome) {
-		if(biome == Biome.OCEAN) return true;
-		if(biome == Biome.DEEP_OCEAN) return true;
-		if(biome == Biome.FROZEN_OCEAN) return true;
-		return false;
+	    switch(biome){
+            case OCEAN:
+            case COLD_OCEAN:
+            case FROZEN_OCEAN:
+            case LUKEWARM_OCEAN:
+            case WARM_OCEAN:
+            case DEEP_OCEAN:
+            case DEEP_COLD_OCEAN:
+            case DEEP_FROZEN_OCEAN:
+            case DEEP_LUKEWARM_OCEAN:
+            case DEEP_WARM_OCEAN:
+                return true;
+            default:
+                return false;
+        }
 	}
 	
 	public static long randomLong(){
@@ -545,27 +556,41 @@ public class Utils {
 	
 	public static Block getHighestSnowBlockAround(Block b, int range) {
 		Block result = b;
-		for(int x = b.getX() - range; x <= b.getX() + range; x++){
-			for(int z = b.getZ() - range; z <= b.getZ() + range; z++){
-				Block block = b.getWorld().getBlockAt(x, b.getY(), z);
-				switch(block.getType()){
-				case SNOW_BLOCK:
-				case SNOW:
-					if(block.getType() == Material.SNOW_BLOCK){
-						while(ClimateUtils.isSnow(block.getRelative(BlockFace.UP))){
-							block = block.getRelative(BlockFace.UP);
-						}
+		int chunkX = Math.floorDiv(b.getX(),16);
+		int chunkZ = Math.floorDiv(b.getZ(),16);
+		if(b.getWorld().isChunkLoaded(chunkX,chunkZ) &&
+				b.getWorld().isChunkLoaded(chunkX-1,chunkZ) &&
+				b.getWorld().isChunkLoaded(chunkX+1,chunkZ) &&
+				b.getWorld().isChunkLoaded(chunkX,chunkZ-1) &&
+				b.getWorld().isChunkLoaded(chunkX,chunkZ + 1) &&
+				b.getWorld().isChunkLoaded(chunkX-1,chunkZ-1) &&
+				b.getWorld().isChunkLoaded(chunkX+1,chunkZ-1) &&
+				b.getWorld().isChunkLoaded(chunkX-1,chunkZ+1) &&
+				b.getWorld().isChunkLoaded(chunkX+1,chunkZ+1) ){
+
+			for(int x = b.getX() - range; x <= b.getX() + range; x++){
+				for(int z = b.getZ() - range; z <= b.getZ() + range; z++){
+					Block block = b.getWorld().getBlockAt(x, b.getY(), z);
+					switch(block.getType()){
+						case SNOW_BLOCK:
+						case SNOW:
+							if(block.getType() == Material.SNOW_BLOCK){
+								while(ClimateUtils.isSnow(block.getRelative(BlockFace.UP))){
+									block = block.getRelative(BlockFace.UP);
+								}
+							}
+							if(ClimateUtils.getSnowLayers(block) > ClimateUtils.getSnowLayers(result) || block.getY() > result.getY()){
+								result = block;
+							}
+							break;
+						default:
+
 					}
-					if(ClimateUtils.getSnowLayers(block) > ClimateUtils.getSnowLayers(result) || block.getY() > result.getY()){
-						result = block;
-					}
-					break;
-				default:
-					
 				}
 			}
+            return result;
 		}
-		return result;
+		return null;
 	}
 	
 	public static void spawnLightning(Block b) {
@@ -674,4 +699,29 @@ public class Utils {
         }
         return false;
     }
+
+    public static Chunk getChunkAt(World world, int chunkX, int chunkZ) throws InvalidThreadException {
+	    if(Thread.currentThread().getId() == LivelyWorld.getInstance().getMainThreadId()){
+	        return world.getChunkAt(chunkX, chunkZ);
+        } else {
+	        throw new InvalidThreadException("Invalid access attempt. Thread " + Thread.currentThread() + " does not have access.");
+        }
+    }
+
+    public static class InvalidThreadException extends Exception{
+
+	    public InvalidThreadException(){
+	        super();
+        }
+
+	    public InvalidThreadException(String message){
+	        super(message);
+        }
+    }
+
+    public static int manhattanDistance(int x1, int z1, int x2, int z2){
+		int dx = x1 > x2 ? x1 - x2 : x2 - x1;
+		int dz = z1 > z2 ? z1 - z2 : z2 - z1;
+		return dx + dz;
+	}
 }

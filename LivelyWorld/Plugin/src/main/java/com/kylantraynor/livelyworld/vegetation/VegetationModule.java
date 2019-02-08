@@ -1,5 +1,7 @@
 package com.kylantraynor.livelyworld.vegetation;
 
+import com.kylantraynor.livelyworld.waterV2.BlockLocation;
+import com.kylantraynor.livelyworld.waterV2.WaterWorld;
 import org.bukkit.Bukkit;
 import org.bukkit.CropState;
 import org.bukkit.Location;
@@ -24,7 +26,7 @@ import com.kylantraynor.livelyworld.climate.ClimateCell;
 import com.kylantraynor.livelyworld.climate.ClimateUtils;
 import com.kylantraynor.livelyworld.climate.Planet;
 import com.kylantraynor.livelyworld.climate.Temperature;
-import com.kylantraynor.livelyworld.water.WaterChunk;
+import com.kylantraynor.livelyworld.waterV2.WaterChunk;
 
 public class VegetationModule implements Listener {
 
@@ -132,8 +134,6 @@ public class VegetationModule implements Listener {
 		default:
 
 		}
-
-		return;
 	}
 
 	private void tryPlantBlueOrchid(Block b) {
@@ -257,12 +257,15 @@ public class VegetationModule implements Listener {
 	
 	private boolean isWaterLevelBelow(Location l, int level, int depth) {
 		int i = 1;
-		WaterChunk wc = WaterChunk.get(l.getWorld(), l.getBlockX() >> 4, l.getBlockZ() >> 4);
+		WaterWorld w = LivelyWorld.getInstance().getWaterModule().getWorld(l.getWorld());
+		if(w == null) return false;
+		WaterChunk wc = w.getChunk(l.getBlockX() >> 4, l.getBlockZ() >> 4);
+		if(wc == null) return false;
 		int x = Utils.floorMod2(l.getBlockX(), 4);
 		int z = Utils.floorMod2(l.getBlockZ(), 4);
 		int y = l.getBlockY();
 		while (i < depth && y > 0) {
-			if(wc.getLevel(x, y, z) >= level){
+			if(wc.getBlockWaterAmount(new BlockLocation(x, y, z)) >= level){
 				return true;
 			}
 			y--;
@@ -332,9 +335,8 @@ public class VegetationModule implements Listener {
 
 	public void plantSapling(Material sap, Location location) {
 		if(location.getBlock().getType().isBlock() || location.getBlock().getType().isSolid()) return;
-		if(location.getBlock().getLightFromSky() < 12) return;
-        Material base = location.getBlock().getRelative(BlockFace.DOWN)
-                .getType();
+		if(location.getBlock().getLightFromSky() < 8) return;
+        Material base = location.getBlock().getRelative(BlockFace.DOWN).getType();
         if (base == Material.DIRT || base == Material.COARSE_DIRT || base == Material.PODZOL || base == Material.GRASS_BLOCK) {
             location.getBlock().setType(sap);
         }

@@ -1,8 +1,13 @@
 package com.kylantraynor.livelyworld.climate;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.lang.ref.WeakReference;
+import java.util.List;
 
+import com.kylantraynor.livelyworld.waterV2.BlockLocation;
+import com.kylantraynor.livelyworld.waterV2.WaterChunk;
+import com.kylantraynor.livelyworld.waterV2.WaterWorld;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -11,35 +16,68 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import com.kylantraynor.livelyworld.LivelyWorld;
 import com.kylantraynor.livelyworld.Utils;
-import com.kylantraynor.livelyworld.water.WaterChunk;
 
 public class WeatherEffectsRunnable extends BukkitRunnable {
 
-	final int effects;
+    private final World world;
+	private final int effects;
 	
-	public WeatherEffectsRunnable(int effects){
-		this.effects = effects;
+	WeatherEffectsRunnable(World world, int effects){
+	    this.world = world;
+	    this.effects = effects;
 	}
-	
+
+    public int closestPlayerDistance(int x, int z){
+        int closestDistance = 15;
+        for(Player p : Bukkit.getServer().getOnlinePlayers()){
+            if(p.getWorld() == world){
+                int d = Utils.manhattanDistance(x,z, p.getLocation().getBlockX() >> 4, p.getLocation().getBlockZ() >> 4);
+                closestDistance = d < closestDistance ? d : closestDistance;
+            }
+        }
+        return closestDistance;
+    }
+
+    public int playersInWorld(){
+	    int count = 0;
+	    for(Player p : Bukkit.getServer().getOnlinePlayers()){
+	        if(p.getWorld() == world){
+	            count++;
+            }
+        }
+        return count;
+    }
+
+    public Chunk[] getValidChunks(Chunk[] chunks){
+	    ArrayList<Chunk> result = new ArrayList<>();
+	    for(Chunk c : chunks){
+	        if(closestPlayerDistance(c.getX(), c.getZ()) < 8){
+	            result.add(c);
+            }
+        }
+        return result.toArray(new Chunk[0]);
+    }
+
 	@Override
 	public void run() {
-	    World world = Bukkit.getWorld("world");
-        Chunk[] chunks = world.getLoadedChunks();
-        int l = chunks.length / 100;
-        l++;
+	    final int playersInWorld = playersInWorld();
+	    if(playersInWorld == 0) return;
+        Chunk[] chunks = getValidChunks(world.getLoadedChunks());
+        if(chunks.length == 0) return;
+        final int l = (playersInWorld * 10);
+
 		for(int i = 0; i < l; i++){
-		    WeakReference<Chunk> chunkRef = new WeakReference<>(chunks[Utils.fastRandomInt(chunks.length)]);
+		    Chunk chunk = chunks[Utils.fastRandomInt(chunks.length)];
 		    final int random_x = Utils.fastRandomInt(16);
 		    final int random_z = Utils.fastRandomInt(16);
 		    int y = 0;
-            while(chunkRef.get() != null & chunkRef.get().getBlock(random_x, y, random_z).getType() != Material.AIR && y < 255){
+            while(chunk.getBlock(random_x, y, random_z).getType() != Material.AIR && y < 255){
                 y++;
             }
             final int fy = y;
-            if(chunkRef.get() == null) continue;
-            final int chunkX = chunkRef.get().getX();
-            final int chunkZ = chunkRef.get().getZ();
-            final Block b = chunkRef.get().getBlock(random_x, y, random_z);
+            final int chunkX = chunk.getX();
+            final int chunkZ = chunk.getZ();
+            final Block b = chunk.getBlock(random_x, y, random_z);
 
             int x = (chunkX << 4) + random_x;
             int z = (chunkZ << 4) + random_z;
@@ -57,18 +95,12 @@ public class WeatherEffectsRunnable extends BukkitRunnable {
                         if(effectAmount > 0){
                             if(Utils.isWater(b)){
                                 final int evaporation = (int) (effectAmount * (1-(c.getRelativeHumidity() * 0.01)));
-                                BukkitRunnable br = new BukkitRunnable(){
-                                    @Override
-                                    public void run() {
-                                        WaterChunk wc = WaterChunk.get(b.getWorld(), chunkX, chunkZ);
-                                        if(wc.isLoaded()){
-                                            int oldLevel = wc.getLevel(random_x, fy, random_z);
-                                            wc.setLevel(random_x, fy, random_z, oldLevel - evaporation);
-                                            WaterChunk.delta[1] -= (oldLevel-evaporation < 0 ? oldLevel : evaporation);
-                                        }
-                                    }
-                                };
-                                br.runTaskAsynchronously(LivelyWorld.getInstance());
+                                WaterWorld w = LivelyWorld.getInstance().getWaterModule().getWorld(b.getWorld());
+                                if(w == null) continue;
+                                WaterChunk wc = w.getChunk(chunkX, chunkX);
+                                if(wc == null) continue;
+                                wc.removeWaterIn(new BlockLocation(random_x, y, random_z), evaporation);
+
                                 b.getWorld().spawnParticle(Particle.CLOUD, b.getLocation().add(0.5,0.5,0.5), evaporation, 0.5, 0.5, 0.5, 0.05);
                             } else {
                                 Block sb = b;
@@ -78,19 +110,13 @@ public class WeatherEffectsRunnable extends BukkitRunnable {
                                     sb = sb.getRelative(BlockFace.DOWN);
                                 }
                                 final Block fb = Utils.getHighestSnowBlockAround(sb, 3);
+                                if(fb == null) continue;
                                 final int amount = ClimateUtils.melt(b, effectAmount);
-                                BukkitRunnable br = new BukkitRunnable(){
-                                    @Override
-                                    public void run() {
-                                        WaterChunk wc = WaterChunk.get(fb.getWorld(), chunkX, chunkZ);
-                                        if(wc.isLoaded()){
-                                            int am = (int) (amount * 0xFF) / 8;
-                                            wc.addWaterAt(random_x, fy, random_z, am);
-                                            WaterChunk.delta[2] += am;
-                                        }
-                                    }
-                                };
-                                br.runTaskAsynchronously(LivelyWorld.getInstance());
+                                WaterWorld w = LivelyWorld.getInstance().getWaterModule().getWorld(b.getWorld());
+                                if(w == null) continue;
+                                WaterChunk wc = w.getChunk(chunkX, chunkX);
+                                if(wc == null) continue;
+                                wc.addWaterIn(new BlockLocation(Utils.floorMod2(fb.getX(), 4), fb.getY(), Utils.floorMod2(fb.getZ(), 4)), amount);
                             }
                         }
                     }
@@ -104,21 +130,12 @@ public class WeatherEffectsRunnable extends BukkitRunnable {
                         SnowFallTask task = new SnowFallTask(LivelyWorld.getInstance().getClimateModule(), c, b.getX(), b.getY() + 1, b.getZ());
                         task.runTaskLater(LivelyWorld.getInstance(), 1);
                     } if (Utils.fastRandomDouble() < 1.0 * (-tdiff1 / 2)){
-						/*while(b.getRelative(BlockFace.DOWN).getType() == Material.WATER || b.getRelative(BlockFace.DOWN).getType() == Material.STATIONARY_WATER){
-							b = b.getRelative(BlockFace.DOWN);
-						}*/
-                    BukkitRunnable br = new BukkitRunnable(){
-                        @Override
-                        public void run() {
-                            WaterChunk wc = WaterChunk.get(b.getWorld(), chunkX, chunkZ);
-                            if(wc.isLoaded()){
-                                wc.addWaterAt(random_x, fy, random_z, 2);
-                                WaterChunk.delta[2] += 2;
-                            }
-                        }
-                    };
-                    br.runTaskAsynchronously(LivelyWorld.getInstance());
-                }
+                        WaterWorld w = LivelyWorld.getInstance().getWaterModule().getWorld(b.getWorld());
+                        if(w == null) continue;
+                        WaterChunk wc = w.getChunk(chunkX, chunkX);
+                        if(wc == null) continue;
+                        wc.addWaterIn(new BlockLocation(random_x, fy, random_z), 2);
+                    }
                     break;
                 case STORM:
                 case SNOWSTORM:
@@ -127,22 +144,12 @@ public class WeatherEffectsRunnable extends BukkitRunnable {
                         SnowFallTask task = new SnowFallTask(LivelyWorld.getInstance().getClimateModule(), c, b.getX(), b.getY() + 1, b.getZ());
                         task.runTaskLater(LivelyWorld.getInstance(), 1);
                     } if (Utils.fastRandomDouble() < 1.0 * (-tdiff2 / 2)){
-						/*while(b.getRelative(BlockFace.DOWN).getType() == Material.WATER || b.getRelative(BlockFace.DOWN).getType() == Material.STATIONARY_WATER){
-							b = b.getRelative(BlockFace.DOWN);
-						}*/
-                    final Block fb = b;
-                    BukkitRunnable br = new BukkitRunnable(){
-                        @Override
-                        public void run() {
-                            WaterChunk wc = WaterChunk.get(fb.getWorld(), chunkX, chunkZ);
-                            if(wc.isLoaded()){
-                                wc.addWaterAt(random_x, fy, random_z, 4);
-                                WaterChunk.delta[2] += 4;
-                            }
-                        }
-                    };
-                    br.runTaskAsynchronously(LivelyWorld.getInstance());
-                }
+                        WaterWorld w = LivelyWorld.getInstance().getWaterModule().getWorld(b.getWorld());
+                        if(w == null) continue;
+                        WaterChunk wc = w.getChunk(chunkX, chunkX);
+                        if(wc == null) continue;
+                        wc.addWaterIn(new BlockLocation(random_x, fy, random_z), 4);
+                    }
                     break;
                 case THUNDERSTORM:
                     if(Utils.fastRandomDouble() < 0.05 / effects){

@@ -31,7 +31,7 @@ import com.kylantraynor.livelyworld.api.AnimalsHelper;
 import com.kylantraynor.livelyworld.api.BoatHelper;
 
 public class TidesModule {
-
+/*
 	private double baseViewDistance = 90;
 	private double baseViewDistanceSquared;
 	private double baseOceanLevel = 48;
@@ -83,9 +83,6 @@ public class TidesModule {
 		changingBlock.put(Material.GRAVEL, Material.SAND);
 		changingBlock.put(Material.STONE_BRICKS, Material.CRACKED_STONE_BRICKS);
 
-		/*int interval = 20 * 30;
-		tidesTask = new TideDispatcherTask(this, interval);
-		tidesTask.runTaskTimer(plugin, 20 * 10, interval);*/
 
 		waterThread.setDaemon(true);
 		waterThread.start();
@@ -150,34 +147,10 @@ public class TidesModule {
 		if (distance >= baseViewDistanceSquared) {
 			return;
 		}
-		/*
-		 * Material material = null; byte data = 0;
-		 */
+
 		if (isActualBeach(location)) {
 			updateOceanLevel(location, 0.0, baseViewDistanceSquared);
 		}
-		/*
-		 * long days = location.getWorld().getFullTime() / 24000; int phase =
-		 * (int) (days%8); switch(phase){ case 0: case 4:
-		 * if(isNextToWater(location) && (isReplaceableMaterial(location) ||
-		 * location.getBlock().isLiquid())){ material = Material.AIR; data = 0;
-		 * } if(location.getBlock().getType() == Material.STATIONARY_WATER ||
-		 * location.getBlock().getType() == Material.WATER){
-		 * sendBlockChange(location.clone().add(0, -1, 0), Material.WATER,
-		 * (byte) 1); } break; case 1: case 3: case 5: case 7:
-		 * if(isNextToWater(location) && (isReplaceableMaterial(location) ||
-		 * location.getBlock().isLiquid())){ material = Material.WATER; data =
-		 * 0; } if(location.getBlock().getType() == Material.STATIONARY_WATER ||
-		 * location.getBlock().getType() == Material.WATER){
-		 * sendBlockChange(location.clone().add(0, -1, 0), Material.WATER,
-		 * (byte) 0); } break; case 2: case 6: if(isNextToWater(location) &&
-		 * (isReplaceableMaterial(location) || location.getBlock().isLiquid())){
-		 * material = Material.WATER; data = 6; }
-		 * if(location.getBlock().getType() == Material.STATIONARY_WATER ||
-		 * location.getBlock().getType() == Material.WATER){
-		 * sendBlockChange(location.clone().add(0, -1, 0), Material.WATER,
-		 * (byte) 0); } break; } } sendBlockChange(location, material, data);
-		 */
 	}
 
 	public double getOceanLevel(Location l) {
@@ -349,11 +322,6 @@ public class TidesModule {
 			return true;
 		}
 		if (l.getBlock().getBiome() == Biome.RIVER) {
-			/*if (isNextToBiome(Biome.OCEAN, l) && oceanDepth > 1) {
-				if (l.getBlock().getBiome() != Biome.OCEAN) {
-					l.getBlock().setBiome(Biome.OCEAN);
-				}
-			}*/
 			return true;
 		}
 
@@ -453,13 +421,6 @@ public class TidesModule {
 		if (args.length >= 2) {
 			switch (args[1].toUpperCase()) {
 			case "INFO":
-				/*int count = 0;
-				for(int i = 0; i < WaterChunk.chunks.size(); i++){
-					if(WaterChunk.chunks.get(i).isLoaded()){
-						count++;
-					}
-				}*/
-				//sender.sendMessage("Loaded water chunks: " + count + "/" + WaterChunk.chunks.size() + "/" + LivelyWorld.getInstance().getServer().getWorld("world").getLoadedChunks().length);
 				sender.sendMessage("Timings: ");
 				sender.sendMessage("Ocean Level: " + Utils.fitTimings(WaterChunk.total[0] / WaterChunk.samples[0]) + " (" + WaterChunk.samples[0] + ")");
 				sender.sendMessage("Pressure Update: " + Utils.fitTimings(WaterChunk.total[1] / WaterChunk.samples[1]) + " (" + WaterChunk.samples[1] + ")");
@@ -587,15 +548,6 @@ public class TidesModule {
 		return realisticSimulation;
 	}
 
-	public void onChunkLoad(ChunkLoadEvent event) {
-		/*
-		 * for(int x = 0; x < 16; x++){ for(int z = 0; z < 16; z++){ Location
-		 * location = event.getChunk().getBlock(x, 0, z).getLocation();
-		 * location.setY(baseOceanLevel + 1); if(isActualBeach(location)){
-		 * updateOceanLevel(location, null); } } }
-		 */
-	}
-
 	public void onPlayerMove(PlayerMoveEvent event) {
 	}
 
@@ -621,5 +573,5 @@ public class TidesModule {
 
 	public BoatHelper getBoatHelper() {
 		return boatHelper;
-	}
+	}*/
 }

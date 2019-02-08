@@ -3,7 +3,7 @@ package com.kylantraynor.livelyworld.water;
 import com.kylantraynor.livelyworld.Utils;
 
 public class WaterData {
-	
+	/*
 	final static int resistanceCode = 8;
 	final static int solidCode = 28;
 	public static final int maxLevel = 0xff;
@@ -82,4 +82,5 @@ public class WaterData {
 	public void update(){
 		chunk.updateData(this);
 	}
+	*/
 }

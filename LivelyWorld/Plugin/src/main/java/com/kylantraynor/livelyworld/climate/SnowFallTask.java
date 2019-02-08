@@ -1,5 +1,8 @@
 package com.kylantraynor.livelyworld.climate;
 
+import com.kylantraynor.livelyworld.waterV2.BlockLocation;
+import com.kylantraynor.livelyworld.waterV2.WaterChunk;
+import com.kylantraynor.livelyworld.waterV2.WaterWorld;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -7,8 +10,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import com.kylantraynor.livelyworld.LivelyWorld;
 import com.kylantraynor.livelyworld.Utils;
-import com.kylantraynor.livelyworld.water.WaterChunk;
-import com.kylantraynor.livelyworld.water.WaterData;
 
 public class SnowFallTask extends BukkitRunnable {
 
@@ -40,8 +41,11 @@ public class SnowFallTask extends BukkitRunnable {
 			// Stop if temperature is above 1
 			//ClimateCell cell = ClimateUtils.getClimateCellAt(b.getLocation(), this.cell);
 			if(ClimateUtils.getAltitudeWeightedTemperature(b.getLocation()).isCelsiusAbove(3)){
-				WaterChunk wc = WaterChunk.get(b.getWorld(), b.getChunk().getX(), b.getChunk().getZ());
-				wc.addWaterAt(Math.floorMod(b.getX(), 16), b.getY(), Math.floorMod(b.getZ(), 16), 1);
+				WaterWorld w = LivelyWorld.getInstance().getWaterModule().getWorld(b.getWorld());
+				if(w == null) return;
+				WaterChunk wc = w.getChunk(b.getChunk().getX(), b.getChunk().getZ());
+				if(wc == null) return;
+				wc.addWaterIn(new BlockLocation(Utils.floorMod2(b.getX(), 4), b.getY(), Utils.floorMod2(b.getZ(), 4)), 4);
 				return;
 			}
 			Block below = b.getRelative(BlockFace.DOWN);
@@ -58,18 +62,13 @@ public class SnowFallTask extends BukkitRunnable {
 				} else {*/
 					b.setType(Material.SNOW);
 				//}
-			} else if (Utils.isWater(below)){ 
-				BukkitRunnable bk = new BukkitRunnable(){
-
-					@Override
-					public void run() {
-						WaterChunk c = WaterChunk.get(b.getWorld(), b.getChunk().getX(), b.getChunk().getZ());
-						c.addWaterAt(Math.floorMod(b.getX(), 16),  y,  Math.floorMod(b.getZ(), 16), WaterData.maxLevel / 8);
-					}
-					
-				};
-				bk.runTaskAsynchronously(LivelyWorld.getInstance());
-				return;
+			} else if (Utils.isWater(below)){
+                WaterWorld w = LivelyWorld.getInstance().getWaterModule().getWorld(b.getWorld());
+                if(w == null) return;
+                WaterChunk wc = w.getChunk(b.getChunk().getX(), b.getChunk().getZ());
+                if(wc == null) return;
+                wc.addWaterIn(new BlockLocation(Utils.floorMod2(b.getX(), 4), b.getY(), Utils.floorMod2(b.getZ(), 4)), 4);
+                return;
 				/*if(below.getData() == 0){
 					if(below.getRelative(BlockFace.EAST).getType().isSolid()
 							|| below.getRelative(BlockFace.NORTH).getType().isSolid()

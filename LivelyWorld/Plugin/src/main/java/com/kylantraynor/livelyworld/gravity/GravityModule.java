@@ -57,6 +57,9 @@ public class GravityModule {
 	public FileConfiguration setProperties(FileConfiguration fileConfiguration) {
 		fileConfiguration.set("gravity.blocks", null);
 		for (Entry<Material, GravityProperties> e : blockProperties.entrySet()) {
+			if(e == null) continue;
+			if(e.getKey() == null) continue;
+			if(e.getValue() == null) continue;
 			fileConfiguration.set("gravity.blocks." + e.getKey().toString()
 					+ ".type", e.getValue().getType().toString());
 			fileConfiguration.set("gravity.blocks." + e.getKey().toString()

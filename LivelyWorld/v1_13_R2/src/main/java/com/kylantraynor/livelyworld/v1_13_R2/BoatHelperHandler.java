@@ -34,9 +34,9 @@ public class BoatHelperHandler implements BoatHelper {
 		EnumStatus status = null;
 		try{
 			Class<?> c = EntityBoat.class;
-            Field aG = c.getDeclaredField("aG");
-            aG.setAccessible(true);
-            status = (EnumStatus) aG.get(b);
+            Field aL = c.getDeclaredField("aL");
+            aL.setAccessible(true);
+            status = (EnumStatus) aL.get(b);
 		} catch (Exception e){
 			e.printStackTrace();
 		}

@@ -43,7 +43,7 @@ public class AnimalsHelperHandler implements AnimalsHelper {
 
             Field by = c.getDeclaredField("breedCause");
             by.setAccessible(true);
-            by.set(entity, human.getUniqueID());
+            by.set(entity, null);
 
             entity.breedItem = null;
             entity.world.broadcastEntityEffect(entity, (byte)18);

@@ -145,8 +145,7 @@ public class ClimateUtils {
 		} else if(layers == 8){
 			block.setType(Material.SNOW_BLOCK);
 		} else {
-			block.setType(Material.SNOW);
-			Snow snow = (Snow) block.getBlockData();
+			Snow snow = (Snow) Material.SNOW.createBlockData();
 			snow.setLayers(layers);
 			block.setBlockData(snow);
 			if(block.getRelative(BlockFace.DOWN).getType() == Material.GRASS){

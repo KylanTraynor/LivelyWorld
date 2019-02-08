@@ -5,8 +5,8 @@ import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.scheduler.BukkitRunnable;
 
-public class TideDispatcherTask extends BukkitRunnable {
-
+public class TideDispatcherTask {// extends BukkitRunnable {
+/*
 	private TidesModule module;
 	private int interval;
 
@@ -26,17 +26,11 @@ public class TideDispatcherTask extends BukkitRunnable {
 				int delay = 1 + (int) Math.random() * (interval - 2);
 				TideTask tt = new TideChunkTask(module, c);
 				tt.runTaskLater(module.plugin, delay);
-				/*
-				 * for(int x = 0; x < 16; x ++){ for(int z = 0; z < 16; z++){
-				 * //Block b = c.getBlock(x, (int) module.getBaseOceanLevel(),
-				 * z); int delay = 1 + (int) Math.random() * (interval - 2);
-				 * TideTask tt = new TideChunkTask(module, c);
-				 * tt.runTaskLater(module.plugin, delay); } }
-				 */
 			}
 		}
 		if (!module.isEnabled()) {
 			this.cancel();
 		}
 	}
+	*/
 }

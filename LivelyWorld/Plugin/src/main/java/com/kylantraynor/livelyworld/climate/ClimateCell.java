@@ -341,14 +341,6 @@ public class ClimateCell extends VCell {
 	}
 	
 	private void moveLowAir(){
-		/*ClimateCell highestPressure = this;
-		for(ClimateCell c : getNeighbours()){
-			if(c == null) continue;
-			if(c.getLowAltitudePressure() > highestPressure.getLowAltitudePressure()){
-				highestPressure = c;
-			}
-		}
-		*/
 		double[] diff;
 		int minDiff;
 		int cellsToFill;
@@ -397,17 +389,6 @@ public class ClimateCell extends VCell {
 				break;
 			}
 		}
-		
-		
-		/*double dp = highestPressure.getLowAltitudePressure() - this.getLowAltitudePressure();
-		//LivelyWorld.getInstance().getLogger().info("Highest Pressure : " + highestPressure.getLowAltitudePressure() + ", this : " + this.getLowAltitudePressure());
-		if(dp > 0){
-			double transfer = ClimateUtils.getGasAmount(Math.abs(dp), getAirVolumeOnBlock(), getTemperature());
-			transfer = Math.min(transfer, highestPressure.getAmountOnBlock());
-			ClimateCell.processLowTransfer(highestPressure, this, transfer);
-		} else {
-			this.lowWind = WindVector.ZERO;
-		}*/
 	}
 	
 	private void bringTemperatureTo(Temperature temp, double inertia){

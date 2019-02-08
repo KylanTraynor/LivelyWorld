@@ -5,8 +5,9 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.scheduler.BukkitRunnable;
 
-public class WaterDataUpdate extends BukkitRunnable{
+public class WaterDataUpdate {// extends BukkitRunnable{
 
+	/*
 	final World world;
 	final Material mat;
 	final int chunkX;
@@ -32,21 +33,6 @@ public class WaterDataUpdate extends BukkitRunnable{
 	
 	@Override
 	public void run() {
-		/*WaterChunk c = WaterChunk.get(world, chunkX, chunkZ);
-		WaterData wd = c.getAt(x, y, z);
-		if(wd.getResistance() != WaterChunk.getResistanceFor(mat)){
-			wd.resistance = (byte) (WaterChunk.getResistanceFor(mat));
-		}
-		if(level > 0 && level != wd.getLevel()){
-			wd.level = (byte) level;
-		}
-		
-		wd.sendChangedEvent();
-		wd.getRelative(BlockFace.DOWN).sendChangedEvent();
-		wd.getRelative(BlockFace.UP).sendChangedEvent();
-		wd.getRelative(BlockFace.NORTH).sendChangedEvent();
-		wd.getRelative(BlockFace.SOUTH).sendChangedEvent();
-		wd.getRelative(BlockFace.EAST).sendChangedEvent();
-		wd.getRelative(BlockFace.WEST).sendChangedEvent();*/
 	}
+	*/
 }

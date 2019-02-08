@@ -47,11 +47,11 @@ public class WaterChunkUpdateRunnable extends BukkitRunnable {
 						}
 						if(WaterData.canReplace(currentBlock.getType())){
 							waterLevel = WaterData.toWaterLevel(level);
-							if(waterLevel != Utils.getWaterHeight(currentBlock)){
+							if(waterLevel != WaterUtils.getWaterHeight(currentBlock)){
 								if(waterLevel > 0 && WaterData.isDropable(currentBlock.getType())){
 									currentBlock.breakNaturally();
 								}
-								Utils.setWaterHeight(currentBlock, waterLevel, true);
+								WaterUtils.setWaterHeight(currentBlock, waterLevel, true);
 							}
 						}
 					}

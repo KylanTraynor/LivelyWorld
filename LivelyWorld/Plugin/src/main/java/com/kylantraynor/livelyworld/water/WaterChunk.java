@@ -4,25 +4,22 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.lang.ref.WeakReference;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterOutputStream;
 
-import com.kylantraynor.livelyworld.utils.IntQueue;
+import com.kylantraynor.livelyworld.utils.AsyncChunk;
 import com.kylantraynor.livelyworld.utils.ShortQueue;
 import org.apache.commons.math3.exception.OutOfRangeException;
-import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.type.Farmland;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -31,6 +28,7 @@ import com.kylantraynor.livelyworld.Utils;
 import com.kylantraynor.livelyworld.Utils.ChunkCoordinates;
 
 public class WaterChunk {
+    /*
 	final static Map<ChunkCoordinates, WaterChunk> chunks = new ConcurrentHashMap<>();
 	final private static int sectorLength = 4096;
 	final private static int currentVersion = 1;
@@ -45,16 +43,12 @@ public class WaterChunk {
 	final private byte[] data = new byte[16 * 16 * 256 * 4];
 	final private int[] pressure = new int[16*16*256];
 	final private ShortQueue updateQueue;
-	//final WaterData[][][] data = new WaterData[256][16][16];
-	//final int dataLength = data.length * data[0].length * data[0][0].length;
-	//final int dataByteLength = dataLength * 4;
 	private boolean isLoaded = false;
 	private final int x;
 	private final int z;
 	private final World world;
 	private boolean needsUpdate = false;
 	private boolean wasGenerated = false;
-	private WeakReference<Chunk> weakChunk;
 	private static Utils.Lock fileLock = new Utils.Lock();
 	private long lastUpdate = System.currentTimeMillis();
 	
@@ -66,18 +60,8 @@ public class WaterChunk {
 		this.x = x;
 		this.z = z;
 		this.updateQueue = new ShortQueue(4096);
-		/*for(int y = 255; y >= 0; y--){
-			for(int x1 = 0; x1 < 16; x1++){
-				for(int z1 = 0; z1 < 16; z1++){
-					if(data[y][x1][z1] == null){
-						data[y][x1][z1] = new WaterData(0, x1, y, z1);
-					}
-				}
-			}
-		}*/
 	}
-	
-	@Override
+
 	public boolean equals(Object o){
 		if(!(o instanceof WaterChunk)) return false;
 		if(!this.world.equals(((WaterChunk)o).getWorld())) return false;
@@ -167,29 +151,7 @@ public class WaterChunk {
 		if(!isLoaded) load();
 		return new WaterData(this, getData(x,y,z), getPressure(x,y,z), x, y, z);
 	}
-	
-	/*void setDataUnchecked(int data, int x, int y, int z){
-		if(!isLoaded) load();
-		byte[] b = Utils.toByteArray(data);
-		int index = getIndex(x,y,z);
-		this.data[index    ] = b[0];
-		this.data[index + 1] = b[1];
-		this.data[index + 2] = b[2];
-		this.data[index + 3] = b[3];
-	}*/
-	
-	/*void setData(int data, int x, int y, int z){
-		if(!isLoaded) load();
-		byte[] b = Utils.toByteArray(data);
-		int index = getIndex(x,y,z);
-		synchronized(this.data){
-			this.data[index    ] = b[0];
-			this.data[index + 1] = b[1];
-			this.data[index + 2] = b[2];
-			this.data[index + 3] = b[3];
-		}
-	}*/
-	
+
 	private int getIndex(int x, int y, int z){
 		return (y << 10) + (x << 6) + (z << 2);
 	}
@@ -214,15 +176,6 @@ public class WaterChunk {
 	}
 	
 	public static WaterChunk get(World world, int x, int z){
-		
-		/*int i = 0;
-		while(i < chunks.size()){
-			WaterChunk c = chunks.get(i);
-			if(c.getWorld().equals(world) && c.getX() == x && c.getZ() == z){
-				return c;
-			}
-			i++;
-		}*/
 		WaterChunk wc = chunks.get(new ChunkCoordinates(world, x, z));
 		if(wc != null){
 			return wc;
@@ -278,13 +231,6 @@ public class WaterChunk {
 			dos.write(Utils.toByteArray(currentVersion));
 			dos.write(Utils.toByteArray(getChunkStateCode()));
 			synchronized(this.data){
-				/*for(int y = 0; y < data.length; y++){
-					for(int x = 0; x < data[y].length; x++){
-						for(int z = 0; z < data[y][x].length; z++){
-							dos.write(data[y][x][z].getByteArray());
-						}
-					}
-				}*/
 				dos.write(data);
 			}
 			dos.flush();
@@ -440,18 +386,12 @@ public class WaterChunk {
 						int chunkData = Utils.toInt(array[4], array[5], array[6], array[7]);
 						synchronized(data){
 							System.arraycopy(array, 8, data,0, data.length);
-							/*for(int i = 8; i < data.length + 8; i++){
-								data[i - 8] = array[i];
-							}*/
 						}
 						needsUpdate = ((chunkData & 1) == 1);
 						wasGenerated = ((chunkData & 2) == 2);
 					} else if(baos.size() == data.length) {
 						synchronized(data){
 							System.arraycopy(array, 0, data, 0, data.length);
-							/*for(int i = 0; i < data.length; i++){
-								data[i] = array[i];
-							}*/
 						}
 					}
 				}
@@ -490,12 +430,6 @@ public class WaterChunk {
 		}
 		return result;
 	}
-
-	/*private double getPlayerCountSquared(){
-		List<int[]> coords = WaterChunkThread.getPlayerCoordinates(this.world);
-		if(coords == null) return 0;
-		return coords.size() * coords.size();
-	}*/
 	
 	private void processWaterMove(final int index){
 
@@ -508,101 +442,9 @@ public class WaterChunk {
 			}
 		}
 		processWaterMoveDirectData(index);
-
-		// This should turn on updates for neighbouring blocks if the level changed.
-		/*if(getLevelUnsafe(index) != level){
-		    setNeedsUpdateUnsafe(index, true);
-        }*/
 		
 	}
-	
-	/*private void processWaterMoveWaterData(int x, int y, int z) {
-		int index = getIndex(x,y,z);
-		int downIndex = y > 0 ? index - yInc : -1;
-		int upIndex = y < 255 ? index + yInc : -1;
-		
-		WaterData west = null;
-		if(x > 0){
-			west = getAt(x -1, y, z);
-		} else if(this.isRelativeLoaded(-1, 0)){
-			west = getRelative(-1,0).getAt(15, y, z);
-		}
-		WaterData east = null;
-		if(x < 15){
-			east = getAt(x+1,y,z);
-		} else if(this.isRelativeLoaded(1, 0)){
-			east = getRelative(1,0).getAt(0,y,z);
-		}
-		WaterData north = null;
-		if(z > 0){
-			north = getAt(x,y,z-1);
-		} else if(this.isRelativeLoaded(0, -1)) {
-			north = getRelative(0,-1).getAt(x,y,15);
-		}
-		WaterData south = null;
-		if(z < 15){
-			south = getAt(x, y, z+1);
-		} else if(this.isRelativeLoaded(0, 1)){
-			south = getRelative(0,1).getAt(x, y, 0);
-		}
-		
-		boolean stable = false;
-		while(getLevel(index) > 0 && !stable){
-			if(y > 0){
-				int max = getMaxQuantityRDM(downIndex);
-				if(getLevel(downIndex) < max
-						&& getPressure(downIndex) < getPressure(index) + max && Utils.fastRandomInt(256) > getResistance(downIndex)){
-					data[downIndex]++;
-					if(isSolid(downIndex)){
-						pressure[downIndex>>2]++;
-					}
-					data[index]--;
-					pressure[index>>2]--;
-					stable = false;
-					//d.lastDirection = 0;
-					continue;
-				}
-			}
-			if(y < 255){
-				int max = getMaxQuantityRDM(index);
-				if(getPressure(upIndex) < getPressure(index) - max){
-					if(getLevel(upIndex) < getMaxQuantityRDM(upIndex)){
-						data[upIndex]++;
-						pressure[upIndex>>2]++;
-						data[index]--;
-						if(isSolid(index)){
-							pressure[index>>2]--;
-						}
-						stable = false;
-						//d.lastDirection = 0;
-						continue;
-					}
-				}
-			}
-			WaterData min = getMinPressure(north, east, west, south);
-			if(min == null) {
-				stable = true;
-				//d.lastDirection = 0;
-			} else if(min.pressure < getPressure(index)){
-				if(min.getLevel() < min.getMaxQuantityRDM()){
-					min.level++;
-					min.pressure++;
-					data[index]--;
-					pressure[index>>2]--;
-					stable = false;
-				} else {
-					stable = true;
-				}
-			} else {
-				stable = true;
-				//d.lastDirection = 0;
-			}
-		}
-		if(west != null) west.update();
-		if(east != null) east.update();
-		if(north != null) north.update();
-		if(south != null) south.update();
-	}*/
+
 
 	private void processWaterMoveDirectData(int index) {
 		final int y = index >> 10;
@@ -671,10 +513,6 @@ public class WaterChunk {
 					setLevelUnsafe(index, (byte) (getLevelUnsafe(index) - 1));
 					setPressureUnsafe(index, getPressureUnsafe(index) - 1);
 					stable = false;
-					/*if(min == north) d.lastDirection = 1;
-					if(min == east) d.lastDirection = 2;
-					if(min == west) d.lastDirection = 3;
-					if(min == south) d.lastDirection = 4;*/
 				} else {
 					stable = true;
 				}
@@ -718,20 +556,6 @@ public class WaterChunk {
 		pressure[index >> 2] = d.pressure;
 	}
 
-	/*public WaterData getMinPressure(WaterData... data){
-		WaterData min = data[0];
-		for(int i = 1; i < data.length; i++){
-			if(data[i] == null) continue;
-			if(data[i].isSolid && Utils.superFastRandomInt() >= data[i].getResistance()) continue;
-			if(min == null) {
-				min = data[i];
-			} else if(data[i].pressure < min.pressure){
-				min = data[i];
-			}
-		}
-		return min;
-	}*/
-
 	private void updatePressure(int index){
 		int l = getLevelUnsafe(index);
 		int p = getLevelUnsafe(index);
@@ -758,6 +582,7 @@ public class WaterChunk {
 	
 	void update(){
 		if(!isLoaded) return;
+		if(!LivelyWorld.allowsTasks()) return;
 		
 		int dist = (int) Math.sqrt(distanceSquaredFromNearestPlayer());
 		float det = 2.0f / (Math.max(dist, 1) >> 1);
@@ -769,32 +594,29 @@ public class WaterChunk {
 			this.saturate();
 			wasGenerated = true;
 		}
-		
+
 		// Get a snapshot of the actual chunk.
 		//SmallChunkData c = null;
 		if(!WaterChunkThread.isChunkLoaded(world, x, z)){
 			return;
 		}
-		weakChunk = new WeakReference<>(world.getChunkAt(x, z));
 
-		long time = System.nanoTime();
+		AsyncChunk futureChunk = AsyncChunk.getAt(world, x, z);
+
+        long time = System.nanoTime();
 		// Saturate Oceans.
 		Biome biome = null;
 		for(int x = 0; x < 16; x++){
 			for(int z = 0; z < 16; z++){
-				if(weakChunk.get() != null){
-					biome = weakChunk.get().getBlock(x, 0, z).getBiome();
-				}
+			    biome = futureChunk.getBiome(x,z);
 				if(biome != null){
 					if((Utils.isOcean(biome) || biome == Biome.RIVER)){
 						int y = 48;
-						if(weakChunk.get() != null){
-							Material m = weakChunk.get().getBlock(x, y, z).getType();
-							while(y > 0 && (Utils.isWater(m) || m == Material.AIR)){
-								setLevelUnsafe(getIndex(x,y,z), (byte) 0xFF);
-								y--;
-							}
-						}
+                        Material m = futureChunk.getType(x,y,z);
+                        while(y > 0 && (Utils.isWater(m) || m == Material.AIR)){
+                            setLevelUnsafe(getIndex(x,y,z), (byte) 0xFF);
+                            y--;
+                        }
 					}
 				}
 			}
@@ -813,20 +635,13 @@ public class WaterChunk {
 			time = System.nanoTime();
 			for(int x = 0; x < 16; x++){
 				for(int z = 0; z < 16; z++){
-					if(weakChunk.get() != null){
-						for(int y = 0; y < 256; y++){
-							int index = getIndex(x, y, z);
-							if(weakChunk.get() != null){
-								Material m = weakChunk.get().getBlock(x, y, z).getType();
-								setResistanceUnsafe(index, (byte) getResistanceFor(m));
-								setSolidUnsafe(index, isSolid(m));
-							} else {
-								break;
-							}
-						}
-					} else {
-						break;
-					}
+                    for(int y = 0; y < 256; y++){
+                        int index = getIndex(x, y, z);
+                        Material m = futureChunk.getType(x,y,z);
+                        if(m == null) continue;
+                        setResistanceUnsafe(index, (byte) getResistanceFor(m));
+                        setSolidUnsafe(index, isSolid(m));
+                    }
 				}
 			}
 			time = System.nanoTime() - time;
@@ -843,13 +658,6 @@ public class WaterChunk {
 		for(int i = data.length -4; i >= 0; i -= 4){
 			updatePressure(i);
 		}
-		/*for(int y = 255; y >= 0; y--){
-			for(int x = 0; x < 16; x++){
-				for(int z = 0; z < 16; z++){
-					updatePressure(x, y, z);
-				}
-			}
-		}*/
 		
 		time = System.nanoTime() - time;
 		total[1] += time;
@@ -894,35 +702,29 @@ public class WaterChunk {
 		for(int y = 0; y < 256; y++){
 			for(int x = 0; x < 16; x++){
 				for(int z = 0; z < 16; z++){
-					if(weakChunk.get() != null){
-						Material m = weakChunk.get().getBlock(x, y, z).getType();
-						if(canReplace(m)){
-							int waterLevel = 0;
-							if(Utils.isWater(m)){
-								waterLevel = Utils.getWaterHeight(weakChunk.get().getBlock(x, y, z).getBlockData());
-							}
-							int index = getIndex(x,y,z);
-							if(waterLevel != toWaterLevel(getLevel(index))){
-								updateVisually(x,y,z, dist <= 2);
-							}
-						} else if(m == Material.FARMLAND){
-						    if(getLevel(getIndex(x,y,z)) > 1){
-						        updateVisually(x,y,z, dist <= 2);
-                            }
+                   Material m = futureChunk.getType(x,y,z);
+                    BlockData d = futureChunk.getBlockData(x,y,z);
+                    if(m == null || d == null) continue;
+                    if(canReplace(m)){
+                        int waterLevel = 0;
+                        if(Utils.isWater(m)){
+                            waterLevel = Utils.getWaterHeight(d);
                         }
-					}
+                        int index = getIndex(x,y,z);
+                        if(waterLevel != toWaterLevel(getLevel(index))){
+                            updateVisually(x,y,z, dist <= 2);
+                        }
+                    } else if(m == Material.FARMLAND){
+                        if(getLevel(getIndex(x,y,z)) > 1){
+                            updateVisually(x,y,z, dist <= 2);
+                        }
+                    }
 				}
 			}
 		}
 	}
 	
 	private static int getResistanceFor(Material material){
-		/*if(material == null){
-			if(!chunk.isLoaded() || !WaterChunkThread.isChunkLoaded(chunk.getWorld(), chunk.getX(), chunk.getZ()))
-				return 0;
-			int id = chunk.getWorld().getBlockTypeIdAt(getX(), getY(), getZ());
-			material = Material.getMaterial(id);
-		}*/
 		if(material == null) return 0;
 		switch (material){
 			case WATER: case AIR:
@@ -1016,15 +818,6 @@ public class WaterChunk {
 		return (level + 16) >> 5;
 	}
 	
-	/*public void updateVisuallyCheckLag(){
-		if(System.currentTimeMillis() - lastUpdate < 1000){
-			return;
-		}
-		lastUpdate = System.currentTimeMillis();
-		if(Utils.hasHighLag()) return;
-		updateVisually();
-	}*/
-	
 	public void updateVisually(){
 		if(!LivelyWorld.getInstance().isEnabled()) return;
 		if(!isLoaded()) return;
@@ -1032,13 +825,6 @@ public class WaterChunk {
 		//BukkitRunnable br = new WaterChunkUpdateRunnable(this, UpdateType.LEVEL);
 		//br.runTask(LivelyWorld.getInstance());
 	}
-	
-	/*public void updateVisuallyAsync(){
-		if(!LivelyWorld.getInstance().isEnabled()) return;
-		if(!isLoaded()) return;
-		if(!WaterChunkThread.isChunkLoaded(world, x, z)) return;
-		
-	}*/
 	
 	public void addWaterAt(int x, int y, int z, int amount) {
 		if(!isLoaded()) return;
@@ -1126,14 +912,6 @@ public class WaterChunk {
         byte b = (byte) ((old & ~0b10000000) + (value ? 0b10000000 : 0b00000000));
         data[index + 3] = b;
     }
-	
-	/*public void setNeedsUpdate(boolean value){
-		needsUpdate = value;
-	}
-	
-	public boolean needsUpdate(){
-		return needsUpdate;
-	}*/
 
 	public void saturate() {
 		if(!isLoaded()) load();
@@ -1168,10 +946,6 @@ public class WaterChunk {
 		if(r == null) return false;
 		return r.isLoaded();
 	}
-
-	/*public byte[] getData() {
-		return data;
-	}*/
 	
 	public static class VisualUpdateTask extends BukkitRunnable{
 
@@ -1227,14 +1001,6 @@ public class WaterChunk {
         if(y >= 256 || y < 0) throw new OutOfRangeException(y, 0, 255);
     }
 
-	/**
-	 * Sets the water level at x, y, z, and enforces that level to be between
-	 * 0 and 255.
-	 * @param x 0 - 15
-	 * @param y 0 - 255
-	 * @param z 0 - 15
-	 * @param level
-	 */
 	public void setLevel(int x, int y, int z, int level) {
 		if(level < 0) level = 0;
 		if(level > 0xFF) level = 0xFF;
@@ -1302,5 +1068,5 @@ public class WaterChunk {
 			return getMaxQuantityUnsafe(index);
 		}
 	}
-	
+	*/
 }

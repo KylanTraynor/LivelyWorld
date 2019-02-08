@@ -13,9 +13,9 @@ import com.kylantraynor.livelyworld.gravity.GravityModule;
 import com.kylantraynor.livelyworld.hooks.HookManager;
 import com.kylantraynor.livelyworld.pathways.PathwaysModule;
 import com.kylantraynor.livelyworld.sounds.SoundManager;
+import com.kylantraynor.livelyworld.utils.MathUtil;
 import com.kylantraynor.livelyworld.vegetation.VegetationModule;
-import com.kylantraynor.livelyworld.water.TidesModule;
-import com.kylantraynor.livelyworld.water.WaterListener;
+import com.kylantraynor.livelyworld.waterV2.WaterModule;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -30,8 +30,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;
-import org.bukkit.entity.Horse;
-import org.bukkit.entity.Horse.Variant;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -47,7 +45,6 @@ import org.bukkit.event.entity.ItemDespawnEvent;
 import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
-import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Crops;
 import org.bukkit.plugin.PluginManager;
@@ -64,6 +61,7 @@ import com.kylantraynor.livelyworld.climate.Temperature;
 public class LivelyWorld extends JavaPlugin implements Listener {
 
 	private static final String PLUGIN_NAME = "LivelyWorld";
+	private static boolean allowTasks = false;
 	
 	private Database database;
 	private boolean useSQLite = true;
@@ -94,7 +92,7 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 	private boolean usingSounds = true;
 
 	private boolean usingTides = true;
-	private TidesModule tides;
+	private WaterModule tides;
 
 	private boolean usingGravity = true;
 	private GravityModule gravity;
@@ -109,7 +107,7 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 	private String packageName;
 	private String version;
 
-	private long mainThreadId = Thread.currentThread().getId();
+	private long mainThreadId;
 
 	private BukkitRunnable lagChecker;
 
@@ -123,7 +121,11 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 
 	@Override
 	public void onEnable() {
+		mainThreadId = Thread.currentThread().getId();
+
 		currentInstance = this;
+
+		allowTasks = true;
 		packageName = LivelyWorld.getInstance().getServer().getClass().getPackage().getName();
 	    version = packageName.substring(packageName.lastIndexOf('.') + 1);
 		saveDefaultConfig();
@@ -169,11 +171,12 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 			sounds.enable();
 		}
 
-		tides = new TidesModule(this);
+		/*tides = new TidesModule(this);
 		if (usingTides) {
 			tides.enable();
 			pm.registerEvents(new WaterListener(), this);
-		}
+		}*/
+		tides = new WaterModule(this);
 
 		if (usingGravity) {
 			gravity = new GravityModule(this);
@@ -224,13 +227,6 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 						} else {
 							return;
 						}
-						/*int randomX = (int) Math.round(Math.random()
-								* (worldBorder * 2) - worldBorder);
-						int randomY = (int) (255 * Math.random());
-						int randomZ = (int) Math.round(Math.random()
-								* (worldBorder * 2) - worldBorder);
-						randomX += worldCenter.getBlockX();
-						randomZ += worldCenter.getBlockZ();*/
 						Location l = new Location(worldCenter.getWorld(),
 								randomX, randomY, randomZ);
 						new BukkitRunnable() {
@@ -281,6 +277,9 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 				blockUpdatePeriod);
 	}
 
+    /**
+     * Start the task triggering random chunk updates.
+     */
 	private void startRandomChunkUpdater() {
 		BukkitRunnable br = new BukkitRunnable(){
 
@@ -425,6 +424,7 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 
 	@Override
 	public void onDisable() {
+	    allowTasks = false;
 		getServer().getScheduler().cancelTasks(this);
 		if (sounds != null) {
 			sounds.disable();
@@ -519,7 +519,7 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 					gravity.onBlockUpdate(l.getBlock(), event.getPlayer());
 				}
 			}
-			if (usingTides) {
+			/*if (usingTides) {
 				tides.onPlayerMove(event);
 			}
 			// this part tries to remove the fall damage when not touching
@@ -532,14 +532,7 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 				if (event.getPlayer().getVelocity().getY() > 0 && getWaterModule().getOceanLevel(event.getFrom()) >= event.getFrom().getBlockY()) {
 					event.getPlayer().setFallDistance(2);
 				}
-			}
-		}
-	}
-
-	@EventHandler
-	public void onChunkLoad(ChunkLoadEvent event) {
-		if (usingTides) {
-			tides.onChunkLoad(event);
+			}*/
 		}
 	}
 
@@ -722,7 +715,9 @@ public class LivelyWorld extends JavaPlugin implements Listener {
                 case SPRUCE_SAPLING:
                     if (usingVegetation) {
                         //log(Level.INFO, "Attempting to plant sapling.");
-                        if (event.getLocation().getChunk().isLoaded()) {
+                        int chunkX = MathUtil.toChunk(event.getLocation().getX());
+                        int chunkZ = MathUtil.toChunk(event.getLocation().getZ());
+                        if (event.getLocation().getWorld().isChunkLoaded(chunkX, chunkZ)) {
                             vegetation.plantSapling(item.getItemStack().getType(), event.getLocation());
                         } else {
                             event.setCancelled(true);
@@ -909,7 +904,7 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 		return 48;
 	}
 
-	public TidesModule getWaterModule() {
+	public WaterModule getWaterModule() {
 		return tides;
 	}
 
@@ -924,4 +919,8 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 	public VegetationModule getVegetationModule() {
 		return vegetation;
 	}
+
+	public static boolean allowsTasks(){
+	    return allowTasks;
+    }
 }

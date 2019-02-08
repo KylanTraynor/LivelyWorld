@@ -12,6 +12,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.block.FluidLevelChangeEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -29,16 +30,13 @@ import com.kylantraynor.livelyworld.Utils;
 import com.kylantraynor.livelyworld.api.BoatHelper;
 
 public class WaterListener implements Listener{
-	
+	/*
 	@EventHandler
 	public void onVehicleMove(VehicleMoveEvent event) {
 		if (event.getVehicle().getType() == EntityType.BOAT) {
 			Boat boat = (Boat) event.getVehicle();
 			BoatHelper helper = LivelyWorld.getInstance().getWaterModule().getBoatHelper();
 			if(helper != null){
-				/*if(boat.getPassengers().size() > 0){
-					boat.getPassengers().get(0).sendMessage("[DEBUG] Is Underwater? " + helper.isUnderwater(boat));
-				}*/
 				if(helper.isUnderwater(boat)){
 					Vector v = helper.getMotionVector(boat);
 					boat.teleport(boat.getLocation().clone().add(0,1/6.0,0));
@@ -85,47 +83,24 @@ public class WaterListener implements Listener{
 	
 	@EventHandler(ignoreCancelled = true)
 	public void onBlockWaterLevelChange(BlockWaterLevelChangeEvent event){
-		/*for(Player p : Bukkit.getOnlinePlayers()){
-			if(p.getLocation().distanceSquared(event.getBlock().getLocation()) < (100*100)){
-				if(event.getNewLevel() > 0){
-					BukkitRunnable br = new BukkitRunnable(){
-						public void run(){
-							p.sendBlockChange(event.getBlock().getLocation(), Material.WATER, (byte)(7 - event.getNewLevel()));
-						}
-					};
-					br.runTaskLater(LivelyWorld.getInstance(), 1);
-				} else {
-					BukkitRunnable br = new BukkitRunnable(){
-						public void run(){
-							p.sendBlockChange(event.getBlock().getLocation(), Material.AIR, (byte)(0));
-						}
-					};
-					br.runTaskLater(LivelyWorld.getInstance(), 1);
-				}
-			}
-		}*/
 	}
-	
-	@EventHandler(ignoreCancelled = true)
+
 	public void onBlockFromTo(BlockFromToEvent event){
 		if(!Utils.isWater(event.getBlock())) return;
 		if(!event.getBlock().getWorld().getName().equals("world")) return;
 		if(!LivelyWorld.getInstance().getWaterModule().isRealisticSimulation()) return;
 		//event.getBlock().setType(Material.WATER, false);
 		event.setCancelled(true);
-		/*Biome fromBiome = event.getBlock().getBiome();
-		switch(fromBiome){
-		case OCEAN:
-			if(event.getBlock().getY() <= LivelyWorld.getInstance().getOceanY()){
-				event.getToBlock().setType(event.getBlock().getType());
-				event.setCancelled(true);
-				return;
-			}
-		default:
-		}*/
 	}
-	
-	@EventHandler
+
+    public void onFluidLevelChange(FluidLevelChangeEvent event){
+	    if(!Utils.isWater(event.getBlock())) return;
+	    if(!event.getBlock().getWorld().getName().equals("world")) return;
+	    if(!LivelyWorld.getInstance().getWaterModule().isRealisticSimulation()) return;
+
+	    event.setCancelled(true);
+    }
+
 	public void onPlayerMove(PlayerMoveEvent event){
 		if(event.getFrom().getChunk() != event.getTo().getChunk()){
 			if(WaterChunk.disabled) return;
@@ -136,18 +111,15 @@ public class WaterListener implements Listener{
 			LivelyWorld.getInstance().getWaterModule().getWaterThread().updateOnlinePlayer(event.getPlayer());
 		}
 	}
-	
-	@EventHandler
+
 	public void onPlayerJoin(PlayerJoinEvent event){
 		LivelyWorld.getInstance().getWaterModule().getWaterThread().updateOnlinePlayer(event.getPlayer());
 	}
-	
-	@EventHandler
+
 	public void onPlayerQuit(PlayerQuitEvent event){
 		LivelyWorld.getInstance().getWaterModule().getWaterThread().removeOnlinePlayer(event.getPlayer());
 	}
-	
-	@EventHandler(ignoreCancelled = true)
+
 	public void onPlayerBucketEmpty(PlayerBucketEmptyEvent event){
 		if(!LivelyWorld.getInstance().getWaterModule().isEnabled()) return;
 		Block b = event.getBlockClicked().getRelative(event.getBlockFace());
@@ -191,57 +163,14 @@ public class WaterListener implements Listener{
 	public void onBlockBreak(BlockBreakEvent event){
 		if(!event.getBlock().getWorld().getName().equals("world")) return;
 		if(!LivelyWorld.getInstance().getWaterModule().isRealisticSimulation()) return;
-		/*BukkitRunnable bk = new WaterDataUpdate(event.getBlock());
-		bk.runTaskLaterAsynchronously(LivelyWorld.getInstance(), 1);*/
-		/*BukkitRunnable bk = new BukkitRunnable(){
-
-			@Override
-			public void run() {
-				SmallChunkData scd = WaterChunkThread.getChunkData(event.getBlock().getWorld(), event.getBlock().getChunk().getX(), event.getBlock().getChunk().getZ());
-				if(scd != null){
-					int x = Utils.floorMod2(event.getBlock().getX(), 4);
-					int z = Utils.floorMod2(event.getBlock().getZ(), 4);
-					scd.setData(x, event.getBlock().getY(), z, new MaterialData(Material.AIR));
-				} else {
-					scd = LivelyWorld.getInstance().getWaterModule().getWaterThread().addLoadedChunk(event.getBlock().getChunk());
-					int x = Utils.floorMod2(event.getBlock().getX(), 4);
-					int z = Utils.floorMod2(event.getBlock().getZ(), 4);
-					scd.setData(x, event.getBlock().getY(), z, new MaterialData(Material.AIR));
-				}
-			}
-			
-		};
-		bk.runTaskLater(LivelyWorld.getInstance(), 1);*/
 	}
 	
 	@EventHandler(ignoreCancelled = true)
 	public void onBlockPlace(BlockPlaceEvent event){
 		if(!event.getBlock().getWorld().getName().equals("world")) return;
 		if(!LivelyWorld.getInstance().getWaterModule().isRealisticSimulation()) return;
-		/*BukkitRunnable bk = new WaterDataUpdate(event.getBlock());
-		bk.runTaskLaterAsynchronously(LivelyWorld.getInstance(), 1);*/
-		/*BukkitRunnable bk = new BukkitRunnable(){
-
-			@Override
-			public void run() {
-				SmallChunkData scd = WaterChunkThread.getChunkData(event.getBlock().getWorld(), event.getBlock().getChunk().getX(), event.getBlock().getChunk().getZ());
-				if(scd != null){
-					int x = Utils.floorMod2(event.getBlock().getX(), 4);
-					int z = Utils.floorMod2(event.getBlock().getZ(), 4);
-					scd.setData(x, event.getBlock().getY(), z, event.getBlockPlaced().getState().getData());
-				} else {
-					scd = LivelyWorld.getInstance().getWaterModule().getWaterThread().addLoadedChunk(event.getBlock().getChunk());
-					int x = Utils.floorMod2(event.getBlock().getX(), 4);
-					int z = Utils.floorMod2(event.getBlock().getZ(), 4);
-					scd.setData(x, event.getBlock().getY(), z, event.getBlockPlaced().getState().getData());
-				}
-			}
-			
-		};
-		bk.runTaskLater(LivelyWorld.getInstance(), 1);*/
 	}
-	
-	@EventHandler
+
 	public void onChunkLoad(ChunkLoadEvent event){
 		if(WaterChunk.disabled) return;
 		if(!LivelyWorld.getInstance().getWaterModule().isEnabled()) return;
@@ -249,36 +178,19 @@ public class WaterListener implements Listener{
 		if(!c.getWorld().getName().equals("world")) return;
 		BukkitRunnable bk = new BukkitRunnable(){
 
-			@Override
 			public void run() {
 				LivelyWorld.getInstance().getWaterModule().getWaterThread().addLoadedChunk(c);
 			}
 			
 		};
 		bk.runTaskLater(LivelyWorld.getInstance(), 1);
-		/*BukkitRunnable br = new BukkitRunnable(){
-			@Override
-			public void run() {
-				WaterChunk.get(c.getWorld(), c.getX(), c.getZ());
-			}
-		};
-		br.runTaskAsynchronously(LivelyWorld.getInstance());*/
 	}
-	
-	@EventHandler
+
 	public void onChunkUnload(ChunkUnloadEvent event){
 		if(WaterChunk.disabled) return;
 		Chunk c = event.getChunk();
 		if(!c.getWorld().getName().equals("world")) return;
 		LivelyWorld.getInstance().getWaterModule().getWaterThread().removeLoadedChunk(c);
-		/*BukkitRunnable br = new BukkitRunnable(){
-			@Override
-			public void run() {
-				WaterChunk wc = WaterChunk.get(c.getWorld(), c.getX(), c.getZ());
-				wc.unload();
-			}
-		};
-		br.runTaskLaterAsynchronously(LivelyWorld.getInstance(), 20 * 5);*/
 	}
-
+*/
 }

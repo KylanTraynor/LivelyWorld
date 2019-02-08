@@ -50,51 +50,25 @@ public class ClimateModule {
 					+ p.getName() + ".");
 		}
 		weatherUpdater = new WeatherUpdaterRunnable();
-		
-		weatherEffectsUpdater = new WeatherEffectsRunnable(weatherEffectBlocks);
+		weatherEffectsUpdater = new WeatherEffectsRunnable(plugin.getServer().getWorld("world"), weatherEffectBlocks);
 		
 		weatherUpdater.runTaskTimer(plugin, 20L, 60L);
 		weatherEffectsUpdater.runTaskTimer(plugin, 20L, 1L);
-		
+
 		climateUpdater = new BukkitRunnable() {
 
 			@Override
 			public void run() {
 				for(Planet p : Planet.planets){
-					/*for(ClimateCell c : p.getClimateMap().getCells()){
-						c.updateIrradiance();
-						c.updateHumidity();
-						c.updateWeather();
-					}
-					for(ClimateCell c : p.getClimateMap().getCells()){
-						c.updateWinds();
-					}*/
 					for(int i = 0; i < cellUpdates; i++){
 						p.getClimateMap().randomCellUpdate();
 					}
 				}
-				/*for (World w : Bukkit.getServer().getWorlds()) {
-					Planet p = Planet.getPlanet(w);
-					if (p != null) {
-						for(int i = 0; i < cellUpdates; i++)
-							p.getClimateMap(w).randomCellUpdate();
-					}
-				}*/
 			}
 
 		};
 
 		climateUpdater.runTaskTimer(plugin, 21L, 1L);
-		
-		/*weatherUpdater = new BukkitRunnable() {
-
-			@Override
-			public void run() {
-				HookManager.getDynmap().updateWeather();
-			}
-			
-		};
-		weatherUpdater.runTaskTimer(plugin, 22L, (Planet.getPlanet(Bukkit.getWorld("world")).getClimateMap().getCells().length)/cellUpdates);*/
 	}
 
 	public void disable() {
@@ -229,7 +203,7 @@ public class ClimateModule {
 		} else if (args.length >= 2) {
 			switch (args[1].toUpperCase()) {
 			case "REFRESHCHUNK":
-				if(sender instanceof Player){
+				if(sender instanceof Player) {
 					Player p = (Player) sender;
 					Chunk c = p.getLocation().getChunk();
 					PacketMapChunk.refreshChunk(c);
@@ -320,7 +294,7 @@ public class ClimateModule {
 									+ planet.getName()
 									+ " has an obliquity of "
 									+ ((planet.getOb() * 180) / Math.PI)
-									+ "� at the moment.");
+									+ "° at the moment.");
 						}
 						break;
 					case "CURRENTSOLAREQUATOR":

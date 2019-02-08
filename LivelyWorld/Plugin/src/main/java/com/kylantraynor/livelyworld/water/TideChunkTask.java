@@ -4,7 +4,7 @@ import org.bukkit.Chunk;
 import org.bukkit.Location;
 
 public class TideChunkTask extends TideTask {
-
+/*
 	private Chunk chunk;
 
 	public TideChunkTask(TidesModule module, Chunk cs) {
@@ -23,4 +23,5 @@ public class TideChunkTask extends TideTask {
 			}
 		}
 	}
+	*/
 }

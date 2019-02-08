@@ -4,7 +4,9 @@ import java.time.Instant;
 import java.time.temporal.ChronoField;
 
 import com.kylantraynor.livelyworld.hooks.HookManager;
-import com.kylantraynor.livelyworld.water.WaterChunk;
+import com.kylantraynor.livelyworld.waterV2.BlockLocation;
+import com.kylantraynor.livelyworld.waterV2.WaterChunk;
+import com.kylantraynor.livelyworld.waterV2.WaterWorld;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -87,22 +89,24 @@ public class UpdateManager {
 
 	private static void processWaterUpdate(Block block) {
 		if(block.getType() == Material.FARMLAND){
-			WaterChunk wc = WaterChunk.get(block.getWorld(), block.getX() >> 4, block.getZ() >> 4);
+			WaterWorld w = LivelyWorld.getInstance().getWaterModule().getWorld(block.getWorld());
+			if(w == null) return;
+			WaterChunk wc = w.getChunk(block.getX() >> 4, block.getZ() >> 4);
+			if(wc == null) return;
 			int xc = Utils.floorMod2(block.getX(), 4);
 			int zc = Utils.floorMod2(block.getZ(), 4);
 			Farmland frld = (Farmland) block.getBlockData();
 			int moisture = frld.getMoisture();
-			int level = wc.getLevel(xc, block.getY(), zc);
+			int level = wc.getBlockWaterAmount(new BlockLocation(xc, block.getY(), zc));
 			int aboveLevel = 0;
 			if(block.getY() < 255){
-				aboveLevel = wc.getLevel(xc, block.getY() + 1, zc);
+				aboveLevel = wc.getBlockWaterAmount(new BlockLocation(xc, block.getY() + 1, zc));
 			}
 			if(level > 0 || aboveLevel > 0){
 				frld.setMoisture(7);
 				if(Utils.isCrop(block.getRelative(BlockFace.UP).getType())){
 					if(Utils.fastRandomDouble() > 0.9){
-						wc.setLevel(xc, block.getY(), zc, level - 1);
-						WaterChunk.delta[3] -= 1;
+					    wc.removeWaterIn(new BlockLocation(xc, block.getY(), zc), 1);
 					}
 				}
 				block.setBlockData(frld, false);

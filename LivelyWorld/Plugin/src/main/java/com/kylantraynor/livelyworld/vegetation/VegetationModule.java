@@ -105,9 +105,15 @@ public class VegetationModule implements Listener {
 				}
 				break;
 			case GRASS:
-				if(Math.random() < 0.1)
+				if(Utils.fastRandomDouble() < 0.1)
 					updateGrass(b.getRelative(BlockFace.DOWN));
 				break;
+			case WATER:
+				if(b.getRelative(BlockFace.DOWN).getType().isSolid()){
+				    if(Utils.hasBlockAround(b.getLocation(), Material.SEAGRASS, 3) && Utils.fastRandomFloat() <= 0.5){
+				        b.setType(Material.SEAGRASS);
+                    }
+                }
 			default:
 				break;
 		}

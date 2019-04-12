@@ -1,11 +1,12 @@
 package com.kylantraynor.livelyworld;
 
 import com.kylantraynor.livelyworld.climate.ClimateUtils;
-import it.unimi.dsi.util.XoRoShiRo128PlusRandom;
+//import it.unimi.dsi.util.XoRoShiRo128PlusRandom;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -29,7 +30,10 @@ public class Utils {
 	private static double sqrt2PI = Math.sqrt(2 * Math.PI);
 	private static long rand = System.currentTimeMillis();
 	private static int[] xor128 = {123456789,362436069,521288629,88675123};
-	private static XoRoShiRo128PlusRandom rdm = new XoRoShiRo128PlusRandom();
+
+	//private static XoRoShiRo128PlusRandom rdm = new XoRoShiRo128PlusRandom();
+	private static Random rdm = new Random();
+
 	private static int t;
 	private static long tickLength;
 	private static int randByte = rdm.nextInt();
@@ -428,7 +432,8 @@ public class Utils {
 	 * @return
 	 */
 	public static double fastRandomDouble(){
-		return rdm.nextDoubleFast();
+		return rdm.nextDouble();
+		//return rdm.nextDoubleFast();
 		//return ((double)(fastRandomInt()) - ((double)Integer.MIN_VALUE)) / (-(Integer.MIN_VALUE * 2.0));
 	}
 	
@@ -509,9 +514,7 @@ public class Utils {
 	}
 	
 	public static int keepBetween(int min, int value, int max){
-		if(value < min) return min;
-		if(value > max) return max;
-		return value;
+		return value < min ? min : (value > max ? max : value);
 	}
 	
 	public static void setLoreInfo(ItemStack is, String info, String value){
@@ -700,6 +703,18 @@ public class Utils {
         return false;
     }
 
+    public static boolean hasBlockAround(Location loc, Material mat, int radius){
+		for(int x = - radius; x <= radius; x ++){
+		    for(int z = -radius; z <= radius; z++){
+		        for(int y = -radius; y <= radius; y++){
+		            Location current = loc.add(x,y,z);
+		            if(current.getBlock().getType() == mat) return true;
+                }
+            }
+        }
+        return false;
+	}
+
     public static Chunk getChunkAt(World world, int chunkX, int chunkZ) throws InvalidThreadException {
 	    if(Thread.currentThread().getId() == LivelyWorld.getInstance().getMainThreadId()){
 	        return world.getChunkAt(chunkX, chunkZ);
@@ -723,5 +738,15 @@ public class Utils {
 		int dx = x1 > x2 ? x1 - x2 : x2 - x1;
 		int dz = z1 > z2 ? z1 - z2 : z2 - z1;
 		return dx + dz;
+	}
+
+	public static double euclidianDistanceSquared(int x1, int z1, int x2, int z2){
+		int dx = x2-x1;
+		int dz = z2-z1;
+		return dx * dx + dz * dz;
+	}
+
+	public static double euclidianDistance(int x1, int z1, int x2, int z2){
+		return Math.sqrt(euclidianDistanceSquared(x1, z1, x2, z2));
 	}
 }

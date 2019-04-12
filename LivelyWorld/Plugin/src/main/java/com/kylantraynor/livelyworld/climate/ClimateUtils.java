@@ -271,4 +271,14 @@ public class ClimateUtils {
 		if(p == null) return ((int)loc.getBlock().getLightFromSky()) / 15.0;
 		return p.getSunRadiation(loc);
 	}
+
+	public static Weather getWeatherAt(Location location) {
+		return getWeatherAt(location.getWorld(), location.getBlockX(), location.getBlockY(), location.getBlockZ());
+	}
+
+	public static Weather getWeatherAt(World world, int x, int y, int z){
+		ClimateCell c = getClimateCellAt(world, x, z);
+		if(c == null) return null;
+		return c.getWeather();
+	}
 }

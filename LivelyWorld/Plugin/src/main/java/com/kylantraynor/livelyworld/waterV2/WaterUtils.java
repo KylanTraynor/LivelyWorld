@@ -83,7 +83,6 @@ public class WaterUtils {
 
     private static int fastfloor(double x) {    return x>0 ? (int)x : (int)x-1;  }
 
-
     public static boolean[] dataToObstacles(BlockData data){
         if(data instanceof Slab){
             Slab s = (Slab) data;
@@ -175,6 +174,12 @@ public class WaterUtils {
             case GOLD_BLOCK: case GOLD_ORE:
             case REDSTONE_BLOCK: case REDSTONE_ORE:
             case EMERALD_BLOCK: case EMERALD_ORE:
+            case GLOWSTONE:
+            case REDSTONE_LAMP:
+            case BLACK_STAINED_GLASS:case BLUE_STAINED_GLASS: case BROWN_STAINED_GLASS: case CYAN_STAINED_GLASS: case GRAY_STAINED_GLASS:
+            case GREEN_STAINED_GLASS: case LIGHT_BLUE_STAINED_GLASS: case LIGHT_GRAY_STAINED_GLASS: case LIME_STAINED_GLASS:
+            case MAGENTA_STAINED_GLASS: case ORANGE_STAINED_GLASS: case PINK_STAINED_GLASS: case PURPLE_STAINED_GLASS:
+            case RED_STAINED_GLASS: case WHITE_STAINED_GLASS: case YELLOW_STAINED_GLASS:
             case WET_SPONGE:
                 return Permeability.NONE;
 

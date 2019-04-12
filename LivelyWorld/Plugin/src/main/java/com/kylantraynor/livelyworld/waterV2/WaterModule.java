@@ -3,12 +3,14 @@ package com.kylantraynor.livelyworld.waterV2;
 import com.kylantraynor.livelyworld.LivelyWorld;
 import com.kylantraynor.livelyworld.Utils;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitScheduler;
 
+import java.security.Key;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -20,6 +22,7 @@ public class WaterModule {
     private final WaterChunkLoaderThread loaderThread;
 
     private boolean realisticSimulation = true;
+    public boolean usePermeability = false;
     private boolean debug = true;
 
     /**
@@ -60,6 +63,13 @@ public class WaterModule {
         if (args.length >= 2) {
             switch (args[1].toUpperCase()) {
                 case "INFO":
+                    sender.sendMessage("Loaded worlds: " + worlds.size());
+                    for(String key : worlds.keySet().toArray(new String[0])){
+                        sender.sendMessage(key);
+                        sender.sendMessage("  Loaded chunks: " + worlds.get(key).loadedChunks.size());
+                        sender.sendMessage("  Chunks pending load: " + worlds.get(key).pendingLoadChunks.size());
+                        sender.sendMessage("  Chunks pending unload: " + worlds.get(key).pendingUnloadChunks.size());
+                    }
                     /*sender.sendMessage("Timings: ");
                     sender.sendMessage("Ocean Level: " + Utils.fitTimings(WaterChunk.total[0] / WaterChunk.samples[0]) + " (" + WaterChunk.samples[0] + ")");
                     sender.sendMessage("Pressure Update: " + Utils.fitTimings(WaterChunk.total[1] / WaterChunk.samples[1]) + " (" + WaterChunk.samples[1] + ")");
@@ -85,19 +95,49 @@ public class WaterModule {
                         br.runTaskAsynchronously(plugin);
                     }*/
                     break;
-                case "SATURATECHUNK":
-                    /*sender.sendMessage("Saturating Chunk.");
-                    Player player0 = (Player) sender;
-                    Chunk c0 = player0.getLocation().getChunk();
-                    if(c0 != null) {
-                        BukkitRunnable br = new BukkitRunnable(){
-                            @Override
-                            public void run() {
-                                WaterChunk.get(c0.getWorld(), c0.getX(), c0.getZ()).saturate();
+                case "SATURATEBLOCK":
+                    {
+                        sender.sendMessage("Saturating Block.");
+                        Player player0 = (Player) sender;
+                        Location l = player0.getLocation();
+                        WaterWorld ww = worlds.get(l.getWorld().getName());
+                        if(ww != null){
+
+                            int chunkX = l.getBlockX() >> 4;
+                            int chunkZ = l.getBlockZ() >> 4;
+
+                            int x = Utils.floorMod2(l.getBlockX(), 4);
+                            int z = Utils.floorMod2(l.getBlockZ(), 4);
+
+                            int left = 32;
+
+                            if(ww.isChunkLoaded(chunkX, chunkZ)){
+                                sender.sendMessage("Adding water at " + x + "," + l.getBlockY() + "," + z + " (Chunk "+chunkX + "," + chunkZ+").");
+                                left = ww.getChunk(chunkX, chunkZ).DEBUGAddWaterIn(new BlockLocation(x, l.getBlockY(), z), left);
+                            } else {
+                                sender.sendMessage("Chunk " + chunkX + "," + chunkZ + " is not loaded.");
                             }
-                        };
-                        br.runTaskAsynchronously(plugin);
-                    }*/
+
+                            //int left = ww.addWaterAt(l.getBlockX(), l.getBlockY(), l.getBlockZ(), 32);
+                            if(left > 0){
+                                sender.sendMessage(left + " out of 32 could not be added.");
+                            }
+                        }
+                    }
+                    break;
+                case "DRAINBLOCK":
+                    {
+                        sender.sendMessage("Draining Block.");
+                        Player player0 = (Player) sender;
+                        Location l = player0.getLocation();
+                        WaterWorld ww = worlds.get(l.getWorld().getName());
+                        if(ww != null){
+                            int left = ww.removeWaterAt(l.getBlockX(), l.getBlockY(), l.getBlockZ(), 32);
+                            if(left > 0){
+                                sender.sendMessage(left + " out of 32 could not be removed.");
+                            }
+                        }
+                    }
                     break;
                 case "UPDATECHUNK":
                     /*sender.sendMessage("Updating chunk.");
@@ -145,6 +185,10 @@ public class WaterModule {
                             case "SIMULATION":
                                 realisticSimulation = !realisticSimulation;
                                 sender.sendMessage("Realistic water simulation is set to: " + realisticSimulation);
+                                break;
+                            case "PERMEABILITY":
+                                usePermeability = !usePermeability;
+                                sender.sendMessage("Using permeability: " + usePermeability);
                                 break;
                             case "WAVES":
                                 /*if (ignoredPlayers.contains((Player) sender)) {

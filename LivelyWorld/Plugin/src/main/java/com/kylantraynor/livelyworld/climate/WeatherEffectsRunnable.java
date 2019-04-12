@@ -97,9 +97,7 @@ public class WeatherEffectsRunnable extends BukkitRunnable {
                                 final int evaporation = (int) (effectAmount * (1-(c.getRelativeHumidity() * 0.01)));
                                 WaterWorld w = LivelyWorld.getInstance().getWaterModule().getWorld(b.getWorld());
                                 if(w == null) continue;
-                                WaterChunk wc = w.getChunk(chunkX, chunkX);
-                                if(wc == null) continue;
-                                wc.removeWaterIn(new BlockLocation(random_x, y, random_z), evaporation);
+                                w.removeWaterAt(random_x, y, random_z, evaporation);
 
                                 b.getWorld().spawnParticle(Particle.CLOUD, b.getLocation().add(0.5,0.5,0.5), evaporation, 0.5, 0.5, 0.5, 0.05);
                             } else {
@@ -114,9 +112,7 @@ public class WeatherEffectsRunnable extends BukkitRunnable {
                                 final int amount = ClimateUtils.melt(b, effectAmount);
                                 WaterWorld w = LivelyWorld.getInstance().getWaterModule().getWorld(b.getWorld());
                                 if(w == null) continue;
-                                WaterChunk wc = w.getChunk(chunkX, chunkX);
-                                if(wc == null) continue;
-                                wc.addWaterIn(new BlockLocation(Utils.floorMod2(fb.getX(), 4), fb.getY(), Utils.floorMod2(fb.getZ(), 4)), amount);
+                                w.addWaterAt(Utils.floorMod2(fb.getX(), 4), fb.getY(), Utils.floorMod2(fb.getZ(), 4), amount);
                             }
                         }
                     }
@@ -132,9 +128,7 @@ public class WeatherEffectsRunnable extends BukkitRunnable {
                     } if (Utils.fastRandomDouble() < 1.0 * (-tdiff1 / 2)){
                         WaterWorld w = LivelyWorld.getInstance().getWaterModule().getWorld(b.getWorld());
                         if(w == null) continue;
-                        WaterChunk wc = w.getChunk(chunkX, chunkX);
-                        if(wc == null) continue;
-                        wc.addWaterIn(new BlockLocation(random_x, fy, random_z), 2);
+                        w.addWaterAt(random_x, y, random_z, 2);
                     }
                     break;
                 case STORM:
@@ -146,9 +140,7 @@ public class WeatherEffectsRunnable extends BukkitRunnable {
                     } if (Utils.fastRandomDouble() < 1.0 * (-tdiff2 / 2)){
                         WaterWorld w = LivelyWorld.getInstance().getWaterModule().getWorld(b.getWorld());
                         if(w == null) continue;
-                        WaterChunk wc = w.getChunk(chunkX, chunkX);
-                        if(wc == null) continue;
-                        wc.addWaterIn(new BlockLocation(random_x, fy, random_z), 4);
+                        w.addWaterAt(random_x, y, random_z, 4);
                     }
                     break;
                 case THUNDERSTORM:

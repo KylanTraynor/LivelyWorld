@@ -236,14 +236,19 @@ public class WaterChunkUtils {
         return (Byte.toUnsignedInt(b0)) + (Byte.toUnsignedInt(b1) << 8) + (Byte.toUnsignedInt(b2) << 16) + (Byte.toUnsignedInt(b3) << 24);
     }
 
-    public static void loadFromFile(WaterChunk chunk){
+    /**
+     * Load the chunk data from its file.
+     * @param chunk
+     * @return {@code true} if data has been found and loaded, {@code false} otherwise.
+     */
+    public static boolean loadFromFile(WaterChunk chunk){
         RandomAccessFile f = null;
         try {
             f = new RandomAccessFile(chunk.getFile(), "r");
-            if(f.length() < 8192) return;
+            if(f.length() < 8192) return false;
             if(f.length() % sectorLength != 0) {
                 //LivelyWorld.getInstance().getLogger().warning(getFile().getName()+": Unexpected file size (" + f.length() + "). Chunk won't be loaded.");
-                return;
+                return false;
             }
             // Get the index of where the location of the chunk is stored.
             int locationIndex = (floorMod2(chunk.coords.x,5) << 5) + (floorMod2(chunk.coords.z,5)) << 2;
@@ -252,7 +257,7 @@ public class WaterChunkUtils {
 
             f.seek(locationIndex);
             int location = f.readInt();
-            if(location < 8192 / sectorLength) return;
+            if(location < 8192 / sectorLength) return false;
             f.seek(sizeIndex);
             int size = f.readInt();
 
@@ -319,14 +324,18 @@ public class WaterChunkUtils {
                             break;
                         }
                     }
+                } else {
+                    return false;
                 }
             } finally {
                 if(ios != null){
                     ios.close();
                 }
             }
+            return true;
         } catch (IOException e) {
             e.printStackTrace();
+            return false;
         } finally {
             try {
                 if (f != null) {

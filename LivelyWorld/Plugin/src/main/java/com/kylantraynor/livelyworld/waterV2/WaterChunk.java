@@ -2,6 +2,7 @@ package com.kylantraynor.livelyworld.waterV2;
 
 import com.kylantraynor.livelyworld.LivelyWorld;
 import com.kylantraynor.livelyworld.Utils;
+import io.netty.handler.logging.LogLevel;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -16,6 +17,7 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.logging.Level;
 
 public class WaterChunk {
 
@@ -146,6 +148,10 @@ public class WaterChunk {
      * @param chunk {@link Chunk} to update
      */
     public void updateBukkitChunk(Chunk chunk){
+        if(Thread.currentThread().getId() != LivelyWorld.getInstance().getMainThreadId()) {
+            LivelyWorld.getInstance().getLogger().log(Level.SEVERE, "Cannot access updateBukkitChunk from an async thread!");
+            return;
+        }
         for(BlockLocation bl : updateSet){
             Block b = chunk.getBlock(bl.x, bl.y, bl.z);
             if(WaterUtils.isReplaceable(b.getType())){
@@ -153,6 +159,30 @@ public class WaterChunk {
             }
         }
         updateSet.clear();
+        lastUpdate = System.currentTimeMillis();
+    }
+
+    /**
+     * Update the {@link Chunk} to show the flow.
+     * @param chunk {@link Chunk} to update
+     */
+    public void updateFullBukkitChunk(Chunk chunk){
+        if(Thread.currentThread().getId() != LivelyWorld.getInstance().getMainThreadId()) {
+            LivelyWorld.getInstance().getLogger().log(Level.SEVERE, "Cannot access updateBukkitChunk from an async thread!");
+            return;
+        }
+
+        for(int y = 0; y < 256; y++){
+            for(int x = 0; x < 16; x++){
+                for(int z = 0; z < 16; z++){
+                    Block b = chunk.getBlock(x,y,z);
+                    if(WaterUtils.isReplaceable(b.getType())){
+                        Utils.setWaterHeight(b, getBlockLevel(new BlockLocation(x,y,z)), false, false);
+                    }
+                }
+            }
+        }
+
         lastUpdate = System.currentTimeMillis();
     }
 
@@ -344,7 +374,9 @@ public class WaterChunk {
         int py = waterY >> 3;  //Math.floorDiv(waterY, yLength / yBlocks);
         int pz = waterZ >> 1;
 
-        return permeabilities[px][py][pz];
+        Permeability p = permeabilities[px][py][pz];
+
+        return LivelyWorld.getInstance().getWaterModule().usePermeability ? p : (p != null ? Permeability.NONE : null);
     }
 
     /**
@@ -520,9 +552,11 @@ public class WaterChunk {
     }
 
     public int addWaterIn(BlockLocation location, int amount){
-        for(int y = location.y << 3; y >= (location.y + 1) << 3;y++){
+        boolean avoidObstacles = permeabilities[location.x][location.y][location.z] == Permeability.NONE;
+        for(int y = location.y << 3; y < (location.y + 1) << 3;y++){
             for (int x = location.x << 1; x < (location.x + 1) << 1; x++){
                 for (int z = location.z << 1; z < (location.z + 1) << 1; z++){
+                    if(obstacle(x,y,z) && avoidObstacles) continue;
                     if(!water[x][y][z]){
                         setWaterAt(x,y,z,true);
                         if(--amount <= 0) return 0;
@@ -533,8 +567,29 @@ public class WaterChunk {
         return amount;
     }
 
+    public int DEBUGAddWaterIn(BlockLocation location, int amount){
+        Permeability p = permeabilities[location.x][location.y][location.z];
+        boolean avoidObstacles = p == Permeability.NONE;
+        LivelyWorld.getInstance().getLogger().info("Permeability: " + (p == null ? "null" : p.toString()));
+        for(int y = location.y << 3; y < (location.y + 1) << 3;y++){
+            for (int x = location.x << 1; x < (location.x + 1) << 1; x++){
+                for (int z = location.z << 1; z < (location.z + 1) << 1; z++){
+                    LivelyWorld.getInstance().getLogger().info("obstacle ("+x+","+y+","+z+"): " + obstacle(x,y,z) + " avoid: " + avoidObstacles);
+                    if(obstacle(x,y,z) && avoidObstacles) continue;
+                    LivelyWorld.getInstance().getLogger().info("water ("+x+","+y+","+z+"): " + water[x][y][z]);
+                    if(!water[x][y][z]){
+                        LivelyWorld.getInstance().getLogger().info("Water added!");
+                        setWaterAt(x,y,z,true);
+                        if(--amount <= 0) return 0;
+                    }
+                }
+            }
+        }
+        return amount;
+    }
+
     public int removeWaterIn(BlockLocation location, int amount){
-        for(int y = location.y << 3; y >= (location.y + 1) << 3;y++){
+        for(int y = location.y << 3; y < (location.y + 1) << 3;y++){
             for (int x = location.x << 1; x < (location.x + 1) << 1; x++){
                 for (int z = location.z << 1; z < (location.z + 1) << 1; z++){
                     if(water[x][y][z]){

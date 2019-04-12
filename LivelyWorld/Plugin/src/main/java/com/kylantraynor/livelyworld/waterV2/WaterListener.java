@@ -2,6 +2,8 @@ package com.kylantraynor.livelyworld.waterV2;
 
 import com.kylantraynor.livelyworld.LivelyWorld;
 import com.kylantraynor.livelyworld.Utils;
+import org.bukkit.Chunk;
+import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -9,6 +11,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.FluidLevelChangeEvent;
+import org.bukkit.event.player.PlayerBucketEmptyEvent;
+import org.bukkit.inventory.ItemStack;
 
 public class WaterListener implements Listener {
 
@@ -48,6 +52,26 @@ public class WaterListener implements Listener {
             obstacles = WaterUtils.dataToObstacles(bd);
         }
         wc.onBlockChange(x,event.getBlock().getY(), z, perm, obstacles, true);
+    }
+
+    @EventHandler
+    public void onPlayerBucketEmpty(PlayerBucketEmptyEvent event){
+        if(!LivelyWorld.getInstance().getWaterModule().isEnabled()) return;
+        Block b = event.getBlockClicked().getRelative(event.getBlockFace());
+        Chunk c = b.getChunk();
+
+        ItemStack is = event.getPlayer().getInventory().getItemInMainHand();
+        String info = Utils.getLoreInfo(is, "Level");
+
+        final int cX = Utils.floorMod2(b.getX(), 4);
+        final int cZ = Utils.floorMod2(b.getZ(), 4);
+        final int level = (info != null ? Utils.keepBetween(0, Integer.parseInt(info),32) : 32);
+
+        WaterWorld w = module.getWorld(b.getWorld());
+        if(w == null) return;
+        WaterChunk wc = w.getChunk(c.getX(), c.getZ());
+        if(wc == null) return;
+        wc.addWaterIn(new BlockLocation(cX, b.getY(), cZ), level);
     }
 
     @EventHandler

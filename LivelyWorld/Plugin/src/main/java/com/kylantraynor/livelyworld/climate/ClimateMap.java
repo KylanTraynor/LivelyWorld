@@ -234,6 +234,13 @@ public class ClimateMap {
 		return null;
 	}
 
+	public ClimateCell getClimateCell(int cellX, int cellZ){
+		if (generated && cellX > 0 && cellX < xCount && cellZ > 0 && cellZ < zCount) {
+			return cells[cellX][cellZ];
+		}
+		return null;
+	}
+
 	private int lastCellUpdateId = 0;
 	private double highestHumidity = 0;
 	private double lowestLowPressure = 101300;

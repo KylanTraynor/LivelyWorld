@@ -1,5 +1,6 @@
 package com.kylantraynor.livelyworld.climate;
 
+import com.kylantraynor.livelyworld.Utils;
 import com.kylantraynor.voronoi.VectorXZ;
 
 public class ClimateSquare {
@@ -26,15 +27,16 @@ public class ClimateSquare {
 
 	    float size = cell.size;
 
-	    double deltaTop = cellright.getTemperature().getValue() - cell.getTemperature().getValue();
-	    double deltaBottom = celldownright.getTemperature().getValue() - cellright.getTemperature().getValue();
+	    float relX = (v.x - cell.getX())/size;
+	    float relZ = (v.z - cell.getZ())/size;
 
-	    float relX = (v.x - cell.getX())/cell.size;
-	    float relZ = (v.z - cell.getZ())/cell.size;
+	    double t = Utils.bilerp(cell.getTemperature().getValue(),
+				cellright.getTemperature().getValue(),
+				celldown.getTemperature().getValue(),
+				celldownright.getTemperature().getValue(),
+				relX, relZ);
 
-	    double dt = (deltaTop * relX) * (1-relZ) + (deltaBottom * relX) * (relZ);
-
-	    return new Temperature(cell.getTemperature().getValue() + dt);
+	    return new Temperature(t);
 	}
 	
 	double getHumidityAt(double x, double z){

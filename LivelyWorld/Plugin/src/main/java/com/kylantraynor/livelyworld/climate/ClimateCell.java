@@ -82,7 +82,7 @@ public class ClimateCell extends VCell {
 	}
 
 	public ClimateCell getRelative(int x, int z){
-		return map.getClimateCellAt(this.x + x, this.z + z);
+		return map.getClimateCell(this.cellX + x, this.cellZ + z);
 	}
 	/**
 	 * Get the neighbouring climate cells.
@@ -94,18 +94,18 @@ public class ClimateCell extends VCell {
 		if(neighbours == null){
 			if(z > 0 && z < map.zCount - 1){
 				neighbours = new ClimateCell[4];
-				neighbours[2] = map.getClimateCellAt(x, z - 1);
-				neighbours[3] = map.getClimateCellAt(x, z + 1);
+				neighbours[2] = getRelative(0, -1);
+				neighbours[3] = getRelative(0, +1);
 			} else {
 				neighbours = new ClimateCell[3];
 				if(z == 0){
-					neighbours[2] = map.getClimateCellAt(x, z + 1);
+					neighbours[2] = getRelative(0, +1);
 				} else {
-					neighbours[2] = map.getClimateCellAt(x, z - 1);
+					neighbours[2] = getRelative(0, -1);
 				}
 			}
-			neighbours[0] = map.getClimateCellAt(x > 0 ? x - 1 : map.xCount - 1, z);
-			neighbours[1] = map.getClimateCellAt(x < map.xCount - 1 ? x + 1 : 0, z);
+			neighbours[0] = getRelative(cellX > 0 ? -1 : map.xCount - 1, 0);
+			neighbours[1] = map.getClimateCellAt(cellX < map.xCount - 1 ? +1 : -(map.xCount - 1), 0);
 		}
 		return neighbours;
 	}

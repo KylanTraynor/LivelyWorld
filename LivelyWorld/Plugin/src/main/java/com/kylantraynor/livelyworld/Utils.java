@@ -749,4 +749,19 @@ public class Utils {
 	public static double euclidianDistance(int x1, int z1, int x2, int z2){
 		return Math.sqrt(euclidianDistanceSquared(x1, z1, x2, z2));
 	}
+
+	public static double lerp(double v1, double v2, double interpolation) {
+		return v1 + (v2 - v1) * clamp01(interpolation);
+	}
+
+	public static double bilerp(double tl, double tr, double bl, double br, double intX, double intY){
+	    double t = lerp(tl, tr, intX);
+	    double b = lerp(bl, br, intX);
+
+	    return lerp(t, b, intY);
+    }
+
+    public static double clamp01(double value){
+	    return value < 0 ? 0 : (value > 1 ? 1 : value);
+    }
 }

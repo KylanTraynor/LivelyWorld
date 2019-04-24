@@ -438,7 +438,9 @@ public class ClimateModule {
 								p.sendMessage(MessageHeader
 										+ ChatColor.GOLD
 										+ "Current temperature here: "
-										+ ClimateUtils.getAltitudeWeightedTemperature(p.getLocation()).toString(p));
+										+ ClimateUtils.getAltitudeWeightedTemperature(p.getLocation()).toString("C")
+										+ " / "
+										+ ClimateUtils.getAltitudeWeightedTemperature(p.getLocation()).toString("F"));
 							} else {
 								p.sendMessage(MessageHeader
 										+ ChatColor.RED

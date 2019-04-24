@@ -66,7 +66,7 @@ public class UpdateManager {
 	}
 
 	private static void processChunkUpdate(Chunk c) {
-		for(int y = 0; y < c.getWorld().getMaxHeight(); y++){
+		for(int y = 0; y < 256; y++){
 			for(int x = 0; x < 16; x++){
 				for(int z = 0; z < 16; z++){
 					processBlockUpdate(c.getBlock(x, y, z));

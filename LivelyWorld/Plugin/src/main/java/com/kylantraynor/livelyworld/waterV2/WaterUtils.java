@@ -181,6 +181,7 @@ public class WaterUtils {
             case MAGENTA_STAINED_GLASS: case ORANGE_STAINED_GLASS: case PINK_STAINED_GLASS: case PURPLE_STAINED_GLASS:
             case RED_STAINED_GLASS: case WHITE_STAINED_GLASS: case YELLOW_STAINED_GLASS:
             case WET_SPONGE:
+            case BOOKSHELF:
                 return Permeability.NONE;
 
             default:

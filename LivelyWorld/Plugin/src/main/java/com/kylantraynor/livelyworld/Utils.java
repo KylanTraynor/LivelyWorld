@@ -625,6 +625,8 @@ public class Utils {
 			case WHEAT:
 			case CARROTS:
 			case BEETROOTS:
+			case POTATOES:
+			case NETHER_WART_BLOCK:
 				return true;
 			default:
 				return false;
@@ -764,4 +766,8 @@ public class Utils {
     public static double clamp01(double value){
 	    return value < 0 ? 0 : (value > 1 ? 1 : value);
     }
+
+    public static int boolToInt(boolean b){
+		return b ? 1 : 0;
+	}
 }

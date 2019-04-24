@@ -226,13 +226,28 @@ public class WaterChunk {
         boolean canPotentiallyMoveSouth = canPotentiallyMoveTo(c.x, c.y, c.z+1);
         boolean canPotentiallyMove = (canPotentiallyMoveDown || canPotentiallyMoveEast || canPotentiallyMoveWest || canPotentiallyMoveNorth || canPotentiallyMoveSouth);
         if(canPotentiallyMove){
-
-            int rdm = Utils.fastRandomInt(4);
             boolean canMoveDown = canMoveTo(c.x, c.y-1, c.z) && !bordersUnloadedChunk(c.x, c.y-1, c.z);
-            boolean canMoveWest = canMoveTo(c.x-1, c.y, c.z) && rdm == 0;
-            boolean canMoveEast = canMoveTo(c.x+1, c.y, c.z) && rdm == 1;
-            boolean canMoveNorth = canMoveTo(c.x, c.y, c.z-1) && rdm == 2;
-            boolean canMoveSouth = canMoveTo(c.x, c.y, c.z+1) && rdm == 3;
+            int rdm = Utils.fastRandomInt(4);
+            boolean canMoveWest = !canMoveDown && rdm == 0 && canMoveTo(c.x-1, c.y, c.z);
+            boolean canMoveEast = !canMoveDown && rdm == 1 && canMoveTo(c.x+1, c.y, c.z);
+            boolean canMoveNorth = !canMoveDown && rdm == 2 && canMoveTo(c.x, c.y, c.z-1);
+            boolean canMoveSouth = !canMoveDown && rdm == 3 && canMoveTo(c.x, c.y, c.z+1);
+
+            boolean canMoveWestDown = canMoveWest && canMoveTo(c.x-1, c.y-1, c.z);
+            boolean canMoveEastDown = canMoveEast && canMoveTo(c.x+1, c.y-1, c.z);
+            boolean canMoveNorthDown = canMoveNorth && canMoveTo(c.x, c.y-1, c.z-1);
+            boolean canMoveSouthDown = canMoveSouth && canMoveTo(c.x, c.y-1, c.z+1);
+            /*int possibilities = Utils.boolToInt(canMoveWest) + Utils.boolToInt(canMoveEast) + Utils.boolToInt(canMoveNorth) + Utils.boolToInt(canMoveSouth);
+
+            if(possibilities > 1){ // If there are multiple horizontal possibilities, select only one randomly.
+                int rdm = Utils.fastRandomInt(possibilities);
+                int id = 0;
+                canMoveWest = canMoveWest && rdm == id++;
+                canMoveEast = canMoveEast && rdm == id++;
+                canMoveNorth = canMoveNorth && rdm == id++;
+                canMoveSouth = canMoveSouth && rdm == id;
+            }*/
+
             if(canMoveDown || canMoveWest || canMoveEast || canMoveNorth ||canMoveSouth){
 
                 if(canMoveDown){
@@ -242,36 +257,36 @@ public class WaterChunk {
                     return true;
                 } else if(canMoveWest){
                     if(c.x == 0){
-                        getRelative(-1,0).setWaterAt(xLength - 1,c.y,c.z, false);
+                        getRelative(-1,0).setWaterAt(xLength - 1, canMoveWestDown ? c.y - 1 : c.y,c.z, false);
                     } else {
-                        setWaterAt(c.x-1,c.y,c.z, false);
+                        setWaterAt(c.x-1, canMoveWestDown ? c.y - 1 : c.y,c.z, false);
                     }
                     removeWaterAt(c.x,c.y,c.z, false);
                     updateNeighbours(c);
                     return true;
                 } else if(canMoveEast){
                     if(c.x == xLength - 1){
-                        getRelative(1,0).setWaterAt(0,c.y,c.z, false);
+                        getRelative(1,0).setWaterAt(0, canMoveEastDown ? c.y - 1 : c.y,c.z, false);
                     } else {
-                        setWaterAt(c.x+1,c.y,c.z, false);
+                        setWaterAt(c.x+1, canMoveEastDown ? c.y - 1 : c.y,c.z, false);
                     }
                     removeWaterAt(c.x,c.y,c.z, false);
                     updateNeighbours(c);
                     return true;
                 } else if(canMoveNorth){
                     if(c.z == 0){
-                        getRelative(0,-1).setWaterAt(c.x,c.y,zLength-1, false);
+                        getRelative(0,-1).setWaterAt(c.x, canMoveNorthDown ? c.y - 1 : c.y,zLength-1, false);
                     } else {
-                        setWaterAt(c.x,c.y,c.z-1, false);
+                        setWaterAt(c.x, canMoveNorthDown ? c.y - 1 : c.y,c.z-1, false);
                     }
                     removeWaterAt(c.x,c.y,c.z, false);
                     updateNeighbours(c);
                     return true;
                 } else if(canMoveSouth){
                     if(c.z == zLength - 1){
-                        getRelative(0,1).setWaterAt(c.x,c.y,0, false);
+                        getRelative(0,1).setWaterAt(c.x, canMoveSouthDown ? c.y - 1 : c.y,0, false);
                     } else {
-                        setWaterAt(c.x,c.y,c.z+1, false);
+                        setWaterAt(c.x, canMoveSouthDown ? c.y - 1 : c.y,c.z+1, false);
                     }
                     removeWaterAt(c.x,c.y,c.z, false);
                     updateNeighbours(c);

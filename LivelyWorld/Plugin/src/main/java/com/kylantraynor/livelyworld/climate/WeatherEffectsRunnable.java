@@ -64,17 +64,16 @@ public class WeatherEffectsRunnable extends BukkitRunnable {
 	    if(playersInWorld == 0) return;
         Chunk[] chunks = getValidChunks(world.getLoadedChunks());
         if(chunks.length == 0) return;
-        final int l = (playersInWorld * 10);
+        final int l = (playersInWorld * 2);
 
 		for(int i = 0; i < l; i++){
 		    Chunk chunk = chunks[Utils.fastRandomInt(chunks.length)];
 		    final int random_x = Utils.fastRandomInt(16);
 		    final int random_z = Utils.fastRandomInt(16);
-		    int y = 0;
-            while(chunk.getBlock(random_x, y, random_z).getType() != Material.AIR && y < 255){
-                y++;
+		    int y = 255;
+            while(chunk.getBlock(random_x, y, random_z).getType() == Material.AIR && y > 0){
+                y--;
             }
-            final int fy = y;
             final int chunkX = chunk.getX();
             final int chunkZ = chunk.getZ();
             final Block b = chunk.getBlock(random_x, y, random_z);
@@ -97,7 +96,7 @@ public class WeatherEffectsRunnable extends BukkitRunnable {
                                 final int evaporation = (int) (effectAmount * (1-(c.getRelativeHumidity() * 0.01)));
                                 WaterWorld w = LivelyWorld.getInstance().getWaterModule().getWorld(b.getWorld());
                                 if(w == null) continue;
-                                w.removeWaterAt(random_x, y, random_z, evaporation);
+                                w.removeWaterAt(x, y, z, evaporation);
 
                                 b.getWorld().spawnParticle(Particle.CLOUD, b.getLocation().add(0.5,0.5,0.5), evaporation, 0.5, 0.5, 0.5, 0.05);
                             } else {
@@ -112,7 +111,7 @@ public class WeatherEffectsRunnable extends BukkitRunnable {
                                 final int amount = ClimateUtils.melt(b, effectAmount);
                                 WaterWorld w = LivelyWorld.getInstance().getWaterModule().getWorld(b.getWorld());
                                 if(w == null) continue;
-                                w.addWaterAt(Utils.floorMod2(fb.getX(), 4), fb.getY(), Utils.floorMod2(fb.getZ(), 4), amount);
+                                w.addWaterAt(fb.getX(), fb.getY(), fb.getZ(), amount);
                             }
                         }
                     }
@@ -123,24 +122,24 @@ public class WeatherEffectsRunnable extends BukkitRunnable {
                 case SNOW:
                     double tdiff1 = Temperature.fromCelsius(5).getValue() - ClimateUtils.getAltitudeWeightedTemperature(b.getLocation()).getValue();
                     if(Utils.fastRandomDouble() < 0.5 * (tdiff1 / 2)){
-                        SnowFallTask task = new SnowFallTask(LivelyWorld.getInstance().getClimateModule(), c, b.getX(), b.getY() + 1, b.getZ());
+                        SnowFallTask task = new SnowFallTask(LivelyWorld.getInstance().getClimateModule(), c, x, y + 1, z);
                         task.runTaskLater(LivelyWorld.getInstance(), 1);
                     } if (Utils.fastRandomDouble() < 1.0 * (-tdiff1 / 2)){
                         WaterWorld w = LivelyWorld.getInstance().getWaterModule().getWorld(b.getWorld());
                         if(w == null) continue;
-                        w.addWaterAt(random_x, y, random_z, 2);
+                        w.addWaterAt(x, y + 1, z, 2);
                     }
                     break;
                 case STORM:
                 case SNOWSTORM:
                     double tdiff2 = Temperature.fromCelsius(5).getValue() - ClimateUtils.getAltitudeWeightedTemperature(b.getLocation()).getValue();
                     if(Utils.fastRandomDouble() < 1.0 * (tdiff2 / 2)){
-                        SnowFallTask task = new SnowFallTask(LivelyWorld.getInstance().getClimateModule(), c, b.getX(), b.getY() + 1, b.getZ());
+                        SnowFallTask task = new SnowFallTask(LivelyWorld.getInstance().getClimateModule(), c, x, y + 1, z);
                         task.runTaskLater(LivelyWorld.getInstance(), 1);
                     } if (Utils.fastRandomDouble() < 1.0 * (-tdiff2 / 2)){
                         WaterWorld w = LivelyWorld.getInstance().getWaterModule().getWorld(b.getWorld());
                         if(w == null) continue;
-                        w.addWaterAt(random_x, y, random_z, 4);
+                        w.addWaterAt(x, y + 1, z, 4);
                     }
                     break;
                 case THUNDERSTORM:

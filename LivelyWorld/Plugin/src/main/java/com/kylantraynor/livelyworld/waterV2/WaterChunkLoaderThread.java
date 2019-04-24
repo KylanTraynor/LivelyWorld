@@ -30,8 +30,12 @@ public class WaterChunkLoaderThread extends Thread {
                     }
                     long time = System.currentTimeMillis();
                     int updatedCells = 0;
-                    for(WaterChunk chunk : world.loadedChunks.values()){
-                        updatedCells += chunk.update();
+                    try{
+                        for(WaterChunk chunk : world.loadedChunks.values()){
+                            updatedCells += chunk.update();
+                        }
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
                     }
                     int elapsed = (int)(System.currentTimeMillis() - time);
                     if(elapsed > 1000){

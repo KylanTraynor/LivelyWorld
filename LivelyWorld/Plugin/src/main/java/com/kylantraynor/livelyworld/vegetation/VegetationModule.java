@@ -9,7 +9,9 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.data.Ageable;
 import org.bukkit.block.data.Bisected;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -143,8 +145,7 @@ public class VegetationModule implements Listener {
 	}
 
 	private void tryPlantBlueOrchid(Block b) {
-		if (debug)
-			Bukkit.getServer().getLogger().info("Trying to plant Blue Orchid");
+		if (debug) Bukkit.getServer().getLogger().info("Trying to plant Blue Orchid");
 		boolean isClimateOk = false;
 		if (Planet.getPlanet(b.getWorld()) != null) {
 			Temperature averageTemp = ClimateUtils.getAltitudeWeightedTemperature(b.getLocation());
@@ -154,23 +155,18 @@ public class VegetationModule implements Listener {
 					Temperature.fromCelsius(35));
 		}
 		if (isClimateOk) {
-			if (debug)
-				Bukkit.getServer().getLogger().info("Climate is Ok");
+			if (debug) Bukkit.getServer().getLogger().info("Climate is Ok");
 			if (isWaterLevelBelow(b.getLocation(), 0xFF / 8, 10)) {
-				if (debug)
-					Bukkit.getServer().getLogger()
-							.info("Found enough water underground.");
+				if (debug) Bukkit.getServer().getLogger().info("Found enough water underground.");
 				b.setType(Material.BLUE_ORCHID, false);
 			}
 		} else {
-			if (debug)
-				Bukkit.getServer().getLogger().info("Climate isn't Ok");
+			if (debug) Bukkit.getServer().getLogger().info("Climate isn't Ok");
 		}
 	}
 
 	private void tryPlantDandelion(Block b) {
-		if (debug)
-			Bukkit.getServer().getLogger().info("Trying to plant Dandelion");
+		if (debug) Bukkit.getServer().getLogger().info("Trying to plant Dandelion");
 		boolean isClimateOk = false;
 		if (Planet.getPlanet(b.getWorld()) != null) {
 			Temperature averageTemp = ClimateUtils.getAltitudeWeightedTemperature(b.getLocation());
@@ -180,23 +176,18 @@ public class VegetationModule implements Listener {
 					Temperature.fromCelsius(25));
 		}
 		if (isClimateOk) {
-			if (debug)
-				Bukkit.getServer().getLogger().info("Climate is Ok");
+			if (debug) Bukkit.getServer().getLogger().info("Climate is Ok");
 			if (isMaterialBelow(b.getLocation(), Material.STONE, 10)) {
-				if (debug)
-					Bukkit.getServer().getLogger()
-							.info("Found right material underground.");
+				if (debug) Bukkit.getServer().getLogger().info("Found right material underground.");
 				b.setType(Material.DANDELION, false);
 			}
 		} else {
-			if (debug)
-				Bukkit.getServer().getLogger().info("Climate isn't Ok");
+			if (debug) Bukkit.getServer().getLogger().info("Climate isn't Ok");
 		}
 	}
 
 	private void tryPlantPoppy(Block b) {
-		if (debug)
-			Bukkit.getServer().getLogger().info("Trying to plant Poppy");
+		if (debug) Bukkit.getServer().getLogger().info("Trying to plant Poppy");
 		boolean isClimateOk = false;
 		if (Planet.getPlanet(b.getWorld()) != null) {
 			Temperature averageTemp = ClimateUtils.getAltitudeWeightedTemperature(b.getLocation());
@@ -206,26 +197,20 @@ public class VegetationModule implements Listener {
 					Temperature.fromCelsius(15));
 		}
 		if (isClimateOk) {
-			if (debug)
-				Bukkit.getServer().getLogger().info("Climate is Ok");
+			if (debug) Bukkit.getServer().getLogger().info("Climate is Ok");
 			if (isMaterialBelow(b.getLocation(), Material.GRANITE, 7)) {
-				if (debug)
-					Bukkit.getServer().getLogger()
-							.info("Found right material underground.");
+				if (debug) Bukkit.getServer().getLogger().info("Found right material underground.");
 				b.setType(Material.POPPY, false);
 			}
 		} else {
-			if (debug)
-				Bukkit.getServer().getLogger().info("Climate isn't Ok");
+			if (debug) Bukkit.getServer().getLogger().info("Climate isn't Ok");
 		}
 	}
 
 	private void tryPlantOxeyeDaisy(Block b) {
-		if (debug)
-			Bukkit.getServer().getLogger().info("Trying to plant OxeyeDaisy");
+		if (debug) Bukkit.getServer().getLogger().info("Trying to plant OxeyeDaisy");
 		boolean isClimateOk = false;
 		if (Planet.getPlanet(b.getWorld()) != null) {
-			ClimateCell c = ClimateUtils.getClimateCellAt(b.getLocation());
 			Temperature averageTemp = ClimateUtils.getAltitudeWeightedTemperature(b.getLocation());
 			isClimateOk = ClimateUtils.isAcceptableTemperature(averageTemp,
 					Temperature.fromCelsius(17),
@@ -233,17 +218,13 @@ public class VegetationModule implements Listener {
 					Temperature.fromCelsius(30));
 		}
 		if (isClimateOk) {
-			if (debug)
-				Bukkit.getServer().getLogger().info("Climate is Ok");
+			if (debug) Bukkit.getServer().getLogger().info("Climate is Ok");
 			if (isMaterialBelow(b.getLocation(), Material.DIORITE, 7)) {
-				if (debug)
-					Bukkit.getServer().getLogger()
-							.info("Found right material underground.");
+				if (debug) Bukkit.getServer().getLogger().info("Found right material underground.");
 				b.setType(Material.OXEYE_DAISY, false);
 			}
 		} else {
-			if (debug)
-				Bukkit.getServer().getLogger().info("Climate isn't Ok");
+			if (debug) Bukkit.getServer().getLogger().info("Climate isn't Ok");
 		}
 	}
 
@@ -340,11 +321,16 @@ public class VegetationModule implements Listener {
 	}
 
 	public void plantSapling(Material sap, Location location) {
+        if (debug) Bukkit.getServer().getLogger().info("Attempting to plant a sapling.");
 		if(location.getBlock().getType().isBlock() || location.getBlock().getType().isSolid()) return;
+        if (debug) Bukkit.getServer().getLogger().info("Checking light conditions.");
 		if(location.getBlock().getLightFromSky() < 8) return;
         Material base = location.getBlock().getRelative(BlockFace.DOWN).getType();
         if (base == Material.DIRT || base == Material.COARSE_DIRT || base == Material.PODZOL || base == Material.GRASS_BLOCK) {
+            if (debug) Bukkit.getServer().getLogger().info("Root block compatible.");
             location.getBlock().setType(sap);
+        } else {
+            if (debug) Bukkit.getServer().getLogger().info("Root block incompatible.");
         }
 	}
 
@@ -370,40 +356,39 @@ public class VegetationModule implements Listener {
 
 	public void onBreakCrops(BlockBreakEvent event) {
 		plugin.getLogger().info("Processing Crops Breaking.");
-		BlockState state = event.getBlock().getState();
-		if(state.getData() instanceof Crops){
-			Crops crops = (Crops) state.getData();
-			switch(crops.getItemType()){
+		BlockData data = event.getBlock().getBlockData();
+		if(data instanceof Ageable){
+			switch(data.getMaterial()){
 			case WHEAT:
 				plugin.getLogger().info("Processing Wheat Breaking.");
-				if(crops.getState() == CropState.RIPE){
+				if(((Ageable) data).getAge() == ((Ageable) data).getMaximumAge()){
 					ItemStack is = new ItemStack(Material.WHEAT, 15);
 					event.getBlock().getWorld().dropItemNaturally(event.getBlock().getLocation(), is);
 				}
 				break;
 			case NETHER_WART_BLOCK:
 				plugin.getLogger().info("Processing Nether Warts Breaking.");
-				if(crops.getState() == CropState.RIPE){
+				if(((Ageable) data).getAge() == ((Ageable) data).getMaximumAge()){
 					ItemStack is = new ItemStack(Material.NETHER_WART, 10);
 					event.getBlock().getWorld().dropItemNaturally(event.getBlock().getLocation(), is);
 				}
 				break;
 			case CARROTS:
                 plugin.getLogger().info("Processing Carrots Breaking.");
-                if(crops.getState() == CropState.RIPE){
+                if(((Ageable) data).getAge() == ((Ageable) data).getMaximumAge()){
                     ItemStack is = new ItemStack(Material.CARROT, 6);
                     event.getBlock().getWorld().dropItemNaturally(event.getBlock().getLocation(), is);
                 }
 				break;
 			case POTATOES:
                 plugin.getLogger().info("Processing Potatoes Breaking.");
-                if(crops.getState() == CropState.RIPE){
+                if(((Ageable) data).getAge() == ((Ageable) data).getMaximumAge()){
                     ItemStack is = new ItemStack(Material.POTATO, 6);
                     event.getBlock().getWorld().dropItemNaturally(event.getBlock().getLocation(), is);
                 }
 				break;
 			default:
-				plugin.getLogger().info("Unexpected type of crop: " + crops.getItemType().toString());
+				plugin.getLogger().info("Unexpected type of crop: " + data.getMaterial().toString());
 				break;
 			}
 		} else {

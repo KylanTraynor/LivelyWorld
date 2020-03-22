@@ -2,10 +2,10 @@ package com.kylantraynor.livelyworld.waterV2;
 
 import com.kylantraynor.livelyworld.LivelyWorld;
 import com.kylantraynor.livelyworld.Utils;
-import io.netty.handler.logging.LogLevel;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.event.block.BlockDamageEvent;
 
@@ -154,8 +154,18 @@ public class WaterChunk {
         }
         for(BlockLocation bl : updateSet){
             Block b = chunk.getBlock(bl.x, bl.y, bl.z);
-            if(WaterUtils.isReplaceable(b.getType())){
-                Utils.setWaterHeight(b, getBlockLevel(bl), false, false);
+            int lvl = getBlockLevel(bl);
+            int minrep = WaterUtils.minLevelReplaceable(b.getType());
+            if(lvl >= minrep) {
+                if(minrep > 0){
+                    b.breakNaturally();
+                }
+                Utils.setWaterHeight(b, lvl, false, false);
+                if(lvl > 2 && b.getRelative(BlockFace.DOWN).getType() == Material.GRASS_BLOCK){
+                    if(Utils.fastRandomFloat() < 0.10){
+                        b.getRelative(BlockFace.DOWN).setType(Material.DIRT, false);
+                    }
+                }
             }
         }
         updateSet.clear();
@@ -176,8 +186,18 @@ public class WaterChunk {
             for(int x = 0; x < 16; x++){
                 for(int z = 0; z < 16; z++){
                     Block b = chunk.getBlock(x,y,z);
-                    if(WaterUtils.isReplaceable(b.getType())){
-                        Utils.setWaterHeight(b, getBlockLevel(new BlockLocation(x,y,z)), false, false);
+                    int lvl = getBlockLevel(new BlockLocation(x,y,z));
+                    int minrep = WaterUtils.minLevelReplaceable(b.getType());
+                    if(lvl >= minrep) {
+                        if(minrep > 0){
+                            b.breakNaturally();
+                        }
+                        Utils.setWaterHeight(b, lvl, false, false);
+                        if(lvl > 2 && b.getRelative(BlockFace.DOWN).getType() == Material.GRASS_BLOCK){
+                            if(Utils.fastRandomFloat() < 0.10){
+                                b.getRelative(BlockFace.DOWN).setType(Material.DIRT, false);
+                            }
+                        }
                     }
                 }
             }
@@ -226,7 +246,10 @@ public class WaterChunk {
         boolean canPotentiallyMoveSouth = canPotentiallyMoveTo(c.x, c.y, c.z+1);
         boolean canPotentiallyMove = (canPotentiallyMoveDown || canPotentiallyMoveEast || canPotentiallyMoveWest || canPotentiallyMoveNorth || canPotentiallyMoveSouth);
         if(canPotentiallyMove){
-            boolean canMoveDown = canMoveTo(c.x, c.y-1, c.z) && !bordersUnloadedChunk(c.x, c.y-1, c.z);
+            boolean canMoveDown = !bordersUnloadedChunk(c.x, c.y-1, c.z) && canMoveTo(c.x, c.y-1, c.z);
+            boolean canMoveDown2 = canMoveDown && canMoveTo(c.x, c.y-2, c.z);
+            boolean canMoveDown3 = canMoveDown2 && canMoveTo(c.x, c.y-3, c.z);
+            boolean canMoveDown4 = canMoveDown3 && canMoveTo(c.x, c.y-4, c.z);
             int rdm = Utils.fastRandomInt(4);
             boolean canMoveWest = !canMoveDown && rdm == 0 && canMoveTo(c.x-1, c.y, c.z);
             boolean canMoveEast = !canMoveDown && rdm == 1 && canMoveTo(c.x+1, c.y, c.z);
@@ -251,45 +274,43 @@ public class WaterChunk {
             if(canMoveDown || canMoveWest || canMoveEast || canMoveNorth ||canMoveSouth){
 
                 if(canMoveDown){
-                    water[c.x][c.y-1][c.z] = true;
+                    int y = canMoveDown2 ? (canMoveDown3 ? (canMoveDown4 ? 4 : 3) : 2) : 1;
+                    water[c.x][c.y-y][c.z] = true;
+                    updateQueue.add(new WaterLocation(c.x,c.y-y,c.z));
                     water[c.x][c.y][c.z] = false;
                     updateNeighbours(c);
                     return true;
                 } else if(canMoveWest){
                     if(c.x == 0){
-                        getRelative(-1,0).setWaterAt(xLength - 1, canMoveWestDown ? c.y - 1 : c.y,c.z, false);
+                        getRelative(-1,0).setWaterAt(xLength - 1, canMoveWestDown ? c.y - 1 : c.y,c.z, true);
                     } else {
-                        setWaterAt(c.x-1, canMoveWestDown ? c.y - 1 : c.y,c.z, false);
+                        setWaterAt(c.x-1, canMoveWestDown ? c.y - 1 : c.y,c.z, true);
                     }
-                    removeWaterAt(c.x,c.y,c.z, false);
-                    updateNeighbours(c);
+                    removeWaterAt(c.x,c.y,c.z, true);
                     return true;
                 } else if(canMoveEast){
                     if(c.x == xLength - 1){
-                        getRelative(1,0).setWaterAt(0, canMoveEastDown ? c.y - 1 : c.y,c.z, false);
+                        getRelative(1,0).setWaterAt(0, canMoveEastDown ? c.y - 1 : c.y,c.z, true);
                     } else {
-                        setWaterAt(c.x+1, canMoveEastDown ? c.y - 1 : c.y,c.z, false);
+                        setWaterAt(c.x+1, canMoveEastDown ? c.y - 1 : c.y,c.z, true);
                     }
-                    removeWaterAt(c.x,c.y,c.z, false);
-                    updateNeighbours(c);
+                    removeWaterAt(c.x,c.y,c.z, true);
                     return true;
                 } else if(canMoveNorth){
                     if(c.z == 0){
-                        getRelative(0,-1).setWaterAt(c.x, canMoveNorthDown ? c.y - 1 : c.y,zLength-1, false);
+                        getRelative(0,-1).setWaterAt(c.x, canMoveNorthDown ? c.y - 1 : c.y,zLength-1, true);
                     } else {
-                        setWaterAt(c.x, canMoveNorthDown ? c.y - 1 : c.y,c.z-1, false);
+                        setWaterAt(c.x, canMoveNorthDown ? c.y - 1 : c.y,c.z-1, true);
                     }
-                    removeWaterAt(c.x,c.y,c.z, false);
-                    updateNeighbours(c);
+                    removeWaterAt(c.x,c.y,c.z, true);
                     return true;
                 } else if(canMoveSouth){
                     if(c.z == zLength - 1){
-                        getRelative(0,1).setWaterAt(c.x, canMoveSouthDown ? c.y - 1 : c.y,0, false);
+                        getRelative(0,1).setWaterAt(c.x, canMoveSouthDown ? c.y - 1 : c.y,0, true);
                     } else {
-                        setWaterAt(c.x, canMoveSouthDown ? c.y - 1 : c.y,c.z+1, false);
+                        setWaterAt(c.x, canMoveSouthDown ? c.y - 1 : c.y,c.z+1, true);
                     }
-                    removeWaterAt(c.x,c.y,c.z, false);
-                    updateNeighbours(c);
+                    removeWaterAt(c.x,c.y,c.z, true);
                     return true;
                 }
             }
@@ -300,6 +321,56 @@ public class WaterChunk {
             // Can't ever move.
             return false;
         }
+    }
+
+    private WaterLocation closestLow(int x, int y, int z) {
+        boolean canMoveDown = canMoveTo(x, y-1, z) && !bordersUnloadedChunk(x, y-1, z);
+        if(!canMoveDown){
+            return moveHorizontally(x,y,z,1);
+        } else {
+            return new WaterLocation(x,y-1,z);
+        }
+    }
+
+    private WaterLocation moveHorizontally(int x, int y, int z, int range){
+        int rdm = Utils.fastRandomInt(4);
+        switch(rdm){
+            case 0:
+                if(canMoveTo(x-1, y, z)){
+                    if(!bordersUnloadedChunk(x-1, y-1, z) && canMoveTo(x-1, y-1, z)){
+                        return new WaterLocation(x-1, y-1, z);
+                    }
+                    return range > 1 ? moveHorizontally(x-1, y, z, range - 1) : new WaterLocation(x-1,y,z);
+                }
+                break;
+            case 1:
+                if(canMoveTo(x+1, y, z)){
+                    if(!bordersUnloadedChunk(x+1, y-1, z) && canMoveTo(x+1, y-1, z)){
+                        return new WaterLocation(x+1, y-1, z);
+                    }
+                    return range > 1 ? moveHorizontally(x+1, y, z, range - 1) : new WaterLocation(x+1,y,z);
+                }
+                break;
+            case 2:
+                if(canMoveTo(x, y, z-1)){
+                    if(!bordersUnloadedChunk(x, y-1, z-1) && canMoveTo(x, y-1, z-1)){
+                        return new WaterLocation(x, y-1, z-1);
+                    }
+                    return range > 1 ? moveHorizontally(x, y, z-1, range - 1) : new WaterLocation(x,y,z-1);
+                }
+                break;
+            case 3:
+                if(canMoveTo(x, y, z+1)){
+                    if(!bordersUnloadedChunk(x, y-1, z+1) && canMoveTo(x, y-1, z+1)){
+                        return new WaterLocation(x, y-1, z+1);
+                    }
+                    return range > 1 ? moveHorizontally(x, y, z+1, range - 1) : new WaterLocation(x,y,z+1);
+                }
+                break;
+            default:
+                break;
+        }
+        return range > 1 ? moveHorizontally(x, y, z, range - 1) : new WaterLocation(x,y,z);
     }
 
     /**
@@ -403,6 +474,7 @@ public class WaterChunk {
      */
     public boolean testPermeability(int waterX, int waterY, int waterZ){
         Permeability p = permeability(waterX, waterY, waterZ);
+        if(p == Permeability.NONE) return false;
         return p == null || Utils.fastRandomFloat() < p.getProbability();
     }
 

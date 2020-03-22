@@ -871,6 +871,9 @@ public class LivelyWorld extends JavaPlugin implements Listener {
 				vegetation.onBreakCrops(event);
 			}
 		}
+		if(usingGravity && event.getBlock().getLocation().getBlockY() < 255) {
+			gravity.checkGravityOn(event.getBlock().getRelative(BlockFace.UP));
+		}
 	}
 	
 	@EventHandler

@@ -19,12 +19,13 @@
             <artifactId>livelyworld-api</artifactId>
             <version>API</version>
         </dependency>
-        <!--dependency>
+        <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot</artifactId>
             <version>1.13.2-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
-        </dependency-->
+            <optional>true</optional>
+        </dependency>
     </dependencies>
 
     <name>v1_13_R2</name>

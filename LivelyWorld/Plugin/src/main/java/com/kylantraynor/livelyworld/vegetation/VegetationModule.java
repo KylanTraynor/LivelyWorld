@@ -3,12 +3,10 @@ package com.kylantraynor.livelyworld.vegetation;
 import com.kylantraynor.livelyworld.waterV2.BlockLocation;
 import com.kylantraynor.livelyworld.waterV2.WaterWorld;
 import org.bukkit.Bukkit;
-import org.bukkit.CropState;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.BlockState;
 import org.bukkit.block.data.Ageable;
 import org.bukkit.block.data.Bisected;
 import org.bukkit.block.data.BlockData;
@@ -18,9 +16,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.material.Crops;
-import org.bukkit.material.MaterialData;
-import org.bukkit.material.Sapling;
 
 import com.kylantraynor.livelyworld.LivelyWorld;
 import com.kylantraynor.livelyworld.Utils;
@@ -125,24 +120,51 @@ public class VegetationModule implements Listener {
 		Block above = b.getRelative(BlockFace.UP);
 		if (above.getType() != Material.AIR)
 			return;
-		int rand = Utils.fastRandomInt(4);
+		int rand = Utils.fastRandomInt(5);
 		switch (rand) {
-		case 0:
-			tryPlantDandelion(above);
-			break;
-		case 1:
-			tryPlantPoppy(above);
-			break;
-		case 2:
-			tryPlantOxeyeDaisy(above);
-			break;
-		case 3:
-			tryPlantBlueOrchid(above);
-			break;
+            case 0:
+                tryPlantDandelion(above);
+                break;
+            case 1:
+                tryPlantPoppy(above);
+                break;
+            case 2:
+                tryPlantOxeyeDaisy(above);
+                break;
+            case 3:
+                tryPlantBlueOrchid(above);
+                break;
+            case 4:
+                tryPlantTulip(above, Material.ORANGE_TULIP, Material.SANDSTONE);
+                break;
+            case 5:
+                tryPlantTulip(above, Material.RED_TULIP, Material.RED_SANDSTONE);
+                break;
 		default:
 
 		}
 	}
+
+	private void tryPlantTulip(Block b, Material m, Material underground){
+	    if(debug) Bukkit.getServer().getLogger().info("Trying to plant tulip");
+	    boolean isClimateOk = false;
+	    if (Planet.getPlanet(b.getWorld()) != null) {
+	        Temperature averageTemp = ClimateUtils.getAltitudeWeightedTemperature(b.getLocation());
+	        isClimateOk = ClimateUtils.isAcceptableTemperature(averageTemp,
+                    Temperature.fromCelsius(15),
+                    Temperature.fromCelsius(5),
+                    Temperature.fromCelsius(23));
+        }
+        if (isClimateOk) {
+            if (debug) Bukkit.getServer().getLogger().info("Climate is Ok");
+            if (isMaterialBelow(b.getLocation(), underground, 10)) {
+                if (debug) Bukkit.getServer().getLogger().info("Found right material underground.");
+                b.setType(m, false);
+            }
+        } else {
+            if (debug) Bukkit.getServer().getLogger().info("Climate isn't Ok");
+        }
+    }
 
 	private void tryPlantBlueOrchid(Block b) {
 		if (debug) Bukkit.getServer().getLogger().info("Trying to plant Blue Orchid");
@@ -156,7 +178,7 @@ public class VegetationModule implements Listener {
 		}
 		if (isClimateOk) {
 			if (debug) Bukkit.getServer().getLogger().info("Climate is Ok");
-			if (isWaterLevelBelow(b.getLocation(), 0xFF / 8, 10)) {
+			if (isWaterLevelBelow(b.getLocation(), 2, 10)) {
 				if (debug) Bukkit.getServer().getLogger().info("Found enough water underground.");
 				b.setType(Material.BLUE_ORCHID, false);
 			}
@@ -242,7 +264,7 @@ public class VegetationModule implements Listener {
 		return false;
 	}
 	
-	private boolean isWaterLevelBelow(Location l, int level, int depth) {
+	private boolean isWaterLevelBelow(Location l, int amount, int depth) {
 		int i = 1;
 		WaterWorld w = LivelyWorld.getInstance().getWaterModule().getWorld(l.getWorld());
 		if(w == null) return false;
@@ -252,7 +274,7 @@ public class VegetationModule implements Listener {
 		int z = Utils.floorMod2(l.getBlockZ(), 4);
 		int y = l.getBlockY();
 		while (i < depth && y > 0) {
-			if(wc.getBlockWaterAmount(new BlockLocation(x, y, z)) >= level){
+			if(wc.getBlockWaterAmount(new BlockLocation(x, y, z)) >= amount){
 				return true;
 			}
 			y--;

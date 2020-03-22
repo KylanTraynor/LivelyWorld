@@ -105,12 +105,24 @@ public class WaterUtils {
     }
 
     public static boolean isReplaceable(Material material){
+        return minLevelReplaceable(material) <= 8;
+    }
+
+    public static int minLevelReplaceable(Material material){
         switch (material){
             case WATER:
             case AIR:
-                return true;
+                return 0;
+            case GRASS: case FERN: case DEAD_BUSH:
+            case OXEYE_DAISY: case POPPY: case BLUE_ORCHID:
+            case ORANGE_TULIP: case PINK_TULIP: case RED_TULIP: case WHITE_TULIP:
+                return 3;
+            case TALL_GRASS: case LARGE_FERN:
+                return 4;
+            case SNOW: case SNOW_BLOCK:
+                return 5;
             default:
-                return false;
+                return 9; // can never reach 9, so basically that means will never be replaceable.
         }
     }
 
@@ -122,7 +134,7 @@ public class WaterUtils {
             case LIGHT_BLUE_CONCRETE_POWDER: case LIGHT_GRAY_CONCRETE_POWDER: case LIME_CONCRETE_POWDER:
             case MAGENTA_CONCRETE_POWDER: case ORANGE_CONCRETE_POWDER: case PINK_CONCRETE_POWDER:
             case PURPLE_CONCRETE_POWDER: case RED_CONCRETE_POWDER: case WHITE_CONCRETE_POWDER:
-            case YELLOW_CONCRETE_POWDER: case SNOW_BLOCK:
+            case YELLOW_CONCRETE_POWDER: case SNOW_BLOCK: case SNOW:
             case SPONGE:
                 return Permeability.HIGH;
 
@@ -130,8 +142,8 @@ public class WaterUtils {
             case GRASS_PATH: case CLAY: case PETRIFIED_OAK_SLAB:
                 return Permeability.MEDIUM;
 
-            case SANDSTONE: case SANDSTONE_SLAB: case SANDSTONE_STAIRS: case CHISELED_SANDSTONE:
-            case SMOOTH_SANDSTONE: case RED_SANDSTONE: case RED_SANDSTONE_SLAB: case RED_SANDSTONE_STAIRS: case CHISELED_RED_SANDSTONE:
+            case SANDSTONE: case SANDSTONE_SLAB: case SANDSTONE_STAIRS: case CHISELED_SANDSTONE: case CUT_SANDSTONE:
+            case SMOOTH_SANDSTONE: case RED_SANDSTONE: case RED_SANDSTONE_SLAB: case RED_SANDSTONE_STAIRS: case CHISELED_RED_SANDSTONE: case CUT_RED_SANDSTONE:
             case SMOOTH_RED_SANDSTONE:
             case CRACKED_STONE_BRICKS:
             case COBBLESTONE: case COBBLESTONE_SLAB: case COBBLESTONE_STAIRS: case COBBLESTONE_WALL: case MOSSY_COBBLESTONE: case MOSSY_COBBLESTONE_WALL:

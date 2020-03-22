@@ -705,6 +705,25 @@ public class Utils {
         return false;
     }
 
+    public static boolean isSign(Material m){
+		switch(m){
+			case OAK_SIGN:
+			case DARK_OAK_SIGN:
+			case ACACIA_SIGN:
+			case SPRUCE_SIGN:
+			case JUNGLE_SIGN:
+			case BIRCH_SIGN:
+			case OAK_WALL_SIGN:
+			case DARK_OAK_WALL_SIGN:
+			case ACACIA_WALL_SIGN:
+			case SPRUCE_WALL_SIGN:
+			case JUNGLE_WALL_SIGN:
+			case BIRCH_WALL_SIGN:
+				return true;
+		}
+		return false;
+	}
+
     public static boolean hasBlockAround(Location loc, Material mat, int radius){
 		for(int x = - radius; x <= radius; x ++){
 		    for(int z = -radius; z <= radius; z++){

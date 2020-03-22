@@ -64,7 +64,8 @@ public class WeatherEffectsRunnable extends BukkitRunnable {
 	    if(playersInWorld == 0) return;
         Chunk[] chunks = getValidChunks(world.getLoadedChunks());
         if(chunks.length == 0) return;
-        final int l = (playersInWorld * 2);
+        int l = (chunks.length >> 7);
+        l = (l > 0 ? l : 1);
 
 		for(int i = 0; i < l; i++){
 		    Chunk chunk = chunks[Utils.fastRandomInt(chunks.length)];
@@ -127,7 +128,7 @@ public class WeatherEffectsRunnable extends BukkitRunnable {
                     } if (Utils.fastRandomDouble() < 1.0 * (-tdiff1 / 2)){
                         WaterWorld w = LivelyWorld.getInstance().getWaterModule().getWorld(b.getWorld());
                         if(w == null) continue;
-                        w.addWaterAt(x, y + 1, z, 2);
+                        w.addWaterAt(x, y + 1, z, 1);
                     }
                     break;
                 case STORM:
@@ -139,7 +140,7 @@ public class WeatherEffectsRunnable extends BukkitRunnable {
                     } if (Utils.fastRandomDouble() < 1.0 * (-tdiff2 / 2)){
                         WaterWorld w = LivelyWorld.getInstance().getWaterModule().getWorld(b.getWorld());
                         if(w == null) continue;
-                        w.addWaterAt(x, y + 1, z, 4);
+                        w.addWaterAt(x, y + 1, z, 2);
                     }
                     break;
                 case THUNDERSTORM:

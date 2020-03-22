@@ -85,9 +85,7 @@ public class SnowFallTask extends BukkitRunnable {
 						ClimateUtils.setSnowLayers(below, ClimateUtils.getWaterHeight(below));
 					}
 				}*/
-			} else if (below.getType() != Material.SIGN
-					&& below.getType() != Material.WALL_SIGN
-					&& below.getType() != Material.RAIL) {
+			} else if (!Utils.isSign(below.getType()) && below.getType() != Material.RAIL) {
 				below.breakNaturally();
 				below.setType(Material.SNOW);
 			}

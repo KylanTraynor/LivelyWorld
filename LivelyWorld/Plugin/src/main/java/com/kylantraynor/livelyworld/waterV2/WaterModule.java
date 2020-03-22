@@ -22,7 +22,7 @@ public class WaterModule {
     private final WaterChunkLoaderThread loaderThread;
 
     private boolean realisticSimulation = true;
-    public boolean usePermeability = false;
+    public boolean usePermeability = true;
     private boolean debug = true;
 
     /**

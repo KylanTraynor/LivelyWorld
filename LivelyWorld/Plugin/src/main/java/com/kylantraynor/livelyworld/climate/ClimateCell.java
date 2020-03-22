@@ -534,7 +534,7 @@ public class ClimateCell extends VCell {
 			highAltitudePressure = data.getHighPressure();
 		} else {
 			this.temperature = new Climate(getLocation()).getAreaSurfaceTemperature();
-			Biome b = world.getBiome(x, z);
+			Biome b = world.getBiome(x, y, z);
 			if(b == Biome.DESERT || 
 					b == Biome.DESERT_HILLS || 
 					b == Biome.BADLANDS ||

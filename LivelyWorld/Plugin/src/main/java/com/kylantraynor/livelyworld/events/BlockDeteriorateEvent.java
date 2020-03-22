@@ -6,7 +6,6 @@ import org.bukkit.block.Block;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.block.BlockEvent;
-import org.bukkit.material.MaterialData;
 
 public class BlockDeteriorateEvent extends BlockEvent implements Cancellable{
 
